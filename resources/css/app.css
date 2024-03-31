@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.custom-header {
+    background-color: #ff0000; /* Replace with your desired color */
+    /* Add any other styles as needed */
+}
