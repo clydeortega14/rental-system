@@ -4,6 +4,7 @@ import { AiOutlineLeftCircle } from "react-icons/ai";
 import { AiOutlineBars } from "react-icons/ai";
 import { useState } from 'react';
 import { AiOutlineDown } from "react-icons/ai";
+import NavLink from '@/Components/NavLink';
 
 function Sidebar() {
 
@@ -11,24 +12,36 @@ function Sidebar() {
 
 		{
 			name: "Dashboard",
+			link: route('dashboard'),
+			status: route().current('dashboard')
 
 		},
 		{
 			name: "Rental Listings",
+			link: '',
+			status: ''
 
 		},
 		{
 			name: "item reservation",
+			link: '',
+			status: '',
 			submenu: true,
 			submenuItems: [
 				{
 					name: "submenuone",
+					link: '',
+					status: ''
 				},
 				{
-					name: "submenutwo"
+					name: "submenutwo",
+					link: '',
+					status: ''
 				},
 				{
-					name: "submenuthree"
+					name: "submenuthree",
+					link: '',
+					status: ''
 				}
 			]
 
@@ -60,10 +73,13 @@ function Sidebar() {
             	{menu_items.map((menu, index) => 
             		<>
 	            		<li key={index} 
-	            			className="text-white text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-light-white rounded-md mt-2"
+	            			className={`text-white text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-light-white rounded-md mt-2 ${menu.status && "bg-light-white"}`}
 	            		>
 	            			<span className="text-2xl block float-left"><AiOutlineBars /></span>
-	            			<span className={`text-base font-small flext-1 ${!open && "hidden"}`}>{menu.name}</span>
+	            			<NavLink href={menu.link} active={menu.status} className={`text-base font-small flex-1 ${!open && "hidden"} ${menu.status && "font-bold text-lg" } hover:text-lg hover:font-bold`}>
+	            				{menu.name}
+	            			</NavLink>
+	            			
 	            			{menu.submenu && <AiOutlineDown onClick={() => setSubmenuOpen(!submenuOpen) } className={`${submenuOpen && "rotate-180"} duration-500`} />}
 	            		</li>
 
@@ -71,8 +87,11 @@ function Sidebar() {
 	            			<ul>
 	            				{menu.submenuItems.map((submenuItem, index) => 
 	            					<li 
-	            						className="text-white text-sm flex items-center duration-500 gap-x-4 cursor-pointer p-2 hover:bg-light-white rounded-md mt-2 px-5">
-	            						{submenuItem.name}
+	            						className={`text-white text-sm flex items-center duration-500 gap-x-4 cursor-pointer p-2 hover:bg-light-white rounded-md mt-2 px-5 ${subMenuItem.status && "bg-light-white"}`}>
+	            						<NavLink className={`${submenuItem.status && "font-bold text-lg"}`}>
+	            							
+	            							{submenuItem.name}
+	            						</NavLink>
 	            					</li>
 	            				)}
 	            			</ul>
