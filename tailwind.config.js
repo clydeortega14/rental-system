@@ -1,5 +1,7 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
+import aspect from '@tailwindcss/aspect-ratio';
+
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -15,8 +17,12 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                "light-green": "#64A664",
+                "light-white": 'rgba(255,255,255,0.18)'
+            }
         },
     },
 
-    plugins: [forms],
+    plugins: [forms,aspect],
 };
