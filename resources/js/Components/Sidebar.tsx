@@ -2,8 +2,12 @@ import { Link } from '@inertiajs/react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { AiOutlineLeftCircle } from "react-icons/ai";
 import { AiOutlineBars } from "react-icons/ai";
+import { AiOutlineUser,AiOutlineOrderedList   } from "react-icons/ai";
+import { AiFillHome } from "react-icons/ai";
 import { useState } from 'react';
 import { AiOutlineDown } from "react-icons/ai";
+import NavLink from '@/Components/NavLink';
+import initialLogo from '@/../../resources/img/initialLogo.png';
 
 function Sidebar() {
 
@@ -11,26 +15,20 @@ function Sidebar() {
 
 		{
 			name: "Dashboard",
+			link: "/dashboard",
+			icon: <AiFillHome />
+
+		},
+		{
+			name: "Profile",
+			link: "/profile",
+			icon: <AiOutlineUser />
 
 		},
 		{
 			name: "Rental Listings",
-
-		},
-		{
-			name: "item reservation",
-			submenu: true,
-			submenuItems: [
-				{
-					name: "submenuone",
-				},
-				{
-					name: "submenutwo"
-				},
-				{
-					name: "submenuthree"
-				}
-			]
+			link: "/rentalListing",
+			icon: <AiOutlineOrderedList />
 
 		}
 	]
@@ -52,7 +50,8 @@ function Sidebar() {
             <div className="flex items-center">
                 <Link href="/" className="inline-flex item-center">
                     <ApplicationLogo className={`block h-9 fill-current text-white rounded cursor-pointer mr-2 duration-500 ${open && "rotate-[360deg]"}`}/>
-                    <h1 className={`text-white origin-left duration-300 font-medium text-2xl ${!open && "scale-0"}`}>RentMe</h1>
+					
+                    {/* <h1 className={`text-white origin-left duration-300 font-medium text-2xl ${!open && "scale-0"}`}>RentMe</h1> */}
                 </Link>
             </div>
 
@@ -62,21 +61,16 @@ function Sidebar() {
 	            		<li key={index} 
 	            			className="text-white text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-light-white rounded-md mt-2"
 	            		>
-	            			<span className="text-2xl block float-left"><AiOutlineBars /></span>
-	            			<span className={`text-base font-small flext-1 ${!open && "hidden"}`}>{menu.name}</span>
-	            			{menu.submenu && <AiOutlineDown onClick={() => setSubmenuOpen(!submenuOpen) } className={`${submenuOpen && "rotate-180"} duration-500`} />}
+							<Link href={menu.link}>
+	            			<span className="text-2xl block float-left">{menu.icon}</span>
+	            			<span className={`text-base font-small flext-1 ${!open && "hidden"}`}>&nbsp;&nbsp;&nbsp;&nbsp;{menu.name}</span>
+							</Link>
+	            		
+							
+							
 	            		</li>
 
-	            		{menu.submenu && submenuOpen && open &&
-	            			<ul>
-	            				{menu.submenuItems.map((submenuItem, index) => 
-	            					<li 
-	            						className="text-white text-sm flex items-center duration-500 gap-x-4 cursor-pointer p-2 hover:bg-light-white rounded-md mt-2 px-5">
-	            						{submenuItem.name}
-	            					</li>
-	            				)}
-	            			</ul>
-	            		}
+	            		
             		</>
             	)}
             </ul>

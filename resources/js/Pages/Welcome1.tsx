@@ -11,6 +11,7 @@ import phlogo from '@/../../resources/img/phillipines.png';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import GoogleIcon from '@mui/icons-material/Google';
 import InstagramIcon from '@mui/icons-material/Instagram';
+import ItemLaningPage from '@/Components/LandingItemPage';
 
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -568,10 +569,29 @@ export default function Welcome({ auth, laravelVersion, phpVersion }: PageProps<
           </Slider>
          
           </div>
+          <div className="p-12 " style={{marginTop: '-85px'}}>
+          <div className="flex flex-col mb-7">
+              <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-900">ALL SHOP</h1>
+          </div>
+          <ItemLaningPage/>
+          </div>
+
         </div>
+        
       </div>
       
+      
     </div>
+    <footer className="bg-gray-900 text-white py-2">
+        <div className="container mx-auto px-4">
+            
+            <div className="mt-1 text-center">
+                <p className="text-sm">&copy; 2024 Your Company, Inc. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+   
+
     
     </>
   )
