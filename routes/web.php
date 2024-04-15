@@ -22,6 +22,10 @@ Route::get('/rentalListing', function () {
     return Inertia::render('User/Partials/Rental');
 })->middleware(['auth'])->name('rentalListing');
 
+Route::get('/renteeStore/{id}', function () {
+    return Inertia::render('RenteeStore/Store');
+})->middleware(['auth'])->name('renteeStore');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

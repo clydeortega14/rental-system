@@ -2,7 +2,7 @@
 import { Fragment, useState } from 'react'
 import { Link, Head } from '@inertiajs/react';
 import { Dialog, Popover, Tab, Transition } from '@headlessui/react'
-import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon,ListBulletIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { PageProps } from '@/types';
 import card1 from '@/../../resources/img/c11.png';
 import card2 from '@/../../resources/img/c22.png';
@@ -11,7 +11,6 @@ import phlogo from '@/../../resources/img/phillipines.png';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import GoogleIcon from '@mui/icons-material/Google';
 import InstagramIcon from '@mui/icons-material/Instagram';
-import ItemLaningPage from '@/Components/LandingItemPage';
 
 
 
@@ -514,11 +513,11 @@ export default function Welcome1({ auth, laravelVersion, phpVersion }: PageProps
       <div >
         <div className="bg-white rounded-lg overflow-hidden">
           {/* Card content goes here */}
-         
-          <div className="p-12 " >
-          
-          <ItemLaningPage/>
-          </div>
+            <div className="p-12 " >
+                <div className="flex flex-col mb-7">
+                    <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-900">John DOe Store</h1>
+                </div>
+            </div>
 
         </div>
         
