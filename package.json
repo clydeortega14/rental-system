@@ -43,6 +43,7 @@
         "react-modal": "^3.16.1",
         "react-router-dom": "^6.22.3",
         "react-slick": "^0.30.2",
+        "react-tailwindcss-datepicker": "^1.6.6",
         "slick-carousel": "^1.8.1",
         "updates": "^16.0.0"
     }

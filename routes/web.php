@@ -22,9 +22,13 @@ Route::get('/rentalListing', function () {
     return Inertia::render('User/Partials/Rental');
 })->middleware(['auth'])->name('rentalListing');
 
-Route::get('/renteeStore/{id}', function () {
-    return Inertia::render('RenteeStore/Store');
-})->middleware(['auth'])->name('renteeStore');
+// Route::get('/itemDetails/{id}', function () {
+//     return Inertia::render('Item/View');
+// })->middleware(['auth'])->name('itemDetails');
+Route::get('/itemDetails/{id}', function ($id) {
+    // Pass the item ID to the view
+    return Inertia::render('Item/View', ['itemId' => $id]);
+})->middleware(['auth'])->name('itemDetails');
 
 
 Route::middleware('auth')->group(function () {

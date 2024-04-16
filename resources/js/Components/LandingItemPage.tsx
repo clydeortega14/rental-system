@@ -1,15 +1,15 @@
-import { Fragment, SetStateAction, useState } from 'react';
-import { Box, Typography, IconButton, TextField, Menu, MenuItem } from '@mui/material';
-import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon, ListBulletIcon } from '@heroicons/react/24/outline'
+import { SetStateAction, useState } from 'react';
+import { Box, Typography, IconButton, TextField } from '@mui/material';
+import { Bars3Icon } from '@heroicons/react/24/outline'
 import CloseIcon from '@mui/icons-material/Close';
 import { Modal, Dialog } from '@mui/material';
-import dayjs, { Dayjs } from 'dayjs';
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateRange } from '@mui/x-date-pickers-pro/models';
-import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+
+
+
+
+
+
 
 function className(...classNames: string[]) {
   return classNames.filter(Boolean).join(' ');
@@ -176,10 +176,14 @@ export default function LandingItemPage() {
   const [showModal, setShowModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const handleCardClick = (item) => {
-    setSelectedItem(item);
-    setShowModal(true);
-  };
+  const handleCardClick = (itemId) => {
+   
+    // Navigate to the itemDetails route with the item ID as a route parameter
+    window.location.href = `/itemDetails/${itemId.id}`;
+};
+
+      // setSelectedItem(item);
+    // setShowModal(true);
 
   const closeModal = () => {
     setShowModal(false);
@@ -303,8 +307,9 @@ export default function LandingItemPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {/* Contact Cards */}
           {currentCards.map((item, index) => (
-            <div key={index} className="relative rounded-lg shadow-md cursor-pointer">
+            <div key={index}  onClick={() => handleCardClick(item)} className="relative rounded-lg shadow-md cursor-pointer">
               {/* Image */}
+              
               <div className="relative" style={{ width: '100%', paddingTop: '75%' }}>
                 <img
                   className="absolute inset-0 w-full h-full rounded-lg object-cover"
