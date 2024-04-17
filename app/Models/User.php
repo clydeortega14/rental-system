@@ -17,6 +17,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'name',
         'email',
         'password',
@@ -44,4 +45,17 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * add property named $keyType and set its value to string 
+     *
+     */
+    protected $keyType = 'string';
+
+     /**
+     *  Set autoincrement to false
+     *
+     */
+
+    public $incrementing = false;
 }
