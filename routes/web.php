@@ -24,6 +24,8 @@ Route::middleware([
 
     Route::get('/completing/user/{user}', [UserController::class, 'getUserInfoPage'])->name('completing.user');
 
+    Route::post('/completing/user', [UserController::class, 'store'])->name('store.completing.user');
+
 });
 
 Route::middleware([
