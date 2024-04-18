@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
@@ -58,4 +60,14 @@ class User extends Authenticatable implements MustVerifyEmail
      */
 
     public $incrementing = false;
+
+    public function company(): HasOne
+    {
+        return $this->hasOne(UserCompanyInformation::class, 'user_id');
+    }
+
+    public function contact()
+    {
+        return $this->hasOne(UserContactDetail::class, 'user_id');
+    }
 }

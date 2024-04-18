@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,7 +17,21 @@ Route::get('/', function () {
     ]);
 });
 
-Route::middleware(['auth', 'verified'])->group(function(){
+Route::middleware([
+    'auth',
+    'verified'
+])->group(function(){
+
+    Route::get('/completing/user/{user}', [UserController::class, 'getUserInfoPage'])->name('completing.user');
+
+});
+
+Route::middleware([
+    'auth', // auth middleware
+    'verified', // email verification middleware
+    'check-user-info'// completed information details
+
+])->group(function(){
 
     /* -- Dashboard -- */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
