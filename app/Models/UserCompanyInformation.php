@@ -4,15 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Uuid;
 
 class UserCompanyInformation extends Model
 {
-    use HasFactory;
+    use HasFactory, Uuid;
+
+    protected $table = 'user_company_information';
 
     protected $fillable = [
 
         'id',
         'user_id',
+        'name',
         'email',
         'tin'
 

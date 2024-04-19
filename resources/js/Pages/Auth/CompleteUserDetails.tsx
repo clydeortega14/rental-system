@@ -11,6 +11,7 @@ function CompleteUserDetails({ user } : {user:object}){
 
 	const { data, setData, post, processing, errors } = useForm({
 
+		id: user.id,
 		name: user.name,
 		email: user.email,
 		company_name: '',
@@ -44,7 +45,16 @@ function CompleteUserDetails({ user } : {user:object}){
 	                </p>
 				</header>
 
-				<form onSubmit={submit} className="mt-6 space-y-6">
+				<form onSubmit={submit} className="mt-6 space-y-6" enctype="multipart/form-data">
+
+					<div>
+						<TextInput
+							type="hidden"
+							className="mt-1 block w-full"
+							value={data.id}
+							autoComplete="user_id"
+						 />
+					</div>
 					
 					<div>
 						<InputLabel htmlFor="name" value="Name" />
