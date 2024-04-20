@@ -6,11 +6,6 @@ import { Modal, Dialog } from '@mui/material';
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 
 
-
-
-
-
-
 function className(...classNames: string[]) {
   return classNames.filter(Boolean).join(' ');
 }

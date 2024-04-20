@@ -28,7 +28,12 @@ Route::get('/rentalListing', function () {
 Route::get('/itemDetails/{id}', function ($id) {
     // Pass the item ID to the view
     return Inertia::render('Item/View', ['itemId' => $id]);
-})->middleware(['auth'])->name('itemDetails');
+})->name('itemDetails');
+
+Route::get('/itemDetails/{id}/checkout', function ($id) {
+    // Pass the item ID to the view
+    return Inertia::render('Item/CheckoutItem', ['itemId' => $id]);
+})->name('itemCheckout');
 
 
 Route::middleware('auth')->group(function () {

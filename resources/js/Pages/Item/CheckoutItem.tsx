@@ -280,13 +280,6 @@ const Modal = ({ isOpen, onClose, title, description }) => {
  const toggleModal = () => {
   setIsModalOpen(!isModalOpen);
 };
-
-const handleCardClick = (itemId) => {
-   
-  // Navigate to the itemDetails route with the item ID as a route parameter
-
-  window.location.href = `/itemDetails/${itemId.id}/checkout`;
-};
   return (
     <>
     <div className="bg-white">
@@ -648,64 +641,86 @@ const handleCardClick = (itemId) => {
           {/* Card content goes here */}
           <div className="p-12 flex flex-col lg:flex-row">
             <div className="lg:w-2/3 mb-7 lg:mb-0 lg:mr-12">
+                <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-900">Request to Rent</h1>
                 {/* Main Image */}
-                <img src='https://content2.kawasaki.com/ContentStorage/KMC/Products/8797/b1200891-3315-46af-9575-185aed6b2892.png?w=675' className="mb-4 w-full lg:w-auto lg:max-h-96" />
+                {/* <img src='https://content2.kawasaki.com/ContentStorage/KMC/Products/8797/b1200891-3315-46af-9575-185aed6b2892.png?w=675' className="mb-4 w-full lg:w-auto lg:max-h-96" /> */}
 
                 {/* Small images below the main image */}
-                <div className="flex flex-wrap justify-center">
-                  <img src='https://content2.kawasaki.com/ContentStorage/KMC/Products/8797/b1200891-3315-46af-9575-185aed6b2892.png?w=675' alt="Small Image 1" className="w-1/3 sm:w-1/4 md:w-1/5 h-auto mb-2" />
-                  <img src='https://content2.kawasaki.com/ContentStorage/KMC/Products/8797/b1200891-3315-46af-9575-185aed6b2892.png?w=675' alt="Small Image 2" className="w-1/3 sm:w-1/4 md:w-1/5 h-auto mb-2" />
-                  <img src='https://content2.kawasaki.com/ContentStorage/KMC/Products/8797/b1200891-3315-46af-9575-185aed6b2892.png?w=675' alt="Small Image 3" className="w-1/3 sm:w-1/4 md:w-1/5 h-auto mb-2" />
-                </div>
+              
 
                 <div className="p-4 rounded-lg  mt-4">
                   <div className="p-2">
                     <div className="flex items-center mb-4">
-                      <div>
-                          <img src={defaultAvatar} alt="Avatar" className="rounded-full mr-4 mt-4" style={{ width: '80px', height: '80px' }} />
-                          
-                      </div>
+ 
                       <div className="ml-4">
-                          <h1 className="mt-3 text-1xl font-extrabold tracking-tight text-slate-900">Jhonsen Dave D. Ationg</h1>
-                          <p>Superhost | 3 years hosting</p>
-                          <div className="flex items-center">
-                              <p>4.86</p>
-                              <div className="ml-2">
-                                  {/* Insert star ratings component here */}
-                                  {/* Example: */}
-                                  <span role="img" aria-label="star" className="text-yellow-400">⭐️</span>
-                                  <span role="img" aria-label="star" className="text-yellow-400">⭐️</span>
-                                  <span role="img" aria-label="star" className="text-yellow-400">⭐️</span>
-                                  <span role="img" aria-label="star" className="text-yellow-400">⭐️</span>
-                                  <span role="img" aria-label="star" className="text-yellow-400">⭐️</span>
-                              </div>
-                          </div>
+                          <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-900">Your Details</h1>
                       </div>
-                     
-                      
                     </div>
                     <div className="flex items-center mb-4">
                       <div className="ml-4">
                         <div className="flex flex-wrap mt-4">
-                          <div className="p-2">
-                              <div className="mt-4">
-                                  <p className="text-base text-gray-700">Kawasaki Ninja 400 Power-trains. The Ninja 400 is powered by a Liquid Cooled Fuel Injection 399 cc 2 Cylinder engine that gives 48.9hp of power at 10000 rpm and 38 Nm Torque at 8000 rpm. It comes with the option of a 6-Speed transmission gearbox. The Ninja 400 has a seat height of 785 mm.</p>
-                              </div>
-                              {/* See More Icon */}
-                              
-                              <button className="mb-5 text-blue-500" onClick={toggleModal}>
-                                  See More..
-                              </button>
-                              {/* Render Modal */}
-                              <Modal
-                                  isOpen={isModalOpen}
-                                  onClose={toggleModal}
-                                  title="NINJA 400 CC Full Description"
-                                  description="Kawasaki Ninja 400 Power-trains. The Ninja 400 is powered by a Liquid Cooled Fuel Injection 399 cc 2 Cylinder engine that gives 48.9hp of power at 10000 rpm and 38 Nm Torque at 8000 rpm. It comes with the option of a 6-Speed transmission gearbox. The Ninja 400 has a seat height of 785 mm."
-                              />
-                      
-                             
+                            <div className="p-2">
+                                <div className="mt-4">
+                                    <p className="text-base text-gray-700">Kawasaki Ninja 400 Power-trains. The Ninja 400 is powered by a Liquid Cooled Fuel Injection 399 cc 2 Cylinder engine that gives 48.9hp of power at 10000 rpm and 38 Nm Torque at 8000 rpm. It comes with the option of a 6-Speed transmission gearbox. The Ninja 400 has a seat height of 785 mm.</p>
+                                </div>
+                                <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mr-3 mt-4">
+                                    <div className="px-6 py-4 mr-5">
+                                        <div className="font-bold text-xl mb-2"><h1 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900">May 26,2024 | Time : 6:00 AM </h1></div>
+                                        <p className="text-gray-700 text-base">
+                                        Start Date
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mr-3 mt-4">
+                                    <div className="px-6 py-4 mr-5">
+                                        <div className="font-bold text-xl mb-2"><h1 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900">May 26,2024 | 7:00 PM</h1></div>
+                                        <p className="text-gray-700 text-base">
+                                        End Date
+                                        </p>
+                                    </div>
+                                </div>
+                                <hr className="w-full lg:w-3/4 xl:w-1/2 mt-5"></hr>
+                                <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-slate-900">Log in or sign up to rent</h1>
+
+                                <div className="rounded-lg bg-white">
+                                    <div className="flex items-center">
+                                        <div className="flex-1">
+                                            <div className="relative">
+                                                <label htmlFor="country" className="block">Country code</label>
+                                                <div className="relative">
+                                                    <select id="country" className="block w-full border border-gray-300 rounded-lg appearance-none focus:border-blue-500">
+                                                        {/* Options for country code */}
+                                                    </select>
+                                                    <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                                        <svg className="w-4 h-4 text-gray-400" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+                                                            <path fill="none" d="M28 12 16.7 23.3a1 1 0 0 1-1.4 0L4 12"></path>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 ml-4"> {/* Adjust margin here */}
+                                            <div className="relative">
+                                                <label htmlFor="phoneInputphone-login" className="block">Phone number</label>
+                                                <div className="flex items-center border border-gray-300 rounded-lg">
+                                                    <div className="py-2 px-4 text-gray-600">+63</div>
+                                                    <input id="phoneInputphone-login" type="tel" className="flex-1 py-2 px-4 bg-transparent focus:outline-none" placeholder="Enter your phone number" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    <p className='mt-4'>We’ll call or text you to confirm your number. Standard message and data rates apply. Privacy Policy</p>
+                                    {/* Button */}
+                                    <div className="mt-4">
+                                    <button onClick={() => handleCardClick(itemId)} className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg w-full focus:outline-none focus:shadow-outline">
+                                        Continue
+                                    </button>
                           </div>
+                                </div>
+                                <hr className="w-full lg:w-3/4 xl:w-1/2 mt-5"></hr>
+                            </div> 
+                            
                         </div>
                       </div>
                     </div>
@@ -720,8 +735,30 @@ const handleCardClick = (itemId) => {
                   <div className="border border-gray-200 p-4 rounded-lg shadow-md ">
                       <div className="p-2">
                           <div className="mt-4">
-                              <p className="text-base text-gray-700">Decide on the duration for which you want to rent the Ninja 400 CC motorcycle. You have the option to rent it for 12 hours, 24 hours, or multiple days.</p>
-                              
+                            <div className="flex items-center mb-4">
+                                <div>
+                                    <img src='https://content2.kawasaki.com/ContentStorage/KMC/Products/8797/b1200891-3315-46af-9575-185aed6b2892.png?w=675' alt="Avatar" className=" mr-4 mt-4" style={{ width: '150px', height: '80px' }} />
+                                    
+                                </div>
+                                <div className="ml-4">
+                                    <h1 className="mt-3 text-1xl font-extrabold tracking-tight text-slate-900">NINJA 400 CC</h1>
+                                    <p>Superhost | 3 years hosting</p>
+                                    <div className="flex items-center">
+                                        <p>4.86</p>
+                                        <div className="ml-2">
+                                            {/* Insert star ratings component here */}
+                                            {/* Example: */}
+                                            <span role="img" aria-label="star" className="text-yellow-400">⭐️</span>
+                                            <span role="img" aria-label="star" className="text-yellow-400">⭐️</span>
+                                            <span role="img" aria-label="star" className="text-yellow-400">⭐️</span>
+                                            <span role="img" aria-label="star" className="text-yellow-400">⭐️</span>
+                                            <span role="img" aria-label="star" className="text-yellow-400">⭐️</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             
+                            <h1 className="mt-12 text-1xl font-extrabold tracking-tight text-slate-900">Price details</h1>
                               <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mr-3">
                                 <div className="px-6 py-4 mr-5">
                                   <div className="font-bold text-xl mb-2"><h1 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900">₱35,000</h1></div>
@@ -730,32 +767,23 @@ const handleCardClick = (itemId) => {
                                     </p>
                                 </div>
                               </div>
-                              <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mr-3 mt-2">
-                                <div className="px-6 py-4 mr-5">
-                                  <div className="font-bold text-xl mb-2"><h1 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900">₱45,000</h1></div>
-                                    <p className="text-gray-700 text-base">
-                                    24 Hours
-                                    </p>
-                                </div>
-                              </div>
+                              
                           </div>
                           {/* See More Icon */}
                           
                          
-                          <h1 className="mt-12 text-1xl font-extrabold tracking-tight text-slate-900">Choose Dates</h1>
-                          <div className='mt-4'>
-                              <Datepicker primaryColor={"teal"} value={value} onChange={handleValueChange} />
-                          </div>
+                         
+
                           <div className='mt-12'>
-                            <h1 className="mt-4 text-center text-1xl font-extrabold tracking-tight text-slate-900">You won't be charged yet</h1>
+                            {/* <h1 className="mt-4 text-center text-1xl font-extrabold tracking-tight text-slate-900">You won't be charged yet</h1> */}
                             <div className="flex items-start justify-between">
                               <div className="relative">
                                 <button type="button" className="text-blue-500 hover:text-blue-600">
-                                  <div className="text-xl font-bold">₱35,000 x 24 Hours</div>
+                                  <div className="text-xl font-bold">₱35,000 x 12 Hours</div>
                                  
                                 </button>
                               </div>
-                              <div className="text-xl font-bold">₱40,000.00</div>
+                              <div className="text-xl font-bold">₱35,000.00</div>
                             </div>
                             <div className="flex items-start justify-between">
                               <div className="relative">
@@ -766,19 +794,10 @@ const handleCardClick = (itemId) => {
                               <div className="text-xl font-bold">₱1,500.00</div>
                             </div>
                             <div className="flex items-start justify-between">
-                              <div>Total before taxes</div>
-                              <div className="text-xl font-bold">₱41,500.00</div>
+                              <div>Total </div>
+                              <div className="text-xl font-bold">₱36,500.00</div>
                             </div>
                           </div>
-                          
-                          
-                          {/* Button */}
-                          <div className="mt-4">
-                          <button onClick={() => handleCardClick(itemId)} className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg w-full focus:outline-none focus:shadow-outline">
-                            Rent Now
-                          </button>
-                          </div>
-                          
                       </div>
                   </div>
 
