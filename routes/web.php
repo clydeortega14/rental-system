@@ -55,6 +55,9 @@ Route::middleware([
 
 ])->group(function(){
 
+    /* -- Account Settings -- */
+    Route::get('/account-settings', [ProfileController::class, 'accountSettings'])->name('account.settings');
+
     /* -- Dashboard -- */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
