@@ -10,8 +10,10 @@ export default {
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
         './resources/js/**/*.tsx',
+        "./resources/**/*.{js,jsx,ts,tsx}",
+        "./node_modules/react-tailwindcss-datepicker/dist/index.esm.js"
     ],
-
+    
     theme: {
         extend: {
             fontFamily: {

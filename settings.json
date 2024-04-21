@@ -1,0 +1,6 @@
+{
+    "workbench.editor.focusRecentEditorAfterSave": "always",
+    "workbench.editor.focusRecentEditorAfterSaveTimeout": 2000,
+    "workbench.editor.enablePreview": false
+  }
+  
