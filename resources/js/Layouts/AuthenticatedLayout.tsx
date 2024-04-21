@@ -20,7 +20,7 @@ export default function Authenticated({ user, header, children }: PropsWithChild
                 <nav className="bg-white border-b border-gray-100">
                     <div className="px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-end h-16">
-                            {/*<div className="flex">
+                            {/* <div className="flex">
                                 
 
                                 <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
@@ -28,8 +28,8 @@ export default function Authenticated({ user, header, children }: PropsWithChild
                                         Dashboard
                                     </NavLink>
                                 </div>
-                            </div>
-*/}
+                            </div> */}
+
                             <div className="hidden sm:flex sm:items-center sm:ms-6">
                                 <div className="ms-3 relative">
                                     <Dropdown>
@@ -122,7 +122,7 @@ export default function Authenticated({ user, header, children }: PropsWithChild
 
                 {header && (
                     <header className="bg-white shadow">
-                        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
+                        <div className="max-w-8xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
                     </header>
                 )}
 
