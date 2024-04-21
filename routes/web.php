@@ -66,11 +66,10 @@ Route::middleware([
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-
     /* -- Reservations -- */
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
 
-    //User
+    
     Route::delete('/rentalListing')->name('rental.listing');
 
 });
