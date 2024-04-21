@@ -60,4 +60,17 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    /**
+     * Account Settings 
+     */
+
+    public function accountSettings(Request $request) : Response
+    {
+        return Inertia::render('Profile/AccountSettings', [
+
+            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'status' => session('status'),
+        ]);
+    }
 }
