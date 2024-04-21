@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
@@ -17,6 +19,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'name',
         'email',
         'password',
@@ -43,5 +46,28 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * add property named $keyType and set its value to string 
+     *
+     */
+    protected $keyType = 'string';
+
+     /**
+     *  Set autoincrement to false
+     *
+     */
+
+    public $incrementing = false;
+
+    public function company(): HasOne
+    {
+        return $this->hasOne(UserCompanyInformation::class, 'user_id');
+    }
+
+    public function contact()
+    {
+        return $this->hasOne(UserContactDetail::class, 'user_id');
     }
 }

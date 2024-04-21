@@ -23,39 +23,46 @@ function Sidebar() {
 		},
 		{
 			id: 2,
+			name: "Reservation Items",
+			link: route('reservations.index'),
+			status: route().current('reservations.index')
+
+		},
+		{
+			id: 3,
 			name: "Rental Listings",
 			link: "/rentalListing",
 			icon: <AiOutlineOrderedList />
 
 		},
-		{
-			id: 3,
-			name: "item reservation",
-			link: '',
-			status: '',
-			submenu: true,
-			submenuItems: [
-				{
-					id: 31,
-					name: "submenuone",
-					link: '',
-					status: ''
-				},
-				{
-					id: 32,
-					name: "submenutwo",
-					link: '',
-					status: ''
-				},
-				{
-					id: 33,
-					name: "submenuthree",
-					link: '',
-					status: ''
-				}
-			]
+		// {
+		// 	id: 4,
+		// 	name: "item reservation",
+		// 	link: '',
+		// 	status: '',
+		// 	submenu: true,
+		// 	submenuItems: [
+		// 		{
+		// 			id: 31,
+		// 			name: "submenuone",
+		// 			link: '',
+		// 			status: ''
+		// 		},
+		// 		{
+		// 			id: 32,
+		// 			name: "submenutwo",
+		// 			link: '',
+		// 			status: ''
+		// 		},
+		// 		{
+		// 			id: 33,
+		// 			name: "submenuthree",
+		// 			link: '',
+		// 			status: ''
+		// 		}
+		// 	]
 
-		}
+		// }
 	]
 
 	const [open, setOpen] = useState(true)
