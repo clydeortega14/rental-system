@@ -17,7 +17,7 @@ export default function Authenticated({ user, header, children }: PropsWithChild
     return (
         <>
 
-        <nav className="bg-white border-b border-gray-300">
+        <nav className="bg-white border-b border-gray-100">
             <div className="px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16">
                     <div>
@@ -60,6 +60,7 @@ export default function Authenticated({ user, header, children }: PropsWithChild
                                 </Dropdown.Trigger>
 
                                 <Dropdown.Content>
+                                    <Dropdown.Link href={route('account.settings')}>Account Settings</Dropdown.Link>
                                     <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
                                     <Dropdown.Link href={route('logout')} method="post" as="button">
                                         Log Out
