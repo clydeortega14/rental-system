@@ -22,7 +22,27 @@ Route::middleware([
     'verified'
 ])->group(function(){
 
+
     Route::get('/completing/user/{user}', [UserController::class, 'getUserInfoPage'])->name('completing.user');
+
+Route::get('/rentalListing', function () {
+    return Inertia::render('User/Partials/Rental');
+})->middleware(['auth'])->name('rentalListing');
+
+// Route::get('/itemDetails/{id}', function () {
+//     return Inertia::render('Item/View');
+// })->middleware(['auth'])->name('itemDetails');
+Route::get('/itemDetails/{id}', function ($id) {
+    // Pass the item ID to the view
+    return Inertia::render('Item/View', ['itemId' => $id]);
+})->name('itemDetails');
+
+Route::get('/itemDetails/{id}/checkout', function ($id) {
+    // Pass the item ID to the view
+    return Inertia::render('Item/CheckoutItem', ['itemId' => $id]);
+})->name('itemCheckout');
+
+
 
     Route::post('/completing/user', [UserController::class, 'store'])->name('store.completing.user');
 
@@ -43,8 +63,13 @@ Route::middleware([
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+
     /* -- Reservations -- */
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+
+    //User
+    Route::delete('/rentalListing')->name('rental.listing');
+
 });
 
 require __DIR__.'/auth.php';

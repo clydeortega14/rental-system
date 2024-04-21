@@ -10,6 +10,7 @@ import Verified from '@/../../resources/img/verified.png';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import GoogleIcon from '@mui/icons-material/Google';
 import InstagramIcon from '@mui/icons-material/Instagram';
+import { PageProps } from '@/types';
 
 // Sample user data
 const user = {

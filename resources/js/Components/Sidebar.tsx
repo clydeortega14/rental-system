@@ -2,9 +2,12 @@ import { Link } from '@inertiajs/react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { AiOutlineLeftCircle } from "react-icons/ai";
 import { AiOutlineBars } from "react-icons/ai";
+import { AiOutlineUser,AiOutlineOrderedList   } from "react-icons/ai";
+import { AiFillHome } from "react-icons/ai";
 import { useState } from 'react';
 import { AiOutlineDown } from "react-icons/ai";
 import NavLink from '@/Components/NavLink';
+import initialLogo from '@/../../resources/img/initialLogo.png';
 import { Fragment } from 'react';
 
 function Sidebar() {
@@ -28,8 +31,8 @@ function Sidebar() {
 		{
 			id: 3,
 			name: "Rental Listings",
-			link: '',
-			status: ''
+			link: "/rentalListing",
+			icon: <AiOutlineOrderedList />
 
 		},
 		// {
@@ -113,15 +116,29 @@ function Sidebar() {
             <div className="flex items-center">
                 <Link href="/" className="inline-flex item-center">
                     <ApplicationLogo className={`block h-9 fill-current text-white rounded cursor-pointer mr-2 duration-500 ${open && "rotate-[360deg]"}`}/>
-                    <h1 className={`text-white origin-left duration-300 font-medium text-2xl ${!open && "scale-0"}`}>RentMe</h1>
+					
+                    {/* <h1 className={`text-white origin-left duration-300 font-medium text-2xl ${!open && "scale-0"}`}>RentMe</h1> */}
                 </Link>
             </div>
 
-
             <ul className="pt-7">
-            	{menuLists}
+            	{menu_items.map((menu, index) => 
+            		<>
+	            		<li key={index} 
+	            			className="text-white text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-light-white rounded-md mt-2"
+	            		>
+							<Link href={menu.link}>
+	            			<span className="text-2xl block float-left">{menu.icon}</span>
+	            			<span className={`text-base font-small flext-1 ${!open && "hidden"}`}>&nbsp;&nbsp;&nbsp;&nbsp;{menu.name}</span>
+							</Link>
+	            		
+							
+							
+	            		</li>
 
-            	
+	            		
+            		</>
+            	)}
             </ul>
            
         </div>

@@ -2,24 +2,16 @@
 import { Fragment, useState } from 'react'
 import { Link, Head } from '@inertiajs/react';
 import { Dialog, Popover, Tab, Transition } from '@headlessui/react'
-import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon,ListBulletIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { PageProps } from '@/types';
-import card1 from '@/../../resources/img/c11.png';
-import card2 from '@/../../resources/img/c22.png';
+
 import initialLogo from '@/../../resources/img/initialLogo.png';
 import phlogo from '@/../../resources/img/phillipines.png';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import GoogleIcon from '@mui/icons-material/Google';
 import InstagramIcon from '@mui/icons-material/Instagram';
-import ItemLaningPage from '@/Components/LandingItemPage';
-
-
-
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-
-
-
+import defaultAvatar from '@/../../resources/img/defaultImage.png';
+import Datepicker from "react-tailwindcss-datepicker";
 
 const navigation = {
   categories: [
@@ -144,17 +136,157 @@ const navigation = {
   ],
 }
 
-
-
-
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Welcome1({ auth, laravelVersion, phpVersion }: PageProps<{ laravelVersion: string, phpVersion: string }>) {
+export default function View({ itemId,auth, laravelVersion, phpVersion }: PageProps<{ laravelVersion: string, phpVersion: string }>) {
   const [open, setOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [value, setValue] = useState({
+    startDate: new Date(),
+    endDate: new Date().setMonth(11)
+  });
+  const handleValueChange = newValue => {
+    console.log("newValue:", newValue);
+    setValue(newValue);
+  };
+
+
+const Modal = ({ isOpen, onClose, title, description }) => {
+  return (
+    <Transition.Root show={isOpen} as={Fragment}>
+      <Dialog
+        as="div"
+        className="fixed inset-0 z-50 overflow-y-auto"
+        onClose={onClose}
+      >
+        <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <Dialog.Overlay className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" />
+          </Transition.Child>
+
+          {/* This element is to trick the browser into centering the modal contents. */}
+          <span
+            className="hidden sm:inline-block sm:align-middle sm:h-screen"
+            aria-hidden="true"
+          >
+            &#8203;
+          </span>
+
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            enterTo="opacity-100 translate-y-0 sm:scale-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          >
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle " style={{width: '1000px'}}>
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="sm:flex sm:items-start">
+                  <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                    <img src='https://content2.kawasaki.com/ContentStorage/KMC/Products/8797/b1200891-3315-46af-9575-185aed6b2892.png?w=675' />
+                  </div>
+                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <Dialog.Title
+                      as="h3"
+                      className="text-lg leading-6 font-medium text-gray-900"
+                    >
+                      {title}
+                    </Dialog.Title>
+                    <p className="text-sm text-gray-500 mt-2">{description}</p> {/* Description */}
+                    {/* Cards go here */}
+                    <div className="flex flex-wrap mt-4">
+                      {/* Example card */}
+                      <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mr-3">
+                        <div className="px-6 py-4 mr-5">
+                          <div className="font-bold text-xl mb-2">Transmission Type</div>
+                            <p className="text-gray-700 text-base">
+                            Gasoline Manual
+                            </p>
+                        </div>
+                      </div>
+                      <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mr-3">
+                        <div className="px-6 py-4 mr-5">
+                          <div className="font-bold text-xl mb-2">Maximum Power</div>
+                            <p className="text-gray-700 text-base">
+                            Gasoline 48.9 hp
+                            </p>
+                        </div>
+                      </div>
+                      <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mr-3">
+                        <div className="px-6 py-4 mr-5">
+                          <div className="font-bold text-xl mb-2">Front Brake</div>
+                            <p className="text-gray-700 text-base">
+                            Gasoline Disc
+                            </p>
+                        </div>
+                      </div>
+                      <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mr-3">
+                        <div className="px-6 py-4 mr-5">
+                          <div className="font-bold text-xl mb-2">Displacement</div>
+                            <p className="text-gray-700 text-base">
+                            Gasoline 399 cc
+                            </p>
+                        </div>
+                      </div>
+                      <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mt-2 mr-3">
+                        <div className="px-6 py-4 mr-5">
+                          <div className="font-bold text-xl mb-2">Ground Clearance</div>
+                            <p className="text-gray-700 text-base">
+                            Gasoline 140 mm
+                            </p>
+                        </div>
+                      </div>
+                      
+                      {/* Add more cards as needed */}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button
+                  type="button"
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  onClick={onClose}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+
+          </Transition.Child>
+        </div>
+      </Dialog>
+    </Transition.Root>
+  );
+};
+
+
+
+
+ // Handler to toggle modal visibility
+ const toggleModal = () => {
+  setIsModalOpen(!isModalOpen);
+};
+
+const handleCardClick = (itemId) => {
+   
+  // Navigate to the itemDetails route with the item ID as a route parameter
+
+  window.location.href = `/itemDetails/${itemId.id}/checkout`;
+};
   return (
     <>
     <div className="bg-white">
@@ -514,12 +646,145 @@ export default function Welcome1({ auth, laravelVersion, phpVersion }: PageProps
       <div >
         <div className="bg-white rounded-lg overflow-hidden">
           {/* Card content goes here */}
-         
-          <div className="p-12 " >
-          
-          <ItemLaningPage/>
-          </div>
+          <div className="p-12 flex flex-col lg:flex-row">
+            <div className="lg:w-2/3 mb-7 lg:mb-0 lg:mr-12">
+                {/* Main Image */}
+                <img src='https://content2.kawasaki.com/ContentStorage/KMC/Products/8797/b1200891-3315-46af-9575-185aed6b2892.png?w=675' className="mb-4 w-full lg:w-auto lg:max-h-96" />
 
+                {/* Small images below the main image */}
+                <div className="flex flex-wrap justify-center">
+                  <img src='https://content2.kawasaki.com/ContentStorage/KMC/Products/8797/b1200891-3315-46af-9575-185aed6b2892.png?w=675' alt="Small Image 1" className="w-1/3 sm:w-1/4 md:w-1/5 h-auto mb-2" />
+                  <img src='https://content2.kawasaki.com/ContentStorage/KMC/Products/8797/b1200891-3315-46af-9575-185aed6b2892.png?w=675' alt="Small Image 2" className="w-1/3 sm:w-1/4 md:w-1/5 h-auto mb-2" />
+                  <img src='https://content2.kawasaki.com/ContentStorage/KMC/Products/8797/b1200891-3315-46af-9575-185aed6b2892.png?w=675' alt="Small Image 3" className="w-1/3 sm:w-1/4 md:w-1/5 h-auto mb-2" />
+                </div>
+
+                <div className="p-4 rounded-lg  mt-4">
+                  <div className="p-2">
+                    <div className="flex items-center mb-4">
+                      <div>
+                          <img src={defaultAvatar} alt="Avatar" className="rounded-full mr-4 mt-4" style={{ width: '80px', height: '80px' }} />
+                          
+                      </div>
+                      <div className="ml-4">
+                          <h1 className="mt-3 text-1xl font-extrabold tracking-tight text-slate-900">Jhonsen Dave D. Ationg</h1>
+                          <p>Superhost | 3 years hosting</p>
+                          <div className="flex items-center">
+                              <p>4.86</p>
+                              <div className="ml-2">
+                                  {/* Insert star ratings component here */}
+                                  {/* Example: */}
+                                  <span role="img" aria-label="star" className="text-yellow-400">⭐️</span>
+                                  <span role="img" aria-label="star" className="text-yellow-400">⭐️</span>
+                                  <span role="img" aria-label="star" className="text-yellow-400">⭐️</span>
+                                  <span role="img" aria-label="star" className="text-yellow-400">⭐️</span>
+                                  <span role="img" aria-label="star" className="text-yellow-400">⭐️</span>
+                              </div>
+                          </div>
+                      </div>
+                     
+                      
+                    </div>
+                    <div className="flex items-center mb-4">
+                      <div className="ml-4">
+                        <div className="flex flex-wrap mt-4">
+                          <div className="p-2">
+                              <div className="mt-4">
+                                  <p className="text-base text-gray-700">Kawasaki Ninja 400 Power-trains. The Ninja 400 is powered by a Liquid Cooled Fuel Injection 399 cc 2 Cylinder engine that gives 48.9hp of power at 10000 rpm and 38 Nm Torque at 8000 rpm. It comes with the option of a 6-Speed transmission gearbox. The Ninja 400 has a seat height of 785 mm.</p>
+                              </div>
+                              {/* See More Icon */}
+                              
+                              <button className="mb-5 text-blue-500" onClick={toggleModal}>
+                                  See More..
+                              </button>
+                              {/* Render Modal */}
+                              <Modal
+                                  isOpen={isModalOpen}
+                                  onClose={toggleModal}
+                                  title="NINJA 400 CC Full Description"
+                                  description="Kawasaki Ninja 400 Power-trains. The Ninja 400 is powered by a Liquid Cooled Fuel Injection 399 cc 2 Cylinder engine that gives 48.9hp of power at 10000 rpm and 38 Nm Torque at 8000 rpm. It comes with the option of a 6-Speed transmission gearbox. The Ninja 400 has a seat height of 785 mm."
+                              />
+                      
+                             
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right side: Item details */}
+              <div className="lg:w-2/4 flex flex-col ml-12 sticky top-0">
+                  
+
+                  <div className="border border-gray-200 p-4 rounded-lg shadow-md ">
+                      <div className="p-2">
+                          <div className="mt-4">
+                              <p className="text-base text-gray-700">Decide on the duration for which you want to rent the Ninja 400 CC motorcycle. You have the option to rent it for 12 hours, 24 hours, or multiple days.</p>
+                              
+                              <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mr-3">
+                                <div className="px-6 py-4 mr-5">
+                                  <div className="font-bold text-xl mb-2"><h1 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900">₱35,000</h1></div>
+                                    <p className="text-gray-700 text-base">
+                                    12 Hours
+                                    </p>
+                                </div>
+                              </div>
+                              <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mr-3 mt-2">
+                                <div className="px-6 py-4 mr-5">
+                                  <div className="font-bold text-xl mb-2"><h1 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900">₱45,000</h1></div>
+                                    <p className="text-gray-700 text-base">
+                                    24 Hours
+                                    </p>
+                                </div>
+                              </div>
+                          </div>
+                          {/* See More Icon */}
+                          
+                         
+                          <h1 className="mt-12 text-1xl font-extrabold tracking-tight text-slate-900">Choose Dates</h1>
+                          <div className='mt-4'>
+                              <Datepicker primaryColor={"teal"} value={value} onChange={handleValueChange} />
+                          </div>
+                          <div className='mt-12'>
+                            <h1 className="mt-4 text-center text-1xl font-extrabold tracking-tight text-slate-900">You won't be charged yet</h1>
+                            <div className="flex items-start justify-between">
+                              <div className="relative">
+                                <button type="button" className="text-blue-500 hover:text-blue-600">
+                                  <div className="text-xl font-bold">₱35,000 x 24 Hours</div>
+                                 
+                                </button>
+                              </div>
+                              <div className="text-xl font-bold">₱40,000.00</div>
+                            </div>
+                            <div className="flex items-start justify-between">
+                              <div className="relative">
+                                <button type="button" className="text-blue-500 hover:text-blue-600">
+                                  <div className="text-xl font-bold">Service fee</div>
+                                </button>
+                              </div>
+                              <div className="text-xl font-bold">₱1,500.00</div>
+                            </div>
+                            <div className="flex items-start justify-between">
+                              <div>Total before taxes</div>
+                              <div className="text-xl font-bold">₱41,500.00</div>
+                            </div>
+                          </div>
+                          
+                          
+                          {/* Button */}
+                          <div className="mt-4">
+                          <button onClick={() => handleCardClick(itemId)} className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg w-full focus:outline-none focus:shadow-outline">
+                            Rent Now
+                          </button>
+                          </div>
+                          
+                      </div>
+                  </div>
+
+                  {/* Add other item details here */}
+              </div>
+          </div>
         </div>
         
       </div>
@@ -531,3 +796,5 @@ export default function Welcome1({ auth, laravelVersion, phpVersion }: PageProps
     </>
   )
 }
+
+
