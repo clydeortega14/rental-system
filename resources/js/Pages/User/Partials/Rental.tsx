@@ -1,12 +1,14 @@
-import { useState } from 'react'; // Import useState hook to manage state
+import { Head, Link, useForm  } from '@inertiajs/react';
+import { useState,FormEventHandler } from 'react'; // Import useState hook to manage state
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField,Typography,Select, MenuItem  } from '@mui/material';
-
+import { ToastContainer, toast } from 'react-toastify';
 import { FaShoppingCart, FaPlus, FaEye } from 'react-icons/fa'; 
 
-export default function Dashboard({ auth }: PageProps) {
+
+export default function RentalList({ auth }: PageProps) {
+    const [submitted, setSubmitted] = useState(false);
     // Sample data with category information
     const items = [
         { id: 1, image:"https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg" , project: 'Chanel ', price: '₱ 2,500,000.00 ', quantity: 10, quality: 'Brand New', remarks: 'Introducing our latest addition - a brand new item! 🎉', category: 'Bags' },
@@ -51,7 +53,8 @@ export default function Dashboard({ auth }: PageProps) {
 
      // State variables for adding item modal
      const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
-     const [newItemData, setNewItemData] = useState({
+
+     const { data, setData, post, processing, errors, reset } = useForm({
         itemImage: '',
         itemName: '',
         price: '',
@@ -59,33 +62,42 @@ export default function Dashboard({ auth }: PageProps) {
         quality: '',
         remarks: '',
         category: '',
-     });
-
-      // Function to handle form input changes
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setNewItemData(prevData => ({
-            ...prevData,
-            [name]: value,
-        }));
+    });
+    const handleFileChange = (event: { target: { files: { name: any; }[]; }; }) => {
+        const file = event.target.files[0];
+        setData({ ...data, itemImage: file });
     };
-
     // Function to handle form submission
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        // Add logic to save new item data to backend or update state
-        // Reset form data and close modal
-        setNewItemData({
-            itemImage:'',
-            itemName: '',
-            price: '',
-            quantity: '',
-            quality: '',
-            remarks: '',
-            category: '',
-        });
-        setIsAddItemModalOpen(false);
+    const handleSubmit: FormEventHandler = (e) => {
+        try {
+            e.preventDefault();
+            const newErrors = {};
+            let hasError = false;
+            for (const fieldName in data) {
+                if (!data[fieldName]) {
+                    newErrors[fieldName] = true;
+                    hasError = true;
+                } else {
+                    newErrors[fieldName] = false;
+                }
+            }
+            if (hasError) {
+                setSubmitted(true);
+                setErrors(newErrors);
+                return; // Exit the function
+            }
+    
+            post(route('store.rentalListing.add.item')) 
+            reset();
+            setIsAddItemModalOpen(false);
+            toast.success("Successfully Created.");
+            
+        } catch (error) {
+            toast.error("Please check the fields!");
+            throw error; 
+        }
     };
+    
 
     // Change page
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -118,13 +130,13 @@ export default function Dashboard({ auth }: PageProps) {
                           
                             <TextField
                                
-                                id="itemImage"
-                                name="itemImage"
-                                type='file'
-                                value={newItemData.itemImage}
-                                onChange={handleInputChange}
+                               type="file"
+                               id="itemImage"
+                               name="itemImage"
+                               onChange={handleFileChange}
                                 fullWidth
                             />
+                            {submitted && !data.itemImage && <Typography variant="caption" className="text-red-500">Item Image is required.</Typography>}
                         </div>
                         <div className="mb-4">
                             <Typography id="spring-modal-description" sx={{ mt: 2 }}>
@@ -135,8 +147,8 @@ export default function Dashboard({ auth }: PageProps) {
                                 id="category"
                                 name="category"
                             
-                                value={newItemData.category}
-                                onChange={handleInputChange}
+                                value={data.category}
+                                onChange={(e) => setData('category', e.target.value)}
                                 fullWidth
                             >
                                 <MenuItem value="Select Category" disabled>
@@ -147,26 +159,31 @@ export default function Dashboard({ auth }: PageProps) {
                                 <MenuItem value="Cars">Cars</MenuItem>
                                 {/* Add more categories as needed */}
                             </Select>
+                            {submitted && !data.category && <Typography variant="caption" className="text-red-500">Category  is required.</Typography>}
                         </div>
                         <div className="mb-4">
                             <TextField
                                 label="Item Name"
                                 id="itemName"
                                 name="itemName"
-                                value={newItemData.itemName}
-                                onChange={handleInputChange}
+                                value={data.itemName}
+                                onChange={(e) => setData('itemName', e.target.value)}
                                 fullWidth
                             />
+                            {submitted && !data.itemName && <Typography variant="caption" className="text-red-500">Item Name  is required.</Typography>}
                         </div>
                         <div className="mb-4">
                             <TextField
                                 label="Price"
                                 id="price"
                                 name="price"
-                                value={newItemData.price}
-                                onChange={handleInputChange}
+                                type='number'
+                                value={data.price}
+                                onChange={(e) => setData('price', e.target.value)}
                                 fullWidth
                             />
+                            {submitted && !data.price && <Typography variant="caption" className="text-red-500">Item Price  is required.</Typography>}
+
                         </div>
                         <div className="mb-4">
                             <TextField
@@ -174,10 +191,11 @@ export default function Dashboard({ auth }: PageProps) {
                                 id="quantity"
                                 name="quantity"
                                 type='number'
-                                value={newItemData.quantity}
-                                onChange={handleInputChange}
+                                value={data.quantity}
+                                onChange={(e) => setData('quantity', e.target.value)}
                                 fullWidth
                             />
+                            {submitted && !data.quantity && <Typography variant="caption" className="text-red-500">Item Quantity  is required.</Typography>}
                         </div>
                         <div className="mb-4">
                             <TextField
@@ -185,14 +203,24 @@ export default function Dashboard({ auth }: PageProps) {
                                 id="quality"
                                 name="quality"
                                 type='text'
-                                value={newItemData.quality}
-                                onChange={handleInputChange}
+                                value={data.quality}
+                                onChange={(e) => setData('quality', e.target.value)}
                                 fullWidth
                             />
+                            {submitted && !data.quality && <Typography variant="caption" className="text-red-500">Item Quality  is required.</Typography>}
+
                         </div>
                         <div className="mb-4">
                             
-                            <textarea className="w-full h-20 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500" placeholder='Add remarks' defaultValue={newItemData.remarks}></textarea>
+                        <textarea
+                                className="w-full h-20 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                                placeholder='Add remarks'
+                                value={data.remarks}
+                                onChange={(e) => setData('remarks', e.target.value)}
+                                name="remarks"
+                            ></textarea>
+                            {submitted && !data.remarks && <Typography variant="caption" className="text-red-500">Item Remarks  is required.</Typography>}
+
                         </div>
                     </form>
                 </DialogContent>
@@ -205,8 +233,8 @@ export default function Dashboard({ auth }: PageProps) {
                     </button>
                 </DialogActions>
             </Dialog>
-
-            
+            <ToastContainer />
+          
 
             <div className="py-7">
                 <div className="max-w-8xl mx-auto sm:px-6 lg:px-8">

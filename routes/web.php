@@ -46,6 +46,7 @@ Route::get('/itemDetails/{id}/checkout', function ($id) {
 
     Route::post('/completing/user', [UserController::class, 'store'])->name('store.completing.user');
 
+
 });
 
 Route::middleware([
@@ -72,7 +73,8 @@ Route::middleware([
 
     //User
     Route::delete('/rentalListing')->name('rental.listing');
-
+  
+    Route::post('/rentalListing/add-item', [UserController::class, 'addItem'])->name('store.rentalListing.add.item');
 });
 
 require __DIR__.'/auth.php';
