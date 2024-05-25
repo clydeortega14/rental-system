@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\RentalItemController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -25,36 +26,32 @@ Route::middleware([
 
     Route::get('/completing/user/{user}', [UserController::class, 'getUserInfoPage'])->name('completing.user');
 
-Route::get('/rentalListing', function () {
-    return Inertia::render('User/Partials/Rental');
-})->middleware(['auth'])->name('rentalListing');
+    // Route::get('/rentalListing', function () {
+    //     return Inertia::render('User/Partials/Rental');
+    // })->middleware(['auth'])->name('rentalListing');
 
-// Route::get('/itemDetails/{id}', function () {
-//     return Inertia::render('Item/View');
-// })->middleware(['auth'])->name('itemDetails');
-Route::get('/itemDetails/{id}', function ($id) {
-    // Pass the item ID to the view
-    return Inertia::render('Item/View', ['itemId' => $id]);
-})->name('itemDetails');
+    // Route::get('/itemDetails/{id}', function () {
+    //     return Inertia::render('Item/View');
+    // })->middleware(['auth'])->name('itemDetails');
+    Route::get('/itemDetails/{id}', function ($id) {
+        // Pass the item ID to the view
+        return Inertia::render('Item/View', ['itemId' => $id]);
+    })->name('itemDetails');
 
-Route::get('/itemDetails/{id}/checkout', function ($id) {
-    // Pass the item ID to the view
-    return Inertia::render('Item/CheckoutItem', ['itemId' => $id]);
-})->name('itemCheckout');
-
-
+    Route::get('/itemDetails/{id}/checkout', function ($id) {
+        // Pass the item ID to the view
+        return Inertia::render('Item/CheckoutItem', ['itemId' => $id]);
+    })->name('itemCheckout');
 
     Route::post('/completing/user', [UserController::class, 'store'])->name('store.completing.user');
-
-
 });
 
 Route::middleware([
     'auth', // auth middleware
     'verified', // email verification middleware
     'check-user-info'// completed information details
-
 ])->group(function(){
+
 
     /* -- Account Settings -- */
     Route::get('/account-settings', [ProfileController::class, 'accountSettings'])->name('account.settings');
@@ -74,7 +71,12 @@ Route::middleware([
     //User
     Route::delete('/rentalListing')->name('rental.listing');
   
-    Route::post('/rentalListing/add-item', [UserController::class, 'addItem'])->name('store.rentalListing.add.item');
+    Route::post('/rentalListing/add-item', [RentalItemController::class, 'create'])->name('store.rentalListing.add.item');
+    Route::get('/rentalListing', [RentalItemController::class, 'index'])->name('rentalListing');
+    // Route::get('/rentalListing', function () {
+    //     return Inertia::render('User/Partials/Rental');
+    // })->middleware(['auth'])->name('rentalListing');
+
 });
 
 require __DIR__.'/auth.php';

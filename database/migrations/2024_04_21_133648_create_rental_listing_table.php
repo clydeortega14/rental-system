@@ -17,6 +17,7 @@ return new class extends Migration
             $table->uuid('itemID')->nullable()->index();
             $table->string('itemName');
             $table->text('description');
+            $table->string('category');
             $table->decimal('price', 10, 2); // Adjust precision and scale as needed
             $table->integer('quantity');
             $table->string('quality');

@@ -68,7 +68,6 @@ class ProfileController extends Controller
     public function accountSettings(Request $request) : Response
     {
         return Inertia::render('Profile/AccountSettings', [
-
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
         ]);

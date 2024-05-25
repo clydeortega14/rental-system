@@ -19,11 +19,9 @@ class UserController extends Controller
      */
     public function getUserInfoPage(User $user) : Response
     {
-
+        
         return Inertia::render('Auth/CompleteUserDetails', [
-
             'user' => $user
-
         ]);
     }
 
@@ -66,11 +64,7 @@ class UserController extends Controller
     {
 
         $user = Auth::user();
-
         $userId = $user->id;
-      
-
-        
 
         // Validate the request data
         $validatedData = $request->validate([

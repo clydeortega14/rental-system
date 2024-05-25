@@ -18,6 +18,7 @@ class RentalAddItem extends Model
         'user_id', 
         'itemID', 
         'itemName', 
+        'category',
         'description',
         'price',
         'quantity',
