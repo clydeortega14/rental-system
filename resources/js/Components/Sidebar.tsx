@@ -108,21 +108,9 @@ function Sidebar({open} : SidebarProps) {
 
 	return (
 		<>
-		
-		
-		<div className={`py-0 px-2 bg-light-green h-100 relative  ${open ? 'w-72' : 'w-20'} duration-300`}>
-
-			
-			 
-            <div className="flex items-center">
-                
-					
-                    {/* <h1 className={`text-white origin-left duration-300 font-medium text-2xl ${!open && "scale-0"}`}>RentMe</h1> */}
-            </div>
-
-            <ul className="pt-7">{menuLists}</ul>
-           
-        </div>
+			<div className={`py-0 px-2 bg-light-green h-100 relative  ${open ? 'w-72' : 'w-20'} duration-300`}>
+	            <ul className="pt-7">{menuLists}</ul>
+	        </div>
 		</>
 
 	);
