@@ -13,14 +13,17 @@ return new class extends Migration
     {
         Schema::create('data_types', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->string('name');
         });
 
         Schema::create('field_types', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->string('name');
         });
 
         Schema::create('form_fields', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->string('name');
             $table->foreignUuid('form_id')->constrained();
             $table->foreignUuid('data_type_id')->constrained();
             $table->foreignUuid('field_type_id')->consrained();

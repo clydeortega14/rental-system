@@ -13,6 +13,10 @@ class Form extends Model
 
     protected $table = 'forms';
 
+    protected $fillable = ['name'];
+
+    public $timestamps = false;
+
     public function detail() : MorphOne
     {
         return $this->morphOne(Detailable::class, 'detailable');

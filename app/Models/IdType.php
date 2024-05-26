@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
-class FieldType extends Model
+class IdType extends Model
 {
     use HasFactory, Uuid;
 
-    protected $table = 'field_types';
-
-    protected $fillable = ['name'];
+    protected $table = 'id_types';
 
     public $timestamps = false;
+
+    protected $fillable = ['name'];
 
     public function detail() : MorphOne
     {

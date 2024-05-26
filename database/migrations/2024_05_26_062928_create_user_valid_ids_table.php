@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('detailables', function (Blueprint $table) {
+        Schema::create('user_valid_ids', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuidMorphs('detailable');
-            $table->string('label');
-            $table->text('description')->nullable();
-            $table->boolean('active')->default(true);
-            $table->timestamps();
+            $table->foreignUuid('user_id')->contrained();
+            $table->foreignUuid('id_type')->constrained();
         });
     }
 
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('detailables');
+        Schema::dropIfExists('user_valid_ids');
     }
 };

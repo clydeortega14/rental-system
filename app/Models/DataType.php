@@ -13,6 +13,10 @@ class DataType extends Model
 
     protected $table = 'data_types';
 
+    protected $fillable = ['name'];
+
+    public $timestamps = false;
+
     public function detail() : MorphOne
     {
         return $this->morphOne(Detailable::class, 'detailable');
