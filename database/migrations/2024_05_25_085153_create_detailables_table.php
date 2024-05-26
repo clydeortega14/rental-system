@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('detailables', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('formable_type');
-            $table->uuid('formable_id');
+            $table->string('detailable_type');
+            $table->uuid('detailable_id');
             $table->string('name');
             $table->string('label');
             $table->text('description')->nullable();

@@ -7,15 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Attachment extends Model
+class Detailable extends Model
 {
     use HasFactory, Uuid;
 
-    protected $fillable = ['attachable_id', 'attachable_type', 'filename', 'type', 'size', 'size_type'];
+    protected $table = 'detailables';
 
-    protected $table = 'attachments';
+    protected $fillable = [
+        'detailable_type',
+        'detailable_id',
+        'name',
+        'label',
+        'description',
+        'active',
+    ];
 
-    public function attachable() : MorphTo
+    public function detailable() : MorphTo
     {
         return $this->morphTo();
     }
