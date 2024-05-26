@@ -23,7 +23,7 @@ class RentalAddItem extends Model
         'price',
         'quantity',
         'quality',
-        'thumbnail_path',
+        'image',
         'updated_at',
         'created_at'
     

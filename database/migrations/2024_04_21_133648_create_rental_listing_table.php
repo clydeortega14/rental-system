@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2); // Adjust precision and scale as needed
             $table->integer('quantity');
             $table->string('quality');
-            $table->string('thumbnail_path')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

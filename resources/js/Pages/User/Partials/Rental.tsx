@@ -190,7 +190,7 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
 
     // State variables for pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
+    const itemsPerPage = 5;
 
     // State variable to store the selected category
     const [selectedCategory, setSelectedCategory] = useState("All");
@@ -297,6 +297,12 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                 <DialogContent>
                     <form onSubmit={handleSubmit} encType="multipart/formdata">
                         <div className="mb-4">
+                            <Typography
+                                id="spring-modal-description"
+                                sx={{ mt: 2 }}
+                            >
+                               Upload Image
+                            </Typography>
                             <TextField
                                 type="file"
                                 id="itemImage"
@@ -350,8 +356,52 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                             )}
                         </div>
                         <div className="mb-4">
+                            <Typography
+                                id="spring-modal-description"
+                                sx={{ mt: 2 }}
+                            >
+                                Condition
+                            </Typography>
+                            <Select
+                                label="Quality"
+                                id="quality"
+                                name="quality"
+                                value={data.quality}
+                                onChange={(e) =>
+                                    setData("quality", e.target.value)
+                                }
+                                fullWidth
+                            >
+                                <MenuItem value="quality" disabled>
+                                    ...
+                                </MenuItem>
+                                <MenuItem value="Brand New">Brand New</MenuItem>
+                                <MenuItem value="Used - Like New" >
+                                    Used - Like New
+                                </MenuItem>
+                                <MenuItem value="Used - Good">Used - Good</MenuItem>
+                                <MenuItem value="Used - Fair">Used - Fair</MenuItem>
+                                {/* Add more categories as needed */}
+                            </Select>
+                            {submitted && !data.quality && (
+                                <Typography
+                                    variant="caption"
+                                    className="text-red-500"
+                                >
+                                    Quality is required.
+                                </Typography>
+                            )}
+                        </div>
+
+                        
+                        <div className="mb-4">
+                            <Typography
+                                id="spring-modal-description"
+                                sx={{ mt: 2 }}
+                            >
+                                Item Name
+                            </Typography>
                             <TextField
-                                label="Item Name"
                                 id="itemName"
                                 name="itemName"
                                 value={data.itemName}
@@ -370,8 +420,13 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                             )}
                         </div>
                         <div className="mb-4">
+                            <Typography
+                                id="spring-modal-description"
+                                sx={{ mt: 2 }}
+                            >
+                                Price
+                            </Typography>
                             <TextField
-                                label="Price"
                                 id="price"
                                 name="price"
                                 type="number"
@@ -391,8 +446,13 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                             )}
                         </div>
                         <div className="mb-4">
+                            <Typography
+                                id="spring-modal-description"
+                                sx={{ mt: 2 }}
+                            >
+                                Quantity
+                            </Typography>
                             <TextField
-                                label="Quantity"
                                 id="quantity"
                                 name="quantity"
                                 type="number"
@@ -412,30 +472,14 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                             )}
                         </div>
                         <div className="mb-4">
-                            <TextField
-                                label="Quality"
-                                id="quality"
-                                name="quality"
-                                type="text"
-                                value={data.quality}
-                                onChange={(e) =>
-                                    setData("quality", e.target.value)
-                                }
-                                fullWidth
-                            />
-                            {submitted && !data.quality && (
-                                <Typography
-                                    variant="caption"
-                                    className="text-red-500"
-                                >
-                                    Item Quality is required.
-                                </Typography>
-                            )}
-                        </div>
-                        <div className="mb-4">
+                            <Typography
+                                id="spring-modal-description"
+                                sx={{ mt: 2 }}
+                            >
+                                Description
+                            </Typography>
                             <textarea
                                 className="w-full h-20 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                                placeholder="Add remarks"
                                 value={data.remarks}
                                 onChange={(e) =>
                                     setData("remarks", e.target.value)
@@ -560,7 +604,7 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                                                             >
                                                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                                                                     <img
-                                                                        src={item.thumbnail_path}
+                                                                        src={item.image}
                                                                         className="h-20 w-20 flex-shrink-0 overflow-hidden border border-green-700 rounded-full "
                                                                         alt="..."
                                                                     />

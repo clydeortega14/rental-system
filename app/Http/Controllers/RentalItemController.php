@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\RentalAddItem;
 use Inertia\Inertia;
@@ -12,11 +13,22 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
+
 class RentalItemController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    // Function to format size and get size type
+    private function formatSizeUnits($bytes) {
+        $units = array('bytes', 'KB', 'MB', 'GB', 'TB');
+        $i = 0;
+        while ($bytes >= 1024) {
+            $bytes /= 1024;
+            $i++;
+        }
+        return array('size' => round($bytes, 2), 'size_type' => $units[$i]);
+    }
     public function index(RentalAddItem $getItem) : Response
     {
         //
@@ -30,6 +42,8 @@ class RentalItemController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+
+ 
 
     public function create(RentalAddItem $rentalAdd ,Request $request) : RedirectResponse
     {
@@ -49,13 +63,14 @@ class RentalItemController extends Controller
         ]);
 
        
-        $file = $request->file('itemImage');
-        $extension = $file->getClientOriginalName();
-        $fileName = time().'.'.$extension;
-        // $fileName = time().$request->file('itemImage')->getClientOriginalName();
-        $path = 'uploads/rentItems';
-        $file->move($path , $fileName);
-      
+
+        $image = $request->file('itemImage');
+        $originalName = $image->getClientOriginalName();
+        $path = $image->storeAs('images', $originalName, 'public');
+        $mime = $image->getClientMimeType();
+        $fileSizeData = $this->formatSizeUnits($image->getSize());
+        $size = $fileSizeData['size'];
+        $sizeType = $fileSizeData['size_type'];
        
 
         $user = RentalAddItem::create([
@@ -68,10 +83,10 @@ class RentalItemController extends Controller
             'price' => $validatedData['price'],
             'quantity' => $validatedData['quantity'],
             'quality' => $validatedData['quality'],
-            'thumbnail_path' => $path.$fileName,
+            'image' => '/storage/'.$path,
         ]);
 
-       
+
         return redirect()->route('rentalListing');
        
     }
