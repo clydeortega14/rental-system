@@ -105,6 +105,10 @@ class RentalItemController extends Controller
     public function show(string $id)
     {
         //
+       
+        $item = RentalAddItem::findOrFail($id);
+        return Inertia::render('User/Partials/Rental', ['item' => $item]);
+     
     }
 
     /**
@@ -121,6 +125,36 @@ class RentalItemController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $item = RentalAddItem::findOrFail($id);
+
+     
+
+        // Validate the request data
+        $request->validate([
+            'itemName' => 'required|string|max:255',
+            'price' => 'required|numeric',
+            'quantity' => 'required|integer',
+            'quality' => 'required|string|max:255',
+            'description' => 'required|string',
+            'category' => 'required|string|max:255',
+           
+        ]);
+
+      
+        
+
+        // Update the item
+        $item->update([
+            'itemName' => $request->itemName,
+            'price' => $request->price,
+            'quantity' => $request->quantity,
+            'quality' => $request->quality,
+            'description' => $request->description,
+            'category' => $request->category,
+           
+        ]);
+
+        return redirect()->route('rentalListing', ['id' => $item->id]);
     }
 
     /**

@@ -1,5 +1,6 @@
 import { Head, Link, useForm } from "@inertiajs/react";
 import { useState, FormEventHandler } from "react"; // Import useState hook to manage state
+
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { PageProps } from "@/types";
 
@@ -12,181 +13,16 @@ import {
     Typography,
     Select,
     MenuItem,
+    IconButton,
 } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
-import { FaShoppingCart, FaPlus, FaEye } from "react-icons/fa";
+import { FaShoppingCart, FaPlus, FaEye,FaTimes,FaEdit  } from "react-icons/fa";
 
 export default function RentalList({ auth, rentalItems }: PageProps & { rentalItems: any[] }) {
     const [submitted, setSubmitted] = useState(false);
     // Sample data with category information
 
     const items = rentalItems;
-
-
-    
-    
-    // const items = [
-    //     {
-    //         id: 1,
-    //         image: "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg",
-    //         project: "Chanel ",
-    //         price: "₱ 2,500,000.00 ",
-    //         quantity: 10,
-    //         quality: "Brand New",
-    //         remarks: "Introducing our latest addition - a brand new item! 🎉",
-    //         category: "Bags",
-    //     },
-    //     {
-    //         id: 2,
-    //         image: "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg",
-    //         project: "Chanel ",
-    //         price: "₱ 2,500,000.00 ",
-    //         quantity: 10,
-    //         quality: "Brand New",
-    //         remarks: "Introducing our latest addition - a brand new item! 🎉",
-    //         category: "Bags",
-    //     },
-    //     {
-    //         id: 3,
-    //         image: "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg",
-    //         project: "Chanel ",
-    //         price: "₱ 2,500,000.00 ",
-    //         quantity: 10,
-    //         quality: "Brand New",
-    //         remarks: "Introducing our latest addition - a brand new item! 🎉",
-    //         category: "Bags",
-    //     },
-    //     {
-    //         id: 4,
-    //         image: "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg",
-    //         project: "Chanel ",
-    //         price: "₱ 2,500,000.00 ",
-    //         quantity: 10,
-    //         quality: "Brand New",
-    //         remarks: "Introducing our latest addition - a brand new item! 🎉",
-    //         category: "Bags",
-    //     },
-    //     {
-    //         id: 5,
-    //         image: "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg",
-    //         project: "Chanel ",
-    //         price: "₱ 2,500,000.00 ",
-    //         quantity: 10,
-    //         quality: "Brand New",
-    //         remarks: "Introducing our latest addition - a brand new item! 🎉",
-    //         category: "Bags",
-    //     },
-    //     {
-    //         id: 6,
-    //         image: "https://imgcdn.zigwheels.ph/large/gallery/exterior/83/1069/suzuki-raider-r150-slant-rear-view-full-image-832720.jpg",
-    //         project: "Raider 150 Carb Type",
-    //         price: "₱ 115,500.00",
-    //         quantity: 5,
-    //         quality: "Goods as New",
-    //         remarks:
-    //             "Discover our latest addition – a brand new item that promises both quality and freshness!",
-    //         category: "Motorcycles",
-    //     },
-    //     {
-    //         id: 7,
-    //         image: "https://imgcdn.zigwheels.ph/large/gallery/exterior/83/1069/suzuki-raider-r150-slant-rear-view-full-image-832720.jpg",
-    //         project: "Raider 150 Carb Type",
-    //         price: "₱ 115,500.00",
-    //         quantity: 5,
-    //         quality: "Goods as New",
-    //         remarks:
-    //             "Discover our latest addition – a brand new item that promises both quality and freshness!",
-    //         category: "Motorcycles",
-    //     },
-    //     {
-    //         id: 8,
-    //         image: "https://imgcdn.zigwheels.ph/large/gallery/exterior/83/1069/suzuki-raider-r150-slant-rear-view-full-image-832720.jpg",
-    //         project: "Raider 150 Carb Type",
-    //         price: "₱ 115,500.00",
-    //         quantity: 5,
-    //         quality: "Goods as New",
-    //         remarks:
-    //             "Discover our latest addition – a brand new item that promises both quality and freshness!",
-    //         category: "Motorcycles",
-    //     },
-    //     {
-    //         id: 9,
-    //         image: "https://imgcdn.zigwheels.ph/large/gallery/exterior/83/1069/suzuki-raider-r150-slant-rear-view-full-image-832720.jpg",
-    //         project: "Raider 150 Carb Type",
-    //         price: "₱ 115,500.00",
-    //         quantity: 5,
-    //         quality: "Goods as New",
-    //         remarks:
-    //             "Discover our latest addition – a brand new item that promises both quality and freshness!",
-    //         category: "Motorcycles",
-    //     },
-    //     {
-    //         id: 10,
-    //         image: "https://imgcdn.zigwheels.ph/large/gallery/exterior/83/1069/suzuki-raider-r150-slant-rear-view-full-image-832720.jpg",
-    //         project: "Raider 150 Carb Type",
-    //         price: "₱ 115,500.00",
-    //         quantity: 5,
-    //         quality: "Goods as New",
-    //         remarks:
-    //             "Discover our latest addition – a brand new item that promises both quality and freshness!",
-    //         category: "Motorcycles",
-    //     },
-    //     {
-    //         id: 11,
-    //         image: "https://imgcdn.zigwheels.ph/large/gallery/exterior/83/1069/suzuki-raider-r150-slant-rear-view-full-image-832720.jpg",
-    //         project: "Raider 150 Carb Type",
-    //         price: "₱ 115,500.00",
-    //         quantity: 5,
-    //         quality: "Goods as New",
-    //         remarks:
-    //             "Discover our latest addition – a brand new item that promises both quality and freshness!",
-    //         category: "Motorcycles",
-    //     },
-    //     {
-    //         id: 12,
-    //         image: "https://hondaphil.com/app/default/files-module/local/images/news-inner-main-image-1650x750-type-r-launch-23.jpg",
-    //         project: "Honda Civic 2018",
-    //         price: "₱ 2,500,800.00 ",
-    //         quantity: 5,
-    //         quality: "Goods as New",
-    //         remarks:
-    //             "Discover our latest addition – a brand new item that promises both quality and freshness!",
-    //         category: "Cars",
-    //     },
-    //     {
-    //         id: 13,
-    //         image: "https://hondaphil.com/app/default/files-module/local/images/news-inner-main-image-1650x750-type-r-launch-23.jpg",
-    //         project: "Honda Civic 2018",
-    //         price: "₱ 2,500,800.00 ",
-    //         quantity: 5,
-    //         quality: "Goods as New",
-    //         remarks:
-    //             "Discover our latest addition – a brand new item that promises both quality and freshness!",
-    //         category: "Cars",
-    //     },
-    //     {
-    //         id: 14,
-    //         image: "https://hondaphil.com/app/default/files-module/local/images/news-inner-main-image-1650x750-type-r-launch-23.jpg",
-    //         project: "Honda Civic 2018",
-    //         price: "₱ 2,500,800.00 ",
-    //         quantity: 5,
-    //         quality: "Goods as New",
-    //         remarks:
-    //             "Discover our latest addition – a brand new item that promises both quality and freshness!",
-    //         category: "Cars",
-    //     },
-    //     {
-    //         id: 15,
-    //         image: "https://hondaphil.com/app/default/files-module/local/images/news-inner-main-image-1650x750-type-r-launch-23.jpg",
-    //         project: "Honda Civic 2018",
-    //         price: "₱ 2,500,800.00 ",
-    //         quantity: 5,
-    //         quality: "Goods as New",
-    //         remarks:
-    //             "Discover our latest addition – a brand new item that promises both quality and freshness!",
-    //         category: "Cars",
-    //     },
-    // ];
 
     // State variables for pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -215,8 +51,11 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
 
     // State variables for adding item modal
     const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [isEditMode, setIsEditMode] = useState(false);
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post,put, processing, errors, reset } = useForm({
         itemImage: "",
         itemName: "",
         price: "",
@@ -224,6 +63,7 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
         quality: "",
         remarks: "",
         category: "",
+        image: null,
     });
     const handleFileChange = (event: {
         target: { files: { name: any }[] };
@@ -261,6 +101,55 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
         }
     };
 
+    const handleView = (itemId) => {
+        const item = rentalItems.find((item) => item.id === itemId);
+        setSelectedItem(item);
+        setIsModalOpen(true);
+    };
+
+    const handleClose = () => {
+        setIsModalOpen(false);
+      
+       
+    };
+    const handleEditClose = () => {
+        
+        setIsEditMode(false);
+       
+    };
+
+    const handleEdit = (itemId) => {
+        const item = rentalItems.find((item) => item.id === itemId);
+        setSelectedItem(item);
+        setData({
+            itemName: item.itemName,
+            price: item.price,
+            quantity: item.quantity,
+            quality: item.quality,
+            description: item.description,
+            category: item.category,
+            image: null, // Set image to null initially
+        });
+        setIsEditMode(true);
+
+    };
+
+    const handleSave = () => {
+        const formData = new FormData();
+        formData.append('itemName', data.itemName);
+        formData.append('price', data.price);
+        formData.append('quantity', data.quantity);
+        formData.append('quality', data.quality);
+        formData.append('description', data.description);
+        formData.append('category', data.category);
+    
+        put(route('rental.update', { id: selectedItem.id }), {
+            data: formData,
+            onSuccess: () => reset(),
+        });
+        setIsEditMode(false);
+        toast.success("Item updated successfully.");
+    };
     // Change page
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -515,7 +404,129 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                 </DialogActions>
             </Dialog>
             <ToastContainer />
+             {/* Modal for displaying item details */}
+            {/* Modal for displaying item details */}
+            <Dialog
+                open={isModalOpen}
+                onClose={handleClose}
+                fullWidth
+                maxWidth="sm"
+            >
 
+                <DialogTitle className="flex justify-between items-center">
+                    <div>{selectedItem ? selectedItem.itemName : ''}</div>
+                    <IconButton onClick={handleClose} >
+                        <FaTimes />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    {selectedItem && (
+                        <div className="flex flex-col items-center">
+                            <img
+                                src={selectedItem.image}
+                                alt={selectedItem.itemName}
+                                className="w-full h-auto object-cover mb-4"
+                            />
+                            <div className="w-full space-y-2">
+                             
+                                <div className="space-y-1">
+                                <Typography variant="body1" className="text-lg" style={{ whiteSpace: 'pre-line' }}>
+                                    {selectedItem.description}
+                                </Typography>
+                                   
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+
+            </Dialog>
+            {/* Modal for edit item details */}
+            <Dialog open={isEditMode} onClose={handleEditClose} fullWidth maxWidth="sm">
+                <DialogTitle className="flex justify-between items-center">
+                    <div>{isEditMode ? 'Edit Item' : 'Item Details'}</div>
+                    <IconButton onClick={handleEditClose} >
+                        <FaTimes />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    {selectedItem && (
+                        <div className="flex flex-col items-center">
+                            {!isEditMode ? (
+                                <>
+                                    <img
+                                        src={selectedItem.image}
+                                        alt={selectedItem.itemName}
+                                        className="w-full h-auto object-cover mb-4"
+                                    />
+                                    <Typography variant="h6" component="h2" className="text-2xl font-bold">
+                                        {selectedItem.itemName}
+                                    </Typography>
+                                    <Typography variant="body1" className="text-lg whitespace-pre-line">
+                                        {selectedItem.description}
+                                    </Typography>
+                                </>
+                            ) : (
+                                <div className="w-full space-y-2 mt-4">
+                                    <TextField
+                                        fullWidth
+                                        label="Item Name"
+                                        value={data.itemName}
+                                        onChange={(e) => setData('itemName', e.target.value)}
+                                    />
+                                    <TextField
+                                        fullWidth
+                                        label="Price"
+                                        type="number"
+                                        value={data.price}
+                                        onChange={(e) => setData('price', e.target.value)}
+                                    />
+                                    <TextField
+                                        fullWidth
+                                        label="Quantity"
+                                        type="number"
+                                        value={data.quantity}
+                                        onChange={(e) => setData('quantity', e.target.value)}
+                                    />
+                                    <TextField
+                                        fullWidth
+                                        label="Quality"
+                                        value={data.quality}
+                                        onChange={(e) => setData('quality', e.target.value)}
+                                    />
+                                    <TextField
+                                        fullWidth
+                                        label="Description"
+                                        value={data.description}
+                                        onChange={(e) => setData('description', e.target.value)}
+                                        multiline
+                                        rows={4}
+                                    />
+                                    <TextField
+                                        fullWidth
+                                        label="Category"
+                                        value={data.category}
+                                        onChange={(e) => setData('category', e.target.value)}
+                                    />
+                                    {/* <input
+                                        type="file"
+                                        onChange={(e) => setData('image', e.target.files[0])}
+                                    /> */}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <button
+                        onClick={handleSave}
+                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-5 rounded inline-flex items-center mr-4"
+                        disabled={processing}
+                    >
+                        Save
+                    </button>
+                </DialogActions>
+            </Dialog>
             <div className="py-7">
                 <div className="max-w-8xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -649,10 +660,20 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                                                                         item.category
                                                                     }
                                                                 </td>
-                                                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 ">
-                                                                    <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center">
-                                                                        <FaEye className="mr-2" />
+                                                                <td className="border-t-0 px-1 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                                                                    <button
+                                                                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-1"
+                                                                        onClick={() => handleView(item.id)}
+                                                                    >
+                                                                        <FaEye className="mr-1" />
                                                                         View
+                                                                    </button>
+                                                                    <button
+                                                                        className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded inline-flex items-center"
+                                                                        onClick={() => handleEdit(item.id)}
+                                                                    >
+                                                                        <FaEdit className="mr-1" />
+                                                                        Edit
                                                                     </button>
                                                                 </td>
                                                             </tr>
