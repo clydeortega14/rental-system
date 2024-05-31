@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('detailables', function (Blueprint $table) {
-            $table->id();
-            $table->morphs('detailable');
-            $table->string('label');
-            $table->text('description')->nullable();
-            $table->boolean('active')->default(true);
-            $table->timestamps();
+        Schema::create('id_types', function (Blueprint $table) {
+            $table->smallIncrements('id');
+            $table->string('name');
         });
     }
 
@@ -26,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('detailables');
+        Schema::dropIfExists('id_types');
     }
 };

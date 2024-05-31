@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('attachments', function (Blueprint $table) {
             $table->id();
             $table->string('attachable_type');
-            $table->uuid('attachable_id');
+            $table->bigInteger('attachable_id')->unsigned();
+            $table->string('filename')->unique();
             $table->string('type');
             $table->decimal('size', 18, 4);
             $table->string('size_type');
