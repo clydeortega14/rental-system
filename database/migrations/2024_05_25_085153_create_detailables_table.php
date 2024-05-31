@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('detailables', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuidMorphs('detailable');
+            $table->id();
+            $table->morphs('detailable');
             $table->string('label');
             $table->text('description')->nullable();
             $table->boolean('active')->default(true);

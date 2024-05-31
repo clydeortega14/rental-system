@@ -1,15 +1,14 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\Uuid;
+
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Detailable extends Model
 {
-    use HasFactory, Uuid;
+    use HasFactory;
 
     protected $table = 'detailables';
 
@@ -21,6 +20,10 @@ class Detailable extends Model
         'description',
         'active',
     ];
+
+    public $incrementing = false;
+
+    public $keyType = 'string';
 
     public function detailable() : MorphTo
     {

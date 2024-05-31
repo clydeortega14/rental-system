@@ -48,18 +48,6 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    /**
-     * add property named $keyType and set its value to string 
-     *
-     */
-    protected $keyType = 'string';
-
-     /**
-     *  Set autoincrement to false
-     *
-     */
-
-    public $incrementing = false;
 
     public function company(): HasOne
     {

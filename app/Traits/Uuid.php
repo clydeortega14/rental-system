@@ -9,7 +9,7 @@ trait Uuid
 	{
 		parent::boot();
 		static::creating(function($model){
-			$model->id = (string) Str::uuid();
+			$model->uuid = (string) Str::uuid();
 		});
 	}
 }

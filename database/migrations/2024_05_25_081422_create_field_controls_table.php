@@ -12,24 +12,28 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('data_types', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->smallIncrements('id');
             $table->string('name');
         });
 
         Schema::create('field_types', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->smallIncrements('id');
             $table->string('name');
         });
 
         Schema::create('form_fields', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->increments('id');
             $table->string('name');
-            $table->foreignUuid('form_id')->constrained();
-            $table->foreignUuid('data_type_id')->constrained();
-            $table->foreignUuid('field_type_id')->consrained();
+            $table->unsignedInteger('form_id');
+            $table->unsignedSmallInteger('data_type_id');
+            $table->unsignedSmallInteger('field_type_id');
             $table->integer('size')->nullable();
             $table->integer('sequence');
             $table->timestamps();
+
+            $table->foreign('form_id')->references('id')->on('forms');
+            $table->foreign('data_type_id')->references('id')->on('data_types');
+            $table->foreign('field_type_id')->references('id')->on('field_types');
         });
     }
 

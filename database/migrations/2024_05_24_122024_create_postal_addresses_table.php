@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('postal_addresses', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->string('addressable_type');
-            $table->uuid('addressable_id');
+            $table->bigInteger('addressable_id')->unsigned();
             $table->address();
             $table->timestamps();
         });

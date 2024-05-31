@@ -12,18 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('categories', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->increments('id');
             $table->string('name');
         });
 
         Schema::create('forms', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->increments('id');
             $table->string('name');
         });
 
         Schema::create('category_forms', function (Blueprint $table) {
-            $table->foreignUuid('category_id')->constrained();
-            $table->foreignUuid('form_id')->constrained();
+            $table->unsignedInteger('category_id')->references('id')->on('categories');
+            $table->unsignedInteger('form_id')->references('id')->on('forms');
 
             $table->primary(['category_id', 'form_id']);
         });

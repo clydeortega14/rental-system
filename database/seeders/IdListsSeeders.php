@@ -28,6 +28,7 @@ class IdListsSeeders extends Seeder
         $id_type->detail()->create([
             'label' => 'Drivers License',
             'description' => 'This is for drivers license valid id',
+            'detailable_id' => $id_type->id
         ]);
     }
 }
