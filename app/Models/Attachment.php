@@ -4,12 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Attachment extends Model
 {
-    use HasFactory, Uuid;
+    use HasFactory;
 
     protected $fillable = ['attachable_id', 'attachable_type', 'filename', 'type', 'size', 'size_type'];
 

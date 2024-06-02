@@ -7,9 +7,11 @@ use App\Models\User;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
+use App\Traits\FileTraits;
 
 class UserController extends Controller
 {
+    use FileTraits;
     /**
      * Display the user's completing of information and contact details form.
      */
@@ -36,17 +38,6 @@ class UserController extends Controller
         if($request->has('company_name') || $request->has('tin')){
 
             $company = $this->createUserCompanyInfo($user, $request->only(['company_name', 'tin', 'email']));
-        }
-
-        if($request->hasFile('valid_id')){
-
-            // validate file
-
-            // filter filename
-
-            // store file to db
-
-            // store file to storage
         }
 
 
