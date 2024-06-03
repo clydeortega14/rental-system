@@ -14,9 +14,13 @@ return new class extends Migration
         Schema::create('attachments', function (Blueprint $table) {
             $table->id();
             $table->string('attachable_type');
-            $table->uuid('attachable_id');
+            $table->bigInteger('attachable_id')->unsigned();
+            $table->string('display_name');
+            $table->string('filename')->unique();
+            $table->string('path');
+            $table->string('storage_disk');
             $table->string('type');
-            $table->decimal('size', 18, 4);
+            $table->decimal('size', 18, 2);
             $table->string('size_type');
             $table->timestamps();
         });

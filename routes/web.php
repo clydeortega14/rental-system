@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RentalItemController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FileUploadController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -62,13 +63,19 @@ Route::middleware([
 
     /* -- Profile -- */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+
+    /* -- Profile Update -- */
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    /* -- Profile Delete -- */
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     /* -- Reservations -- */
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
 
-    
+    /* -- Upload Valid ID -- */
+    Route::post('/upload/valid-id', [FileUploadController::class, 'uploadFile'])->name('upload.valid-id');
+
     Route::delete('/rentalListing')->name('rental.listing');
   
     Route::post('/rentalListing/add-item', [RentalItemController::class, 'create'])->name('store.rentalListing.add.item');
@@ -78,6 +85,8 @@ Route::middleware([
     // Route::get('/rentalListing', function () {
     //     return Inertia::render('User/Partials/Rental');
     // })->middleware(['auth'])->name('rentalListing');
+
+    
 
 });
 
