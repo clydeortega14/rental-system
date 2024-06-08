@@ -11,27 +11,23 @@ class FileUploadController extends Controller
     
     public function uploadFile(Request $request)
     {
-
-       
         $validated = $request->validate([
-            'filename' => 'required|mimes:jpg,jpeg,png|mimetypes:image/png,image/jpeg|max:2000'
+            'filename' => 'required|mimes:jpg,jpeg,png|mimetypes:image/png,image/jpeg|max:2000',
         ]);
+        
+        $file = $request->file('filename');
 
         $user = auth()->user();
 
         $user_valid_id = $user->userValidIds()->create(['id_type' => 1]);
-        $file = $request->file('filename');
 
-
-        $file_name = $this->storeFile(
+        $file_name = $this->manageFileUpload(
             $user_valid_id, // model
             $file, // file
             'local', // driver
             'users/ids/'.$user_valid_id->idType->name // path
         );
-
         
-
         return redirect()->route('dashboard');
     }
 }
