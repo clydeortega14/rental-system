@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\RentalItemController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\RentalProviderController;
@@ -52,8 +53,8 @@ Route::middleware([
     'auth', // auth middleware
     'verified', // email verification middleware
     'check-user-info'// completed information details
-
 ])->group(function(){
+
 
     /* -- Account Settings -- */
     Route::get('/account-settings', [ProfileController::class, 'accountSettings'])->name('account.settings');
@@ -80,6 +81,14 @@ Route::middleware([
     Route::post('/upload/valid-id', [FileUploadController::class, 'uploadFile'])->name('upload.valid-id');
 
     Route::delete('/rentalListing')->name('rental.listing');
+  
+    Route::post('/rentalListing/add-item', [RentalItemController::class, 'create'])->name('store.rentalListing.add.item');
+    Route::get('/rentalListing', [RentalItemController::class, 'index'])->name('rentalListing');
+    Route::get('/rentalListing/items/{id}', [RentalItemController::class, 'show'])->name('rentalListingView');
+    Route::put('/rentalListing/items/update/{id}', [RentalItemController::class, 'update'])->name('rental.update');
+    // Route::get('/rentalListing', function () {
+    //     return Inertia::render('User/Partials/Rental');
+    // })->middleware(['auth'])->name('rentalListing');
 
     
 

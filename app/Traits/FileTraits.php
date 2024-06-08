@@ -24,6 +24,8 @@ trait FileTraits {
 
     public function storeFile($model, $file, $driver, $path)
     {
+       
+        
         $filename = Str::random(32);
         $ext = $file->extension();
         $size = $file->getSize();
@@ -45,6 +47,30 @@ trait FileTraits {
 
         return $new_filename;
     }
+
+    // public function storeFileItems($model, $file, $driver, $path){
+       
+    //     $filename = Str::random(32);
+    //     $ext = $file->extension();
+    //     $size = $file->getSize();
+    //     $storagePath = $path . '/' . $filename . '.' . $ext;
+
+    //     // Create attachment record in the database
+    //     $attachment = $model->attachment()->create([
+    //         'display_name' => $this->fileSanitizer($file),
+    //         'path' => '/storage/' . $storagePath,
+    //         'filename' => $filename,
+    //         'storage_disk' => $driver,
+    //         'type' => $ext,
+    //         'size' => $size,
+    //         'size_type' => 'kb'
+    //     ]);
+    //     $new_filename  = $filename.'.'.$ext;
+
+    //     // store the file to storage
+    //     $file->storeAs('images', $new_filename, 'public');
+    //     return $new_filename;
+    // }
 
     public function manageFileUpload($model, $file, $driver, $path)
     {

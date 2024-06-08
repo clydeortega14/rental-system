@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Traits\Uuid;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -61,6 +62,11 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function userValidIds()
     {
+       
         return $this->hasMany(UserValidId::class);
+    }
+    public function rentalAddItems(): HasMany
+    {
+        return $this->hasMany(RentalAddItem::class,'user_id');
     }
 }
