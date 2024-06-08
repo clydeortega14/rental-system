@@ -6,6 +6,7 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RentalItemController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FileUploadController;
+use App\Http\Controllers\RentalProviderController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -24,7 +25,7 @@ Route::middleware([
     'verified'
 ])->group(function(){
 
-    Route::get('/completing/user/{user}', [UserController::class, 'getUserInfoPage'])->name('completing.user');
+    Route::get('/completing/user/{uuid}', [UserController::class, 'getUserInfoPage'])->name('completing.user');
     
     // user must redirect to this route if first time using the platform.
     Route::post('/completing/user', [UserController::class, 'store'])->name('store.completing.user');
@@ -60,6 +61,9 @@ Route::middleware([
 
     /* -- Dashboard -- */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    /* -- Rental Provider Profile -- */
+    Route::get('rental-provider/profile/{uuid}', [RentalProviderController::class, 'profile'])->name('rental.provider.profile');
 
     /* -- Profile -- */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -19,7 +19,7 @@ class CheckUserInfo
 
         if(is_null($user->company) && is_null($user->contact)){
 
-            return redirect()->route('completing.user', $user->id);
+            return redirect()->route('completing.user', $user->uuid);
         }
 
         return $next($request);

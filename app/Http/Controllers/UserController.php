@@ -19,9 +19,12 @@ class UserController extends Controller
     /**
      * Display the user's completing of information and contact details form.
      */
-    public function getUserInfoPage(User $user) : Response
+    public function getUserInfoPage($uuid) : Response
     {
-        
+        $user = User::where('uuid', $uuid)->first();
+
+        if(is_null($user)) $user = auth()->user();
+
         return Inertia::render('Auth/CompleteUserDetails', [
             'user' => $user
         ]);

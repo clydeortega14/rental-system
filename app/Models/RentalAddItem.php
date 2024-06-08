@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+// use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\Uuid;
 use Illuminate\Support\Str;
@@ -27,12 +27,8 @@ class RentalAddItem extends Model
         'updated_at',
         'created_at'
     ];
-
-    protected $keyType = 'string';
-
-    public $incrementing = false;
     
-    public function attachment(): MorphMany
+    public function attachment()
     {
         return $this->morphMany(Attachment::class, 'attachable');
     }
