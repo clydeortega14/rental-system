@@ -24,8 +24,6 @@ trait FileTraits {
 
     public function storeFile($model, $file, $driver, $path)
     {
-       
-        
         $filename = Str::random(32);
         $ext = $file->extension();
         $size = $file->getSize();
