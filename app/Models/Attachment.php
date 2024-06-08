@@ -33,4 +33,5 @@ class Attachment extends Model
     {
         return $this->filename.'.'.$this->type;
     }
+
 }

@@ -12,16 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rental_listings', function (Blueprint $table) {
-            $table->uuid('id')->primary(); // Change to bigIncrements to use auto-incrementing
-            $table->foreignUuid('user_id')->constrained();
-            $table->uuid('itemID')->nullable()->index();
+            $table->id();
+            $table->uuid('uuid');
+            $table->foreignId('user_id')->constrained();
             $table->string('itemName');
             $table->text('description');
             $table->string('category');
             $table->decimal('price', 10, 2); // Adjust precision and scale as needed
             $table->integer('quantity');
             $table->string('quality');
-            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

@@ -19,6 +19,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { FaShoppingCart, FaPlus, FaEye,FaTimes,FaEdit  } from "react-icons/fa";
 
 export default function RentalList({ auth, rentalItems }: PageProps & { rentalItems: any[] }) {
+    const [setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
     // Sample data with category information
 
@@ -56,14 +57,14 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
     const [isEditMode, setIsEditMode] = useState(false);
 
     const { data, setData, post,put, processing, errors, reset } = useForm({
-        itemImage: "",
+        filename: "",
         itemName: "",
         price: "",
         quantity: "",
         quality: "",
         remarks: "",
         category: "",
-        image: null,
+        // image: null,
     });
     const handleFileChange = (event: {
         target: { files: { name: any }[] };
@@ -74,6 +75,7 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
     // Function to handle form submission
     const handleSubmit: FormEventHandler = (e) => {
         try {
+           
             e.preventDefault();
             const newErrors = {};
             let hasError = false;
@@ -85,11 +87,13 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                     newErrors[fieldName] = false;
                 }
             }
+
             if (hasError) {
                 setSubmitted(true);
                 setErrors(newErrors);
                 return; // Exit the function
             }
+
 
             post(route("store.rentalListing.add.item"));
             reset();
@@ -184,7 +188,7 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                 </DialogTitle>
 
                 <DialogContent>
-                    <form onSubmit={handleSubmit} encType="multipart/formdata">
+                    <form onSubmit={handleSubmit} encType="multipart/form-data">
                         <div className="mb-4">
                             <Typography
                                 id="spring-modal-description"
@@ -194,9 +198,9 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                             </Typography>
                             <TextField
                                 type="file"
-                                id="itemImage"
-                                name="itemImage"
-                                onChange={handleFileChange}
+                                id="file"
+                                name="filename"
+                                onChange={e => setData('filename', e.target.files[0])}
                                 fullWidth
                             />
                             {submitted && !data.itemImage && (

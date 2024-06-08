@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\FileTraits;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -14,12 +15,13 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 
+
+
+
 class RentalItemController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    // Function to format size and get size type
+    use FileTraits;
+   
     private function formatSizeUnits($bytes) {
         $units = array('bytes', 'KB', 'MB', 'GB', 'TB');
         $i = 0;
@@ -29,6 +31,8 @@ class RentalItemController extends Controller
         }
         return array('size' => round($bytes, 2), 'size_type' => $units[$i]);
     }
+
+
     public function index(RentalAddItem $getItem) : Response
     {
         //
@@ -45,12 +49,8 @@ class RentalItemController extends Controller
 
  
 
-    public function create(RentalAddItem $rentalAdd ,Request $request) : RedirectResponse
+    public function create(Request $request) : RedirectResponse
     {
-
-        $user = Auth::user();
-        $userId = $user->id;
-
         // Validate the request data
         $validatedData = $request->validate([
             'itemName' => 'required|string',
@@ -59,36 +59,33 @@ class RentalItemController extends Controller
             'remarks' => 'required|string',
             'quantity' => 'required|integer',
             'quality' => 'required|string',
-            'itemImage' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Adjust max file size as needed
+            'filename' => 'required|mimes:jpg,jpeg,png|mimetypes:image/png,image/jpeg|max:2000'
         ]);
 
-       
-
-        $image = $request->file('itemImage');
-        $originalName = $image->getClientOriginalName();
-        $path = $image->storeAs('images', $originalName, 'public');
-        $mime = $image->getClientMimeType();
-        $fileSizeData = $this->formatSizeUnits($image->getSize());
-        $size = $fileSizeData['size'];
-        $sizeType = $fileSizeData['size_type'];
-       
-
-        $user = RentalAddItem::create([
-            'id' => (string) Str::uuid(),
+        $user = auth()->user();
+        $userId = $user->id;
+        // $user_rentalAddItems = $user->rentalAddItems();
+     
+        $rentalAddItem = RentalAddItem::create([
             'user_id' => $userId,
-            'itemID' => (string) Str::uuid(),
             'itemName' => $validatedData['itemName'],
             'category' => $validatedData['category'],
             'description' => $validatedData['remarks'],
             'price' => $validatedData['price'],
             'quantity' => $validatedData['quantity'],
             'quality' => $validatedData['quality'],
-            'image' => '/storage/'.$path,
         ]);
 
+        // Handle the file upload and association with the RentalAddItem
+        $file = $request->file('filename');
+        $fileName = $this->storeFile(
+            $rentalAddItem, // model
+            $file, // file
+            'public', // driver
+            'images/' . $rentalAddItem->category // path
+        );
 
         return redirect()->route('rentalListing');
-       
     }
 
     /**
