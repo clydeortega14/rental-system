@@ -20,6 +20,10 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/itemDetails/{uuid}', [RentalItemController::class, 'itemDetails'])->name('itemDetails');
+
+Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
+
 Route::middleware([
     'auth',
     'verified'
@@ -30,7 +34,6 @@ Route::middleware([
     // user must redirect to this route if first time using the platform.
     Route::post('/completing/user', [UserController::class, 'store'])->name('store.completing.user');
     
-
     Route::get('/rentalListing', function () {
         return Inertia::render('User/Partials/Rental');
     })->middleware(['auth'])->name('rentalListing');
@@ -38,15 +41,9 @@ Route::middleware([
     // Route::get('/itemDetails/{id}', function () {
     //     return Inertia::render('Item/View');
     // })->middleware(['auth'])->name('itemDetails');
-    Route::get('/itemDetails/{id}', function ($id) {
-        // Pass the item ID to the view
-        return Inertia::render('Item/View', ['itemId' => $id]);
-    })->name('itemDetails');
 
-    Route::get('/itemDetails/{id}/checkout', function ($id) {
-        // Pass the item ID to the view
-        return Inertia::render('Item/CheckoutItem', ['itemId' => $id]);
-    })->name('itemCheckout');
+
+    
 });
 
 Route::middleware([
