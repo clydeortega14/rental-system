@@ -3,6 +3,7 @@
 namespace App\Traits\RentalItems;
 
 use App\Models\RentalAddItem;
+use Inertia\Inertia;
 
 trait ItemDetails {
 
@@ -10,7 +11,7 @@ trait ItemDetails {
     {
         $find_item = $this->findItem($uuid);
 
-        return Inertia::render('Item/ItemDetail', ['item' => $find_item]);
+        return Inertia::render('Item/View', ['item' => $find_item]);
     }
 
     public function checkoutItem($uuid)

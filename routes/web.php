@@ -7,6 +7,10 @@ use App\Http\Controllers\RentalItemController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\RentalProviderController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\FormController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\PermissionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -76,6 +80,38 @@ Route::middleware([
 
     /* -- Upload Valid ID -- */
     Route::post('/upload/valid-id', [FileUploadController::class, 'uploadFile'])->name('upload.valid-id');
+
+    /* -- Categories Routes -- */
+    Route::prefix('categories')->group(function(){
+
+        Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
+
+    });
+
+    /* -- Forms Routes -- */
+    Route::prefix('forms')->group(function(){
+
+        Route::get('/', [FormController::class, 'index'])->name('forms.index');
+    });
+
+    /* -- Access Rights Routes -- */
+    Route::prefix('access-rights')->group(function(){
+
+        // Users
+        Route::prefix('users')->group(function(){
+            Route::get('/', [UserController::class, 'index'])->name('users.index');
+        });
+
+        // Roles
+        Route::prefix('roles')->group(function(){
+            Route::get('/', [RoleController::class, 'index']);
+        });
+
+        // Permissions
+        Route::prefix('permissions')->group(function(){
+            Route::get('/', [PermissionController::class, 'index']);
+        });
+    });
 
     Route::delete('/rentalListing')->name('rental.listing');
   
