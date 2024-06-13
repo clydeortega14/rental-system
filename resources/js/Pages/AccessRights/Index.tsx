@@ -5,8 +5,11 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import React, { useState } from "react";
+import UserList from "../AccessRights/User/UserList";
+import RoleList from "../AccessRights/Role/RoleList";
+import PermissionList from "../AccessRights/Permission/PermissionList";
 
-const Index = ({ auth }: PageProps) => {
+const Index = ({ auth, className }: PageProps<{ className?: string }>) => {
     const [activeTab, setActiveTab] = useState(0);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -38,9 +41,15 @@ const Index = ({ auth }: PageProps) => {
                                 </Tabs>
                             </Box>
                             <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                                {activeTab === 0 && "User Tab Content"}
-                                {activeTab === 1 && "Role Tab Content"}
-                                {activeTab === 2 && "Permission Tab Content"}
+                                {activeTab === 0 && (
+                                    <UserList className="max-w-xl" />
+                                )}
+                                {activeTab === 1 && (
+                                    <RoleList className="max-w-xl" />
+                                )}
+                                {activeTab === 2 && (
+                                    <PermissionList className="max-w-xl" />
+                                )}
                             </div>
                         </div>
                     </div>
