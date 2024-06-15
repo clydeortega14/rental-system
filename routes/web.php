@@ -11,6 +11,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\WorkflowController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -111,6 +112,11 @@ Route::middleware([
         Route::prefix('permissions')->group(function(){
             Route::get('/', [PermissionController::class, 'index']);
         });
+    });
+
+    /* -- Workflows --*/
+    Route::prefix('workflows')->group(function(){
+        Route::get('/', [WorkflowController::class, 'index'])->name('workflows.index');
     });
 
     Route::delete('/rentalListing')->name('rental.listing');

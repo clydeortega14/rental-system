@@ -2,13 +2,36 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { PageProps } from "@/types";
 import { Head } from "@inertiajs/react";
 import PrimaryButton from "@/Components/PrimaryButton";
+import SecondaryButton from "@/Components/SecondaryButton";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
 import CustomTable from "@/Components/CustomTable";
+import { Fragment } from "react";
 
-const Index = ({ auth }: PageProps) => {
+const Index = ({ auth, categories }: PageProps<{ categories: array }>) => {
+    const mapped_categories = categories.map((category, index) => (
+        <Fragment key={index}>
+            <TableRow
+                key={category.name}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+                <TableCell>{category.detail.label}</TableCell>
+                <TableCell>{category.name}</TableCell>
+                <TableCell>
+                    {category.detail.active ? "Active" : "Inactive"}
+                </TableCell>
+                <TableCell>
+                    <SecondaryButton className="mr-2">View</SecondaryButton>
+                    <SecondaryButton className="mr-2">Edit</SecondaryButton>
+                    <SecondaryButton className="mr-2">
+                        Attach Form
+                    </SecondaryButton>
+                </TableCell>
+            </TableRow>
+        </Fragment>
+    ));
     return (
         <div>
             <AuthenticatedLayout
@@ -40,9 +63,7 @@ const Index = ({ auth }: PageProps) => {
                                         <TableCell>Action</TableCell>
                                     </TableRow>
                                 </TableHead>
-                                <TableBody>
-                                    <TableRow></TableRow>
-                                </TableBody>
+                                <TableBody>{mapped_categories}</TableBody>
                             </CustomTable>
                         </div>
                     </div>

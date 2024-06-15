@@ -13,6 +13,7 @@ import { CiSettings } from "react-icons/ci";
 import { BiCategoryAlt } from "react-icons/bi";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { FaWpforms } from "react-icons/fa6";
+import { LuWorkflow } from "react-icons/lu";
 import NavLink from "@/Components/NavLink";
 import initialLogo from "@/../../resources/img/initialLogo.png";
 import { Fragment } from "react";
@@ -71,6 +72,13 @@ function Sidebar({ open }: SidebarProps) {
                     link: route("users.index"),
                     status: route().current("users.index"),
                     icon: <FaPeopleGroup />,
+                },
+                {
+                    id: 34,
+                    name: "Workflows",
+                    link: route("workflows.index"),
+                    status: route().current("workflows.index"),
+                    icon: <LuWorkflow />,
                 },
             ],
         },
