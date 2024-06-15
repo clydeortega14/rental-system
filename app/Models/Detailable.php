@@ -15,7 +15,6 @@ class Detailable extends Model
     protected $fillable = [
         'detailable_type',
         'detailable_id',
-        'name',
         'label',
         'description',
         'active',
