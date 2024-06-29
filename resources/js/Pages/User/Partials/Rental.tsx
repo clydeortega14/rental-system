@@ -1,5 +1,5 @@
 import { Head, Link, useForm } from "@inertiajs/react";
-import { useState, FormEventHandler } from "react"; // Import useState hook to manage state
+import { useState, FormEventHandler,useEffect  } from "react"; // Import useState hook to manage state
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { PageProps } from "@/types";
@@ -14,17 +14,22 @@ import {
     Select,
     MenuItem,
     IconButton,
+    Button,
 } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
 import { FaShoppingCart, FaPlus, FaEye,FaTimes,FaEdit  } from "react-icons/fa";
+import { MdAttachment } from "react-icons/md";
 
 export default function RentalList({ auth, rentalItems }: PageProps & { rentalItems: any[] }) {
     const [setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
+    const [showFileInput, setShowFileInput] = useState(false);
+    const [showButton, setShowButton] = useState(true);
+    const [initialData, setInitialData] = useState({});
+
     // Sample data with category information
 
     const items = rentalItems;
-
     // State variables for pagination
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
@@ -107,6 +112,7 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
 
     const handleView = (itemId) => {
         const item = rentalItems.find((item) => item.id === itemId);
+        console.log(item)
         setSelectedItem(item);
         setIsModalOpen(true);
     };
@@ -124,6 +130,7 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
 
     const handleEdit = (itemId) => {
         const item = rentalItems.find((item) => item.id === itemId);
+        console.log(item);
         setSelectedItem(item);
         setData({
             itemName: item.itemName,
@@ -132,30 +139,96 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
             quality: item.quality,
             description: item.description,
             category: item.category,
-            image: null, // Set image to null initially
         });
         setIsEditMode(true);
 
     };
 
-    const handleSave = () => {
-        const formData = new FormData();
-        formData.append('itemName', data.itemName);
-        formData.append('price', data.price);
-        formData.append('quantity', data.quantity);
-        formData.append('quality', data.quality);
-        formData.append('description', data.description);
-        formData.append('category', data.category);
-    
-        put(route('rental.update', { id: selectedItem.id }), {
-            data: formData,
-            onSuccess: () => reset(),
+    useEffect(() => {
+        if (selectedItem) {
+            const itemData = {
+                id: selectedItem.id || '',
+                category: selectedItem.category || '',
+                itemName: selectedItem.itemName || '',
+                price: selectedItem.price || '',
+                quantity: selectedItem.quantity || '',
+                quality: selectedItem.quality || '',
+                description: selectedItem.description || '',
+                filename: null
+            };
+            setData(itemData);
+            setInitialData(itemData);
+        }
+    }, [selectedItem]);
+
+    const handleUpdate = (e) => {
+        e.preventDefault();
+        const updatedData = {};
+
+        Object.keys(data).forEach(key => {
+            if (data[key] !== initialData[key]) {
+                updatedData[key] = data[key];
+            }
         });
-        setIsEditMode(false);
-        toast.success("Item updated successfully.");
+
+        // Add more validations if needed
+        if (!updatedData.category && data.category === '') {
+            console.log('Category is required.');
+            return;
+        }
+        updatedData.id = data.id;
+        // Form submission logic here
+        console.log('Updated data:', updatedData);
+        // put(route('rental.update', { id: updatedData.id }), {
+        //     data: updatedData,
+        //     onSuccess: () => reset(),
+        // });
+        // setIsEditMode(false);
+        // toast.success("Item updated successfully.");
     };
+    // const handleUpdate = () => {
+       
+       
+        // const newErrors = {};
+        // let hasError = false;
+        // for (const fieldName in data) {
+        //     if (!data[fieldName]) {
+        //         newErrors[fieldName] = true;
+        //         hasError = true;
+        //     } else {
+        //         newErrors[fieldName] = false;
+        //     }
+        // }
+
+
+        // const formData = new FormData();
+        // formData.append('itemName', data.itemName);
+        // formData.append('price', data.price);
+        // formData.append('quantity', data.quantity);
+        // formData.append('quality', data.quality);
+        // formData.append('description', data.description);
+        // formData.append('category', data.category);
+
+        // if (data.image) {
+        //     formData.append('image', data.images);
+        // }
+
+     
+    
+        // put(route('rental.update', { id: selectedItem.id }), {
+        //     data: formData,
+        //     onSuccess: () => reset(),
+        // });
+        // setIsEditMode(false);
+        // toast.success("Item updated successfully.");
+    // };
     // Change page
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+    const handleUpdateImageButtonClick = () => {
+        setShowButton(false); // Hide the button
+        setShowFileInput(true); // Show the file input
+    };
 
     return (
         <AuthenticatedLayout
@@ -427,10 +500,13 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                     {selectedItem && (
                         <div className="flex flex-col items-center">
                             <img
-                                src={selectedItem.image}
+                  
+                                src={`/storage/${selectedItem.images}`}
+                                
                                 alt={selectedItem.itemName}
                                 className="w-full h-auto object-cover mb-4"
                             />
+                           
                             <div className="w-full space-y-2">
                              
                                 <div className="space-y-1">
@@ -454,76 +530,119 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
+                <form onSubmit={handleUpdate} encType="multipart/form-data">
                     {selectedItem && (
-                        <div className="flex flex-col items-center">
-                            {!isEditMode ? (
-                                <>
-                                    <img
-                                        src={selectedItem.image}
-                                        alt={selectedItem.itemName}
-                                        className="w-full h-auto object-cover mb-4"
-                                    />
-                                    <Typography variant="h6" component="h2" className="text-2xl font-bold">
-                                        {selectedItem.itemName}
-                                    </Typography>
-                                    <Typography variant="body1" className="text-lg whitespace-pre-line">
-                                        {selectedItem.description}
-                                    </Typography>
-                                </>
-                            ) : (
-                                <div className="w-full space-y-2 mt-4">
-                                    <TextField
-                                        fullWidth
-                                        label="Item Name"
-                                        value={data.itemName}
-                                        onChange={(e) => setData('itemName', e.target.value)}
-                                    />
-                                    <TextField
-                                        fullWidth
-                                        label="Price"
-                                        type="number"
-                                        value={data.price}
-                                        onChange={(e) => setData('price', e.target.value)}
-                                    />
-                                    <TextField
-                                        fullWidth
-                                        label="Quantity"
-                                        type="number"
-                                        value={data.quantity}
-                                        onChange={(e) => setData('quantity', e.target.value)}
-                                    />
-                                    <TextField
-                                        fullWidth
-                                        label="Quality"
-                                        value={data.quality}
-                                        onChange={(e) => setData('quality', e.target.value)}
-                                    />
-                                    <TextField
-                                        fullWidth
-                                        label="Description"
-                                        value={data.description}
-                                        onChange={(e) => setData('description', e.target.value)}
-                                        multiline
-                                        rows={4}
-                                    />
-                                    <TextField
-                                        fullWidth
-                                        label="Category"
-                                        value={data.category}
-                                        onChange={(e) => setData('category', e.target.value)}
-                                    />
-                                    {/* <input
-                                        type="file"
-                                        onChange={(e) => setData('image', e.target.files[0])}
-                                    /> */}
-                                </div>
+                            <div className="flex flex-col items-center">
+                                {selectedItem.images && showButton && (
+                            <div>
+                                <img
+                                    src={`/storage/${selectedItem.images}`}
+                                    alt={selectedItem.itemName}
+                                    className="w-full h-50 object-cover mb-4"
+                                />
+                                
+                                <button
+                                    onClick={handleUpdateImageButtonClick}
+                                    className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-5 rounded inline-flex items-center mr-4"
+                                    disabled={processing}
+                                >
+                                    Update Image
+                                </button>
+                                
+                            </div>
                             )}
+                            {showFileInput && (
+                               
+                                <TextField
+                                type="file"
+                                id="file"
+                                name="filename"
+                                onChange={e => setData('filename', e.target.files[0])}
+                                fullWidth
+                            />
+                            )}
+                            
+                            <div className="w-full space-y-2 mt-4">
+                                <div className="mb-4">
+                                    <Typography
+                                        id="spring-modal-description"
+                                        sx={{ mt: 2 }}
+                                    >
+                                        Choose Catergories
+                                    </Typography>
+                                    <Select
+                                        label="Category"
+                                        id="category"
+                                        name="category"
+                                        value={data.category}
+                                        onChange={(e) =>
+                                            setData("category", e.target.value)
+                                        }
+                                        fullWidth
+                                    >
+                                        <MenuItem value="Select Category" disabled>
+                                            Select Category
+                                        </MenuItem>
+                                        <MenuItem value="Bags">Bags</MenuItem>
+                                        <MenuItem value="Motorcycles">
+                                            Motorcycles
+                                        </MenuItem>
+                                        <MenuItem value="Cars">Cars</MenuItem>
+                                        {/* Add more categories as needed */}
+                                    </Select>
+                                    {submitted && !data.category && (
+                                        <Typography
+                                            variant="caption"
+                                            className="text-red-500"
+                                        >
+                                            Category is required.
+                                        </Typography>
+                                    )}
+                                </div>
+                                <TextField
+                                    fullWidth
+                                    label="Item Name"
+                                    value={data.itemName}
+                                    onChange={(e) => setData('itemName', e.target.value)}
+                                />
+                                <TextField
+                                    fullWidth
+                                    label="Price"
+                                    type="number"
+                                    value={data.price}
+                                    onChange={(e) => setData('price', e.target.value)}
+                                />
+                                <TextField
+                                    fullWidth
+                                    label="Quantity"
+                                    type="number"
+                                    value={data.quantity}
+                                    onChange={(e) => setData('quantity', e.target.value)}
+                                />
+                                <TextField
+                                    fullWidth
+                                    label="Quality"
+                                    value={data.quality}
+                                    onChange={(e) => setData('quality', e.target.value)}
+                                />
+                                <TextField
+                                    fullWidth
+                                    label="Description"
+                                    value={data.description}
+                                    onChange={(e) => setData('description', e.target.value)}
+                                    multiline
+                                    rows={4}
+                                />
+                                
+                                
+                            </div>
                         </div>
                     )}
+                 </form>
                 </DialogContent>
                 <DialogActions>
                     <button
-                        onClick={handleSave}
+                        onClick={handleUpdate}
                         className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-5 rounded inline-flex items-center mr-4"
                         disabled={processing}
                     >
@@ -610,6 +729,7 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                                                         </th>
                                                     </tr>
                                                 </thead>
+
                                                 <tbody>
                                                     {filterItemsByCategoryAndPagination().map(
                                                         (item) => (
@@ -618,11 +738,16 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                                                                 className="text-black font-bold"
                                                             >
                                                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                                                    <img
-                                                                        src={item.image}
-                                                                        className="h-20 w-20 flex-shrink-0 overflow-hidden border border-green-700 rounded-full "
-                                                                        alt="..."
-                                                                    />
+                                                                   
+                                                                   
+                                                                        <img 
+                                                                          
+                                                                          src={`/storage/${item.images}`}
+                                                                            alt={item.images} 
+                                                                            className="h-20 w-20 flex-shrink-0 overflow-hidden border border-green-700 rounded-full "
+                                                                            
+                                                                        />
+                                                                   
                                                                 </td>
                                                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                                                                     {
@@ -684,6 +809,7 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                                                         ),
                                                     )}
                                                 </tbody>
+
                                             </table>
                                             {/* Pagination */}
                                             <div className="flex justify-center mt-4">

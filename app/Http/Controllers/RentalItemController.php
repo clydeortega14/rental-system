@@ -35,12 +35,31 @@ class RentalItemController extends Controller
 
     public function index(RentalAddItem $getItem) : Response
     {
-        //
-        $rentalItems = RentalAddItem::all();
+        // Fetch rental items along with their attachments
+        $formattedRentalItems = RentalAddItem::with('attachment')->get();
 
-        return Inertia::render('User/Partials/Rental', [
-            'rentalItems' => $rentalItems // Pass the rental items data to the React component
-        ]);
+        // Loop through each rental item to extract image URLs
+        $rentalItems = [];
+        foreach ($formattedRentalItems as $item) {
+            $images = [];
+            foreach ($item->attachment as $attachment) {
+                $images[] = $attachment->path .'/' . $attachment->filename.'.'.$attachment->type;
+            }
+            $rentalItems[] = [
+                'id' => $item->id,
+                'itemName' => $item->itemName,
+                'description' => $item->description,
+                'category' => $item->category,
+                'price' => $item->price,
+                'quantity' => $item->quantity,
+                'quality' => $item->quality,
+                'images' => $images,
+               
+            ];
+        }
+      
+        // Pass the formatted rental items data to the React component using compact
+        return Inertia::render('User/Partials/Rental', compact('rentalItems'));
     }
 
     /**
@@ -51,6 +70,8 @@ class RentalItemController extends Controller
 
     public function create(Request $request) : RedirectResponse
     {
+
+       
         // Validate the request data
         $validatedData = $request->validate([
             'itemName' => 'required|string',
@@ -84,7 +105,6 @@ class RentalItemController extends Controller
             'public', // driver
             'images/' . $rentalAddItem->category // path
         );
-
         return redirect()->route('rentalListing');
     }
 
@@ -121,11 +141,10 @@ class RentalItemController extends Controller
      */
     public function update(Request $request, string $id)
     {
+
+        dd($request, $id);
         //
         $item = RentalAddItem::findOrFail($id);
-
-     
-
         // Validate the request data
         $request->validate([
             'itemName' => 'required|string|max:255',
@@ -161,4 +180,5 @@ class RentalItemController extends Controller
     {
         //
     }
+
 }
