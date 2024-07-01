@@ -22,7 +22,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             IdListsSeeders::class,
-            CategorySeeder::class
+            CategorySeeder::class,
+            FormTypesSeeder::class,
+            FormSeeder::class
         ]);
     }
 }

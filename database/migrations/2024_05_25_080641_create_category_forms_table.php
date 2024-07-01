@@ -21,7 +21,9 @@ return new class extends Migration
             $table->unsignedSmallInteger('form_type_id');
             $table->string('name');
             
-            $table->foreign('form_type_id')->references('id')->on('form_types');
+            $table->foreign('form_type_id')->references('id')->on('form_types')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
 
         Schema::create('category_forms', function (Blueprint $table) {
