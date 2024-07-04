@@ -14,6 +14,7 @@ import { BiCategoryAlt } from "react-icons/bi";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { FaWpforms } from "react-icons/fa6";
 import { LuWorkflow } from "react-icons/lu";
+import { AiFillProfile } from "react-icons/ai";
 import NavLink from "@/Components/NavLink";
 import initialLogo from "@/../../resources/img/initialLogo.png";
 import { Fragment } from "react";
@@ -33,19 +34,26 @@ function Sidebar({ open }: SidebarProps) {
         },
         {
             id: 2,
+            name: "Profiles",
+            link: route("rental.provider.profile.lists"),
+            status: route().current("rental.provider.profile.lists"),
+            icon: <AiFillProfile />,
+        },
+        {
+            id: 3,
             name: "Reservation Items",
             link: route("reservations.index"),
             status: route().current("reservations.index"),
             icon: <MdEventNote />,
         },
         {
-            id: 3,
+            id: 4,
             name: "Rental Listings",
             link: "/rentalListing",
             icon: <GiNotebook />,
         },
         {
-            id: 4,
+            id: 5,
             name: "Settings",
             link: "",
             status: "",

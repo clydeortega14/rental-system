@@ -19,4 +19,9 @@ class RentalProviderController extends Controller
             'rental_provider' => $rental_provider
         ]);
     }
+
+    public function profileLists()
+    {
+        return Inertia::render('RentalProvider/ProfileList');
+    }
 }

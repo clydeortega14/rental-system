@@ -58,8 +58,11 @@ Route::middleware([
     /* -- Dashboard -- */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    /* -- Rental Provider Profile -- */
+    /* -- Rental Provider Profile Show -- */
     Route::get('rental-provider/profile/{uuid}', [RentalProviderController::class, 'profile'])->name('rental.provider.profile');
+
+    /* -- Rental Provider Profiles -- */
+    Route::get('rental-provider/profiles', [RentalProviderController::class, 'profileLists'])->name('rental.provider.profile.lists');
 
     /* -- Profile -- */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

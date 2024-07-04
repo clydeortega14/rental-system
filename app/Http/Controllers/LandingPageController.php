@@ -15,7 +15,6 @@ class LandingPageController extends Controller
     {
         $categories = Detailable::where('detailable_type', 'App\Models\Category')
                         ->where('active', true)
-                        
                         ->get(['detailable_id as category_id', 'label']);
 
         return Inertia::render('Welcome1', [
