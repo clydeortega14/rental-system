@@ -78,6 +78,16 @@ export default function Authenticated({
                                             >
                                                 Profile
                                             </Dropdown.Link>
+                                            {user.company !== undefined && (
+                                                <Dropdown.Link
+                                                    href={route(
+                                                        "rental.provider.profile",
+                                                        user.company.uuid,
+                                                    )}
+                                                >
+                                                    Company Profile
+                                                </Dropdown.Link>
+                                            )}
                                             <Dropdown.Link
                                                 href={route("logout")}
                                                 method="post"
@@ -162,6 +172,11 @@ export default function Authenticated({
                                 <ResponsiveNavLink href={route("profile.edit")}>
                                     Profile
                                 </ResponsiveNavLink>
+
+                                <ResponsiveNavLink href={route("profile.edit")}>
+                                    Company Profile
+                                </ResponsiveNavLink>
+
                                 <ResponsiveNavLink
                                     method="post"
                                     href={route("logout")}
@@ -178,7 +193,7 @@ export default function Authenticated({
             <div className="flex">
                 <Sidebar open={open} />
 
-                <div className="min-h-full w-full bg-gray-100">
+                <div className="min-h-screen w-full bg-gray-100">
                     {header && (
                         <header className="bg-white shadow">
                             <div className="max-w-8xl mx-auto py-6 px-4 sm:px-6 lg:px-8">

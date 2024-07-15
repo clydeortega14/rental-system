@@ -33,13 +33,6 @@ function Sidebar({ open }: SidebarProps) {
             icon: <MdDashboard />,
         },
         {
-            id: 2,
-            name: "Profiles",
-            link: route("rental.provider.profile.lists"),
-            status: route().current("rental.provider.profile.lists"),
-            icon: <AiFillProfile />,
-        },
-        {
             id: 3,
             name: "Reservation Items",
             link: route("reservations.index"),
@@ -143,7 +136,7 @@ function Sidebar({ open }: SidebarProps) {
     return (
         <>
             <div
-                className={`py-0 px-2 bg-light-green h-100 relative  ${open ? "w-72" : "w-20"} duration-300`}
+                className={`py-0 px-2 bg-gradient-to-tr from-blue-500 to-green-500 h-100 relative  ${open ? "w-72" : "w-20"} duration-300`}
             >
                 <ul className="pt-7">{menuLists}</ul>
             </div>
