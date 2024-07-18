@@ -15,7 +15,8 @@ class LandingPageController extends Controller
     {
         $categories = Detailable::where('detailable_type', 'App\Models\Category')
                         ->where('active', true)
-                        ->get(['detailable_id as category_id', 'label']);
+                        ->get(['detailable_id as category_id', 'label'])
+                        ->toArray();
 
         return Inertia::render('Welcome1', [
 
@@ -23,7 +24,7 @@ class LandingPageController extends Controller
             'canRegister' => Route::has('register'),
             'laravelVersion' => Application::VERSION,
             'phpVersion' => PHP_VERSION,
-            'categories'
+            'categories' => $categories
 
         ]);
     }
