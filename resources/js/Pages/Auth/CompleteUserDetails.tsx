@@ -1,214 +1,241 @@
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, useForm } from '@inertiajs/react';
-import TextInput from '@/Components/TextInput';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import { Transition } from '@headlessui/react';
-import { FormEventHandler } from 'react';
-import InputError from '@/Components/InputError';
+import GuestLayout from "@/Layouts/GuestLayout";
+import { Head, useForm } from "@inertiajs/react";
+import TextInput from "@/Components/TextInput";
+import InputLabel from "@/Components/InputLabel";
+import PrimaryButton from "@/Components/PrimaryButton";
+import { Transition } from "@headlessui/react";
+import { FormEventHandler } from "react";
+import InputError from "@/Components/InputError";
 
-function CompleteUserDetails({ user } : {user:object}){
+function CompleteUserDetails({ user }: { user: object }) {
+    const { data, setData, post, processing, errors } = useForm({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        company_name: "",
+        tin: "",
+        years_experience: "",
+        valid_id: "",
+        telephone: "",
+        mobile: "",
+    });
 
-	const { data, setData, post, processing, errors } = useForm({
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
 
-		id: user.id,
-		name: user.name,
-		email: user.email,
-		company_name: '',
-		tin: '',
-		years_experience: '',
-		valid_id: '',
-		telephone: '',
-		mobile: '',
-	})
+        post(route("store.completing.user"));
+    };
 
-	const submit: FormEventHandler = (e) => {
-		
-		e.preventDefault();
+    return (
+        <GuestLayout>
+            <Head title="Complete User Details" />
 
-		post(route('store.completing.user'));
-	}
+            <section>
+                <header>
+                    <h2 className="text-lg font-medium text-gray-900">
+                        Personal Information
+                    </h2>
 
+                    <p className="mt-1 text-sm text-gray-600">
+                        Please complete your personal information
+                    </p>
+                </header>
 
-	return (
+                <form
+                    onSubmit={submit}
+                    className="mt-6 space-y-6"
+                    enctype="multipart/form-data"
+                >
+                    <div>
+                        <TextInput
+                            type="hidden"
+                            className="mt-1 block w-full"
+                            value={data.id}
+                            autoComplete="user_id"
+                        />
+                    </div>
 
-		<GuestLayout>
-			<Head title="Complete User Details" />
+                    <div>
+                        <InputLabel htmlFor="name" value="Name" />
 
+                        <TextInput
+                            id="name"
+                            className="mt-1 block w-full"
+                            value={data.name}
+                            onChange={(e) => setData("name", e.target.value)}
+                            required
+                            disabled
+                            isFocused
+                            autoComplete="name"
+                        />
+                    </div>
 
-			<section>
-				<header>
-					<h2 className="text-lg font-medium text-gray-900">Personal Information</h2>
+                    <div>
+                        <InputLabel htmlFor="email" value="Email" />
 
-	                <p className="mt-1 text-sm text-gray-600">
-	                   Please complete your personal information
-	                </p>
-				</header>
+                        <TextInput
+                            id="email"
+                            className="mt-1 block w-full"
+                            value={data.email}
+                            onChange={(e) => setData("email", e.target.value)}
+                            required
+                            disabled
+                            isFocused
+                            autoComplete="email"
+                        />
+                    </div>
 
-				<form onSubmit={submit} className="mt-6 space-y-6" enctype="multipart/form-data">
+                    <header>
+                        <h2 className="text-lg font-medium text-gray-900">
+                            Company
+                        </h2>
 
-					<div>
-						<TextInput
-							type="hidden"
-							className="mt-1 block w-full"
-							value={data.id}
-							autoComplete="user_id"
-						 />
-					</div>
-					
-					<div>
-						<InputLabel htmlFor="name" value="Name" />
+                        <p className="mt-1 text-sm text-gray-600">
+                            Complete your company information
+                        </p>
+                    </header>
 
-						<TextInput
-                        id="name"
-                        className="mt-1 block w-full"
-                        value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
-                        disabled
-                        isFocused
-                        autoComplete="name"
-                    />
-					</div>
+                    <div>
+                        <InputLabel
+                            htmlFor="company-name"
+                            value="Name of your company"
+                        />
 
-					<div>
-						<InputLabel htmlFor="email" value="Email" />
+                        <TextInput
+                            id="company-name"
+                            className="mt-1 block w-full"
+                            value={data.company_name}
+                            onChange={(e) =>
+                                setData("company_name", e.target.value)
+                            }
+                            isFocused
+                            autoComplete="company-name"
+                        />
 
-						<TextInput
-                        id="email"
-                        className="mt-1 block w-full"
-                        value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
-                        required
-                        disabled
-                        isFocused
-                        autoComplete="email"
-                    />
-					</div>
+                        <InputError
+                            className="mt-2"
+                            message={errors.company_name}
+                        />
+                    </div>
 
-					<header>
-						<h2 className="text-lg font-medium text-gray-900">Company</h2>
+                    <div>
+                        <InputLabel
+                            htmlFor="tin"
+                            value="TIN (Tax Identification Number)"
+                        />
 
-	                	<p className="mt-1 text-sm text-gray-600">
-	                  	 	Complete your company information
-	                	</p>
-					</header>
+                        <TextInput
+                            id="tin"
+                            className="mt-1 block w-full"
+                            value={data.tin}
+                            onChange={(e) => setData("tin", e.target.value)}
+                            isFocused
+                            autoComplete="tin"
+                        />
 
-					<div>
-						<InputLabel htmlFor="company-name" value="Name of your company" />
+                        <InputError className="mt-2" message={errors.tin} />
+                    </div>
 
-						<TextInput
-	                        id="company-name"
-	                        className="mt-1 block w-full"
-	                        value={data.company_name}
-	                        onChange={ (e) => setData('company_name', e.target.value) }
-	                        
-	                        isFocused
-	                        autoComplete="company-name"
-	                    />
+                    <div>
+                        <InputLabel
+                            htmlFor="industry-years"
+                            value="Years in the industry"
+                        />
 
-	                    <InputError className="mt-2" message={errors.company_name} />
-					</div>
+                        <TextInput
+                            id="industry-years"
+                            className="mt-1 block w-full"
+                            value={data.years_experience}
+                            onChange={(e) =>
+                                setData("years_experience", e.target.value)
+                            }
+                            isFocused
+                            autoComplete="industry-years"
+                        />
+                        <InputError
+                            className="mt-2"
+                            message={errors.years_experience}
+                        />
+                    </div>
 
-					<div>
-						<InputLabel htmlFor="tin" value="TIN (Tax Identification Number)" />
+                    <div>
+                        <InputLabel
+                            htmlFor="valid-id"
+                            value="Valid ID (atleast 1 valid id)"
+                        />
 
-						<TextInput
-	                        id="tin"
-	                        className="mt-1 block w-full"
-	                        value={data.tin}
-	                        onChange={(e) => setData('tin', e.target.value)}
-	                        
-	                        isFocused
-	                        autoComplete="tin"
-	                    />
+                        <TextInput
+                            type="file"
+                            id="valid-id"
+                            className="mt-1 block w-full"
+                            value={data.valid_id}
+                            onChange={(e) =>
+                                setData("valid_id", e.target.value)
+                            }
+                            isFocused
+                            autoComplete="valid-id"
+                        />
 
-	                    <InputError className="mt-2" message={errors.tin} />
-					</div>
+                        <InputError
+                            className="mt-2"
+                            message={errors.valid_id}
+                        />
+                    </div>
 
-					<div>
-						<InputLabel htmlFor="industry-years" value="Years in the industry" />
+                    <header>
+                        <h2 className="text-lg font-medium text-gray-900">
+                            Contact Details
+                        </h2>
 
-						<TextInput
-	                        id="industry-years"
-	                        className="mt-1 block w-full"
-	                        value={data.years_experience}
-	                        onChange={(e) => setData('years_experience', e.target.value)}
-	                        
-	                        isFocused
-	                        autoComplete="industry-years"
-	                    />
-	                    <InputError className="mt-2" message={errors.years_experience} />
-					</div>
+                        <p className="mt-1 text-sm text-gray-600">
+                            Please provide your updated contact details
+                        </p>
+                    </header>
 
-					<div>
-						<InputLabel htmlFor="valid-id" value="Valid ID (atleast 1 valid id)" />
+                    <div>
+                        <InputLabel
+                            htmlFor="tel-contact"
+                            value="Telephone (Optional)"
+                        />
 
-						<TextInput
-							type="file"
-	                        id="valid-id"
-	                        className="mt-1 block w-full"
-	                        value={data.valid_id}
-	                        onChange={(e) => setData('valid_id', e.target.value)}
-	                        
-	                        isFocused
-	                        autoComplete="valid-id"
-	                    />
+                        <TextInput
+                            id="tel-contact"
+                            className="mt-1 block w-full"
+                            value={data.telephone}
+                            onChange={(e) =>
+                                setData("telephone", e.target.value)
+                            }
+                            isFocused
+                            autoComplete="tel-contact"
+                        />
 
-	                    <InputError className="mt-2" message={errors.valid_id} />
-					</div>
+                        <InputError
+                            className="mt-2"
+                            message={errors.telephone}
+                        />
+                    </div>
 
-					<header>
-						<h2 className="text-lg font-medium text-gray-900">Contact Details</h2>
+                    <div>
+                        <InputLabel htmlFor="mobile" value="Mobile" />
 
-	                	<p className="mt-1 text-sm text-gray-600">
-	                  	 	Please provide your updated contact details
-	                	</p>
-					</header>
+                        <TextInput
+                            id="mobile"
+                            className="mt-1 block w-full"
+                            value={data.mobile}
+                            onChange={(e) => setData("mobile", e.target.value)}
+                            isFocused
+                            autoComplete="mobile"
+                        />
+                        <InputError className="mt-2" message={errors.mobile} />
+                    </div>
 
-					<div>
-						<InputLabel htmlFor="tel-contact" value="Telephone (Optional)" />
-
-						<TextInput
-	                        id="tel-contact"
-	                        className="mt-1 block w-full"
-	                        value={data.telephone}
-	                        onChange={(e) => setData('telephone', e.target.value)}
-	                        
-	                        isFocused
-	                        autoComplete="tel-contact"
-	                    />
-
-	                    <InputError className="mt-2" message={errors.telephone} />
-					</div>
-
-					<div>
-						<InputLabel htmlFor="mobile" value="Mobile" />
-
-						<TextInput
-	                        id="mobile"
-	                        className="mt-1 block w-full"
-	                        value={data.mobile}
-	                        onChange={(e) => setData('mobile', e.target.value)}
-	                        
-	                        isFocused
-	                        autoComplete="mobile"
-	                    />
-	                    <InputError className="mt-2" message={errors.mobile} />
-					</div>
-
-					<div className="flex items-center gap-4">
-						<PrimaryButton>
-							Submit
-						</PrimaryButton>
-					</div>
-				</form>
-			</section>
-
-		</GuestLayout>
-	);
-
+                    <div className="flex items-center gap-4">
+                        <PrimaryButton>Submit</PrimaryButton>
+                    </div>
+                </form>
+            </section>
+        </GuestLayout>
+    );
 }
-
 
 export default CompleteUserDetails;

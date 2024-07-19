@@ -13,14 +13,14 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-
-
+use App\Traits\RentalItems\ItemDetails;
+use App\Models\Detailable;
 
 
 
 class RentalItemController extends Controller
 {
-    use FileTraits;
+    use FileTraits, ItemDetails;
    
     private function formatSizeUnits($bytes) {
         $units = array('bytes', 'KB', 'MB', 'GB', 'TB');
