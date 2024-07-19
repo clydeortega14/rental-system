@@ -7,14 +7,8 @@ function CategoryComponent({ categories }: ICategory) {
         <div className="md:w-1/4 bg-gray-100 p-4">
             {" "}
             {/* Sidebar */}
-            <div className="flex items-center mb-7">
-                <Bars3Icon className="h-6 w-6 mr-2" aria-hidden="true" />
-                <h1 className="text-3sm font-extrabold tracking-tight text-slate-900">
-                    All Categories
-                </h1>
-            </div>
             <ul className="space-y-2">
-                <li className={`cursor-pointer`}>All</li>
+                <li className={`cursor-pointer`}>All Categories</li>
 
                 {categories.map((category) => (
                     <CategoryItem

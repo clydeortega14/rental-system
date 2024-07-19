@@ -17,6 +17,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import GoogleIcon from "@mui/icons-material/Google";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import ItemLaningPage from "@/Components/LandingItemPage";
+import { IRentalItem } from "@/Interface/RentalItems";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -43,10 +44,12 @@ export default function Welcome1({
     laravelVersion,
     phpVersion,
     categories,
+    rental_items,
 }: PageProps<{
     laravelVersion: string;
     phpVersion: string;
     categories: CategoryProps;
+    rental_items: IRentalItem;
 }>) {
     const [open, setOpen] = useState(false);
 
@@ -291,11 +294,14 @@ export default function Welcome1({
                 </header>
                 {/* Card section */}
                 <div>
-                    <div className="bg-white rounded-lg overflow-hidden">
+                    <div className="border-gray-900/10 rounded-lg overflow-hidden">
                         {/* Card content goes here */}
 
-                        <div className="p-12">
-                            <ItemLaningPage categories={categories} />
+                        <div>
+                            <ItemLaningPage
+                                categories={categories}
+                                items={rental_items}
+                            />
                         </div>
                     </div>
                 </div>
