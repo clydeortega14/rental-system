@@ -19,7 +19,7 @@ export default function Filter() {
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-x-3 sm:col-span-2 col-start-1">
+                    <div className="flex items-center gap-x-3 sm:col-span-2 col-start-1">
                         <input
                             id="search-location"
                             name="push-notifications"
@@ -30,7 +30,7 @@ export default function Filter() {
                             }}
                         />
                         <label
-                            for="search-location"
+                            htmlFor="search-location"
                             className="block text-sm font-medium leading-6 text-gray-900"
                         >
                             Search By Location
