@@ -10,7 +10,6 @@ class RentalProviderController extends Controller
 {
     public function profile($uuid)
     {
-        
         $rental_provider = UserCompanyInformation::where('uuid', $uuid)->first();
 
         if(is_null($rental_provider)) return 'unknown rental provider';

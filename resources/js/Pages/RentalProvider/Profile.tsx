@@ -1,10 +1,13 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { PageProps } from "@/types";
+import About from "./About";
+import Summary from "./Summary";
+import RentalOffering from "./RentalOffering";
 
 const Profile = ({ auth }: PageProps) => {
     const asset = () => {
-        return `${window.location.origin}/images/company-logo.jpg`;
+        return `${window.location.origin}/images/compA.jpeg`;
     };
     return (
         <>
@@ -17,23 +20,16 @@ const Profile = ({ auth }: PageProps) => {
                 }
             >
                 <Head title="Rental Provider Profile" />
+
                 <div className="py-4">
-                    <div className="max-w-md sm:px-3 lg:px-5">
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg border-gray-200 shadow dark:bg-gray-800 dark:border-gray-700 px-7 py-7">
-                            <img
-                                className="w-96 h-64 mb-3 sm:rounded-md shadow-lg"
-                                src={asset("images/company-logo.jpg")}
-                                alt="Bonnie image"
-                            />
-                            <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
-                                Bonnie Green
-                            </h5>
-                            <p className="text-gray-700 text-base">
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipisicing elit. Voluptatibus quia, nulla!
-                                Maiores et perferendis eaque, exercitationem
-                                praesentium nihil.
-                            </p>
+                    <div className="flex">
+                        <div className="basis-1/4">
+                            <Summary asset={asset} />
+                        </div>
+                        <div className="grow min-h-screen">
+                            <About />
+
+                            <RentalOffering />
                         </div>
                     </div>
                 </div>

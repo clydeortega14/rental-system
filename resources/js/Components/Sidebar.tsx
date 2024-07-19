@@ -14,6 +14,7 @@ import { BiCategoryAlt } from "react-icons/bi";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { FaWpforms } from "react-icons/fa6";
 import { LuWorkflow } from "react-icons/lu";
+import { AiFillProfile } from "react-icons/ai";
 import NavLink from "@/Components/NavLink";
 import initialLogo from "@/../../resources/img/initialLogo.png";
 import { Fragment } from "react";
@@ -32,20 +33,20 @@ function Sidebar({ open }: SidebarProps) {
             icon: <MdDashboard />,
         },
         {
-            id: 2,
+            id: 3,
             name: "Reservation Items",
             link: route("reservations.index"),
             status: route().current("reservations.index"),
             icon: <MdEventNote />,
         },
         {
-            id: 3,
+            id: 4,
             name: "Rental Listings",
             link: "/rentalListing",
             icon: <GiNotebook />,
         },
         {
-            id: 4,
+            id: 5,
             name: "Settings",
             link: "",
             status: "",
@@ -135,7 +136,7 @@ function Sidebar({ open }: SidebarProps) {
     return (
         <>
             <div
-                className={`py-0 px-2 bg-light-green h-100 relative  ${open ? "w-72" : "w-20"} duration-300`}
+                className={`py-0 px-2 bg-gradient-to-tr from-blue-500 to-green-500 h-100 relative  ${open ? "w-72" : "w-20"} duration-300`}
             >
                 <ul className="pt-7">{menuLists}</ul>
             </div>

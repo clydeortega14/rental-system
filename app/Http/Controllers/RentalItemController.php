@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\RentalItems\ItemDetails;
-
+use App\Models\Detailable;
 
 
 
@@ -37,9 +37,21 @@ class RentalItemController extends Controller
     {
         //
         $rentalItems = RentalAddItem::all();
+        $categories  = Detailable::where('detailable_type', 'App\Models\Category')
+                        ->where('active', true)
+                        ->with([
+                            'detailable:id,name'
+                        ])
+                        ->get([
+                            'detailable_id',
+                            'label'
+                        ]);
+        
+
 
         return Inertia::render('User/Partials/Rental', [
-            'rentalItems' => $rentalItems // Pass the rental items data to the React component
+            'rentalItems' => $rentalItems, // Pass the rental items data to the React component
+            'categories' => $categories
         ]);
     }
 

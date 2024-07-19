@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use Illuminate\Foundation\Application;
 use App\Models\Category;
 use App\Models\Detailable;
+use App\Models\RentalAddItem;
 
 class LandingPageController extends Controller
 {
@@ -15,17 +16,29 @@ class LandingPageController extends Controller
     {
         $categories = Detailable::where('detailable_type', 'App\Models\Category')
                         ->where('active', true)
-                        
-                        ->get(['detailable_id as category_id', 'label']);
+                        ->get(['detailable_id as category_id', 'label'])
+                        ->toArray();
+
+        $rental_items = RentalAddItem::with(['attachment', 'user'])->get();
+
+        $map_rental_items = $rental_items->map(function($rentItem, $index){
+            return [
+
+                'id' => $rentItem->uuid,
+                'name' => $rentItem->itemName,
+                'role' => 'View More Details',
+                'category' => $rentItem->category,
+                'image' => "https://freepngimg.com/save/32430-honda-civic-transparent/1000x1000"
+            ];
+        })->toArray();
 
         return Inertia::render('Welcome1', [
-
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
             'laravelVersion' => Application::VERSION,
             'phpVersion' => PHP_VERSION,
-            'categories'
-
+            'categories' => $categories,
+            'rental_items' => $map_rental_items
         ]);
     }
 }
