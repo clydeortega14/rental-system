@@ -1,3 +1,5 @@
+import ItemScheduleDetail from "./ItemScheduleDetail";
+
 function ItemImage() {
     return (
         <>
@@ -45,7 +47,7 @@ function ItemImage() {
                 </div>
 
                 <div className="lg:w-2/4 flex flex-col ml-12 sticky top-0">
-                    <div className="border border-gray-200 p-4 rounded-lg shadow-md"></div>
+                    <ItemScheduleDetail />
                 </div>
             </div>
         </>
