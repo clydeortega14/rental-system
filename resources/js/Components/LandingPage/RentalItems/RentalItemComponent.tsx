@@ -61,7 +61,7 @@ export default function RentalItemComponent({ items }: IRentalItems) {
                                         </span>
                                     </div>
                                     {/* Star Rating (hidden on small screens) */}
-                                    <StarRating rating={4.5} />
+                                    <StarRating rating={3.4} />
                                 </div>
                             </div>
                         </div>
