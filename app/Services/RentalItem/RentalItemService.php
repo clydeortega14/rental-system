@@ -16,14 +16,17 @@ class RentalItemService
         $rental_items = $this->getRentalItems();
 
         return $rental_items->map(function($rentItem, $index){
-
+            $images = [];
+            foreach ($rentItem->attachment as $attachment) {
+                $images[] = $attachment->path . '/' . $attachment->filename . '.' . $attachment->type;
+            }
             return [
 
                 'id' => $rentItem->uuid,
                 'name' => $rentItem->itemName,
                 'role' => 'View More Details',
                 'category' => $rentItem->category,
-                'image' => "https://freepngimg.com/save/32430-honda-civic-transparent/1000x1000"
+                'image' =>  $images,
             ];
         })->toArray();
     }

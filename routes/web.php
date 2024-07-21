@@ -119,6 +119,7 @@ Route::middleware([
     Route::get('/rentalListing', [RentalItemController::class, 'index'])->name('rentalListing');
     Route::get('/rentalListing/items/{id}', [RentalItemController::class, 'show'])->name('rentalListingView');
     Route::put('/rentalListing/items/update/{id}', [RentalItemController::class, 'update'])->name('rental.update');
+
     // Route::get('/rentalListing', function () {
     //     return Inertia::render('User/Partials/Rental');
     // })->middleware(['auth'])->name('rentalListing');
