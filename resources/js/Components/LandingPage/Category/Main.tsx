@@ -24,9 +24,9 @@ function CategoryComponent({ categories }: ICategory) {
             },
             body: [
                 {
-                    name: "all car types",
+                    name: "All car types",
                     price: "",
-                    sub_title: "Up to 4 people",
+                    sub_title: "",
                     is_checked: true,
                 },
                 {
