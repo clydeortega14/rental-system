@@ -9,16 +9,31 @@ use Illuminate\Foundation\Application;
 use App\Models\Category;
 use App\Models\Detailable;
 use App\Models\RentalAddItem;
+use App\Services\Category\CategoryService;
+use App\Services\RentalItem\RentalItemService;
 
 class LandingPageController extends Controller
 {
+
+    protected $category_service;
+    protected $rental_items_service;
+
+    public function __construct(
+        
+        CategoryService $category_service,
+        RentalItemService $rental_items_service
+    )
+    {
+        $this->category_service = $category_service;
+        $this->rental_items_service = $rental_items_service;
+    }
+
+
     public function index()
     {
-        $categories = Detailable::where('detailable_type', 'App\Models\Category')
-                        ->where('active', true)
-                        ->get(['detailable_id as category_id', 'label'])
-                        ->toArray();
+        $categories = $this->category_service->getCategories();
 
+<<<<<<< HEAD
         $rental_items = RentalAddItem::with(['attachment', 'user'])->get();
 
         $map_rental_items = $rental_items->map(function($rentItem, $index){
@@ -36,6 +51,9 @@ class LandingPageController extends Controller
                 'image' => $images,
             ];
         })->toArray();
+=======
+        $rental_items = $this->rental_items_service->formattedRentalItems();
+>>>>>>> efe7c75dc667212a7f03ffd0dee3cb9d9e523630
 
        
 
@@ -45,7 +63,7 @@ class LandingPageController extends Controller
             'laravelVersion' => Application::VERSION,
             'phpVersion' => PHP_VERSION,
             'categories' => $categories,
-            'rental_items' => $map_rental_items
+            'rental_items' => $rental_items
         ]);
     }
 }
