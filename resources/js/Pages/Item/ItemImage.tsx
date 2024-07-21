@@ -1,4 +1,7 @@
 import ItemScheduleDetail from "./ItemScheduleDetail";
+import RenteeInfo from "./RenteeInfo";
+import ContactInformation from "./Contact";
+import PrimaryButton from "@/Components/PrimaryButton";
 
 function ItemImage() {
     return (
@@ -44,9 +47,19 @@ function ItemImage() {
                             </p>
                         </div>
                     </div>
+
+                    <RenteeInfo />
+
+                    <ContactInformation />
+
+                    <div className="p-4 ml-4 shadow-lg bg-white rounded-lg mb-4 flex items-center">
+                        <PrimaryButton className="block w-full">
+                            Book Now
+                        </PrimaryButton>
+                    </div>
                 </div>
 
-                <div className="lg:w-2/4 flex flex-col ml-12 sticky top-0">
+                <div className="lg:w-2/4 flex flex-col ml-12 top-0">
                     <ItemScheduleDetail />
                 </div>
             </div>
