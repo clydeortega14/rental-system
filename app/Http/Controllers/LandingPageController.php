@@ -33,30 +33,9 @@ class LandingPageController extends Controller
     {
         $categories = $this->category_service->getCategories();
 
-<<<<<<< HEAD
         $rental_items = RentalAddItem::with(['attachment', 'user'])->get();
-
-        $map_rental_items = $rental_items->map(function($rentItem, $index){
-
-            $images = [];
-            foreach ($rentItem->attachment as $attachment) {
-                $images[] = $attachment->path . '/' . $attachment->filename . '.' . $attachment->type;
-            }
-            return [
-
-                'id' => $rentItem->uuid,
-                'name' => $rentItem->itemName,
-                'role' => 'View More Details',
-                'category' => $rentItem->category,
-                'image' => $images,
-            ];
-        })->toArray();
-=======
+        
         $rental_items = $this->rental_items_service->formattedRentalItems();
->>>>>>> efe7c75dc667212a7f03ffd0dee3cb9d9e523630
-
-       
-
         return Inertia::render('Welcome1', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
