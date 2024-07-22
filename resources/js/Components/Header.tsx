@@ -6,11 +6,10 @@ import { usePage } from "@inertiajs/react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 
 interface HeaderProps {
-    open: boolean;
-    setOpen: () => void;
+    setOpen: (status: boolean) => void;
 }
 
-function NavHeader({ open, setOpen, auth }: HeaderProps) {
+function NavHeader({ setOpen }: HeaderProps) {
     const user = usePage<PageProps>().props.auth.user;
     return (
         <header className="bg-white">

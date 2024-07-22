@@ -88,7 +88,7 @@ function CategoryComponent({ categories }: ICategory) {
                             <div className="mt-4">
                                 <label className="flex items-center">
                                     <Checkbox
-                                        name="remember"
+                                        name={filter_body.name}
                                         checked={filter_body.is_checked}
                                     />
                                     <span className="ms-2 text-sm text-gray-600">
