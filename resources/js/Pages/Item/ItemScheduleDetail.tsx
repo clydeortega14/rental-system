@@ -116,7 +116,7 @@ function ItemScheduleDetail() {
                             550.00
                         </p>
                     </div>
-                    <div className="flex justify-between py-4">
+                    <div className="flex justify-between py-4   ">
                         <p className="font-bold text-base text-gray-900">
                             Total Cost
                         </p>

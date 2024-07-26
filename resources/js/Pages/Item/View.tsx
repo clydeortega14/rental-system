@@ -2,17 +2,18 @@ import { useState } from "react";
 import { PageProps } from "@/types";
 import ItemDetail from "./ItemDetail";
 import NavHeader from "@/Components/Header";
+import { Item } from "@/Interface/Item";
 
 const navigation = {
     categories: [],
 };
 
 export default function View({
-    itemId,
+    item,
     auth,
     laravelVersion,
     phpVersion,
-}: PageProps<{ laravelVersion: string; phpVersion: string }>) {
+}: PageProps<{ laravelVersion: string; phpVersion: string; item: Item }>) {
     const [open, setOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -31,7 +32,7 @@ export default function View({
                     <div className="bg-gray-100 rounded-lg overflow-hidden">
                         {/* Card content goes here */}
 
-                        <ItemDetail />
+                        <ItemDetail item={item} />
                     </div>
                 </div>
             </div>
