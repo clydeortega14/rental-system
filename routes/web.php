@@ -13,6 +13,9 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\WorkflowController;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\BookingController;
+
+
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,7 +24,8 @@ Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.ind
 
 Route::get('/itemDetails/{uuid}', [RentalItemController::class, 'itemDetails'])->name('itemDetails');
 
-Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
+/* -- Submit for reservation -- */
+Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('booking.store');
 
 Route::middleware([
     'auth',
@@ -50,6 +54,10 @@ Route::middleware([
     'verified', // email verification middleware
     'check-user-info'// completed information details
 ])->group(function(){
+
+    
+
+    Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
 
     /* -- Account Settings -- */

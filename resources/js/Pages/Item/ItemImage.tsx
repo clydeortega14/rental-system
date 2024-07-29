@@ -18,6 +18,7 @@ function ItemImage({ item }: Iitem) {
                     <div className="flex flex-wrap justify-center">
                         {item.src.map((x, i) => (
                             <img
+                                key={i}
                                 src={x.link}
                                 alt={x.name}
                                 className="w-1/3 sm:w-1/4 md:w-1/5 h-auto mb-2"
@@ -29,7 +30,7 @@ function ItemImage({ item }: Iitem) {
                             <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900">
                                 {item.name}
                             </h1>
-                            <p className="text-base text-gray-400">
+                            <p className="text-base text-gray-600 mt-4">
                                 {item.description}
                             </p>
                         </div>
@@ -37,7 +38,7 @@ function ItemImage({ item }: Iitem) {
                 </div>
 
                 <div className="lg:w-2/4 flex flex-col ml-12 top-0">
-                    <ItemScheduleDetail />
+                    <ItemScheduleDetail item={item} />
                 </div>
             </div>
         </>

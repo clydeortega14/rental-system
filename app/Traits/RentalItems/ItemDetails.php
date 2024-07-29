@@ -14,8 +14,10 @@ trait ItemDetails {
         
 
         $item_detail = [
+            'uuid' => $find_item->uuid,
             'name' => $find_item->itemName,
             'description' => $find_item->description,
+            'price' => $find_item->price,
             'src' => $find_item->attachment->map(function($item){ 
                 return [
                     'name' => $item->display_name,
