@@ -2,6 +2,7 @@
 
 namespace App\Services\Category;
 use App\Models\Detailable;
+use App\Models\Category;
 
 class CategoryService 
 {
@@ -11,5 +12,10 @@ class CategoryService
                         ->where('active', true)
                         ->get(['detailable_id as category_id', 'label'])
                         ->toArray();
+    }
+
+    public function categoryByName($name)
+    {
+        return Category::where('name', $name)->first();
     }
 }

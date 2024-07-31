@@ -2,9 +2,10 @@ import Checkbox from "@/Components/Checkbox";
 import { useForm } from "@inertiajs/react";
 import { Iitem } from "@/Interface/Item";
 import { useEffect } from "react";
+import InputError from "@/Components/InputError";
 
 function ItemScheduleDetail({ item }: Iitem) {
-    const { data, setData, post, processing, reset } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         item_uuid: item.uuid,
         drop_off_diff_loc: false,
         pick_up_location: "",
@@ -36,18 +37,6 @@ function ItemScheduleDetail({ item }: Iitem) {
             <div className="border border-gray-200 p-4 rounded-lg shadow-xl bg-white mb-4">
                 <form className="w-full px-3" onSubmit={bookingSubmit}>
                     <div className="flex flex-wrap -mx-3 mb-6">
-                        <div>
-                            <input
-                                className="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                type="text"
-                                name="item_uuid"
-                                value={data.item_uuid}
-                                onChange={(e) =>
-                                    setData("item_uuid", e.target.value)
-                                }
-                            />
-                        </div>
-
                         <div className="block mb-4 ml-4">
                             <label
                                 className="flex items-center"
@@ -75,12 +64,19 @@ function ItemScheduleDetail({ item }: Iitem) {
                                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                                 htmlFor="pick-up-drop-off-location"
                             >
-                                Pick-up Drop-off Location
+                                Pick-up/Drop-off Location
                             </label>
                             <input
-                                className="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                onChange={(e) =>
+                                    setData("pick_up_location", e.target.value)
+                                }
+                                className={`${errors.pick_up_location && "border-red-400"} appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
                                 id="pick-up-drop-off-location"
-                                type="password"
+                            />
+
+                            <InputError
+                                message={errors.pick_up_location}
+                                className="mt-2"
                             />
                         </div>
                         {data.drop_off_diff_loc && (
@@ -92,9 +88,19 @@ function ItemScheduleDetail({ item }: Iitem) {
                                     Drop-off Location
                                 </label>
                                 <input
+                                    onChange={(e) =>
+                                        setData(
+                                            "drop_off_location",
+                                            e.target.value,
+                                        )
+                                    }
+                                    value={
+                                        data.drop_off_diff_loc
+                                            ? data.drop_off_location
+                                            : data.pick_up_location
+                                    }
                                     className="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     id="pick-up-drop-off-location"
-                                    type="password"
                                 />
                             </div>
                         )}
@@ -104,15 +110,24 @@ function ItemScheduleDetail({ item }: Iitem) {
                         <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                             <label
                                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                htmlFor="pick-u-date"
+                                htmlFor="pick-up-date"
                             >
                                 Pick-up
                             </label>
                             <input
-                                className="appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                                id="grid-first-name"
+                                name="pick_up_date"
+                                onChange={(e) =>
+                                    setData("pick_up_date", e.target.value)
+                                }
+                                className={`${errors.pick_up_date ? "border-red-400" : ""} appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white`}
+                                id="pick-up-date"
                                 type="date"
-                                placeholder="Jane"
+                                value={data.pick_up_date}
+                            />
+
+                            <InputError
+                                message={errors.pick_up_date}
+                                className="mt-2"
                             />
                         </div>
                         <div className="w-full md:w-1/2 px-3">
@@ -123,10 +138,19 @@ function ItemScheduleDetail({ item }: Iitem) {
                                 Pick-up time
                             </label>
                             <input
-                                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                id="grid-last-name"
+                                name="pick_up_time"
+                                onChange={(e) =>
+                                    setData("pick_up_time", e.target.value)
+                                }
+                                value={data.pick_up_time}
+                                className={`${errors.pick_up_time ? "border-red-400" : ""} appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
+                                id="pick-up-time"
                                 type="time"
-                                placeholder="Doe"
+                            />
+
+                            <InputError
+                                message={errors.pick_up_time}
+                                className="mt-2"
                             />
                         </div>
                     </div>
@@ -140,9 +164,19 @@ function ItemScheduleDetail({ item }: Iitem) {
                                 Drop off
                             </label>
                             <input
-                                className="appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                                name="drop_off_date"
+                                value={data.drop_off_date}
+                                onChange={(e) =>
+                                    setData("drop_off_date", e.target.value)
+                                }
+                                className={`${errors.drop_off_date ? "border-red-400" : ""} appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white`}
                                 id="drop-off-date"
                                 type="date"
+                            />
+
+                            <InputError
+                                message={errors.drop_off_date}
+                                className="mt-2"
                             />
                         </div>
                         <div className="w-full md:w-1/2 px-3">
@@ -153,16 +187,29 @@ function ItemScheduleDetail({ item }: Iitem) {
                                 Drop-off time
                             </label>
                             <input
-                                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                name="drop_off_time"
+                                value={data.drop_off_time}
+                                onChange={(e) =>
+                                    setData("drop_off_time", e.target.value)
+                                }
+                                className={`${errors.drop_off_time ? "border-red-400" : ""} appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
                                 id="drop-off-time"
                                 type="time"
+                            />
+
+                            <InputError
+                                message={errors.drop_off_time}
+                                className="mt-4"
                             />
                         </div>
                     </div>
 
                     <div className="flex flex-wrap -mx-3 mb-6">
                         <div className="w-full px-3">
-                            <button className="block w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
+                            <button
+                                disabled={processing}
+                                className={`${processing && "opacity-25 cursor-not-allowed"} block w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded`}
+                            >
                                 Reserve Now
                             </button>
                         </div>

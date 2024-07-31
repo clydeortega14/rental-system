@@ -59,6 +59,8 @@ Route::middleware([
 
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
+    Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
+
 
     /* -- Account Settings -- */
     Route::get('/account-settings', [ProfileController::class, 'accountSettings'])->name('account.settings');
