@@ -15,6 +15,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\RentalItems\ItemDetails;
 use App\Models\Detailable;
+use App\Models\Category;
 
 
 
@@ -86,15 +87,17 @@ class RentalItemController extends Controller
         $user = auth()->user();
         $userId = $user->id;
         // $user_rentalAddItems = $user->rentalAddItems();
+        $category  = Category::where('name', 'cars')->first();
      
         $rentalAddItem = RentalAddItem::create([
             'user_id' => $userId,
             'itemName' => $validatedData['itemName'],
-            'category' => $validatedData['category'],
+            'category' => $category->name,
             'description' => $validatedData['remarks'],
             'price' => $validatedData['price'],
             'quantity' => $validatedData['quantity'],
             'quality' => $validatedData['quality'],
+            'category_id' => $category->id
         ]);
 
         // Handle the file upload and association with the RentalAddItem

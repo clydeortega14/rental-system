@@ -15,7 +15,7 @@ class BookingService {
             'pick_up_date' => $data['pick_up_date'],
             'pick_up_time' => $data['pick_up_time'],
             'pick_up_location' => $data['pick_up_location'],
-            'drop_off_data' => $data['drop_off_date'],
+            'drop_off_date' => $data['drop_off_date'],
             'drop_off_time' => $data['drop_off_time'],
             'drop_off_location' => $data['drop_off_location'],
         ]);

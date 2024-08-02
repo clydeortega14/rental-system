@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('rental_listings', function (Blueprint $table) {
-            $table->integer('category')->unsigned()->change();
-            // $table->foreign('category')->references('id')->on('categories');
+            // $table->string('category')->after('description');
+            // $table->unsignedInteger('category')->references('id')->on('categories')->change();
+            $table->unsignedInteger('category_id')->after('description');
+            $table->foreign('category_id')->references('id')->on('categories')
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
         });
     }
 
@@ -24,8 +28,10 @@ return new class extends Migration
     {
         Schema::table('rental_listings', function (Blueprint $table) {
             // $table->integer('category')->unsigned()->change();
-            // $table->dropForeign(['category']);
-            $table->dropColumn('category');
+            $table->dropForeign(['category_id']);
+            // $table->string('category')->change();
+            
+            $table->dropColumn('category_id');
         });
     }
 };

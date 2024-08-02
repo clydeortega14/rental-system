@@ -25,7 +25,8 @@ class RentalAddItem extends Model
         'quantity',
         'quality',
         'updated_at',
-        'created_at'
+        'created_at',
+        'category_id'
     ];
     
     public function attachment()
