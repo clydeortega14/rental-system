@@ -11,7 +11,22 @@ trait ItemDetails {
     {
         $find_item = $this->findItem($uuid);
 
-        return Inertia::render('Item/View', ['item' => $find_item]);
+        
+
+        $item_detail = [
+            'uuid' => $find_item->uuid,
+            'name' => $find_item->itemName,
+            'description' => $find_item->description,
+            'price' => $find_item->price,
+            'src' => $find_item->attachment->map(function($item){ 
+                return [
+                    'name' => $item->display_name,
+                    'link' => config('app.url').'/storage/'.$item->file_path
+                ];
+            })->all()
+        ];
+
+        return Inertia::render('Item/View', ['item' => $item_detail]);
     }
 
     public function checkoutItem($uuid)

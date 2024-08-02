@@ -24,7 +24,8 @@ class DatabaseSeeder extends Seeder
             IdListsSeeders::class,
             CategorySeeder::class,
             FormTypesSeeder::class,
-            FormSeeder::class
+            FormSeeder::class,
+            BookingStatusSeeder::class,
         ]);
     }
 }

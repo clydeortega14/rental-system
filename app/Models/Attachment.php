@@ -34,4 +34,9 @@ class Attachment extends Model
         return $this->filename.'.'.$this->type;
     }
 
+    public function getFilePathAttribute()
+    {
+        return $this->path.'/'.$this->filename.'.'.$this->type;
+    }
+
 }
