@@ -42,11 +42,20 @@ class Booking extends Model
 
     public function rentalListing()
     {
-        return $this->belongsTo(RentalListing::class, 'rental_listing_id');
+        return $this->belongsTo(RentalAddItem::class, 'rental_listing_id');
     }
 
     public function bookingStatus()
     {
         return $this->belongsTo(BookingStatus::class, 'status');
+    }
+
+    public function getFormatPickUpAttribute()
+    {
+        return date('F j, Y', strtotime($this->pick_up_date));
+    }
+    public function getFormatDropOffAttribute()
+    {
+        return date('F j, Y', strtotime($this->drop_off_date));
     }
 }

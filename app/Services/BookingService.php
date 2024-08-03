@@ -20,4 +20,28 @@ class BookingService {
             'drop_off_location' => $data['drop_off_location'],
         ]);
     }
+
+    public function getBookings()
+    {
+        $booking = Booking::with(['category', 'bookedBy', 'rentalListing', 'bookingStatus'])
+        ->get();
+
+        return $booking;
+    }
+
+
+    public function formatBookings()
+    {
+        return $this->getBookings()->map(function($booking){
+            return [
+
+                'id' => $booking->id,
+                'item_name' => $booking->rentalListing->itemName,
+                'reservation_date' => $booking->format_pick_up.' - '.$booking->format_drop_off,
+                'status' => $booking->bookingStatus->name,
+                'booked_by' => $booking->bookedBy->name,
+                
+            ];
+        });
+    }
 }
