@@ -1,43 +1,31 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, usePage } from "@inertiajs/react";
 import { PageProps } from "@/types";
-import { User } from "@/types";
 import CustomTable from "@/Components/CustomTable";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableBody from "@mui/material/TableBody";
-import { Fragment } from "react";
+import SecondaryButton from "@/Components/SecondaryButton";
+import { FaEdit } from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
+import { FaTrashAlt } from "react-icons/fa";
+
+type Header = {
+    name: string;
+};
+
+type Body = {
+    id: number;
+    item_name: string;
+    reservation_date: string;
+    status: string;
+    booked_by: string;
+    action: string;
+};
 
 function Index({
     auth,
     headerData,
     bodyData,
-}: PageProps<{ headerData: string; bodyData: string }>) {
+}: PageProps<{ headerData: Header[]; bodyData: Body[] }>) {
     const user = usePage<PageProps>().props.auth.user;
-
-    const mappedHeader = headerData.map((hdata, index) => (
-        <Fragment key={hdata.name}>
-            <TableCell>{hdata.name}</TableCell>
-            <TableCell align="right">{hdata.date}</TableCell>
-            <TableCell align="right">{hdata.bookedby}</TableCell>
-            <TableCell align="right">{hdata.action}</TableCell>
-        </Fragment>
-    ));
-
-    const mappedBody = bodyData.map((bdata, index) => (
-        <Fragment key={index}>
-            <TableRow
-                key={bdata.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-                <TableCell>{bdata.item}</TableCell>
-                <TableCell align="right">{bdata.date}</TableCell>
-                <TableCell align="right">{bdata.bookedby}</TableCell>
-                <TableCell align="right">{bdata.action}</TableCell>
-            </TableRow>
-        </Fragment>
-    ));
 
     return (
         <AuthenticatedLayout
@@ -51,15 +39,37 @@ function Index({
             <Head title="Reservations" />
 
             <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div className="max-w-1xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        {/*<div className="p-6 text-gray-900">Hello, {user.email}</div>*/}
                         <div>
-                            <CustomTable>
-                                <TableHead>
-                                    <TableRow>{mappedHeader}</TableRow>
-                                </TableHead>
-                                <TableBody>{mappedBody}</TableBody>
+                            <CustomTable headerData={headerData}>
+                                {bodyData.map((body) => (
+                                    <tr key={body.id} className="text-center">
+                                        <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
+                                            {body.item_name}
+                                        </td>
+                                        <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
+                                            {body.reservation_date}
+                                        </td>
+                                        <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
+                                            {body.status}
+                                        </td>
+                                        <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
+                                            {body.booked_by}
+                                        </td>
+                                        <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
+                                            <SecondaryButton className="mr-2">
+                                                <FaEdit />
+                                            </SecondaryButton>
+                                            <SecondaryButton className="mr-2">
+                                                <FaEye />
+                                            </SecondaryButton>
+                                            <SecondaryButton>
+                                                <FaTrashAlt />
+                                            </SecondaryButton>
+                                        </td>
+                                    </tr>
+                                ))}
                             </CustomTable>
                         </div>
                     </div>

@@ -1,20 +1,32 @@
-import * as React from "react";
-import Table from "@mui/material/Table";
-import TableContainer from "@mui/material/TableContainer";
-
-import Paper from "@mui/material/Paper";
+type TableHeader = {
+    name: string;
+};
 
 interface CustomTableProps {
-    children: ReactNode;
+    className: string;
+    headerData: TableHeader[];
+    children: React.ReactNode;
 }
 
-function CustomTable({ children, className = "", ...props }: CustomTableProps) {
+function CustomTable({ children, headerData }: CustomTableProps) {
     return (
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                {children}
-            </Table>
-        </TableContainer>
+        <>
+            <table className="border-collapse table-auto w-full shadow-xl">
+                <thead className="bg-gradient-to-tr from-blue-500 to-green-500 text-white text-md">
+                    <tr>
+                        {headerData.map((head, index) => (
+                            <th
+                                key={index}
+                                className="border-b dark:border-slate-600 p-4 font-medium dark:text-slate-200 text-center"
+                            >
+                                {head.name}
+                            </th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody className="text-sm">{children}</tbody>
+            </table>
+        </>
     );
 }
 

@@ -4,27 +4,34 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Services\BookingService;
 
 class ReservationController extends Controller
 {
+    protected $booking_service;
+
+    public function __construct(BookingService $booking_service)
+    {
+        $this->booking_service = $booking_service;
+    }
+
+
     public function index()
     {
         $headersData = [
-            ['name' => 'Item', 'date' => 'Reservation Date', 'bookedby' => 'BookedBy', 'action' => 'Action']
+            ['name' => 'Item'],
+            ['name' => 'Reservation Detail'],
+            ['name' => 'Status'],
+            ['name' => 'Booked By'],
+            ['name' => 'Action']
         ];
 
-        $bodyData = [
-            ['item' => 'Toyota Vios 5 Seaters', 'date' => 'Weds, April 10, 2024', 'bookedby' => 'Jhon Doe', 'action' => 'Action'],
-            ['item' => 'Toyota Vios 5 Seaters', 'date' => 'Weds, April 10, 2024', 'bookedby' => 'Jhon Doe', 'action' => 'Action'],
-            ['item' => 'Toyota Vios 5 Seaters', 'date' => 'Weds, April 10, 2024', 'bookedby' => 'Jhon Doe', 'action' => 'Action'],
-            ['item' => 'Toyota Vios 5 Seaters', 'date' => 'Weds, April 10, 2024', 'bookedby' => 'Jhon Doe', 'action' => 'Action'],
-
-        ];
+        $bookings = $this->booking_service->formatBookings();
 
         return Inertia::render('Reservation/Index', [
 
             'headerData' => $headersData,
-            'bodyData' => $bodyData
+            'bodyData' => $bookings
 
         ]);
     }
