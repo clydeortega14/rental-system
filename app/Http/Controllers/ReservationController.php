@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Services\BookingService;
+use App\Models\Booking;
 
 class ReservationController extends Controller
 {
@@ -34,5 +35,14 @@ class ReservationController extends Controller
             'bodyData' => $bookings
 
         ]);
+    }
+
+    public function accept(Booking $booking, Request $request)
+    {
+        $this->booking_service->updateStatus($booking, [
+            'action' => $request->action
+        ]);
+
+        return back()->with('status', 'Successfully updated');
     }
 }

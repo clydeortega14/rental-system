@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\Models\Booking;
+use App\Models\BookingStatus;
 
 class BookingService {
 
@@ -21,6 +22,21 @@ class BookingService {
         ]);
     }
 
+    public function updateStatus($booking, array $data)
+    {
+        $status_query = BookingStatus::query();
+
+
+        if($data['action'] === 'accept'){
+            $accept = $status_query->where('name', 'reserved')->first();
+
+            $booking->status = $accept->id;
+            $booking->save();
+        }
+
+        return $booking;
+    }
+
     public function getBookings()
     {
         $booking = Booking::with(['category', 'bookedBy', 'rentalListing', 'bookingStatus'])
@@ -36,11 +52,31 @@ class BookingService {
             return [
 
                 'id' => $booking->id,
-                'item_name' => $booking->rentalListing->itemName,
-                'reservation_date' => $booking->format_pick_up.' - '.$booking->format_drop_off,
-                'status' => $booking->bookingStatus->name,
-                'booked_by' => $booking->bookedBy->name,
-                
+                'uuid' => $booking->uuid,
+                'category' => [
+                    'id' => $booking->category->id,
+                    'name' => $booking->category->name
+                ],
+                'rental_item' => [
+                    'id' => $booking->rentalListing->id,
+                    'itemName' => $booking->rentalListing->itemName,
+                ],
+                'booked_by' => [
+                    'id' => $booking->bookedBy->id,
+                    'name' => $booking->bookedBy->name
+                ],
+                'status' => [
+                    'id' => $booking->bookingStatus->id,
+                    'name' => $booking->bookingStatus->name
+                ],
+                'completed_at' => $booking->completed_at,
+                'pick_up_date' => $booking->pick_up_date,
+                'pick_up_time' => $booking->pick_up_time,
+                'pick_up_location' => $booking->pick_up_location,
+                'drop_off_date' => $booking->drop_off_date,
+                'drop_off_time' => $booking->drop_off_time,
+                'drop_off_location' => $booking->drop_off_location,
+                'is_rescheduled' => $booking->is_rescheduled
             ];
         });
     }

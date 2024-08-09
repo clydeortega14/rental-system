@@ -82,6 +82,9 @@ Route::middleware([
 
     /* -- Reservations -- */
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+    
+    /* -- Accepting Reservation -- */
+    Route::post('/reservation/accept/{booking}', [ReservationController::class, 'accept'])->name('reservation.accept');
 
     /* -- Upload Valid ID -- */
     Route::post('/upload/valid-id', [FileUploadController::class, 'uploadFile'])->name('upload.valid-id');
