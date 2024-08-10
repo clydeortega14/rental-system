@@ -82,6 +82,15 @@ Route::middleware([
 
     /* -- Reservations -- */
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+    
+    /* -- Accepting Reservation -- */
+    Route::post('/reservation/update-status/{uuid}', [ReservationController::class, 'update'])->name('reservation.update.status');
+
+    /* -- Cancel Reservation --*/
+    Route::post('/reservation/cancel/{uuid}', [ReservationController::class, 'cancel'])->name('reservation.cancel');
+
+    /* -- Complete Reservation -- */
+    Route::post('/reservation/complete/uuid', [ReservationController::class, 'complete'])->name('reservation.complete');
 
     /* -- Upload Valid ID -- */
     Route::post('/upload/valid-id', [FileUploadController::class, 'uploadFile'])->name('upload.valid-id');

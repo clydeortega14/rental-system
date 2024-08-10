@@ -1,10 +1,13 @@
 import Checkbox from "@/Components/Checkbox";
-import { useForm } from "@inertiajs/react";
+import { useForm, usePage } from "@inertiajs/react";
 import { Iitem } from "@/Interface/Item";
 import { useEffect } from "react";
 import InputError from "@/Components/InputError";
+import { PageProps } from "@/types";
 
 function ItemScheduleDetail({ item }: Iitem) {
+    const false_error_message = usePage<PageProps>().props.flash.error_message;
+
     const { data, setData, post, processing, errors, reset } = useForm({
         item_uuid: item.uuid,
         drop_off_diff_loc: false,
@@ -35,6 +38,13 @@ function ItemScheduleDetail({ item }: Iitem) {
     return (
         <>
             <div className="border border-gray-200 p-4 rounded-lg shadow-xl bg-white mb-4">
+                <div className="border-gray-900">
+                    {false_error_message && (
+                        <p className="p-4 border-2 border-red-300 bg-red-50 rounded-xl mb-4">
+                            {false_error_message}
+                        </p>
+                    )}
+                </div>
                 <form className="w-full px-3" onSubmit={bookingSubmit}>
                     <div className="flex flex-wrap -mx-3 mb-6">
                         <div className="block mb-4 ml-4">
