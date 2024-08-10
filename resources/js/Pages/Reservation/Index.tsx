@@ -8,7 +8,7 @@ import { FaEdit } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import { FaTrashAlt } from "react-icons/fa";
 import Modal from "@/Components/Modal";
-import { useState, FormEventHandler } from "react";
+import { useState, FormEventHandler, useEffect } from "react";
 import { Reservation } from "@/Interface/Reservation";
 import ReasonForm from "@/Components/Booking/ReasonForm";
 
@@ -29,9 +29,10 @@ function Index({
     // Current User state
     const user = usePage<PageProps>().props.auth.user;
 
+    const [submitAction, setSubmitAction] = useState<string | "">("");
     // form request destructure data
-    const { data, setData, post, processing, errors } = useForm({
-        action: "accept",
+    const { data, setData, post, processing, errors, transform } = useForm({
+        action: "",
     });
 
     // show booking detail modal state
@@ -41,8 +42,8 @@ function Index({
     const [showTextBox, setShowTextBox] = useState<boolean>(false);
 
     // selected booking detail state
-    const [bookingDetail, setBookingDetail] = useState<Reservation | undefined>(
-        undefined,
+    const [bookingDetail, setBookingDetail] = useState<Reservation | null>(
+        null,
     );
 
     // bookings list state
@@ -63,7 +64,7 @@ function Index({
     const acceptBooking: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post(route("reservation.accept", bookingDetail), {
+        post(route("reservation.update.status", bookingDetail.uuid), {
             onSuccess: () => {
                 setShowBookingDetailModal(false);
             },
@@ -136,6 +137,7 @@ function Index({
 
                     {!showTextBox && (
                         <BookingAction
+                            bookingDetail={bookingDetail}
                             onAcceptBooking={acceptBooking}
                             processing={processing}
                             setShowTextBox={setShowTextBox}
@@ -144,7 +146,10 @@ function Index({
 
                     {/* Reason for cancelling component */}
                     {showTextBox && (
-                        <ReasonForm setShowTextBox={setShowTextBox} />
+                        <ReasonForm
+                            setShowTextBox={setShowTextBox}
+                            bookingDetail={bookingDetail}
+                        />
                     )}
 
                     <div className="mb-7 border-b border-gray-300 pb-4">

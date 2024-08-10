@@ -25,16 +25,42 @@ class BookingService {
     public function updateStatus($booking, array $data)
     {
         $status_query = BookingStatus::query();
+        $status = '';
+        
+        switch($data['action']){    
 
+            case "accept":
 
-        if($data['action'] === 'accept'){
-            $accept = $status_query->where('name', 'reserved')->first();
+                $status = $status_query->where('name', 'reserved')->first();
+                
+                break;
 
-            $booking->status = $accept->id;
-            $booking->save();
+            case "completed":
+
+                $status = $status_query->where('name', 'completed')->first();
+
+                break;
+
+            case "cancelled":
+
+                $status = $status_query->where('name', 'cancelled')->first();
+
+                break;
+
+            case "rescheduled":
+
+                $status = $status_query->where('name', 'rescheduled')->first();
+
+                break;
+
+            default:
+
+                break;
+
         }
 
-        return $booking;
+        $booking->status = $status->id;
+        $booking->save();
     }
 
     public function getBookings()
