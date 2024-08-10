@@ -9,6 +9,9 @@ export type Reservation = {
         id: number,
         itemName: string,
         price: number,
+        images: {
+            src: string
+        }[]
     },
     booked_by: {
         id: number,

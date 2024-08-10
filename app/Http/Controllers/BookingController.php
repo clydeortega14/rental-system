@@ -24,9 +24,9 @@ class BookingController extends Controller
         // validate request
         $validated = $request->validated();
 
-        $item = RentalAddItem::where('id', $validated['item_uuid'])->first();
+        $item = RentalAddItem::where('uuid', $validated['item_uuid'])->first();
         $status = BookingStatus::where('name', 'pending')->first();
-
+        
         if(is_null($item))
         {
             return back()->with('error', 'Item not found!');

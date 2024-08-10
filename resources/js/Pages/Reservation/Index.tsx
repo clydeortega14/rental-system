@@ -16,24 +16,9 @@ type Header = {
     name: string;
 };
 
-function Index({
-    auth,
-    headerData,
-    bodyData,
-    status,
-}: PageProps<{
-    headerData: Header[];
-    bodyData: Reservation[];
-    status?: string;
-}>) {
+function Index({ headerData, bodyData, status }) {
     // Current User state
-    const user = usePage<PageProps>().props.auth.user;
-
-    const [submitAction, setSubmitAction] = useState<string | "">("");
-    // form request destructure data
-    const { data, setData, post, processing, errors, transform } = useForm({
-        action: "",
-    });
+    const auth = usePage<PageProps>().props.auth;
 
     // show booking detail modal state
     const [showBookingDetailModal, setShowBookingDetailModal] = useState(false);
@@ -60,17 +45,6 @@ function Index({
         setBookingDetail(find_booking);
     };
 
-    // on accept booking function
-    const acceptBooking: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        post(route("reservation.update.status", bookingDetail.uuid), {
-            onSuccess: () => {
-                setShowBookingDetailModal(false);
-            },
-        });
-    };
-
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -90,10 +64,24 @@ function Index({
                                 {bodyData.map((body) => (
                                     <tr key={body.id} className="text-center">
                                         <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
-                                            {body.rental_item.itemName}
+                                            <div className="flex items-center">
+                                                <img
+                                                    src={
+                                                        body.rental_item
+                                                            .images[0].src
+                                                    }
+                                                    className="h-12 w-24 object-contain"
+                                                />
+                                                {body.rental_item.itemName}
+                                            </div>
                                         </td>
                                         <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
-                                            {`${body.pick_up_date} - ${body.drop_off_date}`}
+                                            <p>
+                                                <b>From:</b> {body.pick_up_date}
+                                            </p>
+                                            <p>
+                                                <b>To:</b> {body.drop_off_date}
+                                            </p>
                                         </td>
                                         <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
                                             <span className="bg-yellow-200 p-2 text-gray-800">
@@ -138,8 +126,6 @@ function Index({
                     {!showTextBox && (
                         <BookingAction
                             bookingDetail={bookingDetail}
-                            onAcceptBooking={acceptBooking}
-                            processing={processing}
                             setShowTextBox={setShowTextBox}
                         />
                     )}
@@ -153,12 +139,19 @@ function Index({
                     )}
 
                     <div className="mb-7 border-b border-gray-300 pb-4">
+                        <img
+                            src={bookingDetail?.rental_item.images[0].src}
+                            className="h-48 w-48 object-contain"
+                        />
+                    </div>
+
+                    <div className="mb-7 border-b border-gray-300 pb-4">
                         <h2 className="text-lg font-medium text-gray-900">
                             Pick-up date / time
                         </h2>
 
                         <p className="mt-1 text-sm text-gray-600">
-                            {bookingDetail?.pick_up_date} -{" "}
+                            {bookingDetail?.pick_up_date}{" "}
                             {bookingDetail?.pick_up_time}
                         </p>
                     </div>
@@ -179,7 +172,7 @@ function Index({
                         </h2>
 
                         <p className="mt-1 text-sm text-gray-600">
-                            {bookingDetail?.drop_off_date} -{" "}
+                            {bookingDetail?.drop_off_date}{" "}
                             {bookingDetail?.drop_off_time}
                         </p>
                     </div>

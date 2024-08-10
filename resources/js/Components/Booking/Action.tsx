@@ -5,47 +5,45 @@ import { useState } from "react";
 import { Reservation } from "@/Interface/Reservation";
 import SuccessButton from "../SuccessButton";
 import CompleteBookingForm from "./CompleteForm";
+import AcceptForm from "./AcceptForm";
 
 interface IAction {
     bookingDetail: Reservation;
     onAcceptBooking: (e) => void;
-    processing: boolean;
     setShowTextBox: (status: boolean) => void;
 }
 
 export default function Action({
     bookingDetail,
     onAcceptBooking,
-    processing,
     setShowTextBox,
 }: IAction) {
     return (
         <div className="mb-7 flex">
-            {bookingDetail.status.name !== "reserved" && (
-                <PrimaryButton
-                    className="mr-2 block"
-                    disabled={processing}
-                    onClick={onAcceptBooking}
-                >
-                    Accept
-                </PrimaryButton>
+            {bookingDetail.status.name === "pending" && (
+                <AcceptForm bookingDetail={bookingDetail} />
             )}
 
-            <CompleteBookingForm bookingDetail={bookingDetail} />
+            {bookingDetail.status.name == "reserved" && (
+                <CompleteBookingForm bookingDetail={bookingDetail} />
+            )}
 
-            <SecondaryButton className="mr-2 block" disabled={processing}>
-                Reschedule
-            </SecondaryButton>
+            {bookingDetail.status.name === "reserved" && (
+                <SecondaryButton className="mr-2 block">
+                    Reschedule
+                </SecondaryButton>
+            )}
 
-            <DangerButton
-                className="mr-2 block"
-                onClick={() => {
-                    setShowTextBox(true);
-                }}
-                disabled={processing}
-            >
-                Cancel
-            </DangerButton>
+            {bookingDetail.status.name === "reserved" && (
+                <DangerButton
+                    className="mr-2 block"
+                    onClick={() => {
+                        setShowTextBox(true);
+                    }}
+                >
+                    Cancel
+                </DangerButton>
+            )}
         </div>
     );
 }

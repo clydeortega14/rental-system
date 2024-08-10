@@ -86,6 +86,11 @@ class BookingService {
                 'rental_item' => [
                     'id' => $booking->rentalListing->id,
                     'itemName' => $booking->rentalListing->itemName,
+                    'images' => $booking->rentalListing->attachment->map(function($item){
+                        return [
+                            'src' => config('app.url').'/storage/'.$item->file_path
+                        ];
+                    }),
                 ],
                 'booked_by' => [
                     'id' => $booking->bookedBy->id,
@@ -96,10 +101,10 @@ class BookingService {
                     'name' => $booking->bookingStatus->name
                 ],
                 'completed_at' => $booking->completed_at,
-                'pick_up_date' => $booking->pick_up_date,
+                'pick_up_date' => $booking->format_pick_up,
                 'pick_up_time' => $booking->pick_up_time,
                 'pick_up_location' => $booking->pick_up_location,
-                'drop_off_date' => $booking->drop_off_date,
+                'drop_off_date' => $booking->format_drop_off,
                 'drop_off_time' => $booking->drop_off_time,
                 'drop_off_location' => $booking->drop_off_location,
                 'is_rescheduled' => $booking->is_rescheduled
