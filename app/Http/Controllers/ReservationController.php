@@ -52,6 +52,14 @@ class ReservationController extends Controller
             
         }else if($request->action == "rescheduled"){
             // validate new data
+            $request->validate([
+                'pick_up_date' => ['required'],
+                'pick_up_time' => ['required'],
+                'drop_off_date' => ['required'],
+                'drop_off_time' => ['required']
+            ]);
+
+
             $booking->is_rescheduled = true;
         }
 

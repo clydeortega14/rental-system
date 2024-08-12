@@ -11,12 +11,14 @@ interface IAction {
     bookingDetail: Reservation;
     onAcceptBooking: (e) => void;
     setShowTextBox: (status: boolean) => void;
+    setIsRescheduled: (status: boolean) => void;
 }
 
 export default function Action({
     bookingDetail,
     onAcceptBooking,
     setShowTextBox,
+    setIsRescheduled,
 }: IAction) {
     return (
         <div className="mb-7 flex">
@@ -29,7 +31,12 @@ export default function Action({
             )}
 
             {bookingDetail.status.name === "reserved" && (
-                <SecondaryButton className="mr-2 block">
+                <SecondaryButton
+                    className="mr-2 block"
+                    onClick={() => {
+                        setIsRescheduled(true);
+                    }}
+                >
                     Reschedule
                 </SecondaryButton>
             )}

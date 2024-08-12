@@ -11,6 +11,7 @@ import Modal from "@/Components/Modal";
 import { useState, FormEventHandler, useEffect } from "react";
 import { Reservation } from "@/Interface/Reservation";
 import ReasonForm from "@/Components/Booking/ReasonForm";
+import RescheduleForm from "@/Components/Booking/RescheduleForm";
 
 type Header = {
     name: string;
@@ -25,6 +26,9 @@ function Index({ headerData, bodyData, status }) {
 
     // Reason form cancelling state
     const [showTextBox, setShowTextBox] = useState<boolean>(false);
+
+    // Reschedule State
+    const [isRescheduled, setIsRescheduled] = useState<boolean>(false);
 
     // selected booking detail state
     const [bookingDetail, setBookingDetail] = useState<Reservation | null>(
@@ -121,12 +125,20 @@ function Index({ headerData, bodyData, status }) {
             <Modal show={showBookingDetailModal} onClose={onCloseBookingModal}>
                 <div className="p-6">
                     <p>{status}</p>
-                    {/* Booking Actions Component */}
 
-                    {!showTextBox && (
+                    {!showTextBox && !isRescheduled && (
                         <BookingAction
                             bookingDetail={bookingDetail}
                             setShowTextBox={setShowTextBox}
+                            setIsRescheduled={setIsRescheduled}
+                        />
+                    )}
+
+                    {/* Reason for Rescheduling */}
+                    {isRescheduled && (
+                        <RescheduleForm
+                            bookingDetail={bookingDetail}
+                            setIsRescheduled={setIsRescheduled}
                         />
                     )}
 

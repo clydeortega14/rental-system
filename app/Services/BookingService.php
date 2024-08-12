@@ -59,6 +59,8 @@ class BookingService {
 
         }
 
+        dd($status);
+
         $booking->status = $status->id;
         $booking->save();
     }
