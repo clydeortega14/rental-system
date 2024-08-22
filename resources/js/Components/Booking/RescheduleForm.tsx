@@ -18,7 +18,11 @@ export default function RescheduleForm({ bookingDetail, setIsRescheduled }) {
     const submitReschedule = (e) => {
         e.preventDefault();
 
-        post(route("reservation.update.status", bookingDetail.uuid));
+        post(route("reservation.update.status", bookingDetail.uuid), {
+            onSuccess: () => {
+                setIsRescheduled(false)
+            }
+        });
     };
 
     return (
@@ -47,7 +51,7 @@ export default function RescheduleForm({ bookingDetail, setIsRescheduled }) {
                         type="time"
                         value={data.pick_up_time}
                         name="pick_up_time"
-                        onChange={() => setData("pick_up_time", e.target.value)}
+                        onChange={(e) => setData("pick_up_time", e.target.value)}
                     />
 
                     <InputError message={errors.pick_up_time} />
@@ -62,7 +66,7 @@ export default function RescheduleForm({ bookingDetail, setIsRescheduled }) {
                         type="date"
                         value={data.drop_off_date}
                         name="drop_off_date"
-                        onChange={() =>
+                        onChange={(e) =>
                             setData("drop_off_date", e.target.value)
                         }
                     />
@@ -77,7 +81,7 @@ export default function RescheduleForm({ bookingDetail, setIsRescheduled }) {
                         type="time"
                         value={data.drop_off_time}
                         name="drop_off_time"
-                        onChange={() =>
+                        onChange={(e) =>
                             setData("drop_off_time", e.target.value)
                         }
                     />
