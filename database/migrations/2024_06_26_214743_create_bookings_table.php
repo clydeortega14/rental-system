@@ -26,6 +26,10 @@ return new class extends Migration
             $table->time('drop_off_time')->nullable();
             $table->string('drop_off_location');
             $table->boolean('is_rescheduled')->default(false);
+            $table->decimal('partial_total', 10, 2);
+            $table->integer('duration');
+            $table->decimal('service_fee', 10, 2);
+            $table->decimal('total_cost', 10, 2);
             $table->timestamps();
         });
     }

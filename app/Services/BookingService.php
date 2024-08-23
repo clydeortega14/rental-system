@@ -20,6 +20,10 @@ class BookingService {
             'drop_off_date' => $data['drop_off_date'],
             'drop_off_time' => $data['drop_off_time'],
             'drop_off_location' => $data['drop_off_location'],
+            'service_fee' => $data['service_fee'],
+            'total_cost' => $data['total_cost'],
+            'duration' => $data['duration'],
+            'partial_total' => $data['partial_total']
         ]);
     }
 

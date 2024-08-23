@@ -49,6 +49,8 @@ function Index({ headerData, bodyData, status }) {
         setBookingDetail(find_booking);
     };
 
+    
+
     return (
         <AuthenticatedLayout
             user={auth.user}

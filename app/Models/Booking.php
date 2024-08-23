@@ -26,7 +26,10 @@ class Booking extends Model
         'drop_off_time',
         'drop_off_location',
         'is_rescheduled',
-        
+        'service_fee',
+        'total_cost',
+        'partial_total',
+        'duration'
     ];
 
 

@@ -1,7 +1,7 @@
 import Checkbox from "@/Components/Checkbox";
 import { useForm, usePage } from "@inertiajs/react";
 import { Iitem } from "@/Interface/Item";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import InputError from "@/Components/InputError";
 import { PageProps } from "@/types";
 
@@ -17,16 +17,28 @@ function ItemScheduleDetail({ item }: Iitem) {
         pick_up_time: "",
         drop_off_date: "",
         drop_off_time: "",
+        partial_total: 0,
         service_fee: 450,
         total_cost: 0,
+        duration: 0
     });
+
+    const [ numOfDays, setNumOfDays ] = useState<number>(0);
 
     useEffect(() => {
         calculateTotalCost();
-    }, [item.price, data.total_cost]);
+    }, [item.price, data.total_cost, data.duration, data.partial_total]);
 
     const calculateTotalCost = () => {
-        data.total_cost = Number(item.price) + data.service_fee;
+
+        let partial = Number(item.price) * data.duration;
+        let overall_total = partial + data.service_fee;
+
+        data.partial_total = partial;
+        data.total_cost = overall_total;
+
+        setData("partial_total", partial);
+        setData("total_cost", overall_total);
     };
 
     const bookingSubmit = (e) => {
@@ -34,6 +46,22 @@ function ItemScheduleDetail({ item }: Iitem) {
 
         post(route("booking.store"));
     };
+
+    // calculate 2 days between two days
+    const calculateDays = (start_date, end_date) => {
+        let value = Math.round((end_date - start_date) / (1000 * 60 * 60 * 24) );
+
+        data.duration = value;
+        setData("duration", value);
+    }
+
+    useEffect(() => {
+        if(data.pick_up_date !== "" && data.drop_off_date !== "")
+        {
+            calculateDays(new Date(data.pick_up_date), new Date(data.drop_off_date))
+        }
+        
+    }, [data.pick_up_date, data.drop_off_date, data.duration])
 
     return (
         <>
@@ -230,18 +258,9 @@ function ItemScheduleDetail({ item }: Iitem) {
                     </p>
 
                     <div className="flex justify-between py-4 border-b">
-                        <p className="text-base text-gray-700">Due Now</p>
+                        <p className="text-base text-gray-700">Price for {data.duration} day/s</p>
                         <p className="font-bold text-base text-gray-600">
-                            0.00
-                        </p>
-                    </div>
-
-                    <div className="flex justify-between py-4 border-b">
-                        <p className="text-base text-gray-700">
-                            Due at pick up
-                        </p>
-                        <p className="font-bold text-base text-gray-600">
-                            {item.price}
+                            {data.partial_total.toFixed(2)}
                         </p>
                     </div>
 
@@ -251,6 +270,7 @@ function ItemScheduleDetail({ item }: Iitem) {
                             {data.service_fee.toFixed(2)}
                         </p>
                     </div>
+                    
                     <div className="flex justify-between py-4   ">
                         <p className="font-bold text-base text-gray-900">
                             Total Cost
