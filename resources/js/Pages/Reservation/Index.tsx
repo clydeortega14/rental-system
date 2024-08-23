@@ -88,7 +88,7 @@ function Index({ headerData, bodyData, status }) {
                                             </p>
                                         </td>
                                         <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
-                                            <span className="bg-yellow-200 p-2 text-gray-800">
+                                            <span className={`p-1 ${body.status.className} rounded-lg`}>
                                                 {body.status.name}
                                             </span>
                                         </td>
@@ -213,9 +213,10 @@ function Index({ headerData, bodyData, status }) {
                         <h2 className="text-lg font-medium text-gray-900 mb-2">
                             Status
                         </h2>
-                        <span className="bg-yellow-200 p-1 text-gray-800">
+                        <span className={`p-1 ${bookingDetail?.status.className} rounded-md`}>
                             {bookingDetail?.status.name}
-                        </span>
+                        </span> <br />
+                        <small className="text-slate-500 text-xs">Completed at { bookingDetail?.status.name === 'completed' && bookingDetail?.completed_at}</small>
                     </div>
 
                     <div className="mb-7 border-b border-gray-300 pb-4">

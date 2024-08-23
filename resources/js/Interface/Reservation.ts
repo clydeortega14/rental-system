@@ -19,7 +19,8 @@ export type Reservation = {
     },
     status: {
         id: number,
-        name: string
+        name: string,
+        className: string,
     },
     completed_at: string,
     pick_up_date: string,
