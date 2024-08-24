@@ -33,8 +33,28 @@ trait ItemDetails {
     {
         $find_item = $this->findItem($uuid);
 
-        return Inertia::render('Item/CheckoutItem', [
-            'item' => $find_item
+        $rent_detail = [
+            'pick_up_date' => session('booking_data.pick_up_date') ? date('D, F j, Y', strtotime(session('booking_data.pick_up_date'))) : '',
+            'pick_up_time' => session('booking_data.pick_up_time') ? date('h:i A', strtotime(session('booking_data.pick_up_time')))  : '',
+            'pick_up_location' => session('booking_data.pick_up_location') ?? '',
+            'drop_off_date' => session('booking_data.drop_off_date') ? date('D, F j, Y', strtotime(session('booking_data.drop_off_date'))) : '',
+            'drop_off_time' => session('booking_data.drop_off_time') ? date('h:i A', strtotime(session('booking_data.drop_off_time')))  : '',
+            'drop_location' => session('booking_data.drop_location') ?? '',
+            'rent_item' => [
+                'id' => $find_item->id,
+                'itemName' => $find_item->itemName,
+                'description' => $find_item->description,
+                'image' => config('app.url').'/storage/'.$find_item->attachment[0]->file_path
+            ],
+            'partial_total' => session('booking_data.partial_total') ? number_format(session('booking_data.partial_total'), 2) : '',
+            'duration' => session('booking_data.duration') ?? '',
+            'service_fee' => session('booking_data.service_fee') ? number_format(session('booking_data.service_fee'), 2) : '',
+            'total_cost' => session('booking_data.total_cost') ? number_format(session('booking_data.total_cost'), 2) : '',
+        ];
+        
+        return Inertia::render('Item/Checkout', [
+            'item' => $find_item,
+            'rent_detail' => $rent_detail
         ]);
     }
 

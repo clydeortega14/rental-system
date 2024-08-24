@@ -14,9 +14,9 @@ function ItemScheduleDetail({ item }: Iitem) {
         pick_up_location: "",
         drop_off_location: "",
         pick_up_date: "",
-        pick_up_time: "",
+        pick_up_time: "10:00",
         drop_off_date: "",
-        drop_off_time: "",
+        drop_off_time: "10:00",
         partial_total: 0,
         service_fee: 450,
         total_cost: 0,
@@ -271,7 +271,7 @@ function ItemScheduleDetail({ item }: Iitem) {
                         </p>
                     </div>
                     
-                    <div className="flex justify-between py-4   ">
+                    <div className="flex justify-between py-4">
                         <p className="font-bold text-base text-gray-900">
                             Total Cost
                         </p>
