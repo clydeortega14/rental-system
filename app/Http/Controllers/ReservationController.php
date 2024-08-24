@@ -52,7 +52,18 @@ class ReservationController extends Controller
             
         }else if($request->action == "rescheduled"){
             // validate new data
+            $request->validate([
+                'pick_up_date' => ['required'],
+                'drop_off_date' => ['required'],
+            ]);
+
+
             $booking->is_rescheduled = true;
+            $booking->pick_up_date = $request->pick_up_date;
+            $booking->drop_off_date = $request->drop_off_date;
+            $booking->pick_up_time = !is_null($request->pick_up_time) || $request->pick_up_time !== "" ? $request->pick_up_time : $booking->pick_up_time;
+            $booking->drop_off_time = !is_null($request->drop_off_time) || $request->drop_off_time !== "" ? $request->drop_off_time : $booking->drop_off_time;
+            $booking->save();
         }
 
         $this->booking_service->updateStatus($booking, [
@@ -71,6 +82,7 @@ class ReservationController extends Controller
         $status = BookingStatus::where('name', 'completed')->first();
 
         $booking->status = $status->id;
+        
         $booking->save();
 
     }
@@ -81,11 +93,10 @@ class ReservationController extends Controller
 
         if(is_null($booking)) return back()->with('error', 'Booking Not Found')->first();
 
-        
-
         $status = BookingStatus::where('name', 'cancelled')->first();
 
         $booking->status = $status->id;
+
         $booking->save();
 
         return redirect()->back()->with('success_message', 'Booking has been cancelled');

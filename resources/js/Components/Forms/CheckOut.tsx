@@ -17,17 +17,18 @@ export default function CheckOut() {
         post(route("checkout.booking"));
     };
     return (
-        <div className="mx-auto py-12 px-12">
+        
             <form>
                 <div>
                     <PrimaryButton
                         className="mt-1"
                         onClick={(e) => checkOutNow(e)}
+                        disabled={processing}
                     >
                         Checkout Now
                     </PrimaryButton>
                 </div>
             </form>
-        </div>
+        
     );
 }

@@ -3,6 +3,7 @@
 namespace App\Services;
 use App\Models\Booking;
 use App\Models\BookingStatus;
+use Carbon\Carbon;
 
 class BookingService {
 
@@ -19,6 +20,10 @@ class BookingService {
             'drop_off_date' => $data['drop_off_date'],
             'drop_off_time' => $data['drop_off_time'],
             'drop_off_location' => $data['drop_off_location'],
+            'service_fee' => $data['service_fee'],
+            'total_cost' => $data['total_cost'],
+            'duration' => $data['duration'],
+            'partial_total' => $data['partial_total']
         ]);
     }
 
@@ -38,6 +43,7 @@ class BookingService {
             case "completed":
 
                 $status = $status_query->where('name', 'completed')->first();
+                $booking->completed_at = Carbon::now();
 
                 break;
 
@@ -98,7 +104,8 @@ class BookingService {
                 ],
                 'status' => [
                     'id' => $booking->bookingStatus->id,
-                    'name' => $booking->bookingStatus->name
+                    'name' => $booking->bookingStatus->name,
+                    'className' => $booking->bookingStatus->class_name
                 ],
                 'completed_at' => $booking->completed_at,
                 'pick_up_date' => $booking->format_pick_up,
