@@ -78,4 +78,9 @@ class BookingController extends Controller
         }
         return redirect(route('reservations.index'))->with('success', 'sucessfully booked a reservation');
     }
+
+    public function calendar()
+    {
+        return inertia('BookingCalendar');
+    }
 }
