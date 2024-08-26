@@ -81,6 +81,10 @@ class BookingController extends Controller
 
     public function calendar()
     {
-        return inertia('BookingCalendar');
+        $events = $this->booking_service->formatForCalendar();
+        
+        return inertia('BookingCalendar', [
+            'events' => $events,
+        ]);
     }
 }

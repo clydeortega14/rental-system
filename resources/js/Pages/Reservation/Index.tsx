@@ -12,6 +12,7 @@ import { useState, FormEventHandler, useEffect } from "react";
 import { Reservation } from "@/Interface/Reservation";
 import ReasonForm from "@/Components/Booking/ReasonForm";
 import RescheduleForm from "@/Components/Booking/RescheduleForm";
+import {Link} from "@inertiajs/react";
 
 type Header = {
     name: string;
@@ -63,7 +64,18 @@ function Index({ headerData, bodyData, status }) {
             <Head title="Reservations" />
 
             <div className="py-12">
+                <Link 
+                    href={route('booking.calendar')} 
+                    
+                    className={`py-7 px-7 ${route().current('booking.calendar') ? "text-blue-500" : "text-gray-500"}`}
+                >
+                    Calendar View
+                </Link>
+
+
                 <div className="max-w-1xl mx-auto sm:px-6 lg:px-8">
+                
+
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div>
                             <CustomTable headerData={headerData}>

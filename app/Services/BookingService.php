@@ -4,8 +4,11 @@ namespace App\Services;
 use App\Models\Booking;
 use App\Models\BookingStatus;
 use Carbon\Carbon;
+use App\Traits\CalendarTheme;
 
 class BookingService {
+
+    use CalendarTheme;
 
     public function storeBooking(array $data)
     {
@@ -118,4 +121,19 @@ class BookingService {
             ];
         });
     }
+
+    public function formatForCalendar()
+    {
+        return $this->getBookings()->map(function($b){
+            return [
+                'id' => $b->id,
+                'title' => $b->rentalListing->itemName,
+                'start' => $b->pick_up_date.'T'.$b->pick_up_time,
+                'end' => $b->drop_off_date.'T'.$b->drop_off_time,
+                'backgroundColor' => $this->formatColorByStatus($b->bookingStatus->name)
+            ];
+        });
+    }
+
+
 }
