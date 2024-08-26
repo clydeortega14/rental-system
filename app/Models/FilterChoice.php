@@ -10,7 +10,7 @@ class FilterChoice extends Model
     use HasFactory;
 
 
-    protected $table = 'filter_choice';
+    protected $table = 'filter_choices';
 
     protected $fillable = ['filter_id', 'name'];
 
