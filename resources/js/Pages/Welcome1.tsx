@@ -21,7 +21,6 @@ import { IRentalItems } from "@/Interface/RentalItems";
 
 import NavHeader from "@/Components/Header";
 import CarRentalForm from "@/Components/Forms/CarRental";
-
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -55,6 +54,8 @@ export default function Welcome1({
     rental_items: IRentalItems;
 }>) {
     const [open, setOpen] = useState(false);
+    
+
 
     return (
         <>

@@ -31,6 +31,8 @@ class BookingController extends Controller
             return back()->with('error', 'Item not found!');
         }
 
+        
+
         // store requests to session
         $request->session()->put('booking_data', $validated + [
             'category_id' => $item->category_id,

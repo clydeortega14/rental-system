@@ -29,7 +29,7 @@ export default function View({
 
                 {/* Card section */}
                 <div>
-                    <div className="bg-gray-100 rounded-lg overflow-hidden">
+                    <div className="bg-gray-50 rounded-lg overflow-hidden">
                         {/* Card content goes here */}
 
                         <ItemDetail item={item} />

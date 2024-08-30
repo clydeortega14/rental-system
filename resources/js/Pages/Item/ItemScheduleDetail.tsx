@@ -4,26 +4,31 @@ import { Iitem } from "@/Interface/Item";
 import { useEffect, useState } from "react";
 import InputError from "@/Components/InputError";
 import { PageProps } from "@/types";
+import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
+import InputLabel from "@/Components/InputLabel"
 
 function ItemScheduleDetail({ item }: Iitem) {
     const false_error_message = usePage<PageProps>().props.flash.error_message;
+
+    const [dateRange, setDateRange] = useState({
+        startDate: null,
+        endDate: null
+    });
 
     const { data, setData, post, processing, errors, reset } = useForm({
         item_uuid: item.uuid,
         drop_off_diff_loc: false,
         pick_up_location: "",
         drop_off_location: "",
-        pick_up_date: "",
+        pick_up_date: dateRange.startDate,
         pick_up_time: "10:00",
-        drop_off_date: "",
+        drop_off_date: dateRange.endDate,
         drop_off_time: "10:00",
         partial_total: 0,
         service_fee: 450,
         total_cost: 0,
         duration: 0
     });
-
-    const [ numOfDays, setNumOfDays ] = useState<number>(0);
 
     useEffect(() => {
         calculateTotalCost();
@@ -43,7 +48,7 @@ function ItemScheduleDetail({ item }: Iitem) {
 
     const bookingSubmit = (e) => {
         e.preventDefault();
-
+        
         post(route("booking.store"));
     };
 
@@ -63,8 +68,21 @@ function ItemScheduleDetail({ item }: Iitem) {
         
     }, [data.pick_up_date, data.drop_off_date, data.duration])
 
+    const handleDateChange = (date_value:DateValueType) => {
+
+        setDateRange(date_value);
+
+        data.pick_up_date = date_value.startDate;
+        data.drop_off_date = date_value.endDate;
+
+        setData("pick_up_date", date_value.startDate);
+        setData("drop_off_date", date_value.endDate)
+    }
+
     return (
         <>
+            
+            
             <div className="border border-gray-200 p-4 rounded-lg shadow-xl bg-white mb-4">
                 <div className="border-gray-900">
                     {false_error_message && (
@@ -144,7 +162,14 @@ function ItemScheduleDetail({ item }: Iitem) {
                         )}
                     </div>
 
+                    
+
                     <div className="flex flex-wrap -mx-3 mb-6">
+                        <div className="w-full px-3 md:1/2 mb-6">
+                            <InputLabel htmlFor="date-range" value="Pick-up/Drop-off Date" />
+
+                            <Datepicker value={dateRange} onChange={date_value =>  handleDateChange(date_value)} />
+                        </div>
                         <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                             <label
                                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -154,13 +179,11 @@ function ItemScheduleDetail({ item }: Iitem) {
                             </label>
                             <input
                                 name="pick_up_date"
-                                onChange={(e) =>
-                                    setData("pick_up_date", e.target.value)
-                                }
+                                value={data.pick_up_date}
                                 className={`${errors.pick_up_date ? "border-red-400" : ""} appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white`}
                                 id="pick-up-date"
                                 type="date"
-                                value={data.pick_up_date}
+                                onChange={(e) => setData("pick_up_date", e.target.value)}
                             />
 
                             <InputError
@@ -204,12 +227,10 @@ function ItemScheduleDetail({ item }: Iitem) {
                             <input
                                 name="drop_off_date"
                                 value={data.drop_off_date}
-                                onChange={(e) =>
-                                    setData("drop_off_date", e.target.value)
-                                }
                                 className={`${errors.drop_off_date ? "border-red-400" : ""} appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white`}
                                 id="drop-off-date"
                                 type="date"
+                                onChange={ (e) => setData("drop_off_date", e.target.value)}
                             />
 
                             <InputError

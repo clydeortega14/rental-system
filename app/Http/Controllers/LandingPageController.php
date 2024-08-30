@@ -36,6 +36,8 @@ class LandingPageController extends Controller
         $rental_items = RentalAddItem::with(['attachment', 'user'])->get();
         
         $rental_items = $this->rental_items_service->formattedRentalItems();
+
+        
         return Inertia::render('Welcome1', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),

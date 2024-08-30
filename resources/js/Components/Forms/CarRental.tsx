@@ -1,8 +1,16 @@
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import PrimaryButton from "@/Components/PrimaryButton";
+import DatePicker from "react-tailwindcss-datepicker";
+import { useState } from "react";
 
 function CarRental() {
+    const [value, setValue ] = useState({
+        startDate: null,
+        endDate: null
+    });
+
+
     return (
         <>
             <div className="flex hover:shadow-xl justify-center py-7 bg-gradient-to-tr from-blue-100 to-green-100">
@@ -16,6 +24,10 @@ function CarRental() {
                         name="pick_up_location"
                         className="w-full block"
                     />
+                </div>
+
+                <div className="sm:col-span-2 mr-2 mt-5">
+                    <DatePicker value={value} onChange={newValue => setValue(newValue)} />
                 </div>
                 <div className="sm:col-span-2 mr-2">
                     <InputLabel htmlFor="pick-up-date" value="Pick-up date" />
