@@ -126,7 +126,7 @@ function ItemScheduleDetail({ item }: Iitem) {
                                 onChange={(e) =>
                                     setData("pick_up_location", e.target.value)
                                 }
-                                className={`${errors.pick_up_location && "border-red-400"} appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
+                                className={`${errors.pick_up_location && "border-red-400"} appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
                                 id="pick-up-drop-off-location"
                             />
 
@@ -155,14 +155,12 @@ function ItemScheduleDetail({ item }: Iitem) {
                                             ? data.drop_off_location
                                             : data.pick_up_location
                                     }
-                                    className="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    className="appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     id="pick-up-drop-off-location"
                                 />
                             </div>
                         )}
                     </div>
-
-                    
 
                     <div className="flex flex-wrap -mx-3 mb-6">
                         <div className="w-full px-3 md:1/2 mb-6">
@@ -170,27 +168,7 @@ function ItemScheduleDetail({ item }: Iitem) {
 
                             <Datepicker value={dateRange} onChange={date_value =>  handleDateChange(date_value)} />
                         </div>
-                        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                            <label
-                                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                htmlFor="pick-up-date"
-                            >
-                                Pick-up
-                            </label>
-                            <input
-                                name="pick_up_date"
-                                value={data.pick_up_date}
-                                className={`${errors.pick_up_date ? "border-red-400" : ""} appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white`}
-                                id="pick-up-date"
-                                type="date"
-                                onChange={(e) => setData("pick_up_date", e.target.value)}
-                            />
-
-                            <InputError
-                                message={errors.pick_up_date}
-                                className="mt-2"
-                            />
-                        </div>
+                        
                         <div className="w-full md:w-1/2 px-3">
                             <label
                                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -204,7 +182,7 @@ function ItemScheduleDetail({ item }: Iitem) {
                                     setData("pick_up_time", e.target.value)
                                 }
                                 value={data.pick_up_time}
-                                className={`${errors.pick_up_time ? "border-red-400" : ""} appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
+                                className={`${errors.pick_up_time ? "border-red-400" : ""} appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
                                 id="pick-up-time"
                                 type="time"
                             />
@@ -214,30 +192,7 @@ function ItemScheduleDetail({ item }: Iitem) {
                                 className="mt-2"
                             />
                         </div>
-                    </div>
 
-                    <div className="flex flex-wrap -mx-3 mb-6">
-                        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                            <label
-                                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                htmlFor="drop-off-date"
-                            >
-                                Drop off
-                            </label>
-                            <input
-                                name="drop_off_date"
-                                value={data.drop_off_date}
-                                className={`${errors.drop_off_date ? "border-red-400" : ""} appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white`}
-                                id="drop-off-date"
-                                type="date"
-                                onChange={ (e) => setData("drop_off_date", e.target.value)}
-                            />
-
-                            <InputError
-                                message={errors.drop_off_date}
-                                className="mt-2"
-                            />
-                        </div>
                         <div className="w-full md:w-1/2 px-3">
                             <label
                                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -251,7 +206,7 @@ function ItemScheduleDetail({ item }: Iitem) {
                                 onChange={(e) =>
                                     setData("drop_off_time", e.target.value)
                                 }
-                                className={`${errors.drop_off_time ? "border-red-400" : ""} appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
+                                className={`${errors.drop_off_time ? "border-red-400" : ""} appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
                                 id="drop-off-time"
                                 type="time"
                             />
@@ -261,6 +216,11 @@ function ItemScheduleDetail({ item }: Iitem) {
                                 className="mt-4"
                             />
                         </div>
+                    </div>
+
+                    <div className="flex flex-wrap -mx-3 mb-6">
+                        
+                        
                     </div>
 
                     <div className="flex flex-wrap -mx-3 mb-6">
