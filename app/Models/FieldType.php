@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class FieldType extends Model
 {
-    use HasFactory, Uuid;
+    use HasFactory;
 
     protected $table = 'field_types';
 

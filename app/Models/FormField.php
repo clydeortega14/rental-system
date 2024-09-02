@@ -13,7 +13,7 @@ class FormField extends Model
 
     protected $table = 'form_fields';
 
-    protected $fillable = ['name', 'form_id', 'data_type_id', 'field_type_id', 'size', 'sequence'];
+    protected $fillable = ['label', 'name', 'form_id', 'data_type_id', 'field_type_id', 'size', 'sequence'];
 
     public $timestamps = false;
 

@@ -13,6 +13,12 @@ class DataTypesSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        DataType::create(['name' => 'varchar']);
+        DataType::create(['name' => 'text']);
+        DataType::create(['name' => 'integer']);
+        DataType::create(['name' => 'decimal']);
+        DataType::create(['name' => 'date']);
+        DataType::create(['name' => 'time']);
+        DataType::create(['name' => 'boolean']);
     }
 }

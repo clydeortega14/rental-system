@@ -23,6 +23,7 @@ return new class extends Migration
 
         Schema::create('form_fields', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('label');
             $table->string('name');
             $table->unsignedInteger('form_id');
             $table->unsignedSmallInteger('data_type_id');
