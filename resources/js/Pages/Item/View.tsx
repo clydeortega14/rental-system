@@ -5,10 +5,11 @@ import RenterLayout from "@/Layouts/RenterLayout";
 import ImageGallery from "@/Components/Renter/ImageGallery";
 import { MapPin, Star } from 'lucide-react';
 import PricingOptions from "@/Components/Renter/PricingOptions";
-import { DateAvailability, RentalDuration,TimeSlot } from "@/types/rental";
+import { BookingDetails, RentalDuration,TimeSlot } from "@/types/rental";
 import DatePicker from "@/Components/Renter/DatePicker";
 import { availabilityData } from "@/data/mockData";
 import TimeSlots from "@/Components/Renter/TimeSlots";
+import BookingSummary from "@/Components/Renter/BookingSummary";
 
 const navigation = {
     categories: [],
@@ -31,6 +32,14 @@ export default function View({
     const [quantity, setQuantity] = useState(1);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
+    const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
+        startDate: null,
+        endDate: null,
+        startTime: null,
+        endTime: null,
+        duration: 'daily',
+        quantity: 1
+    })
 
     const [value, setValue] = useState({
         startDate: new Date(),
@@ -52,6 +61,25 @@ export default function View({
     const handleTimeSlotSelect = (timeSlot: TimeSlot) => {
         setSelectedTimeSlot(timeSlot);
     };
+
+    const handleBookingConfirm = (details: BookingDetails) => {
+        
+    setBookingDetails(details);
+  };
+
+    const handleBookNow = () => {
+    if (selectedDate && selectedTimeSlot) {
+      const bookingDetails: BookingDetails = {
+        startDate: new Date(selectedDate),
+        endDate: null, // For simplicity, we're not calculating the end date
+        startTime: selectedTimeSlot.startTime,
+        endTime: selectedTimeSlot.endTime,
+        duration,
+        quantity
+      };
+      handleBookingConfirm(bookingDetails)
+    }
+  };
 
     return (
         <RenterLayout>
@@ -122,11 +150,11 @@ export default function View({
                             />
                         )}
                         
-                        {/* <BookingSummary 
+                        <BookingSummary
                             bookingDetails={bookingDetails} 
                             itemPrice={item.price}
                             onBookNow={handleBookNow}
-                        /> */}
+                        />
                     </div>
                 </div>
             </div>

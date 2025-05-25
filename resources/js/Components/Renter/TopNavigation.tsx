@@ -2,27 +2,27 @@ import React from 'react'
 
 const TopNavigation = () => {
   return (
-    <div>
-        <header className="bg-white border-b border-gray-200 py-4 sticky top-0 z-10">
-            <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-            <div className="font-bold text-2xl text-orange-500">Rentify</div>
-            <nav className="hidden md:flex space-x-6">
-                <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300">Home</a>
-                <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300">Categories</a>
-                <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300">About</a>
-                <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300">Contact</a>
-            </nav>
-            <div className="flex items-center space-x-4">
-                <button className="text-gray-700 hover:text-blue-600 transition-colors duration-300">
-                Sign In
-                </button>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-300">
-                Sign Up
-                </button>
-            </div>
-            </div>
-        </header>
-    </div>
+    
+      <header className="bg-white border-b border-gray-200 py-4 sticky top-0 z-10">
+          <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
+          <div className="font-bold text-2xl text-orange-500">Rentify</div>
+          <nav className="hidden md:flex space-x-6">
+              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300">Home</a>
+              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300">Categories</a>
+              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300">About</a>
+              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300">Contact</a>
+          </nav>
+          <div className="flex items-center space-x-4">
+              <button className="text-gray-700 hover:text-blue-600 transition-colors duration-300">
+              Sign In
+              </button>
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-300">
+              Sign Up
+              </button>
+          </div>
+          </div>
+      </header>
+    
   )
 }
 

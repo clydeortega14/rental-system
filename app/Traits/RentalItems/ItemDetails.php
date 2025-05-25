@@ -16,9 +16,9 @@ trait ItemDetails {
             'name' => $find_item->itemName,
             'description' => $find_item->description,
             'price' => [
-                'hourly' => "700.00",
+                'hourly' => 700,
                 'daily' => $find_item->price,
-                'weekly' => "5000.00"
+                'weekly' => 5000
             ],
             'specifications' => [
                 'Brand' => 'Sony',

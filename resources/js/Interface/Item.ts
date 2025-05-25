@@ -3,9 +3,9 @@ export type Item = {
     name: string;
     description: string;
     price: {
-        hourly: string,
-        daily: string,
-        weekly: string
+        hourly: number,
+        daily: number,
+        weekly: number
     };
     specifications: {
         Brand: string;
