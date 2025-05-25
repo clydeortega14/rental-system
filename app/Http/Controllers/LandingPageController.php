@@ -37,7 +37,6 @@ class LandingPageController extends Controller
         
         $rental_items = $this->rental_items_service->formattedRentalItems();
 
-        
         return Inertia::render('Welcome1', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),

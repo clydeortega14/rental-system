@@ -11,13 +11,25 @@ trait ItemDetails {
     {
         $find_item = $this->findItem($uuid);
 
-        
-
         $item_detail = [
             'uuid' => $find_item->uuid,
             'name' => $find_item->itemName,
             'description' => $find_item->description,
-            'price' => $find_item->price,
+            'price' => [
+                'hourly' => "700.00",
+                'daily' => $find_item->price,
+                'weekly' => "5000.00"
+            ],
+            'specifications' => [
+                'Brand' => 'Sony',
+                'Model' => 'Aplha a7 III',
+                'Sensor' => 'Full Frame CMOS',
+                'Resolution' => '24.2 Megapixels'
+            ],
+            'category' => $find_item->category,
+            'rating' => 4.7,
+            'reviewCount' => 89,
+            'location' => 'Downtown Studio',
             'src' => $find_item->attachment->map(function($item){ 
                 return [
                     'name' => $item->display_name,

@@ -31,6 +31,8 @@ class BookingController extends Controller
             return back()->with('error', 'Item not found!');
         }
 
+        if(is_null($status)) return back()->with('error', 'Pending status does not exists');
+
         
 
         // store requests to session

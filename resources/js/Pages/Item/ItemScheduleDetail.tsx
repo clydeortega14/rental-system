@@ -53,7 +53,7 @@ function ItemScheduleDetail({ item }: Iitem) {
     };
 
     // calculate 2 days between two days
-    const calculateDays = (start_date, end_date) => {
+    const calculateDays = (start_date:number, end_date:number) => {
         let value = Math.round((end_date - start_date) / (1000 * 60 * 60 * 24) );
 
         data.duration = value;
