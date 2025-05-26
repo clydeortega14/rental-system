@@ -44,18 +44,18 @@ class LandingPageController extends Controller
         
         $rental_items = $this->rental_items_service->formattedRentalItems();
 
-        // return inertia('Renter/RentalItemBrowser', [
-        //     'categories' => $categories,
-        //     'priceRanges' => $price_ranges
-        // ]);
-
-        return Inertia::render('Welcome1', [
-            'canLogin' => Route::has('login'),
-            'canRegister' => Route::has('register'),
-            'laravelVersion' => Application::VERSION,
-            'phpVersion' => PHP_VERSION,
+        return inertia('Renter/RentalItemBrowser', [
             'categories' => $categories,
-            'rental_items' => $rental_items
+            'priceRanges' => $price_ranges
         ]);
+
+        // return Inertia::render('Welcome1', [
+        //     'canLogin' => Route::has('login'),
+        //     'canRegister' => Route::has('register'),
+        //     'laravelVersion' => Application::VERSION,
+        //     'phpVersion' => PHP_VERSION,
+        //     'categories' => $categories,
+        //     'rental_items' => $rental_items
+        // ]);
     }
 }
