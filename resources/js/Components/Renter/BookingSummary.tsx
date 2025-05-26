@@ -23,6 +23,7 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow}: BookingSummaryPr
     const basePrice = itemPrice[bookingDetails.duration];
     
     let calculated_total = Number(basePrice) * bookingDetails.quantity;
+    
     return calculated_total;
   };
 

@@ -10,6 +10,7 @@ import DatePicker from "@/Components/Renter/DatePicker";
 import { availabilityData } from "@/data/mockData";
 import TimeSlots from "@/Components/Renter/TimeSlots";
 import BookingSummary from "@/Components/Renter/BookingSummary";
+import ItemSpecification from "@/Components/Renter/ItemSpecification";
 
 const navigation = {
     categories: [],
@@ -157,6 +158,8 @@ export default function View({
                         />
                     </div>
                 </div>
+
+                <ItemSpecification specifications={item.specifications}/>
             </div>
         </RenterLayout>
     );
