@@ -4,7 +4,7 @@ const TopNavigation = () => {
   return (
     
       <header className="bg-white border-b border-gray-200 py-4 sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
+          <div className="px-4 flex justify-between items-center">
           <div className="font-bold text-2xl text-orange-500">Rentify</div>
           <nav className="hidden md:flex space-x-6">
               <a href={route('landing.page.index')} className="text-gray-700 hover:text-blue-600 transition-colors duration-300">Home</a>

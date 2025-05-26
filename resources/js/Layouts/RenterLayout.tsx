@@ -4,11 +4,11 @@ import { PropsWithChildren } from 'react'
 
 const RenterLayout = ({ children }: PropsWithChildren) => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="flex flex-col min-h-screen bg-white">
         
         <TopNavigation />
 
-        <main className="pb-16">
+        <main className="flex-grow">
             {children}
         </main>
 
