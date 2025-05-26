@@ -31,6 +31,10 @@ class BookingController extends Controller
             return back()->with('error', 'Item not found!');
         }
 
+        if(is_null($status)) return back()->with('error', 'Pending status does not exists');
+
+        
+
         // store requests to session
         $request->session()->put('booking_data', $validated + [
             'category_id' => $item->category_id,
@@ -77,5 +81,14 @@ class BookingController extends Controller
             $request->session()->forget(['booking_data']);
         }
         return redirect(route('reservations.index'))->with('success', 'sucessfully booked a reservation');
+    }
+
+    public function calendar()
+    {
+        $events = $this->booking_service->formatForCalendar();
+        
+        return inertia('BookingCalendar', [
+            'events' => $events,
+        ]);
     }
 }

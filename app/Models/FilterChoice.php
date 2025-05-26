@@ -4,20 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\Uuid;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 
-class DataType extends Model
+class FilterChoice extends Model
 {
     use HasFactory;
 
-    protected $table = 'data_types';
 
-    protected $fillable = ['name'];
+    protected $table = 'filter_choices';
+
+    protected $fillable = ['filter_id', 'name'];
 
     public $timestamps = false;
 
-    public function detail() : MorphOne
+    public function detail()
     {
         return $this->morphOne(Detailable::class, 'detailable');
     }

@@ -4,6 +4,8 @@ import { PageProps } from "@/types";
 import { Popover } from "@headlessui/react";
 import { usePage } from "@inertiajs/react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
+import Dropdown from "./Dropdown";
+import { Category } from "@/Interface/CategoryInterface";
 
 interface HeaderProps {
     setOpen: (status: boolean) => void;
@@ -36,6 +38,47 @@ function NavHeader({ setOpen }: HeaderProps) {
                                 />
                             </a>
                         </div>
+
+                        {/* <div className="ms-3 items-center">
+                            <Dropdown>
+                                <Dropdown.Trigger>
+                                    <span className="inline-flex rounded-md">
+                                        <button
+                                            type="button"
+                                            className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                                        >
+                                            Categories
+
+                                            <svg
+                                                className="ms-2 -me-0.5 h-4 w-4"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clipRule="evenodd"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </span>
+                                </Dropdown.Trigger>
+                                <Dropdown.Content>
+                                    {
+                                        categories.map((category: Category, index: number) => (
+                                            <div key={index}>
+                                            <Dropdown.Link
+                                                href={"#"}
+                                            >
+                                                    {category.label}
+                                            </Dropdown.Link>
+                                            </div>
+                                        ))
+                                    }
+                                </Dropdown.Content>
+                            </Dropdown>
+                        </div> */}
 
                         {/* Flyout menus */}
                         <Popover.Group className="hidden lg:ml-8 lg:flex z-50"></Popover.Group>

@@ -82,6 +82,9 @@ Route::middleware([
 
     /* -- Reservations -- */
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+
+    /* -- Booking Calendar -- */
+    Route::get('/booking/calendar', [BookingController::class, 'calendar'])->name('booking.calendar');
     
     /* -- Accepting Reservation -- */
     Route::post('/reservation/update-status/{uuid}', [ReservationController::class, 'update'])->name('reservation.update.status');

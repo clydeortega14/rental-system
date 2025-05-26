@@ -27,6 +27,8 @@ class DatabaseSeeder extends Seeder
             FormTypesSeeder::class,
             FormSeeder::class,
             BookingStatusSeeder::class,
+            DataTypesSeeder::class,
+            FieldTypesSeeder::class
         ]);
     }
 }
