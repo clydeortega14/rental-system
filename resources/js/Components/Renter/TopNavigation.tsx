@@ -7,10 +7,8 @@ const TopNavigation = () => {
           <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
           <div className="font-bold text-2xl text-orange-500">Rentify</div>
           <nav className="hidden md:flex space-x-6">
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300">Home</a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300">Categories</a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300">About</a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300">Contact</a>
+              <a href={route('landing.page.index')} className="text-gray-700 hover:text-blue-600 transition-colors duration-300">Home</a>
+              
           </nav>
           <div className="flex items-center space-x-4">
               <button className="text-gray-700 hover:text-blue-600 transition-colors duration-300">

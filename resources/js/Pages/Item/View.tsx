@@ -11,6 +11,9 @@ import { availabilityData } from "@/data/mockData";
 import TimeSlots from "@/Components/Renter/TimeSlots";
 import BookingSummary from "@/Components/Renter/BookingSummary";
 import ItemSpecification from "@/Components/Renter/ItemSpecification";
+import ReviewsSection from "./ReviewsSection";
+import SimilarItems from "./SimilarItems";
+import { similarItems } from "@/data/similarItems";
 
 const navigation = {
     categories: [],
@@ -160,6 +163,10 @@ export default function View({
                 </div>
 
                 <ItemSpecification specifications={item.specifications}/>
+
+                <ReviewsSection rating={4.8} reviewCount={255}/>
+
+                <SimilarItems items={similarItems}/>
             </div>
         </RenterLayout>
     );
