@@ -1,10 +1,15 @@
 import { useCart } from '@/context/CartContext';
 import { PageProps, User } from '@/types'
-import { Link } from '@inertiajs/react'
-import { Menu, Search, ShoppingCart, X } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react'
+import { Menu, Search, ShoppingCart as CartIcon, X } from 'lucide-react';
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 
-const TopNavigation = ({user}:PropsWithChildren<{user?: User}>) => {
+const TopNavigation = () => {
+
+  const auth = usePage<PageProps>().props.auth;
+
+  const user = auth.user;
+
   const [isOpen, setIsOpen] = useState(false);
   
   const [scrolled, setScrolled] = useState(false);
@@ -16,7 +21,15 @@ const TopNavigation = ({user}:PropsWithChildren<{user?: User}>) => {
     {title: 'My Bookings', link: route('reservations.index'), isActive: route().current('reservations.index'), display:  user === undefined ? false : true},
   ]);
 
+  const [rightNavs, setRightNavs] = useState([
+    {title: 'Sign In', link: route('login'), display: user !== undefined ? false : true, icon: React.ReactNode },
+    {title: 'Sign Up', link: route('register'), display:  user !== undefined ? false : true, icon: React.ReactNode},
+    {title: 'Cart', link: route('cart.index'), display:  user === undefined ? false : true, icon: <CartIcon />},
+    // {title: 'Avatar', link: route('cart.index'), display:  user === undefined ? false : true, },
+  ])
+
   useEffect(() => {
+
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
@@ -25,10 +38,7 @@ const TopNavigation = ({user}:PropsWithChildren<{user?: User}>) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-
-  //   useEffect(() => {
-  //   setIsOpen(false);
-  // }, [location]);
+  
   return (
     
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md' : 'bg-gray-50'}`}>
@@ -48,12 +58,19 @@ const TopNavigation = ({user}:PropsWithChildren<{user?: User}>) => {
               </nav>
 
               <div className="flex items-center space-x-4">
-                <Link href={route('login')} className="text-gray-700 hover:text-blue-600 transition-colors duration-300">
-                  Sign In
-                </Link>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-300">
+                {
+                  rightNavs.map((rightNav, index) => (
+                    <div key={index}>
+                      {rightNav.display && <Link href={rightNav.link} className="text-gray-700 hover:text-blue-600 transition-colors duration-300">
+                        {rightNav.title}
+                      </Link>}
+                    </div>
+                  ))
+                }
+                
+                {/* <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-300">
                 Sign Up
-                </button>
+                </button> */}
 
                 {/* Mobile Menu Button */}
                 <button
