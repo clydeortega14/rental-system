@@ -1,5 +1,6 @@
 import { BookingDetails, RentalDuration } from '@/types/rental';
 import { formatPrice } from '@/utils/dateUtils';
+import { useEffect } from 'react';
 
 interface BookingSummaryProps {
     bookingDetails: BookingDetails;
@@ -13,9 +14,9 @@ interface BookingSummaryProps {
 const BookingSummary = ({bookingDetails, itemPrice, onBookNow}: BookingSummaryProps) => {
     const getDurationText = (duration: RentalDuration) => {
         switch (duration) {
-        case 'hourly': return 'hour';
-        case 'daily': return 'day';
-        case 'weekly': return 'week';
+          case 'hourly': return 'hour';
+          case 'daily': return 'day';
+          case 'weekly': return 'week';
         }
     };
   
@@ -28,6 +29,7 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow}: BookingSummaryPr
   };
 
   const hasSelectedDateTime = bookingDetails.startDate && bookingDetails.startTime;
+
 
   return (
     <div className="bg-gray-50 rounded-lg p-6">

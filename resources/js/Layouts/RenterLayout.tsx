@@ -8,7 +8,7 @@ const RenterLayout = ({user, children}:PropsWithChildren<{ user?: User}>) => {
   return (
     <div className="flex flex-col min-h-screen">
         <CartProvider>
-          <TopNavigation user={user}/>
+          <TopNavigation />
 
           <main className="flex-grow pt-16">
               {children}

@@ -13,7 +13,6 @@ import { Calendar, ChevronLeft, CreditCard, X } from "lucide-react";
 import { PropsWithChildren, useState } from "react";
 
 export default function Checkout({user, item, rent_detail}:PropsWithChildren<{user: User;}>){
-
     return (
 
         <RenterLayout

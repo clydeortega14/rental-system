@@ -1,8 +1,9 @@
 import { useCart } from '@/context/CartContext'
 import RenterLayout from '@/Layouts/RenterLayout'
 import { Link } from '@inertiajs/react'
-import { ChevronLeft, ShoppingCart as CartIcon } from 'lucide-react'
+import { ChevronLeft, ShoppingCart as CartIcon, Calendar, Trash2 } from 'lucide-react'
 import Button from '../Renter/ui/Button'
+import { formatDateDisplay } from '@/utils/dateUtils'
 
 const CartMainContent = () => {
   const { cart, removeFromCart, clearCart, totalPrice } = useCart();
@@ -62,7 +63,7 @@ const CartMainContent = () => {
                                 </div>
                                 <div className="flex-grow">
                                 <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-2">
-                                    <Link to={`/items/${cartItem.item.id}`}>
+                                    <Link href={`/items/${cartItem.item.id}`}>
                                     <h3 className="text-lg font-semibold text-gray-800 hover:text-blue-600">
                                         {cartItem.item.name}
                                     </h3>
@@ -75,7 +76,7 @@ const CartMainContent = () => {
                                     <div className="flex items-center text-gray-600 mb-2">
                                     <Calendar className="h-4 w-4 mr-2" />
                                     <span>
-                                        {formatDate(cartItem.startDate)} - {formatDate(cartItem.endDate)}
+                                        {formatDateDisplay(cartItem.startDate)} - {formatDateDisplay(cartItem.endDate)}
                                     </span>
                                     <span className="ml-2 text-sm text-gray-500">
                                         ({days} {cartItem.item.priceUnit}{days > 1 ? 's' : ''})
@@ -159,7 +160,7 @@ const CartMainContent = () => {
               <span className="font-semibold text-gray-900">${(totalPrice + 10).toFixed(2)}</span>
             </div>
             
-            <Link to="/checkout">
+            <Link href={route("itemCheckout", '86ea132f-ef77-4dbb-8c3e-806ce7662b8c')}>
               <Button variant="primary" fullWidth>
                 Proceed to Checkout
               </Button>
