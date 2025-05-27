@@ -14,6 +14,7 @@ import ItemSpecification from "@/Components/Renter/ItemSpecification";
 import ReviewsSection from "./ReviewsSection";
 import SimilarItems from "./SimilarItems";
 import { similarItems } from "@/data/similarItems";
+import { Head } from "@inertiajs/react";
 
 const navigation = {
     categories: [],
@@ -88,6 +89,8 @@ export default function View({
     return (
         <RenterLayout>
             
+            <Head title={"Item Detail"} />
+
             <div className="max-w-7xl mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>

@@ -6,6 +6,7 @@ import { rentalItems } from '@/data/rentalItemsData';
 import RenterLayout from '@/Layouts/RenterLayout';
 import { IPriceRange } from '@/types/priceRange';
 import { ICategory, Category } from '@/types/rentalCategory';
+import { Head } from '@inertiajs/react';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -64,6 +65,8 @@ const RentalItemBrowser = ({categories, priceRanges}: ICategory) => {
 
   return (
     <RenterLayout>
+
+        <Head title="Reservations" />
         <div className="px-4 py-8">
             <div className="mb-8 py-4">
                 <h1 className="text-3xl font-bold text-gray-800 mb-2">Find the Perfect Rental</h1>
@@ -136,7 +139,7 @@ const RentalItemBrowser = ({categories, priceRanges}: ICategory) => {
                             <Card 
                                 key={item.id} 
                                 item={item}
-                                link={route("itemDetails", item.id)}
+                                link={route("itemDetails", '86ea132f-ef77-4dbb-8c3e-806ce7662b8c')}
                             />
                         ))}
                     </div>

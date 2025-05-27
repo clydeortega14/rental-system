@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-// import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ImageGalleryProps {
   images: {
@@ -39,7 +39,7 @@ setCurrentIndex(index);
           className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md transition-all duration-300 opacity-80 hover:opacity-100"
           aria-label="Previous image"
         >
-          {/* <ChevronLeft className="w-5 h-5 text-gray-700" /> */}
+          <ChevronLeft className="w-5 h-5 text-gray-700" />
         </button>
         
         <button 
@@ -47,7 +47,7 @@ setCurrentIndex(index);
           className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md transition-all duration-300 opacity-80 hover:opacity-100"
           aria-label="Next image"
         >
-          {/* <ChevronRight className="w-5 h-5 text-gray-700" /> */}
+          <ChevronRight className="w-5 h-5 text-gray-700" />
         </button>
       </div>
       

@@ -14,7 +14,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\WorkflowController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\BookingController;
-
+use App\Http\Controllers\CartController;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -59,8 +59,9 @@ Route::middleware([
 
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
-    Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 
+    Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 
     /* -- Account Settings -- */
     Route::get('/account-settings', [ProfileController::class, 'accountSettings'])->name('account.settings');

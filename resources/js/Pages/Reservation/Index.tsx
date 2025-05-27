@@ -104,7 +104,7 @@ function Index({ headerData, bodyData, status }) {
                 </Link> */}
 
 
-                <div className="sm:px-6 lg:px-8 lg:py-8">
+                <div className="px-6 lg:px-8 lg:py-8">
                 
                     <div className="mb-8">
                         <h1 className="text-3xl font-bold text-gray-800 mb-2">My Bookings</h1>
