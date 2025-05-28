@@ -27,11 +27,11 @@ use Inertia\Inertia;
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
 
 Route::group(['prefix' => 'admin'], function () {
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('landing.page.index');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard.index');
 
     Route::group(['prefix' => 'users'], function() {
         Route::get('/', [AdminUserController::class, 'index'])->name('admin.users.index');
-        Route::get('/{uuid}', [AdminDashboardController::class, 'show'])->name('landing.page.index');
+        Route::get('/{uuid}', [AdminDashboardController::class, 'show'])->name('admin.users.show');
     });
 });
 
