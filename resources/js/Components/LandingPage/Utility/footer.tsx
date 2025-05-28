@@ -5,7 +5,7 @@ import logoMobile from '@/../../resources/img/logo.png';
 const Footer = () => {
   return (
     <footer className="bg-gray-50 border-t border-gray-200 py-10">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <img
@@ -36,14 +36,14 @@ const Footer = () => {
             <div>
               <h4 className="font-semibold mb-4">Contact</h4>
               <ul className="space-y-2">
-                <li className="text-gray-600">info@rentease.com</li>
+                <li className="text-gray-600">info@Rentify.com</li>
                 <li className="text-gray-600">+1 (555) 123-4567</li>
                 <li className="text-gray-600">123 Main St, Anytown, USA</li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-500">
-            <p>© 2025 RentEase. All rights reserved.</p>
+            <p>© 2025 Rentify. All rights reserved.</p>
           </div>
         </div>
     </footer>
