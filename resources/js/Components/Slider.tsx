@@ -156,7 +156,7 @@ const Slider = () => {
                   <img
                     src={slide.image}
                     alt={`Slide ${index + 1}`}
-                    className="w-full h-auto max-h-[300px] sm:max-h-[400px] lg:max-h-[500px] object-cover rounded-xl"
+                    className="w-full h-auto max-h-[300px] sm:max-h-[400px] lg:max-h-[500px] object-cover rounded-xl animate-float"
                   />
                 </SwiperSlide>
               ))}
