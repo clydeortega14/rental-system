@@ -3,18 +3,20 @@ import { Star, MapPin } from 'lucide-react';
 import { RentalItem } from '../../types';
 import Button from './Button';
 import NavLink from '@/Components/NavLink';
+import { Link } from '@inertiajs/react';
 
 interface CardProps {
   item: RentalItem;
   compact?: boolean;
+  link: string;
 }
 
-const Card: React.FC<CardProps> = ({ item, compact = false }) => {
+const Card: React.FC<CardProps> = ({ item, compact = false, link }) => {
   return (
     <div className={`bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden ${
       compact ? 'h-full flex flex-col' : ''
     }`}>
-      <NavLink to={route("itemDetails", item.id)} className="block relative">
+      <Link href={link} className="block relative">
         <img 
           src={item.imageUrl} 
           alt={item.name} 
@@ -25,7 +27,7 @@ const Card: React.FC<CardProps> = ({ item, compact = false }) => {
             Unavailable
           </div>
         )}
-      </NavLink>
+      </Link>
       <div className="p-4 flex flex-col flex-grow">
         <div className="flex justify-between items-start mb-2">
           <h3 className="font-bold text-lg text-gray-800 line-clamp-1">{item.name}</h3>
@@ -49,7 +51,7 @@ const Card: React.FC<CardProps> = ({ item, compact = false }) => {
               {item.category}
             </div>
           </div>
-          <NavLink to={route("itemDetails", item.id)}>
+          <Link href={link}>
             <Button 
               variant="primary" 
               fullWidth 
@@ -57,7 +59,7 @@ const Card: React.FC<CardProps> = ({ item, compact = false }) => {
             >
               {item.availability.available ? 'View Details' : 'Not Available'}
             </Button>
-          </NavLink>
+          </Link> 
         </div>
       </div>
     </div>

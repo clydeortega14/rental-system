@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PageProps } from "@/types";
 import { Item } from "@/Interface/Item";
 import RenterLayout from "@/Layouts/RenterLayout";
@@ -14,6 +14,8 @@ import ItemSpecification from "@/Components/Renter/ItemSpecification";
 import ReviewsSection from "./ReviewsSection";
 import SimilarItems from "./SimilarItems";
 import { similarItems } from "@/data/similarItems";
+import { Head } from "@inertiajs/react";
+import { formatPrice } from "@/utils/dateUtils";
 
 const navigation = {
     categories: [],
@@ -36,6 +38,7 @@ export default function View({
     const [quantity, setQuantity] = useState(1);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
+    
     const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
         startDate: null,
         endDate: null,
@@ -43,7 +46,9 @@ export default function View({
         endTime: null,
         duration: 'daily',
         quantity: 1
-    })
+    });
+
+    const [calculatedTotal, setCalculatedTotal] = useState<string>(item.price[bookingDetails.duration]);
 
     const [value, setValue] = useState({
         startDate: new Date(),
@@ -71,9 +76,12 @@ export default function View({
     setBookingDetails(details);
   };
 
-    const handleBookNow = () => {
+  useEffect( () => {
+
+    // handle calculation in booking summary
+
     if (selectedDate && selectedTimeSlot) {
-      const bookingDetails: BookingDetails = {
+      const selected_booking: BookingDetails = {
         startDate: new Date(selectedDate),
         endDate: null, // For simplicity, we're not calculating the end date
         startTime: selectedTimeSlot.startTime,
@@ -81,13 +89,29 @@ export default function View({
         duration,
         quantity
       };
-      handleBookingConfirm(bookingDetails)
+      handleBookingConfirm(selected_booking)
+
+      // calculate total
+      const basePrice = item.price[selected_booking.duration];
+
+      let calculate_total: number = Number(basePrice) * selected_booking.quantity;
+      setCalculatedTotal(formatPrice(String(calculate_total)));
+
     }
-  };
+
+    
+
+  }, [selectedDate, selectedTimeSlot, item])
+
+    const handleBookNow = () => {
+        alert('submit booking');
+    };
 
     return (
         <RenterLayout>
             
+            <Head title={"Item Detail"} />
+
             <div className="max-w-7xl mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
@@ -158,6 +182,7 @@ export default function View({
                             bookingDetails={bookingDetails} 
                             itemPrice={item.price}
                             onBookNow={handleBookNow}
+                            calculatedTotal={calculatedTotal}
                         />
                     </div>
                 </div>

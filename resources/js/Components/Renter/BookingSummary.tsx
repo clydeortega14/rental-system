@@ -1,5 +1,6 @@
 import { BookingDetails, RentalDuration } from '@/types/rental';
 import { formatPrice } from '@/utils/dateUtils';
+import { useEffect, useState } from 'react';
 
 interface BookingSummaryProps {
     bookingDetails: BookingDetails;
@@ -9,25 +10,27 @@ interface BookingSummaryProps {
         weekly: number;
     }
     onBookNow: () => void;
+    calculatedTotal: string;
 }
-const BookingSummary = ({bookingDetails, itemPrice, onBookNow}: BookingSummaryProps) => {
+const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal}: BookingSummaryProps) => {
+
+    const [hasSelectedDateTime, setHasSelectedDateTime] = useState<boolean>(false);
     const getDurationText = (duration: RentalDuration) => {
         switch (duration) {
-        case 'hourly': return 'hour';
-        case 'daily': return 'day';
-        case 'weekly': return 'week';
+          case 'hourly': return 'hour';
+          case 'daily': return 'day';
+          case 'weekly': return 'week';
         }
     };
-  
-  const calculateTotal = () => {
-    const basePrice = itemPrice[bookingDetails.duration];
-    
-    let calculated_total = Number(basePrice) * bookingDetails.quantity;
-    
-    return calculated_total;
-  };
 
-  const hasSelectedDateTime = bookingDetails.startDate && bookingDetails.startTime;
+    useEffect( () => {
+      //
+      if(bookingDetails.startDate && bookingDetails.startTime) setHasSelectedDateTime(true)
+      
+    }, [bookingDetails]);
+
+  
+
 
   return (
     <div className="bg-gray-50 rounded-lg p-6">
@@ -70,7 +73,7 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow}: BookingSummaryPr
         <div className="border-t border-gray-200 pt-3 mt-3">
           <div className="flex justify-between font-semibold text-lg">
             <span>Total</span>
-            <span>{formatPrice(calculateTotal())}</span>
+            <span>{calculatedTotal}</span>
           </div>
         </div>
       </div>
@@ -81,7 +84,7 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow}: BookingSummaryPr
             ? 'bg-blue-600 hover:bg-blue-700' 
             : 'bg-gray-400 cursor-not-allowed'
         }`}
-        disabled={!hasSelectedDateTime}
+        disabled={hasSelectedDateTime}
         onClick={onBookNow}
       >
         {hasSelectedDateTime ? 'Book Now' : 'Select Date & Time'}
