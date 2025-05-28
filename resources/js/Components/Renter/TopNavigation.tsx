@@ -1,7 +1,7 @@
 import { useCart } from '@/context/CartContext';
 import { PageProps, User } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
-import { Menu, Search, ShoppingCart as CartIcon, X } from 'lucide-react';
+import { Menu, Search, ShoppingCart as CartIcon, X, LogIn, Signature } from 'lucide-react';
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 
 const TopNavigation = () => {
@@ -15,16 +15,19 @@ const TopNavigation = () => {
   const [scrolled, setScrolled] = useState(false);
   const { itemCount } = useCart();
   // const location = useLocation();
+
+  
   
   const [navs, setNavs] = useState([
-    {title: 'Home', link: route('landing.page.index'), isActive: route().current('landing.page.index'), display: user || user === undefined ? true : false },
-    {title: 'My Bookings', link: route('reservations.index'), isActive: route().current('reservations.index'), display:  user === undefined ? false : true},
+    {title: 'Home', link: route('landing.page.index'), isActive: route().current('landing.page.index'), display: user || user === undefined || user === null ? true : false },
+    {title: 'My Bookings', link: route('reservations.index'), isActive: route().current('reservations.index'), display:  user === undefined  || user === null ?false : true},
   ]);
 
   const [rightNavs, setRightNavs] = useState([
-    {title: 'Sign In', link: route('login'), display: user !== undefined ? false : true, icon: React.ReactNode },
-    {title: 'Sign Up', link: route('register'), display:  user !== undefined ? false : true, icon: React.ReactNode},
-    {title: 'Cart', link: route('cart.index'), display:  user === undefined ? false : true, icon: <CartIcon />},
+    {title: 'Shopping Cart', link: route('cart.index'), display:  user === undefined || user === null ? false : true, icon: <CartIcon />},
+    {title: 'Sign In', link: route('login'), display: user !== undefined || user !== null ? false : true, icon:  <LogIn />},
+    {title: 'Sign Up', link: route('register'), display:  user !== undefined || user !== null ? false : true, icon: <Signature />},
+    
     // {title: 'Avatar', link: route('cart.index'), display:  user === undefined ? false : true, },
   ])
 
@@ -61,8 +64,11 @@ const TopNavigation = () => {
                 {
                   rightNavs.map((rightNav, index) => (
                     <div key={index}>
-                      {rightNav.display && <Link href={rightNav.link} className="text-gray-700 hover:text-blue-600 transition-colors duration-300">
-                        {rightNav.title}
+                      {<Link href={rightNav.link} className="text-gray-700 hover:text-blue-600 transition-colors duration-300">
+                      <div className="flex gap-x-2">
+                          {rightNav.icon } { rightNav.title}
+                      </div>
+                       
                       </Link>}
                     </div>
                   ))

@@ -1,11 +1,11 @@
-import React from "react";
-
-const LandingPage = () => {
+import LandingPageLayout from "@/Layouts/LandingPageLayout"
+import { Head } from '@inertiajs/react';
+export default function LandingPage() {
+   
     return (
-        <div>
-            <span>test</span>
-        </div>
+        <>
+        <Head title="Welcome" />
+        <LandingPageLayout/>
+        </>
     );
-};
-
-export default LandingPage;
+}
