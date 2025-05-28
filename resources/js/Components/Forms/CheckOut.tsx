@@ -21,7 +21,6 @@ export default function CheckOut() {
         post(route("checkout.booking"));
     };
 
-
     const { cart, removeFromCart, clearCart, totalPrice } = useCart();
     const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
     const [formData, setFormData] = useState({
