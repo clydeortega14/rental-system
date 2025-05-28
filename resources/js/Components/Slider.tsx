@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Autoplay, EffectFade } from 'swiper/modules'
+import { BiSearchAlt  } from 'react-icons/bi';
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/effect-fade'
@@ -189,8 +190,9 @@ const Slider = () => {
             defaultValue="2025-03-15 12:00"
             className="p-3 rounded bg-black text-white border border-gray-700 w-full"
           />
-          <button className="bg-orange-500 hover:bg-orange-600 p-3 rounded-md text-white w-full">
-            <i className="bx bx-search-alt" />
+          <button className="bg-orange-500 hover:bg-orange-600 p-3 rounded-md text-white w-full flex items-center justify-center gap-2">
+            <BiSearchAlt className="text-xl" />
+            Search
           </button>
         </div>
       </div>
