@@ -30,13 +30,13 @@ Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('
 Route::middleware([
     'auth',
     'verified'
-])->group(function(){
+])->group(function () {
 
     Route::get('/completing/user/{uuid}', [UserController::class, 'getUserInfoPage'])->name('completing.user');
-    
+
     // user must redirect to this route if first time using the platform.
     Route::post('/completing/user', [UserController::class, 'store'])->name('store.completing.user');
-    
+
     Route::get('/rentalListing', function () {
         return Inertia::render('User/Partials/Rental');
     })->middleware(['auth'])->name('rentalListing');
@@ -46,16 +46,16 @@ Route::middleware([
     // })->middleware(['auth'])->name('itemDetails');
 
 
-    
+
 });
 
 Route::middleware([
     'auth', // auth middleware
     'verified', // email verification middleware
-    'check-user-info'// completed information details
-])->group(function(){
+    'check-user-info' // completed information details
+])->group(function () {
 
-    
+
 
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
@@ -85,7 +85,7 @@ Route::middleware([
 
     /* -- Booking Calendar -- */
     Route::get('/booking/calendar', [BookingController::class, 'calendar'])->name('booking.calendar');
-    
+
     /* -- Accepting Reservation -- */
     Route::post('/reservation/update-status/{uuid}', [ReservationController::class, 'update'])->name('reservation.update.status');
 
@@ -99,44 +99,43 @@ Route::middleware([
     Route::post('/upload/valid-id', [FileUploadController::class, 'uploadFile'])->name('upload.valid-id');
 
     /* -- Categories Routes -- */
-    Route::prefix('categories')->group(function(){
+    Route::prefix('categories')->group(function () {
 
         Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
-
     });
 
     /* -- Forms Routes -- */
-    Route::prefix('forms')->group(function(){
+    Route::prefix('forms')->group(function () {
 
         Route::get('/', [FormController::class, 'index'])->name('forms.index');
     });
 
     /* -- Access Rights Routes -- */
-    Route::prefix('access-rights')->group(function(){
+    Route::prefix('access-rights')->group(function () {
 
         // Users
-        Route::prefix('users')->group(function(){
+        Route::prefix('users')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('users.index');
         });
 
         // Roles
-        Route::prefix('roles')->group(function(){
+        Route::prefix('roles')->group(function () {
             Route::get('/', [RoleController::class, 'index']);
         });
 
         // Permissions
-        Route::prefix('permissions')->group(function(){
+        Route::prefix('permissions')->group(function () {
             Route::get('/', [PermissionController::class, 'index']);
         });
     });
 
     /* -- Workflows --*/
-    Route::prefix('workflows')->group(function(){
+    Route::prefix('workflows')->group(function () {
         Route::get('/', [WorkflowController::class, 'index'])->name('workflows.index');
     });
 
     Route::delete('/rentalListing')->name('rental.listing');
-  
+
     Route::post('/rentalListing/add-item', [RentalItemController::class, 'create'])->name('store.rentalListing.add.item');
     Route::get('/rentalListing', [RentalItemController::class, 'index'])->name('rentalListing');
     Route::get('/rentalListing/items/{id}', [RentalItemController::class, 'show'])->name('rentalListingView');
@@ -146,8 +145,8 @@ Route::middleware([
     //     return Inertia::render('User/Partials/Rental');
     // })->middleware(['auth'])->name('rentalListing');
 
-    
-
+    Route::resource('roles', RoleController::class);
+    Route::resource('permissions', PermissionController::class);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
