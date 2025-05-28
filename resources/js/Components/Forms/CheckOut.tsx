@@ -11,9 +11,7 @@ import { formatDateDisplay } from "@/utils/dateUtils";
 export default function CheckOut() {
     const user = usePage<PageProps>().props.auth.user;
 
-    const { data, setData, post, processing, errors } = useForm({
-        booked_by: user.id,
-    });
+    const { data, setData, post, processing, errors } = useForm({});
 
     const checkOutNow = (e) => {
         e.preventDefault();

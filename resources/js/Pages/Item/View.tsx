@@ -14,7 +14,7 @@ import ItemSpecification from "@/Components/Renter/ItemSpecification";
 import ReviewsSection from "./ReviewsSection";
 import SimilarItems from "./SimilarItems";
 import { similarItems } from "@/data/similarItems";
-import { Head } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import { formatPrice } from "@/utils/dateUtils";
 
 const navigation = {
@@ -38,6 +38,7 @@ export default function View({
     const [quantity, setQuantity] = useState(1);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
+    const {post} = useForm({})
     
     const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
         startDate: null,
@@ -48,7 +49,7 @@ export default function View({
         quantity: 1
     });
 
-    const [calculatedTotal, setCalculatedTotal] = useState<string>(item.price[bookingDetails.duration]);
+    const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[duration]);
 
     const [value, setValue] = useState({
         startDate: new Date(),
@@ -59,53 +60,63 @@ export default function View({
     const timeSlots = selectedDateData?.timeSlots || [];
 
     const handleDurationChange = (newDuration: RentalDuration) => {
+
+        setBookingDetails({...bookingDetails, duration: newDuration});
         setDuration(newDuration);
     };
 
     const handleDateSelect = (date: string) => {
+        setBookingDetails({...bookingDetails, startDate: new Date(date)})
         setSelectedDate(date);
         setSelectedTimeSlot(null); // Reset time slot when date changes
     };
 
     const handleTimeSlotSelect = (timeSlot: TimeSlot) => {
+        setBookingDetails({...bookingDetails, startTime: timeSlot.startTime})
         setSelectedTimeSlot(timeSlot);
     };
 
-    const handleBookingConfirm = (details: BookingDetails) => {
-        
-    setBookingDetails(details);
-  };
+    useEffect( () => {
 
-  useEffect( () => {
+        // calculate total
+        const basePrice = item.price[duration];
 
-    // handle calculation in booking summary
+        let calculate_total: number = Number(basePrice) * quantity;
+        setCalculatedTotal(formatPrice(calculate_total));
 
-    if (selectedDate && selectedTimeSlot) {
-      const selected_booking: BookingDetails = {
-        startDate: new Date(selectedDate),
-        endDate: null, // For simplicity, we're not calculating the end date
-        startTime: selectedTimeSlot.startTime,
-        endTime: selectedTimeSlot.endTime,
-        duration,
-        quantity
-      };
-      handleBookingConfirm(selected_booking)
-
-      // calculate total
-      const basePrice = item.price[selected_booking.duration];
-
-      let calculate_total: number = Number(basePrice) * selected_booking.quantity;
-      setCalculatedTotal(formatPrice(String(calculate_total)));
-
-    }
-
-    
-
-  }, [selectedDate, selectedTimeSlot, item])
+    }, [duration, quantity]);
 
     const handleBookNow = () => {
-        alert('submit booking');
+
+        post(route('booking.store'))
+        // alert('submit booking');
     };
+
+//   useEffect( () => {
+
+//     // handle calculation in booking summary
+
+//     if (selectedDate && selectedTimeSlot) {
+
+//       setBookingDetails({...bookingDetails, startDate: new Date(selectedDate),
+//         endDate: null, // For simplicity, we're not calculating the end date
+//         startTime: selectedTimeSlot.startTime,
+//         endTime: selectedTimeSlot.endTime,
+//         duration,
+//         quantity});
+
+//       // calculate total
+
+//       console.log(bookingDetails)
+
+//         const basePrice = item.price[bookingDetails.duration];
+
+//       let calculate_total: number = Number(basePrice) * bookingDetails.quantity;
+//       setCalculatedTotal(formatPrice(String(calculate_total)));
+//     }
+//   }, [selectedDate, selectedTimeSlot, item])
+
+    
 
     return (
         <RenterLayout>
