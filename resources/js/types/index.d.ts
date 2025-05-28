@@ -20,3 +20,32 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
         error_message: string
     }
 };
+
+export type IconProps = {
+  className?: string;
+};
+
+export type NavItem = {
+  icon: React.ReactNode;
+  text: string;
+  path?: string;
+  active?: boolean;
+  subItems?: NavItem[];
+};
+
+export type NavItemProps = {
+  item: NavItem;
+  sidebarOpen: boolean;
+  level?: number;
+};
+export type AdminLayoutProps = {
+  children: React.ReactNode;
+};
+
+export type Notification = {
+  id: string;
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
+};
