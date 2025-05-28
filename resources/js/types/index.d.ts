@@ -39,7 +39,9 @@ export type NavItemProps = {
   level?: number;
 };
 export type AdminLayoutProps = {
-  children: React.ReactNode;
+    children: React.ReactNode;
+    activemenu: string;
+    activesubmenu: string;
 };
 
 export type Notification = {

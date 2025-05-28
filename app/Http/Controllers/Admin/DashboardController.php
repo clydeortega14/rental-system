@@ -13,7 +13,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return inertia('Admin/Dashboard', [
+        return inertia('Admin/DashboardAntD', [
             'title' => 'Admin Dashboard',
             'description' => 'Welcome to the admin dashboard. Here you can manage all aspects of the application.',
         ]);
