@@ -26,6 +26,7 @@ use Inertia\Inertia;
 
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
 
+Route::get('rental-browser/{category}', [RentalItemController::class, 'rentalBrowserIndex'])->name('rental.browser.index');
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard.index');
 
@@ -39,6 +40,8 @@ Route::get('/itemDetails/{uuid}', [RentalItemController::class, 'itemDetails'])-
 
 /* -- Submit for reservation -- */
 Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('booking.store');
+
+Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
 Route::middleware([
     'auth',
@@ -70,7 +73,7 @@ Route::middleware([
 
 
 
-    Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
+    
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 

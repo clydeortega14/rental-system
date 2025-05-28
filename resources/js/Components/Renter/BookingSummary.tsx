@@ -1,6 +1,8 @@
 import { BookingDetails, RentalDuration } from '@/types/rental';
 import { formatPrice } from '@/utils/dateUtils';
 import { useEffect, useState } from 'react';
+import Button from '../Renter/ui/Button';
+import PrimaryButton from '../PrimaryButton';
 
 interface BookingSummaryProps {
     bookingDetails: BookingDetails;
@@ -10,7 +12,7 @@ interface BookingSummaryProps {
         weekly: number;
     }
     onBookNow: () => void;
-    calculatedTotal: string;
+    calculatedTotal: number;
 }
 const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal}: BookingSummaryProps) => {
 
@@ -28,9 +30,6 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal}:
       if(bookingDetails.startDate && bookingDetails.startTime) setHasSelectedDateTime(true)
       
     }, [bookingDetails]);
-
-  
-
 
   return (
     <div className="bg-gray-50 rounded-lg p-6">
@@ -77,8 +76,12 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal}:
           </div>
         </div>
       </div>
+
+      <Button onClick={onBookNow} className={hasSelectedDateTime ? 'cursor-not-allowed bg-gray-400' : 'bg-blue-600'}>
+        {hasSelectedDateTime ? 'Book Now' : 'Select Date & Time'}
+      </Button>
       
-      <button 
+      {/* <button 
         className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all duration-300 ${
           hasSelectedDateTime 
             ? 'bg-blue-600 hover:bg-blue-700' 
@@ -88,7 +91,7 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal}:
         onClick={onBookNow}
       >
         {hasSelectedDateTime ? 'Book Now' : 'Select Date & Time'}
-      </button>
+      </button> */}
     </div>
   )
 }
