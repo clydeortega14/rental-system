@@ -1,5 +1,5 @@
 import { SVGAttributes } from 'react';
-import initialLogo from '@/../../resources/img/initialLogo.png';
+import initialLogo from '@/../../resources/img/logo-web.png';
 
 
 export default function ApplicationLogo(props: SVGAttributes<SVGElement>) {
