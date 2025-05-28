@@ -15,7 +15,6 @@ export default {
     ],
 
     theme: {
-<<<<<<< HEAD
     	extend: {
     		fontFamily: {
     			sans: [
@@ -76,27 +75,4 @@ export default {
     },
 
     plugins: [forms,aspect, require("tailwindcss-animate")],
-=======
-        extend: {
-            fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
-            },
-            colors: {
-                "light-green": "#64A664",
-                "light-white": 'rgba(255,255,255,0.18)'
-            },
-            keyframes: {
-                float: {
-                    '0%, 100%': { transform: 'translateY(0)' },
-                    '50%': { transform: 'translateY(-10px)' },
-                },
-            },
-            animation: {
-                float: 'float 3s ease-in-out infinite',
-            },
-        },
-    },
-
-    plugins: [forms, aspect],
->>>>>>> a18ba4d6dc967e21a4e9fc064c842d82ba8374f1
 };
