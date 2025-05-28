@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RentalItemController;
 use App\Http\Controllers\UserController;
@@ -18,19 +19,29 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CartController;
 
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
 
+Route::get('rental-browser/{category}', [RentalItemController::class, 'rentalBrowserIndex'])->name('rental.browser.index');
 Route::group(['prefix' => 'admin'], function () {
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('landing.page.index');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard.index');
+
+    Route::group(['prefix' => 'users'], function() {
+        Route::get('/', [AdminUserController::class, 'index'])->name('admin.users.index');
+        Route::get('/{uuid}', [AdminDashboardController::class, 'show'])->name('admin.users.show');
+    });
 });
 
 Route::get('/itemDetails/{uuid}', [RentalItemController::class, 'itemDetails'])->name('itemDetails');
 
 /* -- Submit for reservation -- */
 Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('booking.store');
+
+Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
 Route::middleware([
     'auth',
@@ -64,7 +75,7 @@ Route::middleware([
 
 
 
-    Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
+    
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 
