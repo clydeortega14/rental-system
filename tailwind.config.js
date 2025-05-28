@@ -2,7 +2,6 @@ import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
 import aspect from '@tailwindcss/aspect-ratio';
 
-
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
@@ -13,7 +12,7 @@ export default {
         "./resources/**/*.{js,jsx,ts,tsx}",
         "./node_modules/react-tailwindcss-datepicker/dist/index.esm.js"
     ],
-    
+
     theme: {
         extend: {
             fontFamily: {
@@ -22,9 +21,18 @@ export default {
             colors: {
                 "light-green": "#64A664",
                 "light-white": 'rgba(255,255,255,0.18)'
-            }
+            },
+            keyframes: {
+                float: {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-10px)' },
+                },
+            },
+            animation: {
+                float: 'float 3s ease-in-out infinite',
+            },
         },
     },
 
-    plugins: [forms,aspect],
+    plugins: [forms, aspect],
 };
