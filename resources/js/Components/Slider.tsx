@@ -6,16 +6,26 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/effect-fade'
 
-import banner1 from '@/../../resources/img/banner/1.png'
-import banner2 from '@/../../resources/img/banner/banner1.png'
-import banner3 from '@/../../resources/img/banner/2.png'
-import banner4 from '@/../../resources/img/banner/3.png'
-import banner5 from '@/../../resources/img/banner/4.png'
-import banner6 from '@/../../resources/img/banner/5.png'
+import phones from '@/../../resources/img/banner/1.png'
+import cars from '@/../../resources/img/banner/banner1.png'
+import motorcycle from '@/../../resources/img/banner/2.png'
+import bags from '@/../../resources/img/banner/bags.png'
+import hotels from '@/../../resources/img/banner/hotels.png'
+
+interface Category {
+  category_id: number;
+  label: string;
+}
+
+interface SliderProps {
+  categories: Category[];
+}
+
 
 const slides = [
   {
-    image: banner1,
+    image: phones,
+    label: 'Phones and Bags',
     title: (
       <>
         Rent the latest gadgets <span className="text-orange-500">phones, laptops, cameras </span> & more!
@@ -28,73 +38,49 @@ const slides = [
     ]
   },
   {
-    image: banner2,
+    image: cars,
+    label: 'cars',
     title: (
       <>
         Reliable car rentals for city <span className="text-orange-500"> trips & long drives!</span>
       </>
     ),
-    description: 'Making equipment rental simple, reliable, and accessible for everyone.',
-    buttons: [
-      { label: 'Rent a Car', href: '/listing-grid' },
-      { label: 'Add Your Car', href: '/add-listing' }
-    ]
+    description: 'Making equipment rental simple, reliable, and accessible for everyone.'
   },
   {
-    image: banner3,
+    image: motorcycle,
+    label: 'motorcycles',
     title: (
       <>
         Affordable motorcycle <span className="text-orange-500"> rentals perfect for city </span> rides & island adventures!
       </>
     ),
-    description: 'Making equipment rental simple, reliable, and accessible for everyone.',
-    buttons: [
-      { label: 'Rent a Motorcycle', href: '/motorcycles' },
-      { label: 'Add Your Motorcycle', href: '/add-motorcycle' }
-    ]
+    description: 'Making equipment rental simple, reliable, and accessible for everyone.'
   },
   {
-    image: banner4,
+    image: bags,
+    label: 'Phones and Bags',
     title: (
       <>
-        Your ideal space awaits <span className="text-orange-500">affordable rentals </span> available!
+        Style meets function from <span className="text-orange-500"> sleek totes to rugged backpacks, find the </span> perfect bag for every adventure!
       </>
     ),
-    description: 'Making equipment rental simple, reliable, and accessible for everyone.',
-    buttons: [
-      { label: 'Rent a Property', href: '/real-estate' },
-      { label: 'List Your Space', href: '/add-property' }
-    ]
+    description: 'Making equipment rental simple, reliable, and accessible for everyone.'
   },
   {
-    image: banner5,
+    image: hotels,
+    label: 'hotels',
     title: (
       <>
-        Power up your projects <span className="text-orange-500">affordable tool rentals!</span>
+        Find cozy stays, luxurious <span className="text-orange-500"> getaways,  and everything in between  book your </span> perfect hotel now!!
       </>
     ),
-    description: 'Making equipment rental simple, reliable, and accessible for everyone.',
-    buttons: [
-      { label: 'Rent Tools', href: '/tools' },
-      { label: 'Add Your Tools', href: '/add-tool' }
-    ]
-  },
-  {
-    image: banner6,
-    title: (
-      <>
-        Tough jobs need tough <span className="text-orange-500"> gear rent heavy </span> equipment today!
-      </>
-    ),
-    description: 'Making equipment rental simple, reliable, and accessible for everyone.',
-    buttons: [
-      { label: 'Rent Heavy Equipment', href: '/equipment' },
-      { label: 'List Your Equipment', href: '/add-equipment' }
-    ]
+    description: 'Making equipment rental simple, reliable, and accessible for everyone.'
   }
 ]
 
-const Slider = () => {
+const Slider = ({ categories }: SliderProps) => {
+  console.log(categories)
   const [activeIndex, setActiveIndex] = useState(0)
   const [textVisible, setTextVisible] = useState(true)
 
@@ -118,19 +104,31 @@ const Slider = () => {
               </p>
 
               <div className="mt-6 flex flex-col sm:flex-row gap-4">
-                {slides[activeIndex].buttons.map((btn, idx) => (
-                  <a
-                    key={idx}
-                    href={btn.href}
-                    className={`${
-                      idx === 0
-                        ? 'bg-orange-500 hover:bg-orange-600'
-                        : 'bg-gray-800 hover:bg-gray-700'
-                    } text-white px-5 py-2 rounded-md transition text-center`}
-                  >
-                    {btn.label}
-                  </a>
-                ))}
+                {(() => {
+                  const currentSlide = slides[activeIndex]
+                  const matchedCategory = categories.find(
+                    (cat) => cat.label.toLowerCase() === currentSlide.label.toLowerCase()
+                  )
+
+                  if (!matchedCategory) return null
+
+                  return (
+                    <>
+                      <a
+                        href={`/rent/${matchedCategory.category_id}`}
+                        className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-md transition text-center"
+                      >
+                        Rent {matchedCategory.label}
+                      </a>
+                      <a
+                        href={`/add/${matchedCategory.category_id}`}
+                        className="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2 rounded-md transition text-center"
+                      >
+                        Add Your {matchedCategory.label}
+                      </a>
+                    </>
+                  )
+                })()}
               </div>
             </div>
           </div>

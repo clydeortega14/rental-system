@@ -1,11 +1,21 @@
 import LandingPageLayout from "@/Layouts/LandingPageLayout"
 import { Head } from '@inertiajs/react';
-export default function LandingPage() {
-   
+
+interface Category {
+    id: number;
+    name: string;
+    // Add other category fields as needed
+}
+
+interface LandingPageProps {
+    categories: Category[];
+}
+
+export default function LandingPage({ categories }: LandingPageProps) {
     return (
         <>
-        <Head title="Welcome" />
-        <LandingPageLayout/>
+            <Head title="Welcome" />
+            <LandingPageLayout categories={categories} />
         </>
     );
 }

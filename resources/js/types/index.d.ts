@@ -51,3 +51,4 @@ export type Notification = {
   time: string;
   read: boolean;
 };
+
