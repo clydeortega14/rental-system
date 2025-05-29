@@ -1,21 +1,62 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
+
+const Dashboard = lazy(() => import("@/Pages/Lessor/Dashboard"));
+const Properties = lazy(() => import("@/Pages/Lessor/Properties"));
+const Reservations = lazy(() => import("@/Pages/Lessor/Reservations"));
+const Invoice = lazy(() => import("@/Pages/Lessor/Invoice"));
+const Inquiries = lazy(() => import("@/Pages/Lessor/Inquiries"));
+const Reviews = lazy(() => import("@/Pages/Lessor/Reviews"));
+const Profile = lazy(() => import("@/Pages/Lessor/Profile"));
+
+interface LessorLayoutProps {
+  lessorName?: string;
+  incomeSummary?: any;
+  upcomingReservations?: any[];
+  reservationChartData?: any[];
+  ratingsChartData?: any[];
+}
 
 export default function LessorLayout({
-  children,
   lessorName,
-}: {
-  children: React.ReactNode;
-  lessorName?: string;
-}) {
+  incomeSummary,
+  upcomingReservations,
+  reservationChartData,
+  ratingsChartData,
+}: LessorLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeView, setActiveView] = useState("Dashboard");
 
   useEffect(() => {
-    if (sidebarOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = sidebarOpen ? "hidden" : "";
   }, [sidebarOpen]);
+
+  const renderContent = () => {
+    switch (activeView) {
+      case "Dashboard":
+        return (
+          <Dashboard
+            incomeSummary={incomeSummary}
+            upcomingReservations={upcomingReservations}
+            reservationChartData={reservationChartData}
+            ratingsChartData={ratingsChartData}
+          />
+        );
+      case "Properties":
+        return <Properties />;
+      case "Reservations":
+        return <Reservations />;
+      case "Invoice":
+        return <Invoice />;
+      case "Inquiries":
+        return <Inquiries isLessorSidebarOpen={sidebarOpen} />;
+      case "Reviews":
+        return <Reviews />;
+      case "Profile":
+        return <Profile />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
@@ -28,7 +69,6 @@ export default function LessorLayout({
       </button>
 
       <div className="min-h-screen flex bg-gray-100 text-gray-900">
-        {/* Sidebar */}
         <aside
           className={`
             fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-gray-900 to-gray-800 p-6 pt-20 text-white
@@ -45,21 +85,26 @@ export default function LessorLayout({
             </h1>
             <nav className="flex flex-col gap-2">
               {[
-                ["#listings", "Properties"],
-                ["#reservation", "Reservations"],
-                ["#invoice", "Invoice"],
-                ["#inquiries", "Inquiries"],
-                ["#review", "Reviews"],
-                ["#profile", "Profile"],
-              ].map(([href, label]) => (
-                <a
-                  key={href}
-                  href={href}
-                  className="text-white hover:bg-orange-500 px-3 py-2 rounded-md"
-                  onClick={() => setSidebarOpen(false)}
+                "Dashboard",
+                "Properties",
+                "Reservations",
+                "Invoice",
+                "Inquiries",
+                "Reviews",
+                "Profile",
+              ].map((label) => (
+                <button
+                  key={label}
+                  onClick={() => {
+                    setActiveView(label);
+                    setSidebarOpen(false);
+                  }}
+                  className={`text-left text-white hover:bg-orange-500 px-3 py-2 rounded-md ${
+                    activeView === label ? "bg-orange-500" : ""
+                  }`}
                 >
                   {label}
-                </a>
+                </button>
               ))}
             </nav>
           </div>
@@ -74,12 +119,17 @@ export default function LessorLayout({
           </form>
         </aside>
 
-        {/* Main content */}
         <main
           className="flex-1 p-6 pt-20 bg-white overflow-y-auto min-h-screen md:ml-64"
           style={{ overflowX: sidebarOpen ? "hidden" : undefined }}
         >
-          {children}
+          <Suspense
+            fallback={
+              <div className="text-center text-gray-500">Loading...</div>
+            }
+          >
+            {renderContent()}
+          </Suspense>
         </main>
       </div>
     </>

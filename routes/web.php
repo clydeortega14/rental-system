@@ -61,9 +61,12 @@ Route::middleware([
     //     return Inertia::render('Item/View');
     // })->middleware(['auth'])->name('itemDetails');
 
-    Route::get('/lessor/dashboard', function () {
-        return Inertia::render('Lessor/Dashboard'); 
+    Route::get('/lessor', function () {
+        return Inertia::render('Lessor/Landing', [
+            'lessorName' => auth()->user()->name,
+        ]);
     });
+
 
 });
 
