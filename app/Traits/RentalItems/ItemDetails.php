@@ -11,6 +11,8 @@ trait ItemDetails {
     {
         $find_item = $this->findItem($uuid);
 
+        if(is_null($find_item)) return back()->with('error', 'Item not found!');
+
         $item_detail = [
             'uuid' => $find_item->uuid,
             'name' => $find_item->itemName,
@@ -45,7 +47,7 @@ trait ItemDetails {
     {
         $find_item = RentalAddItem::where('uuid', $uuid)->first();
 
-        if(is_null($find_item)) return redirect()->back()->with('error', 'Item Cannot be found!');
+        // if(is_null($find_item)) return redirect()->back()->with('error', 'Item Cannot be found!');
 
         return $find_item;
     }

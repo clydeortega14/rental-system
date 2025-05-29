@@ -1,4 +1,5 @@
 import { RentalItem } from "@/Interface/RentalItems";
+import { formatPrice } from "@/utils/dateUtils";
 
 // Mock data for rental items
 export const rentalItems: RentalItem[] = [

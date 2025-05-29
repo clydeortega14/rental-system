@@ -138,7 +138,7 @@ function Index({ headerData, bodyData, status }) {
                                                     <h3 className="text-lg font-semibold text-gray-800">{item?.name}</h3>
                                                     <div className="mt-2 md:mt-0">
                                                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(booking.status)}`}>
-                                                        {(booking.status)}
+                                                        {getStatusIcon(booking.status)}
                                                         <span className="ml-1 capitalize">{booking.status}</span>
                                                     </span>
                                                     </div>
