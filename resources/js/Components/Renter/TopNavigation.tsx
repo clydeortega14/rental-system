@@ -3,6 +3,7 @@ import { PageProps, User } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
 import { Menu, Search, ShoppingCart as CartIcon, X, LogIn, Signature } from 'lucide-react';
 import React, { PropsWithChildren, useEffect, useState } from 'react'
+import logoWeb from '../../../img/logo-web.png';
 
 const TopNavigation = () => {
 
@@ -48,7 +49,7 @@ const TopNavigation = () => {
           <div className="container mx-auto px-4 py-4">
             <div className=" flex justify-between items-center">
               <Link href={route('landing.page.index')} className="text-2xl font-bold text-orange-500 flex items-center">
-                Rentify
+                <img src={logoWeb} alt="Logo" className="h-10 md:h-16 w-auto"/>
               </Link>
               <nav className="hidden md:flex space-x-6 items-center space-x-8">
 

@@ -20,4 +20,9 @@ class Category extends Model
     {
         return $this->morphOne(Detailable::class, 'detailable');
     }
+
+    public function rentalItems()
+    {
+        return $this->hasMany(RentalAddItem::class, 'category_id');
+    }
 }
