@@ -5,7 +5,17 @@ import logoWeb from '@/../../resources/img/logo-web.png';
 import logoMobile from '@/../../resources/img/logo.png';
 import { BiUser, BiLock, BiMenu, BiX } from 'react-icons/bi';
 
-const TopNavigation = ({ auth }: PageProps) => {
+
+interface Category {
+  category_id: number;
+  label: string;
+}
+interface TopNavigationProps extends PageProps {
+  categories: Category[];
+}
+
+
+const TopNavigation = ({ auth, categories }: TopNavigationProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -31,9 +41,10 @@ const TopNavigation = ({ auth }: PageProps) => {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex col-span-6 justify-center space-x-6 md:col-span-6">
+         <nav className="hidden md:flex col-span-6 justify-center space-x-6 md:col-span-6">
           <Link href="/" className="text-gray-700 hover:text-orange-500 transition">Home</Link>
-          {/* Categories with Dropdown */}
+
+          {/* Categories Dropdown */}
           <div className="relative group">
             <div className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition cursor-pointer">
               <span>Categories</span>
@@ -43,12 +54,19 @@ const TopNavigation = ({ auth }: PageProps) => {
             </div>
 
             <div className="absolute left-0 mt-2 w-48 bg-white border rounded-md shadow-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-200 z-50">
-              <Link href="/categories/Vehicles" className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100">Vehicles</Link>
-              <Link href="/categories/Tools" className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100">Tools</Link>
-              <Link href="/categories/Party" className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100">Party</Link>
-              <Link href="/categories/Electronics" className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100">Electronics</Link>
-              <Link href="/categories/Outdoor" className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100">Outdoor</Link>
-              <Link href="/categories/Furniture" className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100">Furniture</Link>
+              {categories.length > 0 ? (
+                categories.map(category => (
+                  <Link
+                    key={category.category_id}
+                    href={`/categories/${category.category_id}`}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100"
+                  >
+                    {category.label}
+                  </Link>
+                ))
+              ) : (
+                <div className="px-4 py-2 text-sm text-gray-400">No categories found</div>
+              )}
             </div>
           </div>
 

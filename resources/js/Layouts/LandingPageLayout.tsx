@@ -4,19 +4,27 @@ import Slider from '@/Components/Slider'
 
 import { PropsWithChildren } from 'react'
 
-const RenterLayout = ({ children }: PropsWithChildren) => {
+interface Category {
+  id: number
+  name: string
+  // add other fields if needed
+}
+
+interface LandingPageLayoutProps extends PropsWithChildren {
+  categories: Category[]
+}
+
+const LandingPageLayout = ({ children, categories }: LandingPageLayoutProps) => {
   return (
     <div className="flex flex-col min-h-screen ">
-
-        <Header />
-        <main className="flex-grow">
-            {children}
-            <Slider />
-        </main>
-
-        <Footer />
+      <Header categories={categories} />
+      <main className="flex-grow">
+        {children}
+        <Slider categories={categories} />
+      </main>
+      <Footer />
     </div>
   )
 }
 
-export default RenterLayout
+export default LandingPageLayout
