@@ -90,7 +90,7 @@ export default function Inquiries({ isLessorSidebarOpen = false }: InquiriesProp
           <h2 className="text-2xl font-semibold text-gray-800 mb-3">Messages</h2>
           <input
             type="text"
-            placeholder="Search lessee..."
+            placeholder="Search Lessee..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full px-4 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400 text-gray-700"

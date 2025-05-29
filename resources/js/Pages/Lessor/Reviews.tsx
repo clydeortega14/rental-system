@@ -24,7 +24,7 @@ const mockProperties: Property[] = [
   {
     id: 1,
     name: "Seaside Escape",
-    image: "/images/property1.jpg",
+    image: "/images/lease/seaside.jpeg",
     reviews: [
       {
         id: 1,
@@ -48,7 +48,7 @@ const mockProperties: Property[] = [
   {
     id: 2,
     name: "City Loft",
-    image: "/images/property2.jpg",
+    image: "/images/lease/city_loft.jpg",
     reviews: [
       {
         id: 3,

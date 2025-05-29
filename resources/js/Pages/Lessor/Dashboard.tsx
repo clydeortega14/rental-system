@@ -76,9 +76,9 @@ export default function Dashboard({
       <section className="mb-10 grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded shadow">
           <h2 className="text-xl font-semibold mb-3">Income Summary</h2>
-          <p className="text-4xl font-bold text-green-600">${incomeSummary.total.toLocaleString()}</p>
+          <p className="text-4xl font-bold text-green-600">&#8369;{incomeSummary.total.toLocaleString()}</p>
           <p className="text-gray-600">Total Income</p>
-          <p className="mt-2 text-lg">${incomeSummary.monthly.toLocaleString()} / month</p>
+          <p className="mt-2 text-lg">&#8369;{incomeSummary.monthly.toLocaleString()} / month</p>
         </div>
 
         <div className="bg-white p-6 rounded shadow">

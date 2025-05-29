@@ -72,18 +72,17 @@ export default function Invoice() {
       <Card className="shadow-md">
         <CardContent className="p-4 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="flex items-center gap-4">
-            <WalletIcon />
             <div>
               <h2 className="text-lg font-semibold text-gray-800 mb-1">Wallet Balance</h2>
-              <p className="text-2xl font-bold text-green-600">${walletData.balance.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-green-600">&#8369;{walletData.balance.toFixed(2)}</p>
               {walletData.autoDeduct && (
                 <p className="text-sm text-gray-500 mt-1">
-                  Invoice total of <strong>${invoiceData.totalAmount.toFixed(2)}</strong> will be
+                  Invoice total of <strong>&#8369;{invoiceData.totalAmount.toFixed(2)}</strong> will be
                   automatically deducted from your wallet.
                 </p>
               )}
               <p className="text-xs text-gray-400 mt-1 italic">
-                Last deposit: ${walletData.lastDeposit.amount.toFixed(2)} from {walletData.lastDeposit.from} on {walletData.lastDeposit.date}
+                Last deposit: &#8369;{walletData.lastDeposit.amount.toFixed(2)} from {walletData.lastDeposit.from} on {walletData.lastDeposit.date}
               </p>
             </div>
           </div>
@@ -143,14 +142,14 @@ export default function Invoice() {
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="border px-4 py-2">{item.description}</td>
                     <td className="border px-4 py-2">{item.period}</td>
-                    <td className="border px-4 py-2">${item.amount.toFixed(2)}</td>
+                    <td className="border px-4 py-2">&#8369;{item.amount.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
               <tfoot>
                 <tr>
                   <td colSpan="2" className="text-right px-4 py-3 font-semibold border">Total</td>
-                  <td className="px-4 py-3 font-semibold border">${invoiceData.totalAmount.toFixed(2)}</td>
+                  <td className="px-4 py-3 font-semibold border">&#8369;{invoiceData.totalAmount.toFixed(2)}</td>
                 </tr>
               </tfoot>
             </table>
@@ -193,7 +192,7 @@ export default function Invoice() {
                     <tr key={index} className="hover:bg-gray-50">
                       <td className="border px-4 py-2">{inv.invoiceNumber}</td>
                       <td className="border px-4 py-2">{inv.date}</td>
-                      <td className="border px-4 py-2">${inv.amount.toFixed(2)}</td>
+                      <td className="border px-4 py-2">&#8369;{inv.amount.toFixed(2)}</td>
                       <td className="border px-4 py-2">
                         <span
                           className={`px-2 py-1 rounded text-xs font-medium ${

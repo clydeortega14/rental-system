@@ -1,127 +1,210 @@
-import React from "react";
+import React, { useState } from "react";
 import LessorLayout from "@/Layouts/LessorLayout";
-import { Card, CardContent } from "@/Components/Lessor/ui/card";
+import { Card } from "@/Components/Lessor/ui/card";
 import { Button } from "@/Components/Lessor/ui/button";
-import { MoreHorizontal, CheckCircle, Clock, XCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "@/Components/Lessor/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/Components/Lessor/ui/dropdown-menu";
+import { CheckCircle, Clock, XCircle, MoreHorizontal } from "lucide-react";
 
 const reservationsData = [
   {
     id: 1,
-    guestName: "John Doe",
+    guestName: "Johnny Wood",
     property: "Cozy Apartment Downtown",
-    checkIn: "2025-06-01",
-    checkOut: "2025-06-05",
+    imageUrl: "/images/lease/cozy_condo.jpg",
+    acquire: "2025-06-01",
+    return: "2025-06-05",
     status: "Confirmed",
   },
   {
     id: 2,
     guestName: "Jane Smith",
     property: "Beachfront Villa",
-    checkIn: "2025-06-10",
-    checkOut: "2025-06-15",
+    imageUrl: "/images/lease/seaside.jpeg",
+    acquire: "2025-06-10",
+    return: "2025-06-15",
     status: "Pending",
   },
   {
     id: 3,
     guestName: "Mike Johnson",
-    property: "Mountain Cabin",
-    checkIn: "2025-07-01",
-    checkOut: "2025-07-07",
+    property: "Harley Davidson Motorcycle",
+    imageUrl: "/images/lease/harley.jpg",
+    acquire: "2025-07-01",
+    return: "2025-07-07",
     status: "Cancelled",
   },
 ];
 
 const statusBadge = (status: string) => {
-  const base = "inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full";
-  switch (status) {
-    case "Confirmed":
-      return (
-        <span className={`${base} bg-green-100 text-green-700`}>
-          <CheckCircle className="w-4 h-4" /> Confirmed
-        </span>
-      );
-    case "Pending":
-      return (
-        <span className={`${base} bg-yellow-100 text-yellow-800`}>
-          <Clock className="w-4 h-4" /> Pending
-        </span>
-      );
-    case "Cancelled":
-      return (
-        <span className={`${base} bg-red-100 text-red-700`}>
-          <XCircle className="w-4 h-4" /> Cancelled
-        </span>
-      );
-    default:
-      return status;
-  }
+  const base = "inline-flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded-full";
+  const badges = {
+    Confirmed: {
+      className: "bg-green-100 text-green-700",
+      icon: <CheckCircle className="w-4 h-4" />,
+      label: "Confirmed",
+    },
+    Pending: {
+      className: "bg-yellow-100 text-yellow-800",
+      icon: <Clock className="w-4 h-4" />,
+      label: "Pending",
+    },
+    Cancelled: {
+      className: "bg-red-100 text-red-700",
+      icon: <XCircle className="w-4 h-4" />,
+      label: "Rejected",
+    },
+  };
+
+  const badge = badges[status] || { className: "", icon: null, label: status };
+  return (
+    <span className={`${base} ${badge.className}`}>
+      {badge.icon} {badge.label}
+    </span>
+  );
 };
 
 export default function Reservations() {
+  const [selectedRes, setSelectedRes] = useState<typeof reservationsData[0] | null>(null);
+  const [actionType, setActionType] = useState<"confirm" | "reject" | null>(null);
+  const { toast } = useToast();
+
+  const closeDialog = () => {
+    setSelectedRes(null);
+    setActionType(null);
+  };
+
+  const handleAction = () => {
+    if (!selectedRes || !actionType) return;
+
+    toast({
+      title: `Reservation ${actionType === "confirm" ? "confirmed" : "rejected"}`,
+      description: `You have ${actionType}ed the booking for ${selectedRes.guestName}.`,
+    });
+    closeDialog();
+  };
+
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-6 max-w-5xl mx-auto space-y-6">
+      <header className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-orange-600">Bookings</h1>
         <Button className="bg-orange-600 text-white hover:bg-orange-500">Export CSV</Button>
-      </div>
+      </header>
 
-      <Card className="bg-white shadow-sm rounded-xl">
-        <CardContent className="p-0 overflow-x-auto">
-          <table className="min-w-full text-sm table-auto border-collapse">
-            <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
-              <tr>
-                <th className="py-3 px-6 text-left">Guest</th>
-                <th className="py-3 px-6 text-left">Property</th>
-                <th className="py-3 px-6 text-left">Check-In</th>
-                <th className="py-3 px-6 text-left">Check-Out</th>
-                <th className="py-3 px-6 text-left">Status</th>
-                <th className="py-3 px-6 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {reservationsData.map((res) => (
-                <tr key={res.id} className="hover:bg-orange-50 transition">
-                  <td className="px-6 py-4 font-medium text-gray-900">{res.guestName}</td>
-                  <td className="px-6 py-4 text-gray-700">{res.property}</td>
-                  <td className="px-6 py-4 text-gray-600">
-                    {new Date(res.checkIn).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 text-gray-600">
-                    {new Date(res.checkOut).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4">{statusBadge(res.status)}</td>
-                  <td className="px-6 py-4 text-center">
-                    <div className="flex justify-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => alert(`Viewing reservation ${res.id}`)}
-                      >
-                        View
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        disabled={res.status !== "Pending"}
-                        onClick={() => alert(`Confirm reservation ${res.id}`)}
-                      >
-                        Confirm
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {reservationsData.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="text-center py-6 text-gray-500 italic">
-                    No reservations found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </CardContent>
-      </Card>
+      {reservationsData.length === 0 ? (
+        <p className="text-center py-10 text-gray-500 italic">No reservations found.</p>
+      ) : (
+        <div className="space-y-4">
+          {reservationsData.map((res) => (
+            <Card
+              key={res.id}
+              className="flex flex-col sm:flex-row gap-4 sm:gap-6 p-4 rounded-xl hover:shadow-lg transition-shadow"
+            >
+              <img
+                src={res.imageUrl}
+                alt={res.property}
+                className="w-full sm:w-32 h-40 sm:h-24 rounded-md object-cover"
+              />
+
+              <div className="flex-1 space-y-1">
+                <h2 className="text-lg font-semibold text-gray-900">{res.property}</h2>
+                <p className="text-gray-700">Guest: {res.guestName}</p>
+                <p className="text-gray-600 text-sm">
+                  Acquire:{" "}
+                  <time dateTime={res.acquire}>{new Date(res.acquire).toLocaleDateString()}</time>
+                </p>
+                <p className="text-gray-600 text-sm">
+                  Return:{" "}
+                  <time dateTime={res.return}>{new Date(res.return).toLocaleDateString()}</time>
+                </p>
+              </div>
+
+              <div className="flex sm:flex-col sm:items-end justify-between sm:justify-center gap-2 sm:gap-3">
+                {statusBadge(res.status)}
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" aria-label="Actions">
+                      <MoreHorizontal className="w-5 h-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => alert(`Viewing reservation ${res.id}`)}>
+                      View Details
+                    </DropdownMenuItem>
+                    {res.status === "Pending" && (
+                      <>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedRes(res);
+                            setActionType("confirm");
+                          }}
+                        >
+                          Confirm
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedRes(res);
+                            setActionType("reject");
+                          }}
+                        >
+                          Reject
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </Card>
+
+          ))}
+        </div>
+      )}
+
+      <Dialog open={!!actionType} onOpenChange={() => setActionType(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {actionType === "confirm" ? "Confirm Reservation" : "Reject Reservation"}
+            </DialogTitle>
+          </DialogHeader>
+
+          <DialogDescription>
+            Are you sure you want to{" "}
+            <strong className="capitalize">{actionType}</strong> the booking for{" "}
+            <strong>{selectedRes?.guestName}</strong>?
+          </DialogDescription>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setActionType(null)}>
+              Cancel
+            </Button>
+            <Button
+              className={`${
+                actionType === "confirm"
+                  ? "bg-green-600 hover:bg-green-500 text-white"
+                  : "bg-red-600 hover:bg-red-500 text-white"
+              }`}
+              onClick={handleAction}
+            >
+              {actionType === "confirm" ? "Confirm" : "Reject"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
