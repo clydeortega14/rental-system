@@ -45,7 +45,7 @@ const Card: React.FC<CardProps> = ({ item, compact = false, link }) => {
         <div className="mt-auto">
           <div className="flex justify-between items-center mb-3">
             <div>
-              <span className="font-bold text-lg text-gray-900">{formatPrice(item.price)}</span>
+              <span className="font-bold text-lg text-gray-900">{formatPrice(item.price[item.priceUnit])}</span>
               <span className="text-gray-500 text-sm">/{item.priceUnit}</span>
             </div>
             <div className="text-xs font-medium px-2 py-1 bg-gray-100 rounded text-gray-700">

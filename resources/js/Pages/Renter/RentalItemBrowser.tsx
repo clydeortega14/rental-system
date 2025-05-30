@@ -3,19 +3,24 @@ import Button from '@/Components/Renter/ui/Button';
 import Card from '@/Components/Renter/ui/Card';
 import Filter from '@/Components/Renter/ui/Filter';
 import { rentalItems } from '@/data/rentalItemsData';
+import { RentalItem } from '@/Interface/RentalItems';
 import RenterLayout from '@/Layouts/RenterLayout';
+import { PageProps } from '@/types';
 import { IPriceRange } from '@/types/priceRange';
 import { ICategory, Category } from '@/types/rentalCategory';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import React, { useState } from 'react';
 
 interface RentalBrowserProps {
     categories: ICategory,
-    priceRanges: IPriceRange
+    priceRanges: IPriceRange,
+    rentalItems: RentalItem[]
 }
 
-const RentalItemBrowser = ({categories, priceRanges}: ICategory) => {
+const RentalItemBrowser = ({rentalItems, categories, priceRanges}: RentalBrowserProps) => {
+
+    const error_message = usePage<PageProps>().props.flash.error_message;
 
     const [searchQuery, setSearchQuery] = useState('');
     const [showFilters, setShowFilters] = useState(false);
@@ -68,6 +73,9 @@ const RentalItemBrowser = ({categories, priceRanges}: ICategory) => {
 
         <Head title="Reservations" />
         <div className="px-4 py-8">
+            <div>
+                { error_message && <p className="text-2xl text-red-500 pt-4">{error_message }</p> }
+            </div>
             <div className="mb-8 py-4">
                 <h1 className="text-3xl font-bold text-gray-800 mb-2">Find the Perfect Rental</h1>
                 <p className="text-gray-600">Browse our selection of high-quality rental items</p>
@@ -139,7 +147,7 @@ const RentalItemBrowser = ({categories, priceRanges}: ICategory) => {
                             <Card 
                                 key={item.id} 
                                 item={item}
-                                link={route("itemDetails", '86ea132f-ef77-4dbb-8c3e-806ce7662b8c')}
+                                link={route("itemDetails", item.uuid)}
                             />
                         ))}
                     </div>
