@@ -31,3 +31,6 @@ export const rentalItem: RentalItem = {
   reviewCount: 124,
   location: 'Downtown Studio'
 }
+
+
+export const rentalItems: RentalItem[] = [];

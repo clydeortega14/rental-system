@@ -19,7 +19,6 @@ use App\Models\Category;
 use App\Services\Category\CategoryService;
 
 
-
 class RentalItemController extends Controller
 {
     use FileTraits, ItemDetails;
@@ -83,7 +82,9 @@ class RentalItemController extends Controller
     {
         $category = Category::where('name', $category_name)->first();
 
-        $categories = $this->category_service->getCategories();
+        if(is_null($category)) return redirect()->back()->with('error', 'Category not found!');
+        
+        $categories = $this->category_service->getCategories($category->id);
 
         $price_ranges = [
             ['id' => '0-50', 'label' => '0 - 50'],
@@ -95,7 +96,8 @@ class RentalItemController extends Controller
 
         return inertia('Renter/RentalItemBrowser', [
             'categories' => $categories,
-            'priceRanges' => $price_ranges
+            'priceRanges' => $price_ranges,
+            'rentalItems' => $this->getRentalItemsByCategory($category->id)
         ]);
     }
 
