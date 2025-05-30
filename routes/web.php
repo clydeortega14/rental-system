@@ -67,6 +67,10 @@ Route::middleware([
         ]);
     });
 
+    Route::get('/lessee', function () {
+        return Inertia::render('Lessee/Landing');
+    })->name('lessee.profile');
+
 
 });
 

@@ -1,40 +1,30 @@
 import { Link } from "@inertiajs/react";
-import { HelpCircle, Bell, Menu } from "lucide-react";
+import { HelpCircle, Bell } from "lucide-react";
 import logoWeb from '@/../../resources/img/logo-web.png';
 import logoMobile from '@/../../resources/img/logo.png';
 
-export default function LessorHeader({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
+export default function LesseeHeader({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
   return (
     <header className="fixed top-0 w-full h-16 bg-white shadow-md z-40 flex items-center justify-between px-4">
-      {/* Left section: button + logo */}
+      {/* Left section: Logo */}
       <div className="flex items-center">
-        {/* Sidebar toggle button (mobile only) */}
-        <button
-          onClick={onToggleSidebar}
-          className="md:hidden h-16 w-10 flex items-center justify-center text-orange-600 hover:text-orange-700 transition-colors duration-200"
-          aria-label="Toggle sidebar"
-        >
-          <Menu className="w-6 h-6" />
-        </button>
-
         <Link href="/" className="flex items-center">
-          {/* Show mobile logo on small screens, desktop logo on medium+ */}
           <img src={logoMobile} alt="Logo" className="h-10 w-auto md:hidden" />
           <img src={logoWeb} alt="Logo" className="h-10 md:h-12 w-auto hidden md:block" />
         </Link>
       </div>
 
       {/* Right section */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4 sm:gap-6">
         {/* Be a Lessor button */}
         <Link
-          href="/rental-browser"
+          href="/lessor"
           className="text-sm font-medium border border-orange-600 text-orange-600 px-3 py-1.5 rounded-md hover:bg-orange-50 transition"
         >
-          Property Catalog
+          Be a Lessor
         </Link>
 
-        {/* Notification bell button */}
+        {/* Notification bell */}
         <button
           className="relative text-gray-700 hover:text-orange-600 transition-colors duration-200"
           aria-label="Notifications"
