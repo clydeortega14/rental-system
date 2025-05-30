@@ -28,6 +28,12 @@ const reservationsData = [
     acquire: "2025-06-01",
     return: "2025-06-05",
     status: "Confirmed",
+    location: "Downtown City, 123 Main St",
+    pricePerNight: 120,
+    description:
+      "A cozy, modern apartment in the heart of downtown, close to all amenities and public transport.",
+    amenities: ["WiFi", "Air Conditioning", "Kitchen", "Parking"],
+    contactInfo: "contact@propertyowner.com",
   },
   {
     id: 2,
@@ -37,6 +43,12 @@ const reservationsData = [
     acquire: "2025-06-10",
     return: "2025-06-15",
     status: "Pending",
+    location: "Ocean Drive, Malibu",
+    pricePerNight: 350,
+    description:
+      "Luxurious villa with private beach access and stunning ocean views.",
+    amenities: ["Pool", "WiFi", "Breakfast", "Parking", "Air Conditioning"],
+    contactInfo: "info@beachvilla.com",
   },
   {
     id: 3,
@@ -46,11 +58,18 @@ const reservationsData = [
     acquire: "2025-07-01",
     return: "2025-07-07",
     status: "Cancelled",
+    location: "Bike Rental Center, 45 Motorway",
+    pricePerNight: 80,
+    description:
+      "Experience the thrill of riding a Harley Davidson through the countryside.",
+    amenities: ["Helmet", "GPS", "Insurance"],
+    contactInfo: "rentals@harleymoto.com",
   },
 ];
 
 const statusBadge = (status: string) => {
-  const base = "inline-flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded-full";
+  const base =
+    "inline-flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded-full";
   const badges = {
     Confirmed: {
       className: "bg-green-100 text-green-700",
@@ -80,6 +99,7 @@ const statusBadge = (status: string) => {
 export default function Reservations() {
   const [selectedRes, setSelectedRes] = useState<typeof reservationsData[0] | null>(null);
   const [actionType, setActionType] = useState<"confirm" | "reject" | null>(null);
+  const [viewingRes, setViewingRes] = useState<typeof reservationsData[0] | null>(null);
   const { toast } = useToast();
 
   const closeDialog = () => {
@@ -117,6 +137,7 @@ export default function Reservations() {
                 src={res.imageUrl}
                 alt={res.property}
                 className="w-full sm:w-32 h-40 sm:h-24 rounded-md object-cover"
+                loading="lazy"
               />
 
               <div className="flex-1 space-y-1">
@@ -142,7 +163,7 @@ export default function Reservations() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => alert(`Viewing reservation ${res.id}`)}>
+                    <DropdownMenuItem onClick={() => setViewingRes(res)}>
                       View Details
                     </DropdownMenuItem>
                     {res.status === "Pending" && (
@@ -169,24 +190,23 @@ export default function Reservations() {
                 </DropdownMenu>
               </div>
             </Card>
-
           ))}
         </div>
       )}
 
+      {/* Confirm/Reject Dialog */}
       <Dialog open={!!actionType} onOpenChange={() => setActionType(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
               {actionType === "confirm" ? "Confirm Reservation" : "Reject Reservation"}
             </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to{" "}
+              <strong className="capitalize">{actionType}</strong> the booking for{" "}
+              <strong>{selectedRes?.guestName}</strong>?
+            </DialogDescription>
           </DialogHeader>
-
-          <DialogDescription>
-            Are you sure you want to{" "}
-            <strong className="capitalize">{actionType}</strong> the booking for{" "}
-            <strong>{selectedRes?.guestName}</strong>?
-          </DialogDescription>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setActionType(null)}>
@@ -201,6 +221,83 @@ export default function Reservations() {
               onClick={handleAction}
             >
               {actionType === "confirm" ? "Confirm" : "Reject"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* View Details Dialog */}
+      <Dialog open={!!viewingRes} onOpenChange={() => setViewingRes(null)}>
+        <DialogContent
+          className="w-full max-w-md sm:max-w-lg max-h-[80vh] overflow-y-auto p-4 sm:p-6"
+          style={{ minWidth: "280px" }}
+        >
+          <DialogHeader>
+            <DialogTitle className="text-lg sm:text-xl">{viewingRes?.property}</DialogTitle>
+            <DialogDescription>
+              Detailed information about the booking and property for {viewingRes?.guestName}.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 mt-4">
+            <img
+              src={viewingRes?.imageUrl}
+              alt={viewingRes?.property}
+              className="w-full h-48 rounded-md object-cover"
+              loading="lazy"
+            />
+
+            <p>
+              <strong>Guest:</strong> {viewingRes?.guestName}
+            </p>
+            <p>
+              <strong>Acquire:</strong>{" "}
+              <time dateTime={viewingRes?.acquire}>
+                {viewingRes ? new Date(viewingRes.acquire).toLocaleDateString() : ""}
+              </time>
+            </p>
+            <p>
+              <strong>Return:</strong>{" "}
+              <time dateTime={viewingRes?.return}>
+                {viewingRes ? new Date(viewingRes.return).toLocaleDateString() : ""}
+              </time>
+            </p>
+            <p>
+              <strong>Status:</strong> {viewingRes && statusBadge(viewingRes.status)}
+            </p>
+
+            <hr className="my-2" />
+            <p>
+              <strong>Location:</strong> {viewingRes?.location}
+            </p>
+            <p>
+              <strong>Reservation Fee:</strong> &#8369;{viewingRes?.pricePerNight}
+            </p>
+            <p>
+              <strong>Description:</strong> {viewingRes?.description}
+            </p>
+
+            {viewingRes?.amenities?.length ? (
+              <div>
+                <strong>Amenities:</strong>
+                <ul className="list-disc list-inside ml-4">
+                  {viewingRes.amenities.map((amenity, i) => (
+                    <li key={i}>{amenity}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
+            {viewingRes?.contactInfo && (
+              <p>
+                <strong>Contact Info:</strong> {viewingRes.contactInfo}
+              </p>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setViewingRes(null)}>
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>
