@@ -14,7 +14,7 @@ type Property = {
   categoryType: string;
   bedrooms: number;
   bathrooms: number;
-  pricePerMonth: number;
+  reservationAmt: number;
   availableFrom: string;
   imageUrl?: string;
 };
@@ -29,7 +29,7 @@ type Vehicle = {
   model: string;
   year: number;
   mileage: number;
-  pricePerDay: number;
+  reservationAmt: number;
   imageUrl?: string;
 };
 
@@ -50,9 +50,9 @@ export default function RentalPortfolio() {
       categoryType: "Entire Place",
       bedrooms: 3,
       bathrooms: 2,
-      pricePerMonth: 1500,
+      reservationAmt: 1500,
       availableFrom: "2025-06-01",
-      imageUrl: "https://via.placeholder.com/300x200?text=Apartment",
+      imageUrl: "/images/lease/ocean_view_apt.jpg",
     },
     {
       id: 2,
@@ -63,9 +63,9 @@ export default function RentalPortfolio() {
       categoryType: "Private Room",
       bedrooms: 1,
       bathrooms: 1,
-      pricePerMonth: 1200,
+      reservationAmt: 1200,
       availableFrom: "2025-07-15",
-      imageUrl: "https://via.placeholder.com/300x200?text=Condo",
+      imageUrl: "/images/lease/cozy_condo.jpg",
     },
     {
       id: 3,
@@ -77,8 +77,8 @@ export default function RentalPortfolio() {
       model: "Camry",
       year: 2019,
       mileage: 45000,
-      pricePerDay: 40,
-      imageUrl: "https://via.placeholder.com/300x200?text=Car",
+      reservationAmt: 40,
+      imageUrl: "/images/lease/camry.jpg",
     },
     {
       id: 4,
@@ -90,8 +90,8 @@ export default function RentalPortfolio() {
       model: "Sportster",
       year: 2017,
       mileage: 12000,
-      pricePerDay: 55,
-      imageUrl: "https://via.placeholder.com/300x200?text=Motorcycle",
+      reservationAmt: 55,
+      imageUrl: "/images/lease/harley.jpg",
     },
   ];
 
@@ -109,7 +109,7 @@ export default function RentalPortfolio() {
     categoryType: PROPERTY_CATEGORY_TYPES[0],
     bedrooms: 1,
     bathrooms: 1,
-    pricePerMonth: 0,
+    reservationAmt: 0,
     availableFrom: new Date().toISOString().slice(0, 10),
   } as RentalItem);
 
@@ -127,7 +127,7 @@ export default function RentalPortfolio() {
         categoryType: PROPERTY_CATEGORY_TYPES[0],
         bedrooms: 1,
         bathrooms: 1,
-        pricePerMonth: 0,
+        reservationAmt: 0,
         availableFrom: new Date().toISOString().slice(0, 10),
       });
     } else if (isVehicleCategory(category)) {
@@ -141,7 +141,7 @@ export default function RentalPortfolio() {
         model: "",
         year: new Date().getFullYear(),
         mileage: 0,
-        pricePerDay: 0,
+        reservationAmt: 0,
       });
     }
   }
@@ -213,7 +213,7 @@ export default function RentalPortfolio() {
                     <strong>Bathrooms:</strong> {(item as Property).bathrooms}
                   </p>
                   <p>
-                    <strong>Price per Month:</strong> ${(item as Property).pricePerMonth}
+                    <strong>Reservation Fee:</strong> &#8369;{(item as Property).reservationAmt}
                   </p>
                   <p>
                     <strong>Available From:</strong> {(item as Property).availableFrom}
@@ -235,7 +235,7 @@ export default function RentalPortfolio() {
                     <strong>Mileage:</strong> {(item as Vehicle).mileage} km
                   </p>
                   <p>
-                    <strong>Price per Day:</strong> ${(item as Vehicle).pricePerDay}
+                    <strong>Reservation Fee:</strong> &#8369;{(item as Vehicle).reservationAmt}
                   </p>
                 </>
               )}
@@ -382,8 +382,8 @@ function RentalItemModal({
               type="number"
               min={0}
               className="w-full border border-gray-300 rounded px-3 py-2 mb-4"
-              value={(form as Property).pricePerMonth}
-              onChange={(e) => setForm({ ...form, pricePerMonth: Number(e.target.value) })}
+              value={(form as Property).reservationAmt}
+              onChange={(e) => setForm({ ...form, reservationAmt: Number(e.target.value) })}
             />
 
             <label className="block font-semibold mb-1">Available From</label>
@@ -438,8 +438,8 @@ function RentalItemModal({
               type="number"
               min={0}
               className="w-full border border-gray-300 rounded px-3 py-2 mb-6"
-              value={(form as Vehicle).pricePerDay}
-              onChange={(e) => setForm({ ...form, pricePerDay: Number(e.target.value) })}
+              value={(form as Vehicle).reservationAmt}
+              onChange={(e) => setForm({ ...form, reservationAmt: Number(e.target.value) })}
             />
           </>
         )}

@@ -31,7 +31,9 @@ class LandingPageController extends Controller
 
     public function index()
     {
-        // $categories = $this->category_service->getCategories();
+        $categories = $this->category_service->getCategories();
+
+ 
         // $price_ranges = [
         //     ['id' => '0-50', 'label' => '0 - 50'],
         //     ['id' => '50-100', 'label' => '50 - 100'],
@@ -54,7 +56,7 @@ class LandingPageController extends Controller
             'canRegister' => Route::has('register'),
             'laravelVersion' => Application::VERSION,
             'phpVersion' => PHP_VERSION,
-            // 'categories' => $categories,
+            'categories' => $categories,
             // 'rental_items' => $rental_items
         ]);
     }
