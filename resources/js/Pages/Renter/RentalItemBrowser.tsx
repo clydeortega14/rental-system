@@ -44,18 +44,20 @@ const RentalItemBrowser = ({rentalItems, categories, priceRanges}: RentalBrowser
         const matchesSearch = !searchQuery || 
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
+      const default_price:number = item.price['daily'];
+
     const matchesCategory = selectedCategories.length === 0 || 
       selectedCategories.includes(item.category);
     
         let matchesPriceRange = true;
         if (selectedPriceRanges.length > 0) {
-        matchesPriceRange = selectedPriceRanges.some(range => {
-            if (range === '0-50') return item.price <= 50;
-            if (range === '50-100') return item.price > 50 && item.price <= 100;
-            if (range === '100-200') return item.price > 100 && item.price <= 200;
-            if (range === '200-500') return item.price > 200 && item.price <= 500;
-            if (range === '500+') return item.price > 500;
+        matchesPriceRange = selectedPriceRanges.some((range: string) => {
+            if (range === '0-50') return default_price <= 50;
+            if (range === '50-100') return default_price > 50 && default_price <= 100;
+            if (range === '100-200') return default_price > 100 && default_price <= 200;
+            if (range === '200-500') return default_price > 200 && default_price <= 500;
+            if (range === '500+') return default_price > 500;
             return true;
         });
         }
