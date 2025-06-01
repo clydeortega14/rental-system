@@ -7,7 +7,7 @@ import { RentalItem } from '@/Interface/RentalItems';
 import RenterLayout from '@/Layouts/RenterLayout';
 import { PageProps } from '@/types';
 import { IPriceRange } from '@/types/priceRange';
-import { ICategory, Category } from '@/types/rentalCategory';
+import { ICategory, Category, CategoryFilterType } from '@/types/rentalCategory';
 import { Head, usePage } from '@inertiajs/react';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import React, { useState } from 'react';
@@ -15,10 +15,11 @@ import React, { useState } from 'react';
 interface RentalBrowserProps {
     categories: ICategory,
     priceRanges: IPriceRange,
-    rentalItems: RentalItem[]
+    rentalItems: RentalItem[],
+    category_filters: CategoryFilterType[]
 }
 
-const RentalItemBrowser = ({rentalItems, categories, priceRanges}: RentalBrowserProps) => {
+const RentalItemBrowser = ({rentalItems, categories, priceRanges, category_filters}: RentalBrowserProps) => {
 
     const error_message = usePage<PageProps>().props.flash.error_message;
 
@@ -114,7 +115,7 @@ const RentalItemBrowser = ({rentalItems, categories, priceRanges}: RentalBrowser
                 <ItemFilter 
                     showFilters={showFilters}
                     clearAllFilters={clearAllFilters}
-                    categories={categories}
+                    categories={category_filters}
                     selectedCategories={selectedCategories}
                     setSelectedCategories={setSelectedCategories}
                     priceRanges={priceRanges}

@@ -14,6 +14,9 @@ class Category extends Model
 
     protected $fillable = ['name'];
 
+
+    protected $hidden = ['pivot'];
+
     public $timestamps = false;
 
     public function detail() : MorphOne
@@ -24,5 +27,10 @@ class Category extends Model
     public function rentalItems()
     {
         return $this->hasMany(RentalAddItem::class, 'category_id');
+    }
+
+    public function filters()
+    {
+        return $this->belongsToMany(Filter::class, 'category_filters', 'category_id', 'filter_id');
     }
 }
