@@ -65,15 +65,11 @@
         "react-toastify": "^10.0.5",
         "recharts": "^2.15.3",
         "slick-carousel": "^1.8.1",
-<<<<<<< HEAD
-        "sweetalert2": "^11.6.13",
-=======
         "sweetalert2": "^11.12.4",
         "swiper": "^11.2.8",
         "tailwind-merge": "^3.3.0",
         "tailwind-variants": "^1.0.0",
         "tailwindcss-animate": "^1.0.7",
->>>>>>> 6841f2cca72ab86ac7d114974953f5aa9a34a562
         "updates": "^16.0.0"
     }
 }

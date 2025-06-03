@@ -30,7 +30,7 @@ Route::get('rental-browser/{category}', [RentalItemController::class, 'rentalBro
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard.index');
 
-    Route::group(['prefix' => 'users'], function() {
+    Route::group(['prefix' => 'users'], function () {
         Route::get('/', [AdminUserController::class, 'index'])->name('admin.users.index');
         Route::get('/{uuid}', [AdminDashboardController::class, 'show'])->name('admin.users.show');
     });
@@ -72,10 +72,10 @@ Route::middleware([
     })->name('lessee.profile');
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 6841f2cca72ab86ac7d114974953f5aa9a34a562
+    Route::get('/lessee', function () {
+        return Inertia::render('Lessee/Landing');
+    })->name('lessee.profile');
 });
 
 Route::middleware([
@@ -85,12 +85,10 @@ Route::middleware([
 ])->group(function () {
 
 
-<<<<<<< HEAD
-=======
 
 
-    
->>>>>>> 6841f2cca72ab86ac7d114974953f5aa9a34a562
+
+
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 
@@ -189,12 +187,8 @@ Route::middleware([
     //     return Inertia::render('User/Partials/Rental');
     // })->middleware(['auth'])->name('rentalListing');
 
-<<<<<<< HEAD
+
     Route::get('/AccessRights/Index', [UserController::class, 'index'])->name('user.profile');
-=======
-
-
->>>>>>> 6841f2cca72ab86ac7d114974953f5aa9a34a562
 });
 
 require __DIR__ . '/auth.php';
