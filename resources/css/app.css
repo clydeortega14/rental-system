@@ -8,14 +8,21 @@
 }
 
 .bg-store1 {
-    background-image: url('/resources/img/c11.png');
+    background-image: url("/resources/img/c11.png");
 }
 
 .bg-store2 {
-    background-image: url('/resources/img/c11.png');
+    background-image: url("/resources/img/c11.png");
 }
 
 .bg-store3 {
-    background-image: url('/resources/img/c11.png');
+    background-image: url("/resources/img/c11.png");
 }
 
+.text-color-1 {
+    color: #ea5e17;
+}
+
+.bg-color-1 {
+    background-color: #1a2331;
+}

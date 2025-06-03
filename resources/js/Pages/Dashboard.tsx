@@ -14,7 +14,12 @@ export default function Dashboard({ auth }: PageProps) {
             }
         >
             <Head title="Dashboard" />
-
+            <button
+                onClick={() => (window.location.href = "/UserProfile")}
+                className="px-4 py-2 bg-blue-600 text-white rounded"
+            >
+                Go to User Profile
+            </button>
             <div className="py-12 min-h-screen">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">

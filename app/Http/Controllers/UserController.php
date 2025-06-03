@@ -22,37 +22,37 @@ class UserController extends Controller
 
     public function index()
     {
-        return Inertia::render('AccessRights/Index');
+        return Inertia::render('UserProfile');
     }
 
-    public function getUserInfoPage($uuid) : Response
+    public function getUserInfoPage($uuid): Response
     {
         $user = User::where('uuid', $uuid)->first();
 
-        if(is_null($user)) $user = auth()->user();
+        if (is_null($user)) $user = auth()->user();
 
         return Inertia::render('Auth/CompleteUserDetails', [
             'user' => $user
         ]);
     }
 
-    public function store(Request $request) : RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $this->validateRequest($request);
 
         $user = User::where('id', $request->id)->first();
 
-        if(is_null($user)){
+        if (is_null($user)) {
             return redirect()->back()->with('error', 'User not found');
         }
 
-        if($request->has('company_name') || $request->has('tin')){
+        if ($request->has('company_name') || $request->has('tin')) {
 
             $company = $this->createUserCompanyInfo($user, $request->only(['company_name', 'tin', 'email']));
         }
 
 
-        if($request->has('telephone') || $request->has('mobile')){
+        if ($request->has('telephone') || $request->has('mobile')) {
 
             $this->createUserContact($user, $request->only(['telephone', 'mobile']));
         }
@@ -60,7 +60,7 @@ class UserController extends Controller
         return redirect()->route('dashboard');
     }
 
-    public function addItem(RentalAddItem $rentalAdd ,Request $request) : RedirectResponse
+    public function addItem(RentalAddItem $rentalAdd, Request $request): RedirectResponse
     {
 
         $user = Auth::user();
@@ -88,9 +88,8 @@ class UserController extends Controller
             'thumbnail_path' => $validatedData['itemImage'],
         ]);
 
-       
+
         return redirect()->route('rentalListing');
-       
     }
 
     public function validateRequest(Request $request)

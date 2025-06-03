@@ -127,6 +127,16 @@ Route::middleware([
         Route::prefix('permissions')->group(function () {
             Route::get('/', [PermissionController::class, 'index']);
         });
+
+        Route::prefix('permissions')->name('permissions.')->group(function () {
+            Route::get('/', [PermissionController::class, 'index'])->name('index');
+            Route::get('/create', [PermissionController::class, 'create'])->name('create');
+            Route::post('/', [PermissionController::class, 'store'])->name('store');
+            Route::get('/{permission}/edit', [PermissionController::class, 'edit'])->name('edit');
+            Route::put('/{permission}', [PermissionController::class, 'update'])->name('update');
+            Route::patch('/{permission}/toggle', [PermissionController::class, 'toggle'])->name('toggle');
+            Route::delete('/{permission}', [PermissionController::class, 'destroy'])->name('destroy');
+        });
     });
 
     /* -- Workflows --*/
@@ -145,8 +155,7 @@ Route::middleware([
     //     return Inertia::render('User/Partials/Rental');
     // })->middleware(['auth'])->name('rentalListing');
 
-    Route::resource('roles', RoleController::class);
-    Route::resource('permissions', PermissionController::class);
+    Route::get('/AccessRights/Index', [UserController::class, 'index'])->name('user.profile');
 });
 
 require __DIR__ . '/auth.php';
