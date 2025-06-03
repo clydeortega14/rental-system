@@ -1,20 +1,13 @@
 import Footer from '@/Components/LandingPage/Utility/footer'
 import Header from '@/Components/LandingPage/Utility/header'
 import Slider from '@/Components/Slider'
+import { Category } from '@/Interface/CategoryInterface'
 
 import { PropsWithChildren } from 'react'
 
-interface Category {
-  id: number
-  name: string
-  // add other fields if needed
-}
 
-interface LandingPageLayoutProps extends PropsWithChildren {
-  categories: Category[]
-}
 
-const LandingPageLayout = ({ children, categories }: LandingPageLayoutProps) => {
+const LandingPageLayout = ({ categories, children }: PropsWithChildren<{categories: Category[]}>) => {
   return (
     <div className="flex flex-col min-h-screen ">
       <Header categories={categories} />

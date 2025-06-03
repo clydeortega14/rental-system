@@ -7,12 +7,8 @@ import { BiUser, BiLock, BiMenu, BiX } from 'react-icons/bi';
 import { Category } from '@/Interface/CategoryInterface';
 
 
-interface TopNavigationProps extends PageProps {
-  categories: Category[];
-}
 
-
-const TopNavigation = ({ auth, categories }: TopNavigationProps) => {
+const TopNavigation = ({ auth, categories }: PageProps<{categories:Category[]}>) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
