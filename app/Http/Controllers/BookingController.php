@@ -18,36 +18,31 @@ class BookingController extends Controller
         $this->booking_service = $booking_service;
     }
 
-    public function bookingStore(StoreBookingRequest $request)
+    public function bookingStore(Request $request)
     {
         // validate request
-        $validated = $request->validated();
+        // $validated = $request->validated();
 
-        $item = RentalAddItem::where('uuid', $validated['item_uuid'])->first();
-        $status = BookingStatus::where('name', 'pending')->first();
+        // $item = RentalAddItem::where('uuid', $validated['item_uuid'])->first();
+        // $status = BookingStatus::where('name', 'pending')->first();
         
-        if(is_null($item))
-        {
-            return back()->with('error', 'Item not found!');
-        }
+        // if(is_null($item)) return back()->with('error', 'Item not found!');
 
-        if(is_null($status)) return back()->with('error', 'Pending status does not exists');
+        // if(is_null($status)) return back()->with('error', 'Pending status does not exists');
 
-        
+        // // store requests to session
+        // $request->session()->put('booking_data', $validated + [
+        //     'category_id' => $item->category_id,
+        //     'rental_listing_id' => $item->id,
+        //     'status' => $status->id,
+        //     'partial_total' => $request->partial_total,
+        //     'service_fee' => $request->service_fee,
+        //     'total_cost' => $request->total_cost,
+        //     'duration' => $request->duration,
+        //     'drop_location' => is_null($validated['drop_off_location']) ?  $validated['pick_up_location'] : $validated['pick_up_location']
+        // ]);
 
-        // store requests to session
-        $request->session()->put('booking_data', $validated + [
-            'category_id' => $item->category_id,
-            'rental_listing_id' => $item->id,
-            'status' => $status->id,
-            'partial_total' => $request->partial_total,
-            'service_fee' => $request->service_fee,
-            'total_cost' => $request->total_cost,
-            'duration' => $request->duration,
-            'drop_location' => is_null($validated['drop_off_location']) ?  $validated['pick_up_location'] : $validated['pick_up_location']
-        ]);
-
-        return redirect(route('itemCheckout', $request->item_uuid));
+        return redirect(route('itemCheckout'));
     }
 
     public function checkOutBooking(Request $request)

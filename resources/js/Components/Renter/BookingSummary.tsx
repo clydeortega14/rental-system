@@ -1,5 +1,8 @@
 import { BookingDetails, RentalDuration } from '@/types/rental';
 import { formatPrice } from '@/utils/dateUtils';
+import { useEffect, useState } from 'react';
+import Button from '../Renter/ui/Button';
+import PrimaryButton from '../PrimaryButton';
 
 interface BookingSummaryProps {
     bookingDetails: BookingDetails;
@@ -9,25 +12,24 @@ interface BookingSummaryProps {
         weekly: number;
     }
     onBookNow: () => void;
+    calculatedTotal: number;
 }
-const BookingSummary = ({bookingDetails, itemPrice, onBookNow}: BookingSummaryProps) => {
+const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal}: BookingSummaryProps) => {
+
+    const [hasSelectedDateTime, setHasSelectedDateTime] = useState<boolean>(false);
     const getDurationText = (duration: RentalDuration) => {
         switch (duration) {
-        case 'hourly': return 'hour';
-        case 'daily': return 'day';
-        case 'weekly': return 'week';
+          case 'hourly': return 'hour';
+          case 'daily': return 'day';
+          case 'weekly': return 'week';
         }
     };
-  
-  const calculateTotal = () => {
-    const basePrice = itemPrice[bookingDetails.duration];
-    
-    let calculated_total = Number(basePrice) * bookingDetails.quantity;
-    
-    return calculated_total;
-  };
 
-  const hasSelectedDateTime = bookingDetails.startDate && bookingDetails.startTime;
+    useEffect( () => {
+      //
+      if(bookingDetails.startDate && bookingDetails.startTime) setHasSelectedDateTime(true)
+      
+    }, [bookingDetails]);
 
   return (
     <div className="bg-gray-50 rounded-lg p-6">
@@ -70,22 +72,26 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow}: BookingSummaryPr
         <div className="border-t border-gray-200 pt-3 mt-3">
           <div className="flex justify-between font-semibold text-lg">
             <span>Total</span>
-            <span>{formatPrice(calculateTotal())}</span>
+            <span>{calculatedTotal}</span>
           </div>
         </div>
       </div>
+
+      <Button onClick={onBookNow} className={hasSelectedDateTime ? 'cursor-not-allowed bg-gray-400' : 'bg-blue-600'}>
+        {hasSelectedDateTime ? 'Book Now' : 'Select Date & Time'}
+      </Button>
       
-      <button 
+      {/* <button 
         className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all duration-300 ${
           hasSelectedDateTime 
             ? 'bg-blue-600 hover:bg-blue-700' 
             : 'bg-gray-400 cursor-not-allowed'
         }`}
-        disabled={!hasSelectedDateTime}
+        disabled={hasSelectedDateTime}
         onClick={onBookNow}
       >
         {hasSelectedDateTime ? 'Book Now' : 'Select Date & Time'}
-      </button>
+      </button> */}
     </div>
   )
 }

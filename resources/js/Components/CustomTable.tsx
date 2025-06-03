@@ -1,17 +1,19 @@
-type TableHeader = {
-    name: string;
-};
-
+import { Link } from "@inertiajs/react";
+import Button from "./Renter/ui/Button";
+import { AlertCircle, Calendar, CheckCircle, ChevronRight, Clock, XCircle } from "lucide-react";
+import { formatDateDisplay } from "@/utils/dateUtils";
+import { useState } from "react";
+import { bookings, getItemById } from "@/data/bookingsData";
 interface CustomTableProps {
-    className: string;
-    headerData: TableHeader[];
+    className?: string;
     children: React.ReactNode;
 }
 
-function CustomTable({ children, headerData }: CustomTableProps) {
+function CustomTable({ children }: CustomTableProps) {
+    
     return (
         <>
-            <table className="border-collapse table-auto w-full shadow-xl">
+            {/* <table className="border-collapse table-auto w-full shadow-xl">
                 <thead className="bg-gradient-to-tr from-blue-500 to-green-500 text-white text-md">
                     <tr>
                         {headerData.map((head, index) => (
@@ -25,7 +27,16 @@ function CustomTable({ children, headerData }: CustomTableProps) {
                     </tr>
                 </thead>
                 <tbody className="text-sm">{children}</tbody>
-            </table>
+            </table> */}
+
+            <div className="px-4 py-5">
+                <div className="overflow-hidden mb-8">
+
+                    <div className="divide-y divide-gray-200">
+                        {children}
+                    </div>
+                </div>
+            </div>
         </>
     );
 }
