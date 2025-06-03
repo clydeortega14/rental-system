@@ -17,13 +17,24 @@ use App\Http\Controllers\WorkflowController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\RatingController;
+use App\Http\Controllers\FeedbackController;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
+Route::get('/preview/feedback', function () {
+    return Inertia::render('Feedback/Create', [
+        'booking' => [
+            'uuid' => 'preview-uuid',
+            'rentalListing' => ['itemName' => 'Sample Rental Item']
+        ],
+        'existingRating' => null,
+        'ratingType' => 'renter'
+    ]);
+});
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
 
 Route::get('rental-browser/{category}', [RentalItemController::class, 'rentalBrowserIndex'])->name('rental.browser.index');
@@ -80,11 +91,7 @@ Route::middleware([
     'check-user-info'// completed information details
 ])->group(function(){
 
-
-
-    
-
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
     Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 
@@ -126,20 +133,16 @@ Route::middleware([
 
     /* -- Categories Routes -- */
     Route::prefix('categories')->group(function(){
-
         Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
-
     });
 
     /* -- Forms Routes -- */
     Route::prefix('forms')->group(function(){
-
         Route::get('/', [FormController::class, 'index'])->name('forms.index');
     });
 
     /* -- Access Rights Routes -- */
     Route::prefix('access-rights')->group(function(){
-
         // Users
         Route::prefix('users')->group(function(){
             Route::get('/', [UserController::class, 'index'])->name('users.index');
@@ -173,7 +176,21 @@ Route::middleware([
     // })->middleware(['auth'])->name('rentalListing');
 
 
+    /*-- Ratings --*/
+    Route::get('/bookings/{booking}/rate', [RatingController::class, 'create'])
+        ->name('ratings.create');
+    Route::post('/bookings/{booking}/rate', [RatingController::class, 'store'])
+        ->name('ratings.store');
+    Route::get('/ratings/confirmation', [RatingController::class, 'confirmation'])
+        ->name('ratings.confirmation');
 
+    /*-- Feedback --*/
+    Route::get('/feedback', [FeedbackController::class, 'create'])
+        ->name('feedback.create');
+    Route::post('/feedback', [FeedbackController::class, 'store'])
+        ->name('feedback.store');
+    Route::get('/feedback/confirmation', [FeedbackController::class, 'confirmation'])
+        ->name('feedback.confirmation');
 });
 
 require __DIR__.'/auth.php';

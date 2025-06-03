@@ -128,7 +128,7 @@ class RentalItemController extends Controller
             'filename' => 'required|mimes:jpg,jpeg,png|mimetypes:image/png,image/jpeg|max:2000'
         ]);
 
-        $user = auth()->user();
+        $user = Auth::user();
         $userId = $user->id;
         // $user_rentalAddItems = $user->rentalAddItems();
         $category  = Category::where('name', 'cars')->first();
