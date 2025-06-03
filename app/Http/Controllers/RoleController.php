@@ -11,13 +11,13 @@ class RoleController extends Controller
     public function index()
     {
         $roles = Role::with('permissions')->get();
-        return view('roles.index', compact('roles'));
+        return view('#', compact('roles'));
     }
 
     public function create()
     {
         $permissions = Permission::all();
-        return view('roles.create', compact('permissions'));
+        return view('#', compact('permissions'));
     }
 
     public function store(Request $request)
@@ -35,14 +35,14 @@ class RoleController extends Controller
             $role->permissions()->sync($request->input('permissions'));
         }
 
-        return redirect()->route('Index.tsx')->with('success', 'Role created successfully.');
+        return redirect()->route('#')->with('success', 'Role created successfully.');
     }
 
     public function edit(Role $role)
     {
         $permissions = Permission::all();
         $rolePermissions = $role->permissions->pluck('id')->toArray();
-        return view('roles.edit', compact('role', 'permissions', 'rolePermissions'));
+        return view('#', compact('role', 'permissions', 'rolePermissions'));
     }
 
     public function update(Request $request, Role $role)
@@ -62,12 +62,12 @@ class RoleController extends Controller
             $role->permissions()->detach();
         }
 
-        return redirect()->route('Index.tsx')->with('success', 'Role updated successfully.');
+        return redirect()->route('#')->with('success', 'Role updated successfully.');
     }
 
     public function destroy(Role $role)
     {
         $role->delete();
-        return redirect()->route('Index.tsx')->with('success', 'Role deleted successfully.');
+        return redirect()->route('#')->with('success', 'Role deleted successfully.');
     }
 }

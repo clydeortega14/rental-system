@@ -4,27 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Models\Permission;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PermissionController extends Controller
 {
     public function index()
     {
-        $permissions = Permission::all();
-        return view('permissions.index', compact('permissions'));
+        return Inertia::render('AccessRights/Permission/ManagePermissions', [
+            'permissions' => Permission::orderBy('name')->get()
+        ]);
     }
 
     public function create()
     {
-        return view('permissions.create');
+        return Inertia::render('AccessRights/Permission/CreatePermission');
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|unique:permissions',
-            'slug' => 'required|unique:permissions',
-            'description' => 'nullable',
-            'active' => 'boolean',
+            'name' => 'required|string|max:255|unique:permissions',
+            'slug' => 'required|string|max:255|unique:permissions',
+            'description' => 'nullable|string',
+            'active' => 'boolean'
         ]);
 
         Permission::create($validated);
@@ -34,21 +36,29 @@ class PermissionController extends Controller
 
     public function edit(Permission $permission)
     {
-        return view('permissions.edit', compact('permission'));
+        return Inertia::render('AccessRights/Permission/EditPermission', [
+            'permission' => $permission
+        ]);
     }
 
     public function update(Request $request, Permission $permission)
     {
         $validated = $request->validate([
-            'name' => 'required|unique:permissions,name,' . $permission->id,
-            'slug' => 'required|unique:permissions,slug,' . $permission->id,
-            'description' => 'nullable',
-            'active' => 'boolean',
+            'name' => 'required|string|max:255|unique:permissions,name,' . $permission->id,
+            'slug' => 'required|string|max:255|unique:permissions,slug,' . $permission->id,
+            'description' => 'nullable|string',
+            'active' => 'boolean'
         ]);
 
         $permission->update($validated);
 
         return redirect()->route('permissions.index')->with('success', 'Permission updated successfully.');
+    }
+
+    public function toggle(Request $request, Permission $permission)
+    {
+        $permission->update(['active' => $request->active]);
+        return back()->with('success', 'Permission status updated.');
     }
 
     public function destroy(Permission $permission)
