@@ -2,27 +2,33 @@ import React, { useState } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
 import { Booking } from '@/types/models';
 import { Rating } from '@/types/ratings';
+import { RatingType, isRatingType} from '@/types/Rating';
 
 interface Props {
     booking: Booking;
     existingRating?: Rating;
-    ratingType: 'renter' | 'owner';
+    ratingType: RatingType;
 }
 interface RatingFormData {
     rating: number;
     review?: string;
-    type: 'renter' | 'owner';
+    type: RatingType;
+    booking_id: number;
 }
 
 const RatingForm: React.FC<Props> = ({ booking, existingRating, ratingType }) => {
     const [rating, setRating] = useState(existingRating?.rating || 0);
     const { data, setData, post, processing } = useForm<RatingFormData>({
-        rating,
+        rating: existingRating?.rating || 0,
         review: existingRating?.review || '',
-        type: ratingType
+        type: ratingType,
+        booking_id: booking.id,
     });
 
     const handleSubmit = (e: React.FormEvent) => {
+        if (!isRatingType(data.type)) {
+            return;
+        }
         e.preventDefault();
         post(route('ratings.store', booking.id));
     };

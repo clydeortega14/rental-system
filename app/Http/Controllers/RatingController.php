@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 Use Illuminate\Support\Facades\Auth;
 use App\Notifications\NewRatingReceived;
 use App\Http\Requests\StoreBookingRequest;
+use App\Enums\RatingType;
+use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use \Illuminate\Database\Eloquent\Model;
 
 class RatingController extends Controller
 {
@@ -18,17 +22,19 @@ class RatingController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        return view('ratings.create', [
+        return Inertia::render('Ratings/RatingForm', [
             'booking' => $booking,
-            'ratee' => $booking->rentalListing->user
+            'ratee' => $booking->rentalListing->user,
+            'ratingTypes' => RatingType::cases()
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request,)
     {
         $validated = $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'review' => 'nullable|string|max:500',
+            'type' => ['required', Rule::in(RatingType::values())],
             'booking_id' => 'required|exists:bookings,id',
             'ratee_id' => 'required|exists:users,id'
         ]);

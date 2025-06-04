@@ -16,12 +16,22 @@ use Illuminate\Support\Facades\Auth;
 use App\Traits\RentalItems\ItemDetails;
 use App\Models\Detailable;
 use App\Models\Category;
-
+use App\Services\Category\CategoryService;
 
 
 class RentalItemController extends Controller
 {
     use FileTraits, ItemDetails;
+
+    protected $category_service;
+
+    public function __construct(
+        
+        CategoryService $category_service
+    )
+    {
+        $this->category_service = $category_service;
+    }
    
     private function formatSizeUnits($bytes) {
         $units = array('bytes', 'KB', 'MB', 'GB', 'TB');
@@ -61,6 +71,34 @@ class RentalItemController extends Controller
       
         // Pass the formatted rental items data to the React component using compact
         return Inertia::render('User/Partials/Rental', compact('rentalItems'));
+    }
+
+    public function checkoutItem()
+    {
+        return inertia('Item/Checkout');
+    }
+
+    public function rentalBrowserIndex($category_name)
+    {
+        $category = Category::where('name', $category_name)->first();
+
+        if(is_null($category)) return redirect()->back()->with('error', 'Category not found!');
+        
+        $categories = $this->category_service->getCategories($category->id);
+
+        $price_ranges = [
+            ['id' => '0-50', 'label' => '0 - 50'],
+            ['id' => '50-100', 'label' => '50 - 100'],
+            ['id' => '100-200', 'label' => '100 - 200'],
+            ['id' => '200-500', 'label' => '20 - 500'],
+            ['id' => '500+', 'label' => '500+']
+        ];
+
+        return inertia('Renter/RentalItemBrowser', [
+            'categories' => $categories,
+            'priceRanges' => $price_ranges,
+            'rentalItems' => $this->getRentalItemsByCategory($category->id)
+        ]);
     }
 
     /**

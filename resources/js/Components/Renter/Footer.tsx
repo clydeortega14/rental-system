@@ -1,4 +1,6 @@
 import React from 'react'
+import logoWeb from '@/../../resources/img/logo-web.png';
+import logoMobile from '@/../../resources/img/logo.png';
 
 const Footer = () => {
   return (
@@ -6,7 +8,11 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h3 className="font-bold text-lg text-orange-500 mb-4">Rentify</h3>
+              <img
+              src={logoWeb}
+              alt="Logo"
+              className="h-10 md:h-16 w-auto"
+            />
               <p className="text-gray-600">
                 Making equipment rental simple, reliable, and accessible for everyone.
               </p>

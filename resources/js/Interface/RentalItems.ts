@@ -1,5 +1,6 @@
 export type RentalItem = {
     id: number,
+    uuid: string,
     description: string | null
     name: string,
     role?: string | null,
