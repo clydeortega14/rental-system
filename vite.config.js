@@ -7,14 +7,17 @@ export default defineConfig({
     plugins: [
         laravel({
             input: 'resources/js/app.tsx',
-            refresh: true,
+            refresh: [
+                'resources/js/Pages/**',
+                'resources/js/Components/**',
+            ],
         }),
         react(),
     ],
     resolve: {
         alias: {
             '@': path.resolve(__dirname, 'resources/js'),
-            '@Components': '/resources/js/Components',
+            
         },
     },
 });

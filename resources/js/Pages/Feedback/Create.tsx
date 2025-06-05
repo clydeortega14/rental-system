@@ -4,8 +4,8 @@ import { useForm } from '@inertiajs/react';
 import { FeedbackType, isFeedbackType } from '@/types/Feedback';
 import { PageProps } from '@/types';
 
-// const FeedbackForm = () => {
-    const FeedbackForm= ({ auth, errors, feedbackTypes }: PageProps) => {
+export default function Create({ auth, feedbackTypes }: PageProps & { feedbackTypes: string[] }) {
+    // const FeedbackForm= ({ auth, errors, feedbackTypes }: PageProps) => {
     const { data, setData, post, processing } = useForm({
         type: FeedbackType.SUGGESTION,
         message: '',
@@ -13,10 +13,7 @@ import { PageProps } from '@/types';
     });
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!isFeedbackType(data.type)) {
-            // Handle invalid type
-            return;
-        }
+        if (!isFeedbackType(data.type)) return;
         post(route('feedback.store'));
     };
     return (
@@ -24,7 +21,7 @@ import { PageProps } from '@/types';
         <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto p-6 bg-white rounded-lg shadow">
             <div>
                 <label htmlFor="feedbackType" className="block text-sm font-medium text-gray-700">
-                    Feedback Type
+                    Feedback
                 </label>
                 <select
                     id="feedbackType"
@@ -65,4 +62,3 @@ import { PageProps } from '@/types';
         </AuthenticatedLayout>
     );
 };
-export default FeedbackForm;

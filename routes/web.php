@@ -146,9 +146,9 @@ Route::middleware([
     Route::put('/rentalListing/items/update/{id}', [RentalItemController::class, 'update'])->name('rental.update');
 
     /*-- Ratings --*/
-    Route::middleware(['web', 'auth'])->group(function () {
+    // Route::middleware(['web', 'auth'])->group(function () {
     // Rating creation form
-    Route::get('/bookings/{booking}/rate', [RatingController::class, 'create'])
+    Route::get('/rating', [RatingController::class, 'create'])
         ->name('ratings.create');
     
     // Handle form submission
@@ -174,6 +174,6 @@ Route::middleware([
     // Public confirmation
     Route::get('/feedback/confirmation', [FeedbackController::class, 'confirmation'])
         ->name('feedback.confirmation');
-    });
+    // });
 
 require __DIR__.'/auth.php';

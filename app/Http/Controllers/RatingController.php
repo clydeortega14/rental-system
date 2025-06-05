@@ -12,19 +12,20 @@ use App\Enums\RatingType;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use \Illuminate\Database\Eloquent\Model;
+use Resources\js\Components\Forms\RatingForm;
+
 
 class RatingController extends Controller
 {
    public function create(Booking $booking)
     {
         // Basic authorization check
-        if ($booking->booked_by !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if ($booking->booked_by !== Auth::id()) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
-        return Inertia::render('Components/Form/RatingForm', [
-            'booking' => $booking,
-            'ratee' => $booking->rentalListing->user,
+        return Inertia::render('Ratings/Create', [
+            'booking' => $booking->load('rentalListing.user'),
             'ratingTypes' => RatingType::cases()
         ]);
     }
