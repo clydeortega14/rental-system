@@ -1,5 +1,7 @@
 import { useState } from 'react'
+//@ts-ignore
 import { Swiper, SwiperSlide } from 'swiper/react'
+//@ts-ignore
 import { Pagination, Autoplay, EffectFade } from 'swiper/modules'
 import { BiSearchAlt  } from 'react-icons/bi';
 import 'swiper/css'
@@ -143,7 +145,7 @@ const Slider = ({ categories }: SliderProps) => {
               effect="fade"
               fadeEffect={{ crossFade: true }}
               onSlideChangeTransitionStart={() => setTextVisible(false)}
-              onSlideChangeTransitionEnd={(swiper) => {
+              onSlideChangeTransitionEnd={(swiper: Swiper) => {
                 setActiveIndex(swiper.realIndex)
                 setTextVisible(true)
               }}
