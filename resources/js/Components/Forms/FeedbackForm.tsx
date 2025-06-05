@@ -20,6 +20,7 @@ import { PageProps } from '@/types';
         post(route('feedback.store'));
     };
     return (
+        <AuthenticatedLayout user={auth?.user}>
         <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto p-6 bg-white rounded-lg shadow">
             <div>
                 <label htmlFor="feedbackType" className="block text-sm font-medium text-gray-700">
@@ -61,6 +62,7 @@ import { PageProps } from '@/types';
                 {processing ? 'Submitting...' : 'Submit Feedback'}
             </button>
         </form>
+        </AuthenticatedLayout>
     );
 };
 export default FeedbackForm;

@@ -22,7 +22,7 @@ class RatingController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        return Inertia::render('Ratings/RatingForm', [
+        return Inertia::render('Components/Form/RatingForm', [
             'booking' => $booking,
             'ratee' => $booking->rentalListing->user,
             'ratingTypes' => RatingType::cases()

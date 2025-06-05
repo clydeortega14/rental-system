@@ -9,12 +9,13 @@ use App\Models\Feedback;
 use Illuminate\Validation\Rule;
 use App\Enums\FeedbackType;
 use Inertia\Inertia;
+use Resources\Components\Form\FeedbackForm;
 
 class FeedbackController extends Controller
 {
     public function create()
     {
-        return Inertia::render('Feedback/Create', [
+        return Inertia::render('Components/Form/FeedbackForm', [
             'feedbackTypes' => array_column(FeedbackType::cases(), 'value')
         ]);
     }
