@@ -1,5 +1,6 @@
 import LandingPageLayout from "@/Layouts/LandingPageLayout"
 import { Head } from '@inertiajs/react';
+import { PageProps } from '@/types'
 
 interface Category {
     id: number;
@@ -11,11 +12,11 @@ interface LandingPageProps {
     categories: Category[];
 }
 
-export default function LandingPage({ categories }: LandingPageProps) {
+export default function LandingPage({ auth, categories }: PageProps) {
     return (
         <>
             <Head title="Welcome" />
-            <LandingPageLayout categories={categories} />
+            <LandingPageLayout auth={auth} categories={categories} />
         </>
     );
 }

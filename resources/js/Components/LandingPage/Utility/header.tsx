@@ -10,12 +10,23 @@ interface Category {
   category_id: number;
   label: string;
 }
-interface TopNavigationProps extends PageProps {
-  categories: Category[];
+interface User {
+  id: number
+  name: string
+  email: string
+}
+
+interface TopNavigationProps {
+  categories: Category[]
+  auth: {
+    user: User | null
+  }
 }
 
 
 const TopNavigation = ({ auth, categories }: TopNavigationProps) => {
+
+  console.log(auth)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -72,29 +83,34 @@ const TopNavigation = ({ auth, categories }: TopNavigationProps) => {
 
           <Link href="/about-us" className="text-gray-700 hover:text-orange-500 transition">About Us</Link>
           <Link href="/contact-us" className="text-gray-700 hover:text-orange-500 transition">Contact Us</Link>
-          {auth && (
-            <Link href={route('dashboard')} className="text-orange-600 font-semibold">Dashboard</Link>
-          )}
+          
         </nav>
 
         {/* Desktop Auth Buttons */}
         <div className="hidden md:flex col-span-3 justify-end space-x-4">
-          {auth ? null : (
-            <>
+          {auth.user ? (
               <Link
-                href={route('login')}
-                className="flex items-center gap-1 px-4 py-2 rounded-md bg-gray-100 text-gray-800 hover:bg-gray-200"
+                href={route('dashboard')}
+                className="text-orange-600 font-semibold"
               >
-                <BiUser /> Sign In
+                Dashboard
               </Link>
-              <Link
-                href={route('register')}
-                className="flex items-center gap-1 px-4 py-2 rounded-md bg-orange-500 text-white hover:bg-orange-600"
-              >
-                <BiLock /> Sign Up
-              </Link>
-            </>
-          )}
+            ) : (
+              <>
+                <Link
+                  href={route('login')}
+                  className="flex items-center gap-1 px-4 py-2 rounded-md bg-gray-100 text-gray-800 hover:bg-gray-200"
+                >
+                  <BiUser /> Sign In
+                </Link>
+                <Link
+                  href={route('register')}
+                  className="flex items-center gap-1 px-4 py-2 rounded-md bg-orange-500 text-white hover:bg-orange-600"
+                >
+                  <BiLock /> Sign Up
+                </Link>
+              </>
+            )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -116,14 +132,14 @@ const TopNavigation = ({ auth, categories }: TopNavigationProps) => {
           <Link href="/about-us" className="block text-gray-800 hover:text-orange-500">About</Link>
           <Link href="/contact-us" className="block text-gray-800 hover:text-orange-500">Contact</Link>
           <Link href="/blog-list" className="block text-gray-800 hover:text-orange-500">Blog</Link>
-          {auth ? (
+          {auth.user ? (
             <Link href={route('dashboard')} className="block text-orange-600 font-semibold">Dashboard</Link>
           ) : (
             <>
-              <Link href={route('login')} className="block flex items-center gap-1 text-gray-700 hover:text-orange-500">
+              <Link href={route('login')} className="block flex items-center gap-1 text-gray-700 hover:text-orange-500 ">
                 <BiUser /> Sign In
               </Link>
-              <Link href={route('register')} className="block flex items-center gap-1 text-gray-700 hover:text-orange-500">
+              <Link href={route('register')} className="block flex items-center gap-1 text-gray-700 hover:text-orange-500 ">
                 <BiLock /> Sign Up
               </Link>
             </>

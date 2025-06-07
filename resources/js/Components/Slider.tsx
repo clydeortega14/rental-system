@@ -80,7 +80,6 @@ const slides = [
 ]
 
 const Slider = ({ categories }: SliderProps) => {
-  console.log(categories)
   const [activeIndex, setActiveIndex] = useState(0)
   const [textVisible, setTextVisible] = useState(true)
 
