@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FormEventHandler, useEffect, useState } from "react";
 import { PageProps } from "@/types";
 import { Item } from "@/Interface/Item";
 import RenterLayout from "@/Layouts/RenterLayout";
@@ -86,10 +86,8 @@ export default function View({
 
     }, [duration, quantity]);
 
-    const handleBookNow = () => {
-
+    const handleBookNow: FormEventHandler = (e) => {
         post(route('booking.store'))
-        // alert('submit booking');
     };
 
 //   useEffect( () => {

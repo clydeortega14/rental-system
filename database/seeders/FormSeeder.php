@@ -35,6 +35,9 @@ class FormSeeder extends Seeder
                         'label' => $form['label'],
                         'description' => $form['description']
                     ]);
+
+
+                    // add custom fields to form
                 }
             }
         }
@@ -47,7 +50,10 @@ class FormSeeder extends Seeder
             [
                 'type' => 'transactional',
                 'forms' => [
-                    ['label' => 'Rental Information', 'description' => 'Gather information on renting an item'],
+                    [
+                        'label' => 'Rental Information', 
+                        'description' => 'Gather information on renting an item'
+                    ],
                     ['label' => 'Customer Detail', 'description' => 'Collect Customer Detail']
                 ]
             ],
@@ -55,7 +61,7 @@ class FormSeeder extends Seeder
                 'type' => 'setup',
                 'forms' => [
 
-                    ['label' => 'Car Rental', 'description' => 'Rent a car form'],
+                    ['label' => 'Car Rental', 'description' => 'can add customize fields for rental items'],
                     ['label' => 'Motorcycle Rental', 'description' => 'Rent a Motorcycle form'],
                     ['label' => 'Properties Rental', 'description' => 'Rent a Properties form'],
                 ],

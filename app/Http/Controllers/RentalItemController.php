@@ -86,6 +86,11 @@ class RentalItemController extends Controller
         
         $categories = $this->category_service->getCategories($category->id);
 
+        $category_filters = $category->filters()
+                            ->with('choices')
+                            ->get()
+                            ->toArray();
+
         $price_ranges = [
             ['id' => '0-50', 'label' => '0 - 50'],
             ['id' => '50-100', 'label' => '50 - 100'],
@@ -97,7 +102,8 @@ class RentalItemController extends Controller
         return inertia('Renter/RentalItemBrowser', [
             'categories' => $categories,
             'priceRanges' => $price_ranges,
-            'rentalItems' => $this->getRentalItemsByCategory($category->id)
+            'rentalItems' => $this->getRentalItemsByCategory($category->id),
+            'category_filters' => $category_filters
         ]);
     }
 
@@ -122,7 +128,7 @@ class RentalItemController extends Controller
             'filename' => 'required|mimes:jpg,jpeg,png|mimetypes:image/png,image/jpeg|max:2000'
         ]);
 
-        $user = auth()->user();
+        $user = Auth::user();
         $userId = $user->id;
         // $user_rentalAddItems = $user->rentalAddItems();
         $category  = Category::where('name', 'cars')->first();

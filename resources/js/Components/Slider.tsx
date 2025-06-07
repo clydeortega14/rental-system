@@ -1,5 +1,7 @@
 import { useState } from 'react'
+//@ts-ignore
 import { Swiper, SwiperSlide } from 'swiper/react'
+//@ts-ignore
 import { Pagination, Autoplay, EffectFade } from 'swiper/modules'
 import { BiSearchAlt  } from 'react-icons/bi';
 import 'swiper/css'
@@ -11,11 +13,8 @@ import cars from '@/../../resources/img/banner/banner1.png'
 import motorcycle from '@/../../resources/img/banner/2.png'
 import bags from '@/../../resources/img/banner/bags.png'
 import hotels from '@/../../resources/img/banner/hotels.png'
+import { Category } from '@/Interface/CategoryInterface';
 
-interface Category {
-  category_id: number;
-  label: string;
-}
 
 interface SliderProps {
   categories: Category[];
@@ -106,7 +105,7 @@ const Slider = ({ categories }: SliderProps) => {
                 {(() => {
                   const currentSlide = slides[activeIndex]
                   const matchedCategory = categories.find(
-                    (cat) => cat.label.toLowerCase() === currentSlide.label.toLowerCase()
+                    (cat) => cat.detail.label.toLowerCase() === currentSlide.label.toLowerCase()
                   )
 
                   if (!matchedCategory) return null
@@ -114,16 +113,16 @@ const Slider = ({ categories }: SliderProps) => {
                   return (
                     <>
                       <a
-                        href={`/rent/${matchedCategory.category_id}`}
+                        href={route('rental.browser.index', matchedCategory.name)}
                         className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-md transition text-center"
                       >
-                        Rent {matchedCategory.label}
+                        Rent {matchedCategory.detail.label}
                       </a>
                       <a
                         href={`/add/${matchedCategory.category_id}`}
                         className="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2 rounded-md transition text-center"
                       >
-                        Add Your {matchedCategory.label}
+                        Add Your {matchedCategory.detail.label}
                       </a>
                     </>
                   )
@@ -142,7 +141,7 @@ const Slider = ({ categories }: SliderProps) => {
               effect="fade"
               fadeEffect={{ crossFade: true }}
               onSlideChangeTransitionStart={() => setTextVisible(false)}
-              onSlideChangeTransitionEnd={(swiper) => {
+              onSlideChangeTransitionEnd={(swiper: Swiper) => {
                 setActiveIndex(swiper.realIndex)
                 setTextVisible(true)
               }}

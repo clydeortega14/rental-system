@@ -6,7 +6,7 @@ import { usePage } from "@inertiajs/react";
 import { useCart } from "@/context/CartContext";
 import { Calendar, ChevronLeft, CreditCard, X } from "lucide-react";
 import Button from "../Renter/ui/Button";
-import { formatDateDisplay } from "@/utils/dateUtils";
+import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
 
 export default function CheckOut() {
     const user = usePage<PageProps>().props.auth.user;
@@ -268,7 +268,7 @@ export default function CheckOut() {
                                 fullWidth
                                 disabled={isProcessing}
                             >
-                                {isProcessing ? 'Processing...' : `Complete Booking • $${(totalPrice + 10).toFixed(2)}`}
+                                {isProcessing ? 'Processing...' : `Complete Booking • ${formatPrice(totalPrice)}`}
                             </Button>
                             </div>
                         </div>
@@ -326,17 +326,17 @@ export default function CheckOut() {
                         <div className="border-t border-b border-gray-200 py-4 mb-4">
                         <div className="flex justify-between mb-2">
                             <span className="text-gray-600">Subtotal</span>
-                            <span className="text-gray-900">${totalPrice.toFixed(2)}</span>
+                            <span className="text-gray-900">{formatPrice(totalPrice)}</span>
                         </div>
                         <div className="flex justify-between mb-2">
                             <span className="text-gray-600">Service fee</span>
-                            <span className="text-gray-900">$10.00</span>
+                            <span className="text-gray-900">{formatPrice(10)}</span>
                         </div>
                         </div>
                         
                         <div className="flex justify-between mb-4">
                         <span className="font-semibold text-gray-900">Total</span>
-                        <span className="font-semibold text-gray-900">${(totalPrice + 10).toFixed(2)}</span>
+                        <span className="font-semibold text-gray-900">{formatPrice(totalPrice + 10) }</span>
                         </div>
                     </div>
                     </div>

@@ -7,7 +7,7 @@ import { RentalItem } from '@/Interface/RentalItems';
 import RenterLayout from '@/Layouts/RenterLayout';
 import { PageProps } from '@/types';
 import { IPriceRange } from '@/types/priceRange';
-import { ICategory, Category } from '@/types/rentalCategory';
+import { ICategory, Category, CategoryFilterType } from '@/types/rentalCategory';
 import { Head, usePage } from '@inertiajs/react';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import React, { useState } from 'react';
@@ -15,10 +15,11 @@ import React, { useState } from 'react';
 interface RentalBrowserProps {
     categories: ICategory,
     priceRanges: IPriceRange,
-    rentalItems: RentalItem[]
+    rentalItems: RentalItem[],
+    category_filters: CategoryFilterType[]
 }
 
-const RentalItemBrowser = ({rentalItems, categories, priceRanges}: RentalBrowserProps) => {
+const RentalItemBrowser = ({rentalItems, categories, priceRanges, category_filters}: RentalBrowserProps) => {
 
     const error_message = usePage<PageProps>().props.flash.error_message;
 
@@ -44,18 +45,20 @@ const RentalItemBrowser = ({rentalItems, categories, priceRanges}: RentalBrowser
         const matchesSearch = !searchQuery || 
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
+      const default_price:number = item.price['daily'];
+
     const matchesCategory = selectedCategories.length === 0 || 
       selectedCategories.includes(item.category);
     
         let matchesPriceRange = true;
         if (selectedPriceRanges.length > 0) {
-        matchesPriceRange = selectedPriceRanges.some(range => {
-            if (range === '0-50') return item.price <= 50;
-            if (range === '50-100') return item.price > 50 && item.price <= 100;
-            if (range === '100-200') return item.price > 100 && item.price <= 200;
-            if (range === '200-500') return item.price > 200 && item.price <= 500;
-            if (range === '500+') return item.price > 500;
+        matchesPriceRange = selectedPriceRanges.some((range: string) => {
+            if (range === '0-50') return default_price <= 50;
+            if (range === '50-100') return default_price > 50 && default_price <= 100;
+            if (range === '100-200') return default_price > 100 && default_price <= 200;
+            if (range === '200-500') return default_price > 200 && default_price <= 500;
+            if (range === '500+') return default_price > 500;
             return true;
         });
         }
@@ -112,7 +115,7 @@ const RentalItemBrowser = ({rentalItems, categories, priceRanges}: RentalBrowser
                 <ItemFilter 
                     showFilters={showFilters}
                     clearAllFilters={clearAllFilters}
-                    categories={categories}
+                    categories={category_filters}
                     selectedCategories={selectedCategories}
                     setSelectedCategories={setSelectedCategories}
                     priceRanges={priceRanges}
