@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\Uuid;
 use Illuminate\Support\Str;
+use App\Http\Traits\CustomFields\HasCustomFieldValues;
 
 
 class RentalAddItem extends Model
 {
-    use HasFactory, Uuid;
+    use HasFactory, Uuid, HasCustomFieldValues;
 
     protected $table = 'rental_listings';
 
@@ -23,9 +24,6 @@ class RentalAddItem extends Model
         'description',
         'price',
         'quantity',
-        'quality',
-        'updated_at',
-        'created_at',
         'category_id'
     ];
     
