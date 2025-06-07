@@ -8,9 +8,18 @@ Use Illuminate\Support\Facades\Auth;
 use App\Models\Feedback;
 use Illuminate\Validation\Rule;
 use App\Enums\FeedbackType;
+use Inertia\Inertia;
+use Resources\Components\Form\FeedbackForm;
+use Resources\js\Pages\Feedback\Create;
 
 class FeedbackController extends Controller
 {
+    public function create()
+    {
+        return Inertia::render('Feedback/Create', [
+            'feedbackTypes' => array_column(FeedbackType::cases(), 'value')
+        ]);
+    }
     public function store(Request $request)
     {
         $validated = $request->validate([
