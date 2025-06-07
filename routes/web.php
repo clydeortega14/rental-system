@@ -17,24 +17,18 @@ use App\Http\Controllers\WorkflowController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\RatingController;
-use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\Auth\GoogleController;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-Route::get('/preview/feedback', function () {
-    return Inertia::render('Feedback/Create', [
-        'booking' => [
-            'uuid' => 'preview-uuid',
-            'rentalListing' => ['itemName' => 'Sample Rental Item']
-        ],
-        'existingRating' => null,
-        'ratingType' => 'renter'
-    ]);
-});
+
+// Google OAuth routes
+Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle']);
+Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
 
 Route::get('rental-browser/{category}', [RentalItemController::class, 'rentalBrowserIndex'])->name('rental.browser.index');

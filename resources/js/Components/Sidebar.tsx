@@ -1,23 +1,15 @@
 import { Link } from "@inertiajs/react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
-import { AiOutlineLeftCircle } from "react-icons/ai";
-import { AiOutlineBars } from "react-icons/ai";
-import { AiOutlineUser, AiOutlineOrderedList } from "react-icons/ai";
-import { AiFillHome } from "react-icons/ai";
-import { useState } from "react";
-import { AiOutlineDown } from "react-icons/ai";
-import { MdDashboard } from "react-icons/md";
-import { MdEventNote } from "react-icons/md";
+import { AiOutlineLeftCircle, AiOutlineBars, AiOutlineUser, AiOutlineOrderedList, AiFillHome, AiOutlineDown, AiFillProfile } from "react-icons/ai";
+import { MdDashboard, MdEventNote } from "react-icons/md";
 import { GiNotebook } from "react-icons/gi";
 import { CiSettings } from "react-icons/ci";
 import { BiCategoryAlt } from "react-icons/bi";
-import { FaPeopleGroup } from "react-icons/fa6";
-import { FaWpforms } from "react-icons/fa6";
+import { FaPeopleGroup, FaWpforms } from "react-icons/fa6";
 import { LuWorkflow } from "react-icons/lu";
-import { AiFillProfile } from "react-icons/ai";
 import NavLink from "@/Components/NavLink";
 import initialLogo from "@/../../resources/img/initialLogo.png";
-import { Fragment } from "react";
+import { useState, Fragment } from "react";
 
 interface SidebarProps {
     open: boolean;
@@ -26,6 +18,11 @@ interface SidebarProps {
 function Sidebar({ open }: SidebarProps) {
     const menu_items = [
         {
+            type: "section",
+            name: "MAIN",
+        },
+        {
+            type: "item",
             id: 1,
             name: "Dashboard",
             link: route("dashboard"),
@@ -33,6 +30,11 @@ function Sidebar({ open }: SidebarProps) {
             icon: <MdDashboard />,
         },
         {
+            type: "section",
+            name: "BOOKINGS",
+        },
+        {
+            type: "item",
             id: 3,
             name: "Reservation Items",
             link: route("reservations.index"),
@@ -40,12 +42,19 @@ function Sidebar({ open }: SidebarProps) {
             icon: <MdEventNote />,
         },
         {
+            type: "item",
             id: 4,
             name: "Rental Listings",
             link: "/rentalListing",
+            status: route().current("rentalListing"),
             icon: <GiNotebook />,
         },
         {
+            type: "section",
+            name: "SETTINGS",
+        },
+        {
+            type: "item",
             id: 5,
             name: "Settings",
             link: "",
@@ -86,62 +95,72 @@ function Sidebar({ open }: SidebarProps) {
     ];
     const [submenuOpen, setSubmenuOpen] = useState(false);
 
-    const menuLists = menu_items.map((menu, index) => (
-        <Fragment key={index}>
-            <li
-                key={index}
-                className={`text-white text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-light-white rounded-md mt-2 ${menu.status && "bg-light-white"}`}
-            >
-                <span className="text-2xl block float-left">{menu.icon}</span>
-                <NavLink
-                    href={menu.link}
-                    active={menu.status}
-                    className={`text-sm font-small flex-1 ${!open && "hidden"} ${menu.status && "font-bold text-lg"} hover:text-base hover:font-bold`}
+    const menuLists = menu_items.map((menu, index) => {
+        if (menu.type === "section") {
+            return (
+                <li
+                    key={`section-${index}`}
+                    className={`text-gray-400 text-xs uppercase mt-6 mb-1 pl-2 ${!open && "hidden"}`}
                 >
                     {menu.name}
-                </NavLink>
+                </li>
+            );
+        }
 
-                {menu.submenu && (
-                    <AiOutlineDown
-                        onClick={() => setSubmenuOpen(!submenuOpen)}
-                        className={`${submenuOpen && "rotate-180"} duration-500`}
-                    />
-                )}
-            </li>
+        return (
+            <Fragment key={menu.id}>
+                <li
+                    className={`text-white text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-light-white rounded-md mt-2 ${menu.status && "bg-light-white"}`}
+                >
+                    <span className="text-2xl block float-left">{menu.icon}</span>
+                    <NavLink
+                        href={menu.link}
+                        active={menu.status}
+                        className={`text-sm font-small flex-1 ${!open && "hidden"} ${menu.status && "font-bold text-lg"} hover:text-base hover:font-bold`}
+                    >
+                        {menu.name}
+                    </NavLink>
 
-            {menu.submenu && submenuOpen && open && (
-                <ul key={menu.id}>
-                    {menu.submenuItems.map((submenuItem, submenuIndex) => (
-                        <li
-                            key={submenuIndex}
-                            className={`text-white text-sm flex items-center duration-500 gap-x-2 cursor-pointer p-2 hover:bg-light-white rounded-md mt-2 px-7 ${submenuItem.status && "bg-light-white"}`}
-                        >
-                            <span className="text-lg block float-left">
-                                {submenuItem.icon}
-                            </span>
-                            <NavLink
-                                href={submenuItem.link}
-                                active={submenuItem.status}
-                                className={`${submenuItem.status && "font-bold text-base"} hover:text-base hover:font-bold`}
+                    {menu.submenu && (
+                        <AiOutlineDown
+                            onClick={() => setSubmenuOpen(!submenuOpen)}
+                            className={`${submenuOpen && "rotate-180"} duration-500`}
+                        />
+                    )}
+                </li>
+
+                {menu.submenu && submenuOpen && open && (
+                    <ul key={menu.id}>
+                        {menu.submenuItems.map((submenuItem, submenuIndex) => (
+                            <li
+                                key={submenuIndex}
+                                className={`text-white text-sm flex items-center duration-500 gap-x-2 cursor-pointer p-2 hover:bg-light-white rounded-md mt-2 px-7 ${submenuItem.status && "bg-light-white"}`}
                             >
-                                {submenuItem.name}
-                            </NavLink>
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </Fragment>
-    ));
+                                <span className="text-lg block float-left">{submenuItem.icon}</span>
+                                <NavLink
+                                    href={submenuItem.link}
+                                    active={submenuItem.status}
+                                    className={`${submenuItem.status && "font-bold text-base"} hover:text-base hover:font-bold`}
+                                >
+                                    {submenuItem.name}
+                                </NavLink>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </Fragment>
+        );
+    });
 
     return (
         <>
-            <div
-                className={`py-0 px-2 bg-gradient-to-tr from-blue-500 to-green-500 h-100 relative  ${open ? "w-72" : "w-20"} duration-300`}
-            >
-                <ul className="pt-7">{menuLists}</ul>
+            <div className={`py-0 px-2 bg-gray-900 text-white relative ${open ? "w-72" : "w-20"} duration-300`}>
+
+            <ul className="pt-2">{menuLists}</ul>
             </div>
         </>
     );
+
 }
 
 export default Sidebar;
