@@ -21,7 +21,6 @@ class Rating extends Model
         'ratee_id',
         'type'
     ];
-
     /**
      * The attributes that should be cast.
      *

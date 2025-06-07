@@ -4,18 +4,11 @@ import { useState, useEffect } from 'react';
 import logoWeb from '@/../../resources/img/logo-web.png';
 import logoMobile from '@/../../resources/img/logo.png';
 import { BiUser, BiLock, BiMenu, BiX } from 'react-icons/bi';
+import { Category } from '@/Interface/CategoryInterface';
 
 
-interface Category {
-  category_id: number;
-  label: string;
-}
-interface TopNavigationProps extends PageProps {
-  categories: Category[];
-}
 
-
-const TopNavigation = ({ auth, categories }: TopNavigationProps) => {
+const TopNavigation = ({ auth, categories }: PageProps<{categories:Category[]}>) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -57,11 +50,11 @@ const TopNavigation = ({ auth, categories }: TopNavigationProps) => {
               {categories.length > 0 ? (
                 categories.map(category => (
                   <Link
-                    key={category.category_id}
-                    href={`/categories/${category.category_id}`}
+                    key={category.id}
+                    href={`${route('rental.browser.index', category.name)}`}
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100"
                   >
-                    {category.label}
+                    {category.detail.label}
                   </Link>
                 ))
               ) : (

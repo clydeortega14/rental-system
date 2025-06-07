@@ -30,7 +30,7 @@ class RatingController extends Controller
         ]);
     }
 
-    public function store(Request $request,)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'rating' => 'required|integer|min:1|max:5',

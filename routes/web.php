@@ -16,6 +16,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\WorkflowController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\FeedbackController;
 
@@ -24,7 +25,16 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
+Route::get('/preview/feedback', function () {
+    return Inertia::render('Feedback/Create', [
+        'booking' => [
+            'uuid' => 'preview-uuid',
+            'rentalListing' => ['itemName' => 'Sample Rental Item']
+        ],
+        'existingRating' => null,
+        'ratingType' => 'renter'
+    ]);
+});
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
 
 Route::get('rental-browser/{category}', [RentalItemController::class, 'rentalBrowserIndex'])->name('rental.browser.index');
@@ -43,6 +53,8 @@ Route::get('/itemDetails/{uuid}', [RentalItemController::class, 'itemDetails'])-
 Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('booking.store');
 
 Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
+
+Route::get('shopping-cart', [CartController::class, 'index'])->name('cart.index');
 
 Route::middleware([
     'auth',

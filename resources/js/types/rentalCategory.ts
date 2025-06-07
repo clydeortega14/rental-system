@@ -4,5 +4,18 @@ export type Category = {
 }
 
 export interface ICategory {
-    categories: Category[]
+    categories: Category[];
+    category_filters: CategoryFilterType[]
+}
+
+export type CategoryFilterType = {
+    id: number,
+    name: string,
+    choices: ChoiceType[]
+}
+
+export type ChoiceType = {
+    id: number;
+    filter_id: number;
+    name: string;
 }
