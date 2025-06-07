@@ -46,9 +46,11 @@ Route::get('/itemDetails/{uuid}', [RentalItemController::class, 'itemDetails'])-
 /* -- Submit for reservation -- */
 Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('booking.store');
 
-Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
+Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('checkout.item');
 
 Route::get('shopping-cart', [CartController::class, 'index'])->name('cart.index');
+
+Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 
 Route::middleware([
     'auth',
@@ -73,7 +75,7 @@ Route::middleware([
 
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
-    Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
+    // Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 
     /* -- Account Settings -- */
     Route::get('/account-settings', [ProfileController::class, 'accountSettings'])->name('account.settings');

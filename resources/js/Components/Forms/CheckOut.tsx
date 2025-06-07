@@ -16,7 +16,7 @@ export default function CheckOut() {
     const checkOutNow = (e) => {
         e.preventDefault();
 
-        post(route("checkout.booking"));
+        
     };
 
     const { cart, removeFromCart, clearCart, totalPrice } = useCart();
@@ -45,20 +45,30 @@ export default function CheckOut() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
         setIsProcessing(true);
+
+        post(route("checkout.booking", formData), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setTimeout(() => {
+                    setIsProcessing(false);
+                    setIsComplete(true);
+                    clearCart();
+                }, 2000);
+
+                // Simulate payment processing
+            }
+        });
+
         
-        // Simulate payment processing
-        setTimeout(() => {
-        setIsProcessing(false);
-        setIsComplete(true);
-        clearCart();
-        }, 2000);
+        
     };
     return (
         <>
             <div className="bg-gray-100 container mx-auto px-4 py-8">
                 <div className="mb-6">
-                    <Link href="/cart" className="inline-flex items-center text-blue-600 hover:text-blue-800">
+                    <Link href={route('cart.index')} className="inline-flex items-center text-blue-600 hover:text-blue-800">
                     <ChevronLeft className="h-4 w-4 mr-1" />
                         Back to Cart
                     </Link>
@@ -85,7 +95,6 @@ export default function CheckOut() {
                                 name="name"
                                 value={formData.name}
                                 onChange={handleInputChange}
-                                required
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 />
                             </div>
@@ -99,7 +108,6 @@ export default function CheckOut() {
                                 name="email"
                                 value={formData.email}
                                 onChange={handleInputChange}
-                                required
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 />
                             </div>
@@ -113,7 +121,6 @@ export default function CheckOut() {
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handleInputChange}
-                                required
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 />
                             </div>
@@ -133,7 +140,6 @@ export default function CheckOut() {
                                 name="address"
                                 value={formData.address}
                                 onChange={handleInputChange}
-                                required
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 />
                             </div>
@@ -148,7 +154,6 @@ export default function CheckOut() {
                                     name="city"
                                     value={formData.city}
                                     onChange={handleInputChange}
-                                    required
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 />
                                 </div>
@@ -162,7 +167,6 @@ export default function CheckOut() {
                                     name="zipCode"
                                     value={formData.zipCode}
                                     onChange={handleInputChange}
-                                    required
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 />
                                 </div>
@@ -214,7 +218,6 @@ export default function CheckOut() {
                                     value={formData.cardNumber}
                                     onChange={handleInputChange}
                                     placeholder="1234 5678 9012 3456"
-                                    required
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 />
                                 </div>
@@ -230,7 +233,6 @@ export default function CheckOut() {
                                     value={formData.cardExpiry}
                                     onChange={handleInputChange}
                                     placeholder="MM/YY"
-                                    required
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                     />
                                 </div>
@@ -245,7 +247,6 @@ export default function CheckOut() {
                                     value={formData.cardCvv}
                                     onChange={handleInputChange}
                                     placeholder="123"
-                                    required
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                     />
                                 </div>

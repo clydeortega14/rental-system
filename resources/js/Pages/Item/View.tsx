@@ -154,7 +154,7 @@ export default function View({
                         />
                     
                         <div className="mb-6">
-                            <h3 className="text-lg font-semibold mb-3">Quantity</h3>
+                            <h3 className="text-lg font-semibold mb-3">Duration Period</h3>
                             <div className="flex items-center">
                             <button 
                                 onClick={() => quantity > 1 && setQuantity(quantity - 1)}
