@@ -21,9 +21,9 @@ class BookingController extends Controller
     public function bookingStore(Request $request)
     {
         // validate request
-        // $validated = $request->validated();
+        $validated = $request->validated();
 
-        // $item = RentalAddItem::where('uuid', $validated['item_uuid'])->first();
+        $item = RentalAddItem::where('uuid', $validated['item_uuid'])->first();
         // $status = BookingStatus::where('name', 'pending')->first();
         
         // if(is_null($item)) return back()->with('error', 'Item not found!');
@@ -42,7 +42,7 @@ class BookingController extends Controller
         //     'drop_location' => is_null($validated['drop_off_location']) ?  $validated['pick_up_location'] : $validated['pick_up_location']
         // ]);
 
-        return redirect(route('itemCheckout'));
+        return redirect(route('itemCheckout', $validated['item_uuid']));
     }
 
     public function checkOutBooking(Request $request)

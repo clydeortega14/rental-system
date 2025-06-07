@@ -54,6 +54,8 @@ Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('
 
 Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
+Route::get('shopping-cart', [CartController::class, 'index'])->name('cart.index');
+
 Route::middleware([
     'auth',
     'verified'
