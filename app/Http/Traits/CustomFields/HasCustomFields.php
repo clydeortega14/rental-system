@@ -71,11 +71,11 @@ trait HasCustomFields {
 
     public function getCustomFields($model_type)
     {
-        return CustomField::select(
+        return $this->customFields()->select(
                 'id', 
                 'name', 
                 'label', 
-                'sequence', 
+                'order', 
                 'slug', 
                 'type', 
                 'placeholder',
@@ -84,7 +84,7 @@ trait HasCustomFields {
             )
             ->where('model_type', $model_type)
             ->with(['modelable'])
-            ->orderBy('sequence', 'asc')
+            ->orderBy('order', 'asc')
             ->get();
 
     }

@@ -62,9 +62,11 @@ Route::middleware([
     // user must redirect to this route if first time using the platform.
     Route::post('/completing/user', [UserController::class, 'store'])->name('store.completing.user');
 
-    Route::get('/rentalListing', function () {
-        return Inertia::render('User/Partials/Rental');
-    })->middleware(['auth'])->name('rentalListing');
+    // Route::get('/rentalListing', function () {
+    //     return Inertia::render('User/Partials/Rental');
+    // })->middleware(['auth'])->name('rentalListing');
+
+    // Route::get('rental-listings', [RentalItemController::class, 'rentalListings'])->name('rentalListing');
 });
 
 Route::middleware([

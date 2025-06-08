@@ -27,19 +27,19 @@ const Footer = () => {
             </div>
             <div>
               <h4 className="font-semibold mb-4">Support</h4>
-              <ul className="space-y-2">
+              {/* <ul className="space-y-2">
                 <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">Help Center</a></li>
                 <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">Safety</a></li>
                 <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">Cancellation Options</a></li>
-              </ul>
+              </ul> */}
             </div>
             <div>
               <h4 className="font-semibold mb-4">Contact</h4>
-              <ul className="space-y-2">
+              {/* <ul className="space-y-2">
                 <li className="text-gray-600">info@rentease.com</li>
                 <li className="text-gray-600">+1 (555) 123-4567</li>
                 <li className="text-gray-600">123 Main St, Anytown, USA</li>
-              </ul>
+              </ul> */}
             </div>
           </div>
           <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-500">

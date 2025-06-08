@@ -15,7 +15,7 @@ class CategoryService
         //                 ->toArray();
 
         return Category::select('id', 'name')->with(['detail' => function($query){
-            $query->where('active', true);
+            $query->select('id', 'label', 'active', 'detailable_id')->where('active', true);
         }])->get();
     }
 

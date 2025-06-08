@@ -33,8 +33,7 @@ class CarCategoryCustomFieldValuesSeeder extends Seeder
                 throw new Exception("Category not found!", 404);
                 
             }
-
-           
+            
             $item = RentalAddItem::firstOrCreate([
                 'itemName' => $d['itemName'], 
                 'description' => $d['Description'],
