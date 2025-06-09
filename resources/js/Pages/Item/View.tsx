@@ -16,6 +16,7 @@ import SimilarItems from "./SimilarItems";
 import { similarItems } from "@/data/similarItems";
 import { Head, useForm } from "@inertiajs/react";
 import { formatPrice } from "@/utils/dateUtils";
+import RentalCalendar from "@/Components/Renter/RentalCalendar";
 
 const navigation = {
     categories: [],
@@ -153,7 +154,7 @@ export default function View({
                             onSelectDuration={handleDurationChange} 
                         />
                     
-                        <div className="mb-6">
+                        {/* <div className="mb-6">
                             <h3 className="text-lg font-semibold mb-3">Duration Period</h3>
                             <div className="flex items-center">
                             <button 
@@ -171,13 +172,15 @@ export default function View({
                                 +
                             </button>
                             </div>
-                        </div>
+                        </div> */}
                     
-                        <DatePicker 
+                        {/* <DatePicker 
                             availabilityData={availabilityData} 
                             selectedDate={selectedDate} 
                             onSelectDate={handleDateSelect} 
-                        />
+                        /> */}
+
+                        <RentalCalendar />
                         
                         {selectedDate && (
                             <TimeSlots
