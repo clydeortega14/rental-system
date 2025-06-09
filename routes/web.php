@@ -21,6 +21,9 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\FeedbackController;
 
+use App\Http\Controllers\Lessor\RentalController;
+use App\Http\Controllers\Lessor\LessorController;
+
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\Request as HttpRequest;
@@ -69,6 +72,18 @@ Route::middleware([
     // })->middleware(['auth'])->name('rentalListing');
 
     // Route::get('rental-listings', [RentalItemController::class, 'rentalListings'])->name('rentalListing');
+
+    Route::group(['prefix' => 'lessor'], function () {
+        Route::get('/', [LessorController::class, 'dashboard']);
+        Route::get('/properties', [RentalController::class, 'index'])->name('lessor.properties');
+        Route::post('/properties', [RentalController::class, 'store'])->name('lessor.properties.store');
+        Route::put('/properties/{id}', [RentalController::class, 'update'])->name('lessor.properties.update');
+
+    });
+
+    Route::get('/lessee', function () {
+        return Inertia::render('Lessee/Landing');
+    })->name('lessee.profile');
 });
 
 Route::middleware([
