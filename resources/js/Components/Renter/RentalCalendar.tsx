@@ -4,8 +4,14 @@ import { cn } from "@/lib/utils";
 
 interface Availability {
   [date: string]: boolean; // true means available, false means unavailable
+  
 }
-const RentalCalendar: React.FC = () => {
+
+interface RentalCalendarProps {
+    onSelectDate: () => void;
+    selectedDate: string;
+}
+const RentalCalendar = ({onSelectDate, selectedDate}: RentalCalendarProps) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [availability, setAvailability] = useState<Availability>({
         // Example unavailable dates
@@ -44,10 +50,11 @@ const RentalCalendar: React.FC = () => {
       <div className="grid grid-cols-7 gap-2 text-center">
         {days.map((day) => (
           <div
+            onClick={ () => onSelectDate(day)}
             key={day.toString()}
             className={cn(
-              "rounded-lg p-2 text-sm",
-              isAvailable(day) ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+              "rounded-lg p-2 text-sm hover:cursor-pointer hover:border hover:border-green-500",
+              isAvailable(day) ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700 hover:cursor-not-allowed"
             )}
           >
             {format(day, "d")}
