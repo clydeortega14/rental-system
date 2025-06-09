@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { useState, FormEventHandler,useEffect  } from "react"; // Import useState hook to manage state
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -19,8 +19,20 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import { FaShoppingCart, FaPlus, FaEye,FaTimes,FaEdit  } from "react-icons/fa";
 import { MdAttachment } from "react-icons/md";
+import { RentalItem } from "@/types/rental";
+import { Category } from "@/Interface/CategoryInterface";
 
-export default function RentalList({ auth, rentalItems }: PageProps & { rentalItems: any[] }) {
+
+interface RentalListProps {
+    rentalItems: RentalItem[];
+    categories: Category[]
+
+}
+
+export default function RentalList({ rentalItems, categories }: RentalListProps) {
+
+
+    const auth = usePage<PageProps>().props.auth;
     const [setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
     const [showFileInput, setShowFileInput] = useState(false);
@@ -62,20 +74,19 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
     const [isEditMode, setIsEditMode] = useState(false);
 
     const { data, setData, post,put, processing, errors, reset } = useForm({
-        filename: "",
         itemName: "",
         price: "",
         quantity: "",
-        quality: "",
         remarks: "",
-        category: "",
-        // image: null,
+        category_id: "",
+        images: [],
+        customFields: []
     });
     const handleFileChange = (event: {
         target: { files: { name: any }[] };
     }) => {
-        const file = event.target.files[0];
-        setData({ ...data, itemImage: file });
+        const file = event.target.files;
+        setData({ ...data.images, images: file });
     };
     // Function to handle form submission
     const handleSubmit: FormEventHandler = (e) => {
@@ -128,19 +139,16 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
        
     };
 
-    const handleEdit = (itemId) => {
+    const handleEdit = (itemId: string) => {
         const item = rentalItems.find((item) => item.id === itemId);
-        console.log(item);
-        setSelectedItem(item);
-        setData({
-            itemName: item.itemName,
-            price: item.price,
-            quantity: item.quantity,
-            quality: item.quality,
-            description: item.description,
-            category: item.category,
-        });
-        setIsEditMode(true);
+
+        if(item){
+            setSelectedItem(item);
+            setData("itemName", item.itemName);
+            setData("category_id", String(item.category));
+            setIsEditMode(true);
+        }
+        
 
     };
 
@@ -273,7 +281,7 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                                 type="file"
                                 id="file"
                                 name="filename"
-                                onChange={e => setData('filename', e.target.files[0])}
+                                onChange={e => setData('images', e.target.files)}
                                 fullWidth
                             />
                             {submitted && !data.itemImage && (
@@ -292,69 +300,32 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                             >
                                 Choose Catergories
                             </Typography>
-                            <Select
-                                label="Category"
+                            <select
                                 id="category"
                                 name="category"
-                                value={data.category}
+                                value={data.category_id}
                                 onChange={(e) =>
-                                    setData("category", e.target.value)
+                                    setData("category_id", e.target.value)
                                 }
-                                fullWidth
+                                className="w-full block"
                             >
-                                <MenuItem value="Select Category" disabled>
-                                    Select Category
-                                </MenuItem>
-                                <MenuItem value="Bags">Bags</MenuItem>
-                                <MenuItem value="Motorcycles">
-                                    Motorcycles
-                                </MenuItem>
-                                <MenuItem value="Cars">Cars</MenuItem>
-                                {/* Add more categories as needed */}
-                            </Select>
+
+                                {
+                                    categories.map((category, index) => {
+
+                                        return (
+                                            <option key={index} value={category.id}>{category.detail.label}</option>
+                                        );
+                                    })
+                                }
+                                
+                            </select>
                             {submitted && !data.category && (
                                 <Typography
                                     variant="caption"
                                     className="text-red-500"
                                 >
                                     Category is required.
-                                </Typography>
-                            )}
-                        </div>
-                        <div className="mb-4">
-                            <Typography
-                                id="spring-modal-description"
-                                sx={{ mt: 2 }}
-                            >
-                                Condition
-                            </Typography>
-                            <Select
-                                label="Quality"
-                                id="quality"
-                                name="quality"
-                                value={data.quality}
-                                onChange={(e) =>
-                                    setData("quality", e.target.value)
-                                }
-                                fullWidth
-                            >
-                                <MenuItem value="quality" disabled>
-                                    ...
-                                </MenuItem>
-                                <MenuItem value="Brand New">Brand New</MenuItem>
-                                <MenuItem value="Used - Like New" >
-                                    Used - Like New
-                                </MenuItem>
-                                <MenuItem value="Used - Good">Used - Good</MenuItem>
-                                <MenuItem value="Used - Fair">Used - Fair</MenuItem>
-                                {/* Add more categories as needed */}
-                            </Select>
-                            {submitted && !data.quality && (
-                                <Typography
-                                    variant="caption"
-                                    className="text-red-500"
-                                >
-                                    Quality is required.
                                 </Typography>
                             )}
                         </div>
@@ -786,7 +757,7 @@ export default function RentalList({ auth, rentalItems }: PageProps & { rentalIt
                                                                 </td>
                                                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 ">
                                                                     {
-                                                                        item.category
+                                                                        item.category.name
                                                                     }
                                                                 </td>
                                                                 <td className="border-t-0 px-1 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">

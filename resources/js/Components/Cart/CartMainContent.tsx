@@ -160,7 +160,7 @@ const CartMainContent = () => {
               <span className="font-semibold text-gray-900">${(totalPrice + 10).toFixed(2)}</span>
             </div>
             
-            <Link href={route("itemCheckout", '86ea132f-ef77-4dbb-8c3e-806ce7662b8c')}>
+            <Link href={route('checkout.item')}>
               <Button variant="primary" fullWidth>
                 Proceed to Checkout
               </Button>

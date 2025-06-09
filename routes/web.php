@@ -48,9 +48,11 @@ Route::get('/itemDetails/{uuid}', [RentalItemController::class, 'itemDetails'])-
 /* -- Submit for reservation -- */
 Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('booking.store');
 
-Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
+Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('checkout.item');
 
 Route::get('shopping-cart', [CartController::class, 'index'])->name('cart.index');
+
+Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 
 Route::middleware([
     'auth',
@@ -62,9 +64,11 @@ Route::middleware([
     // user must redirect to this route if first time using the platform.
     Route::post('/completing/user', [UserController::class, 'store'])->name('store.completing.user');
 
-    Route::get('/rentalListing', function () {
-        return Inertia::render('User/Partials/Rental');
-    })->middleware(['auth'])->name('rentalListing');
+    // Route::get('/rentalListing', function () {
+    //     return Inertia::render('User/Partials/Rental');
+    // })->middleware(['auth'])->name('rentalListing');
+
+    // Route::get('rental-listings', [RentalItemController::class, 'rentalListings'])->name('rentalListing');
 });
 
 Route::middleware([
@@ -75,7 +79,7 @@ Route::middleware([
 
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
-    Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
+    // Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 
     /* -- Account Settings -- */
     Route::get('/account-settings', [ProfileController::class, 'accountSettings'])->name('account.settings');

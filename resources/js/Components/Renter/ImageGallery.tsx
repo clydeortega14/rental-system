@@ -29,7 +29,7 @@ setCurrentIndex(index);
     <div className="relative w-full overflow-hidden rounded-lg bg-gray-100">
       <div className="aspect-w-16 aspect-h-9 md:aspect-w-4 md:aspect-h-3 relative">
         <img 
-          src={images[currentIndex].link} 
+          src={images[currentIndex]?.link} 
           alt="Rental item" 
           className="w-full h-full transition-opacity duration-500"
         />

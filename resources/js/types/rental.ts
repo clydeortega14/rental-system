@@ -1,3 +1,5 @@
+import { Category } from "@/Interface/CategoryInterface";
+
 export interface RentalItem {
   id: string;
   name: string;
@@ -11,10 +13,12 @@ export interface RentalItem {
   specifications: {
     [key: string]: string;
   };
-  category: string;
+  category: Category;
   rating: number;
   reviewCount: number;
   location: string;
+  itemName: string;
+  quantity: number | null
 }
 
 export interface TimeSlot {

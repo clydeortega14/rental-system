@@ -15,12 +15,11 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid');
             $table->foreignId('user_id')->constrained();
+            $table->foreignId('company_id')->constrained(table: 'user_company_information', indexName: 'rental_listings_company_id');
             $table->string('itemName');
             $table->text('description');
-            $table->string('category');
             $table->decimal('price', 10, 2); // Adjust precision and scale as needed
             $table->integer('quantity');
-            $table->string('quality');
             $table->timestamps();
         });
     }
