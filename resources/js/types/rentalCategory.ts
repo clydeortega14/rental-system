@@ -19,3 +19,16 @@ export type ChoiceType = {
     filter_id: number;
     name: string;
 }
+
+export type CategoryCustomField = {
+    id: number,
+    name: string,
+    label: string,
+    order: number,
+    type: string,
+    placeholder: string | null,
+    options: string[],
+    defaultAnswer: any,
+    modelable: any | null,
+    is_required: boolean,
+}

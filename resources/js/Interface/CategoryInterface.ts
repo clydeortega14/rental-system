@@ -6,6 +6,8 @@ export type Category = {
     detail: {
         id: number;
         label: string;
+        detailable_id: number;
+        active: boolean
     }
 }
 

@@ -76,7 +76,7 @@ trait ItemDetails {
                     'weekly' => 5000
                 ],
                 'priceUnit' => 'daily',
-                'imageUrl' => config('app.url').'/storage/'.$rent_item->attachment[0]->file_path,
+                'imageUrl' => count($rent_item->attachment) > 0 ? config('app.url').'/storage/'.$rent_item->attachment[0]->file_path : '',
                 'rating' => 4.8,
                 'availability' => [
                     'available' => true
