@@ -10,9 +10,7 @@ class PermissionController extends Controller
 {
     public function index()
     {
-        return Inertia::render('AccessRights/Permission/ManagePermissions', [
-            'permissions' => Permission::orderBy('name')->get()
-        ]);
+        return response()->json(Permission::orderBy('name')->get());
     }
 
     public function create()
@@ -65,5 +63,10 @@ class PermissionController extends Controller
     {
         $permission->delete();
         return redirect()->route('permissions.index')->with('success', 'Permission deleted successfully.');
+    }
+
+    public function all()
+    {
+        return response()->json(Permission::orderBy('name')->get());
     }
 }

@@ -151,8 +151,14 @@ Route::middleware([
         });
 
         // Roles
-        Route::prefix('roles')->group(function () {
-            Route::get('/', [RoleController::class, 'index']);
+        Route::prefix('roles')->name('roles.')->group(function () {
+            Route::get('/', [RoleController::class, 'index'])->name('index');
+            Route::get('/create', [RoleController::class, 'create'])->name('create');
+            Route::post('/', [RoleController::class, 'store'])->name('store');
+            Route::get('/{role}/edit', [RoleController::class, 'edit'])->name('edit');
+            Route::put('/{role}', [RoleController::class, 'update'])->name('update');
+            Route::patch('/{role}/toggle', [RoleController::class, 'toggle'])->name('toggle');
+            Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');
         });
 
         // Permissions
@@ -188,7 +194,15 @@ Route::middleware([
     // })->middleware(['auth'])->name('rentalListing');
 
 
-    Route::get('/AccessRights/Index', [UserController::class, 'index'])->name('user.profile');
+    Route::get('UserProfile', [UserController::class, 'index'])->name('user.profile');
+    Route::get('/RolesTest', function () {
+        return Inertia::render('RolesTest');
+    })->name('roles.test');
+    Route::get('/access-rights/roles', [RoleController::class, 'index']);
+    Route::get('/PermissionTest', function () {
+        return Inertia::render('PermissionTest');
+    })->name('permissions.test');
+    Route::get('/access-rights/permissions/all', [PermissionController::class, 'all']);
 });
 
 require __DIR__ . '/auth.php';
