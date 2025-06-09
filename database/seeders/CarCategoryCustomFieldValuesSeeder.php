@@ -38,6 +38,7 @@ class CarCategoryCustomFieldValuesSeeder extends Seeder
                 'itemName' => $d['itemName'], 
                 'description' => $d['Description'],
                 'user_id' => $admin->id,
+                'company_id' => $admin->company->id,
                 'category_id' => $car_category->id,
                 'price' => $d['price'],
                 'quantity' => array_key_exists('quantity', $d) ?? 1

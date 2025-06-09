@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
             BookingStatusSeeder::class,
             DataTypesSeeder::class,
             FieldTypesSeeder::class,
-            CarCategoryCustomFieldsSeeder::class
+            CarCategoryCustomFieldsSeeder::class,
+            CarCategoryCustomFieldValuesSeeder::class
         ]);
     }
 }
