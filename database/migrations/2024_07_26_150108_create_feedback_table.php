@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->text('message');
-            $table->string('type'); // complaint or suggestion etc.
+            $table->string('type');
+            $table->string('contact_email')->nullable(); //new
             $table->boolean('resolved')->default(false);
             $table->timestamps();
         });
