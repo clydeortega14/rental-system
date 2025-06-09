@@ -18,6 +18,8 @@ use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\RatingController;
+use App\Http\Controllers\FeedbackController;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Client\Request;
@@ -156,7 +158,7 @@ Route::middleware([
     Route::put('/rentalListing/items/update/{id}', [RentalItemController::class, 'update'])->name('rental.update');
 
     /*-- Ratings --*/
-    // Route::middleware(['web', 'auth'])->group(function () {
+    Route::middleware(['web', 'auth'])->group(function () {
     // Rating creation form
     Route::get('/rating', [RatingController::class, 'create'])
         ->name('ratings.create');
@@ -184,6 +186,6 @@ Route::middleware([
     // Public confirmation
     Route::get('/feedback/confirmation', [FeedbackController::class, 'confirmation'])
         ->name('feedback.confirmation');
-    // });
+    });
 
 require __DIR__.'/auth.php';
