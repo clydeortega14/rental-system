@@ -10,10 +10,11 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Traits\Uuid;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable, Uuid;
+    use HasFactory, Notifiable, Uuid, HasRoles;
 
     /**
      * The attributes that are mass assignable.

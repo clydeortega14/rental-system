@@ -19,6 +19,14 @@ class RentalItemService
 
         DB::transaction( function () {
             try {
+
+                $request->validate([
+                    'itemName' => 'required|string|max:255',
+                    'description' => 'required|string',
+                    'price' => 'required',
+                    'category_id' => 'required'
+                ]);
+
                 $item = RentalAddItem::firstOrCreate($request->only(
                     'itemName',
                     'description',
@@ -26,6 +34,7 @@ class RentalItemService
                     'category_id'
                 ) + [
                     'user_id' => $request->user()->id,
+                    'company_id' => $request->user()->company->id,
                     'quantity' => $request->has('quantity') ? $request->quantity : 1
                 ]);
 

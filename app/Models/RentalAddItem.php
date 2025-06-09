@@ -19,7 +19,8 @@ class RentalAddItem extends Model
 
     protected $fillable = [
         'user_id', 
-        'itemName', 
+        'company_id',
+        'itemName',
         'category',
         'description',
         'price',
@@ -34,6 +35,11 @@ class RentalAddItem extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(UserCompanyInformation::class, 'company_id');
     }
 
     public function toCategory()
