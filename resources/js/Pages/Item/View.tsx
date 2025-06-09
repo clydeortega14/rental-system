@@ -180,13 +180,16 @@ export default function View({
                             onSelectDate={handleDateSelect} 
                         /> */}
 
-                        <RentalCalendar />
+                        <RentalCalendar
+                            selectedDate={selectedDate}
+                            onSelectDate={handleDateSelect}
+                        />
                         
                         {selectedDate && (
                             <TimeSlots
-                            timeSlots={timeSlots} 
-                            selectedTimeSlot={selectedTimeSlot} 
-                            onSelectTimeSlot={handleTimeSlotSelect} 
+                                timeSlots={timeSlots} 
+                                selectedTimeSlot={selectedTimeSlot} 
+                                onSelectTimeSlot={handleTimeSlotSelect} 
                             />
                         )}
                         
