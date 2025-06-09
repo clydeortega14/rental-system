@@ -40,16 +40,15 @@ export default function Create({ auth, booking, ratingTypes, existingRating }: P
 
     return (
         <AuthenticatedLayout user={auth.user as import("c:/xampp/htdocs/rental-system/resources/js/types/index").User}>
-            {/* START OF VISUAL ENHANCEMENTS */}
             <div className="py-8 bg-gray-50 min-h-screen">
                 <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="bg-white shadow-xl rounded-lg overflow-hidden">
-                        <div className="bg-blue-600 py-4 px-6">
+                        <div className="bg-orange-600 py-4 px-6">
                             <h2 className="text-2xl font-bold text-white">
-                                {existingRating ? 'Update Your Rental Experience' : 'Rate Your Rental'}
+                                {existingRating ? 'Update Your Rental Experience' : 'Rate Your Experience'}
                             </h2>
                             <p className="text-blue-100 mt-1">
-                                Share your thoughts about your recent car rental
+                                Share your thoughts about your rental experience
                             </p>
                         </div>
                         
@@ -79,7 +78,7 @@ export default function Create({ auth, booking, ratingTypes, existingRating }: P
                                     value={data.review}
                                     onChange={e => setData('review', e.target.value)}
                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                    placeholder="Tell us about your rental experience..."
+                                    placeholder="Tell us about your experience..."
                                     rows={5}
                                 />
                             </div>
@@ -90,7 +89,7 @@ export default function Create({ auth, booking, ratingTypes, existingRating }: P
                                 <button
                                     type="submit"
                                     disabled={processing || rating === 0}
-                                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {processing ? (
                                         <>
@@ -107,12 +106,11 @@ export default function Create({ auth, booking, ratingTypes, existingRating }: P
                     </div>
                 </div>
             </div>
-            {/* END OF VISUAL ENHANCEMENTS */}
         </AuthenticatedLayout>
     );
 }
 
-// Enhanced Star Rating Component
+// Star Rating Component
 const StarRating = ({ value, onChange }: { value: number; onChange: (val: number) => void }) => (
     <div className="flex space-x-2">
         {[1, 2, 3, 4, 5].map(star => (
