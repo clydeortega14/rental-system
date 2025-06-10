@@ -8,7 +8,7 @@ interface Availability {
 }
 
 interface RentalCalendarProps {
-    onSelectDate: () => void;
+    onSelectDate: (date: string) => void;
     selectedDate: string;
 }
 const RentalCalendar = ({onSelectDate, selectedDate}: RentalCalendarProps) => {
@@ -39,6 +39,17 @@ const RentalCalendar = ({onSelectDate, selectedDate}: RentalCalendarProps) => {
         const key = format(date, "yyyy-MM-dd");
         return availability[key] !== false;
     };
+
+    const dateHasPass = (date: string) => {
+      let current_date = format(new Date, "yyyy-MM-dd");
+      if(current_date >=  date){
+        return true;
+      }
+
+      return false;
+    }
+
+
   return (
     <div className="mx-auto p-4">
         <h3 className="text-lg font-semibold mb-3">Select Rental Date</h3>
@@ -48,18 +59,52 @@ const RentalCalendar = ({onSelectDate, selectedDate}: RentalCalendarProps) => {
         <button onClick={handleNextMonth} className="text-blue-500">Next</button>
       </div>
       <div className="grid grid-cols-7 gap-2 text-center">
-        {days.map((day) => (
-          <div
-            onClick={ () => onSelectDate(day)}
-            key={day.toString()}
-            className={cn(
-              "rounded-lg p-2 text-sm hover:cursor-pointer hover:border hover:border-green-500",
-              isAvailable(day) ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700 hover:cursor-not-allowed"
-            )}
-          >
-            {format(day, "d")}
-          </div>
-        ))}
+        {
+          days.map((day: Date, index) => {
+            let new_formated_date: string = format(day, "yyyy-MM-dd");
+            
+            if(dateHasPass(new_formated_date)){
+              return (
+                <div
+                  key={index}
+                  className={cn(
+                    "rounded-lg p-2 text-sm hover:cursor-not-allowed bg-gray-100 text-slate-700 opacity-25",
+                  )}
+                >
+                  {format(day, "d")}
+                </div>
+              );
+            }else if(!isAvailable(day))
+            {
+              return (
+                <div
+                  key={index}
+                  className={cn(
+                    "rounded-lg p-2 text-sm bg-red-100 text-red-700 hover:cursor-not-allowed opacity-50",
+                  )}
+              >
+                {format(day, "d")}
+                
+              </div>
+              )
+            }
+
+            return (
+              <div
+                onClick={ () => {
+                  onSelectDate(format(day, "yyyy-MM-dd"))
+                }}
+                key={index}
+                className={cn(
+                  "rounded-lg p-2 text-sm hover:cursor-pointer hover:border hover:border-green-200 bg-green-100 text-green-700",
+                )}
+              >
+                {format(day, "d")}
+                
+              </div>
+            )
+          })
+        }
       </div>
     </div>
   )
