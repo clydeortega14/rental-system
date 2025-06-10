@@ -59,22 +59,52 @@ const RentalCalendar = ({onSelectDate, selectedDate}: RentalCalendarProps) => {
         <button onClick={handleNextMonth} className="text-blue-500">Next</button>
       </div>
       <div className="grid grid-cols-7 gap-2 text-center">
-        {days.map((day: Date) => (
-          <div
-            onClick={ () => {
-              onSelectDate(format(day, "yyyy-MM-dd"))
-            }}
-            key={day.toString()}
-            className={cn(
-              "rounded-lg p-2 text-sm hover:cursor-pointer hover:border hover:border-green-500",
-              isAvailable(day) ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700 hover:cursor-not-allowed",
-              dateHasPass(format(day, "yyyy-MM-dd")) ? 'opacity-25 hover:cursor-not-allowed' : ''
-            )}
-          >
-            {format(day, "d")}
+        {
+          days.map((day: Date, index) => {
+            let new_formated_date: string = format(day, "yyyy-MM-dd");
             
-          </div>
-        ))}
+            if(dateHasPass(new_formated_date)){
+              return (
+                <div
+                  key={index}
+                  className={cn(
+                    "rounded-lg p-2 text-sm hover:cursor-not-allowed bg-gray-100 text-slate-700 opacity-25",
+                  )}
+                >
+                  {format(day, "d")}
+                </div>
+              );
+            }else if(!isAvailable(day))
+            {
+              return (
+                <div
+                  key={index}
+                  className={cn(
+                    "rounded-lg p-2 text-sm bg-red-100 text-red-700 hover:cursor-not-allowed opacity-50",
+                  )}
+              >
+                {format(day, "d")}
+                
+              </div>
+              )
+            }
+
+            return (
+              <div
+                onClick={ () => {
+                  onSelectDate(format(day, "yyyy-MM-dd"))
+                }}
+                key={index}
+                className={cn(
+                  "rounded-lg p-2 text-sm hover:cursor-pointer hover:border hover:border-green-200 bg-green-100 text-green-700",
+                )}
+              >
+                {format(day, "d")}
+                
+              </div>
+            )
+          })
+        }
       </div>
     </div>
   )
