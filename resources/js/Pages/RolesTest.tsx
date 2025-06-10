@@ -215,21 +215,6 @@ const RolesTest: React.FC<PageProps> = ({ auth }) => {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Slug*
-                                </label>
-                                <input
-                                    name="slug"
-                                    value={form.slug}
-                                    onChange={handleChange}
-                                    placeholder="admin"
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                    required
-                                    disabled={isLoading}
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
                                     Description
                                 </label>
                                 <textarea
