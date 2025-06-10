@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use App\Models\Permission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class RoleController extends Controller
 {
@@ -24,11 +25,15 @@ class RoleController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|unique:roles',
-            'slug' => 'required|unique:roles',
             'description' => 'nullable',
             'active' => 'boolean',
             'permissions' => 'array',
         ]);
+
+        $validated['slug'] = Str::of($validated['name'])
+            ->lower()
+            ->replaceMatches('/[^a-z0-9]+/', '.')
+            ->trim('.');
 
         $role = Role::create($validated);
         if ($request->has('permissions')) {
@@ -59,11 +64,15 @@ class RoleController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|unique:roles,name,' . $role->id,
-            'slug' => 'required|unique:roles,slug,' . $role->id,
             'description' => 'nullable',
             'active' => 'boolean',
             'permissions' => 'array',
         ]);
+
+        $validated['slug'] = Str::of($validated['name'])
+            ->lower()
+            ->replaceMatches('/[^a-z0-9]+/', '.')
+            ->trim('.');
 
         $role->update($validated);
         if ($request->has('permissions')) {
@@ -79,9 +88,13 @@ class RoleController extends Controller
         return redirect()->route('roles.test')->with('success', 'Role updated successfully.');
     }
 
-    public function destroy(Role $role)
+    public function destroy(Role $role, Request $request)
     {
         $role->delete();
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true]);
+        }
         return redirect()->route('roles.test')->with('success', 'Role deleted successfully.');
     }
 }

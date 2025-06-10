@@ -22,8 +22,9 @@ class UserController extends Controller
 
     public function index()
     {
-        return Inertia::render('AccessRights/Index');
+        return Inertia::render('UserProfile');
     }
+
 
     public function getUserInfoPage($uuid): Response
     {
