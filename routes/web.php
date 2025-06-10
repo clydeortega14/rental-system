@@ -210,6 +210,7 @@ Route::middleware([
     Route::get('/ManageUserTest', function () {
         return Inertia::render('ManageUserTest');
     });
+    Route::get('/access-rights/my-permissions', [UserController::class, 'myPermissions']);
 });
 
 require __DIR__ . '/auth.php';
