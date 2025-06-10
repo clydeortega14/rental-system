@@ -155,7 +155,7 @@ Route::middleware([
             Route::get('/', [RoleController::class, 'index'])->name('index');
             Route::get('/create', [RoleController::class, 'create'])->name('create');
             Route::post('/', [RoleController::class, 'store'])->name('store');
-            Route::get('/{role}/edit', [RoleController::class, 'edit'])->name('edit');
+            Route::get('/{role}/edit', action: [RoleController::class, 'edit'])->name('edit');
             Route::put('/{role}', [RoleController::class, 'update'])->name('update');
             Route::patch('/{role}/toggle', [RoleController::class, 'toggle'])->name('toggle');
             Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');
@@ -203,6 +203,13 @@ Route::middleware([
         return Inertia::render('PermissionTest');
     })->name('permissions.test');
     Route::get('/access-rights/permissions/all', [PermissionController::class, 'all']);
+    // Get all users (for the dropdown)
+    Route::get('/access-rights/users/all', [UserController::class, 'all']);
+    // Assign roles to user
+    Route::put('/access-rights/users/{user}/roles', [UserController::class, 'assignRoles']);
+    Route::get('/ManageUserTest', function () {
+        return Inertia::render('ManageUserTest');
+    });
 });
 
 require __DIR__ . '/auth.php';
