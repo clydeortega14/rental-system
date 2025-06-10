@@ -13,10 +13,17 @@ class CheckPermission
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, $permission): Response
+    public function handle(Request $request, Closure $next, $permission)
     {
-        if (!auth()->check() || !optional(auth()->user())->hasPermission($permission)) {
-            abort(403, 'Unauthorized action.');
+        $user = $request->user();
+        if (!$user) {
+            abort(403, 'Unauthorized');
+        }
+        // Check if user has the permission via roles
+        if (!$user->roles()->whereHas('permissions', function ($q) use ($permission) {
+            $q->where('slug', $permission);
+        })->exists()) {
+            abort(403, 'Forbidden');
         }
         return $next($request);
     }
