@@ -8,7 +8,7 @@ interface Availability {
 }
 
 interface RentalCalendarProps {
-    onSelectDate: () => void;
+    onSelectDate: (date: string) => void;
     selectedDate: string;
 }
 const RentalCalendar = ({onSelectDate, selectedDate}: RentalCalendarProps) => {
@@ -39,6 +39,17 @@ const RentalCalendar = ({onSelectDate, selectedDate}: RentalCalendarProps) => {
         const key = format(date, "yyyy-MM-dd");
         return availability[key] !== false;
     };
+
+    const dateHasPass = (date: string) => {
+      let current_date = format(new Date, "yyyy-MM-dd");
+      if(current_date >=  date){
+        return true;
+      }
+
+      return false;
+    }
+
+
   return (
     <div className="mx-auto p-4">
         <h3 className="text-lg font-semibold mb-3">Select Rental Date</h3>
@@ -48,16 +59,20 @@ const RentalCalendar = ({onSelectDate, selectedDate}: RentalCalendarProps) => {
         <button onClick={handleNextMonth} className="text-blue-500">Next</button>
       </div>
       <div className="grid grid-cols-7 gap-2 text-center">
-        {days.map((day) => (
+        {days.map((day: Date) => (
           <div
-            onClick={ () => onSelectDate(day)}
+            onClick={ () => {
+              onSelectDate(format(day, "yyyy-MM-dd"))
+            }}
             key={day.toString()}
             className={cn(
               "rounded-lg p-2 text-sm hover:cursor-pointer hover:border hover:border-green-500",
-              isAvailable(day) ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700 hover:cursor-not-allowed"
+              isAvailable(day) ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700 hover:cursor-not-allowed",
+              dateHasPass(format(day, "yyyy-MM-dd")) ? 'opacity-25 hover:cursor-not-allowed' : ''
             )}
           >
             {format(day, "d")}
+            
           </div>
         ))}
       </div>
