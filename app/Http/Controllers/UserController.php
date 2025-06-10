@@ -137,4 +137,18 @@ class UserController extends Controller
         $user->roles()->sync($validated['roles'] ?? []);
         return response()->json(['success' => true, 'user' => $user->load('roles')]);
     }
+
+    public function myPermissions(Request $request)
+    {
+        $permissions = $request->user()
+            ->roles()
+            ->with('permissions')
+            ->get()
+            ->pluck('permissions')
+            ->flatten()
+            ->pluck('slug')
+            ->unique()
+            ->values();
+        return response()->json($permissions);
+    }
 }
