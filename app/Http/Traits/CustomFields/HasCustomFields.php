@@ -1,12 +1,12 @@
 <?php
 
-
 namespace App\Http\Traits\CustomFields;
+
 use App\Models\CustomField;
 use App\Http\Traits\Helper;
 
-trait HasCustomFields {
-
+trait HasCustomFields
+{
     use Helper;
 
     public function customFields()
@@ -19,73 +19,52 @@ trait HasCustomFields {
         return $this->customFields()->orderBy('order', 'desc')->first();
     }
 
-    public function manageSequence()
+    public function manageSequence(): int
     {
-        $template_field = $this->getModelLatestField();
-
-        if(is_null($template_field)) {
-            $sequence = 1;
-        }else{
-            $template_field->sequence++;
-            $sequence = $template_field->sequence;
-        }
-
-        return $sequence;
+        $lastField = $this->getModelLatestField();
+        return $lastField ? $lastField->order + 1 : 1;
     }
 
-    public function createCustomField($d)
+    public function createCustomField(array $d)
     {
-        // $custom_field = $this->customFields()->firstOrCreate([
-        //     'name' => $this->cleanSlug($d['model_type'], $d['label']),
-        //     'label' => $d['label'],
-        //     'sequence' => $this->manageSequence(),
-        //     'is_required' => $d['is_required'],
-        //     'model_type'=> $d['model_type'],
-        //     'type' => $d['type'],
-        //     'slug' => $this->cleanSlug($d['model_type'], $d['label'])
-        // ]);
+        // Use the passed slug if available, otherwise generate it
+        $slug = $d['slug'] ?? $this->cleanSlug($d['model_type'], $d['label']);
 
-        $custom_field = $this->customFields()->firstOrCreate($d + [
-            'name' => $this->cleanSlug($d['model_type'], $d['label']),
-            'order' => $this->manageSequence(),
-            'slug' => $this->cleanSlug($d['model_type'], $d['label'])
-        ]);
+        $custom_field = $this->customFields()->firstOrCreate(
+            ['slug' => $slug],
+            [
+                'name'        => $slug,
+                'label'       => $d['label'],
+                'order'       => $this->manageSequence(),
+                'model_type'  => $d['model_type'],
+                'type'        => $d['type'],
+                'is_required' => $d['is_required'] ?? false,
+            ]
+        );
 
-        if(array_key_exists('options', $d))
-        {
-            if(!is_array($d))
-            {
-                $fields[] = array($d);
-            }
-
-            $fields[] = $d;
-
-            foreach($fields as $field)
-            {
-                $custom_field->options = $field['options'];
-            }
-
+        if (!empty($d['options']) && is_array($d['options'])) {
+            $custom_field->options = $d['options'];
             $custom_field->save();
         }
     }
 
-    public function getCustomFields($model_type)
+    public function getCustomFields(string $model_type)
     {
-        return $this->customFields()->select(
-                'id', 
-                'name', 
-                'label', 
-                'order', 
-                'slug', 
-                'type', 
+        return $this->customFields()
+            ->select(
+                'id',
+                'name',
+                'label',
+                'order',
+                'slug',
+                'type',
                 'placeholder',
-                'options', 
+                'options',
                 'is_required'
             )
             ->where('model_type', $model_type)
             ->with(['modelable'])
             ->orderBy('order', 'asc')
             ->get();
-
     }
 }

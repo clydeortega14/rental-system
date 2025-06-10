@@ -18,6 +18,7 @@ class RentalAddItem extends Model
     protected $table = 'rental_listings';
 
     protected $fillable = [
+        'uuid',
         'user_id', 
         'company_id',
         'itemName',
@@ -27,6 +28,15 @@ class RentalAddItem extends Model
         'quantity',
         'category_id'
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->uuid = Str::uuid();
+        });
+    }
     
     public function attachment()
     {

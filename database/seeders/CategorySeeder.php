@@ -38,20 +38,20 @@ class CategorySeeder extends Seeder
         return [
 
             [
-                'label' => 'Cars',
-                'description' => 'For Car Rentals'
+                'label' => 'vehicle',
+                'description' => 'For Vehicles Rentals'
             ],
             [
-                'label' => 'Hotels',
-                'description' => 'For Hotel Rentals'
+                'label' => 'residential',
+                'description' => 'For Residential Rentals'
             ],
             [
-                'label' => 'Motorcycles',
-                'description' => 'For Motorcycle Rentals',
+                'label' => 'event',
+                'description' => 'For Event and Party Rentals',
             ],
             [
-                'label' => 'Phones and Bags',
-                'description' => 'For Phones and Bags'
+                'label' => 'digital devices',
+                'description' => 'For Electronics and Technology Rentals'
             ]
         ];
     }
