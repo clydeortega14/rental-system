@@ -120,4 +120,21 @@ class UserController extends Controller
             ['mobile' => $data['mobile']]
         );
     }
+
+    public function all()
+    {
+        return response()->json(
+            User::with('roles')->orderBy('name')->get()
+        );
+    }
+
+    public function assignRoles(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'roles' => 'array',
+            'roles.*' => 'exists:roles,id',
+        ]);
+        $user->roles()->sync($validated['roles'] ?? []);
+        return response()->json(['success' => true, 'user' => $user->load('roles')]);
+    }
 }
