@@ -159,38 +159,6 @@ const Slider = ({ categories }: SliderProps) => {
             </Swiper>
           </div>
         </div>
-
-        {/* Search Form */}
-        <div className="mt-12 bg-[#111] p-6 rounded-xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <select className="p-3 rounded bg-black text-white border border-gray-700 w-full">
-            <option>Pickup Location</option>
-            <option>New York</option>
-            <option>Dallas</option>
-            <option>Chicago</option>
-          </select>
-          <select className="p-3 rounded bg-black text-white border border-gray-700 w-full">
-            <option>Drop Location</option>
-            <option>San Francisco</option>
-            <option>Austin</option>
-            <option>Boston</option>
-          </select>
-          <input
-            type="text"
-            readOnly
-            defaultValue="2025-03-14 12:00"
-            className="p-3 rounded bg-black text-white border border-gray-700 w-full"
-          />
-          <input
-            type="text"
-            readOnly
-            defaultValue="2025-03-15 12:00"
-            className="p-3 rounded bg-black text-white border border-gray-700 w-full"
-          />
-          <button className="bg-orange-500 hover:bg-orange-600 p-3 rounded-md text-white w-full flex items-center justify-center gap-2">
-            <BiSearchAlt className="text-xl" />
-            Search
-          </button>
-        </div>
       </div>
     </section>
   )
