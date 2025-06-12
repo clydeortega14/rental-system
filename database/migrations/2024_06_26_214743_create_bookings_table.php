@@ -19,15 +19,9 @@ return new class extends Migration
             $table->unsignedBigInteger('booked_by')->references('id')->on('users');
             $table->unsignedSmallInteger('status')->references('id')->on('booking_statuses');
             $table->datetime('completed_at')->nullable();
-            $table->date('pick_up_date');
-            $table->time('pick_up_time')->nullable();
-            $table->string('pick_up_location');
-            $table->date('drop_off_date');
-            $table->time('drop_off_time')->nullable();
-            $table->string('drop_off_location');
-            $table->boolean('is_rescheduled')->default(false);
             $table->decimal('partial_total', 10, 2);
             $table->integer('duration');
+            $table->text('duration_type')->nullable(); // Hourly, Daily, Weekly
             $table->decimal('service_fee', 10, 2);
             $table->decimal('total_cost', 10, 2);
             $table->timestamps();

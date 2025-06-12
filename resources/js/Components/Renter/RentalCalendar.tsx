@@ -12,6 +12,7 @@ interface RentalCalendarProps {
     selectedDate: string;
 }
 const RentalCalendar = ({onSelectDate, selectedDate}: RentalCalendarProps) => {
+  
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [availability, setAvailability] = useState<Availability>({
         // Example unavailable dates
@@ -97,6 +98,7 @@ const RentalCalendar = ({onSelectDate, selectedDate}: RentalCalendarProps) => {
                 key={index}
                 className={cn(
                   "rounded-lg p-2 text-sm hover:cursor-pointer hover:border hover:border-green-200 bg-green-100 text-green-700",
+                  selectedDate === new_formated_date ? "bg-white border border-green-200" : ""
                 )}
               >
                 {format(day, "d")}
