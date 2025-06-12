@@ -39,6 +39,7 @@ export default function View({
     const [quantity, setQuantity] = useState(1);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
+    const [selectedEndDate, setSelectedEndDate] = useState<string | null>(null);
     const {post} = useForm({})
     
     const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
@@ -67,9 +68,20 @@ export default function View({
     };
 
     const handleDateSelect = (date: string) => {
-        setBookingDetails({...bookingDetails, startDate: new Date(date)})
-        setSelectedDate(date);
-        setSelectedTimeSlot(null); // Reset time slot when date changes
+
+        let formatDate = new Date(date);
+        let bookingDateFormat = new Date(date);
+
+        if(bookingDetails.startDate === null){
+            setBookingDetails({...bookingDetails, startDate: formatDate})
+            setSelectedDate(date);
+            setSelectedTimeSlot(null); // Reset time slot when date changes
+            setSelectedEndDate(null)
+        }else{
+            setBookingDetails({...bookingDetails, endDate: formatDate});
+            setSelectedEndDate(date);
+        }
+        
     };
 
     const handleTimeSlotSelect = (timeSlot: TimeSlot) => {
@@ -87,8 +99,39 @@ export default function View({
 
     }, [duration, quantity]);
 
+    useEffect( () => {
+
+        if(bookingDetails.endDate){
+            if(bookingDetails.endDate < bookingDetails.startDate) {
+                setSelectedEndDate(null)
+                setBookingDetails({...bookingDetails, endDate: null})
+            }
+
+            if(bookingDetails.startDate === null)
+            {
+                setSelectedEndDate(null);
+            }
+        }
+        
+    }, [bookingDetails])
+
+    useEffect( () => {
+
+            if(selectedDate === null){
+                setBookingDetails({...bookingDetails, startDate: selectedDate});
+                // setBookingDetails({...bookingDetails, endDate: null})
+                setSelectedEndDate(null);
+            }
+
+    }, [selectedDate])
+
     const handleBookNow: FormEventHandler = (e) => {
-        post(route('booking.store'))
+        post(route('booking.store', {
+            bookingDetails,
+        }), {
+            preserveScroll: true,
+            preserveState: true
+        })
     };
 
 //   useEffect( () => {
@@ -182,7 +225,9 @@ export default function View({
 
                         <RentalCalendar
                             selectedDate={selectedDate}
+                            selectedEndDate={selectedEndDate}
                             onSelectDate={handleDateSelect}
+                            setSelectedEndDate={setSelectedDate}
                         />
                         
                         {selectedDate && (

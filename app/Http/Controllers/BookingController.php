@@ -20,6 +20,7 @@ class BookingController extends Controller
 
     public function bookingStore(Request $request)
     {
+        dd($request->all());
         // validate request
         // $validated = $request->validated();
 
