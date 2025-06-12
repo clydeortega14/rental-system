@@ -4,9 +4,11 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Category;
+use App\Http\Traits\Helper;
 
 class CategoryCustomFieldsSeeder extends Seeder
 {
+    use Helper;
     /**
      * Run the database seeds.
      */
@@ -68,7 +70,8 @@ class CategoryCustomFieldsSeeder extends Seeder
      */
     protected function makeField(string $label, array $options): array
     {
-        $slug = strtolower('category_' . str_replace(' ', '_', $label)); // or use cleanSlug helper
+        // $slug = strtolower('category_' . str_replace(' ', '_', $label)); // or use cleanSlug helper
+        $slug = $this->cleanSlug('Category', $label);
         return [
             'label' => $label,
             'model_type' => 'Category',

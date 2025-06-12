@@ -34,9 +34,4 @@ class Category extends Model
     {
         return $this->belongsToMany(Filter::class, 'category_filters', 'category_id', 'filter_id');
     }
-
-    public function customFields()
-    {
-        return $this->hasMany(CustomField::class, 'modelable_id')->where('modelable_type', self::class);
-    }
 }
