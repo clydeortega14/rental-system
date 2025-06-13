@@ -2,6 +2,7 @@ import { Link } from "@inertiajs/react";
 import { HelpCircle, Bell } from "lucide-react";
 import logoWeb from '@/../../resources/img/logo-web.png';
 import logoMobile from '@/../../resources/img/logo.png';
+import { BiSolidUserCheck   } from "react-icons/bi";
 
 export default function LesseeHeader({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
   return (
@@ -19,8 +20,9 @@ export default function LesseeHeader({ onToggleSidebar }: { onToggleSidebar?: ()
         {/* Be a Lessor button */}
         <Link
           href="/lessor"
-          className="text-sm font-medium border border-orange-600 text-orange-600 px-3 py-1.5 rounded-md hover:bg-orange-50 transition"
+          className="text-sm font-medium border border-orange-600 text-orange-600 px-3 py-1.5 rounded-md hover:bg-orange-50 transition flex items-center gap-2"
         >
+          <BiSolidUserCheck    className="text-lg" />
           Be a Lessor
         </Link>
 
