@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/system';
-import defaultAvatar from '@/../../resources/img/img1.jpg';
+import defaultAvatar from '@/../../resources/img/logo-web.png';
 import notVerified from '@/../../resources/img/notVerifiedv1.png';
 import Verified from '@/../../resources/img/verified.png';
 import FacebookIcon from '@mui/icons-material/Facebook';

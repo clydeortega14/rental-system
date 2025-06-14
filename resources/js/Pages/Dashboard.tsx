@@ -7,12 +7,15 @@ import banner from '@/../../resources/img/banner/banner1.png'
 import icon from '@/../../resources/img/notVerifiedv1.png'
 
 export default function Dashboard({ auth }: PageProps) {
+
+    console.log(auth)
+
     return (
         <AuthenticatedLayout
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Dashboard
+                    Dashboardss
                 </h2>
             }
         >
