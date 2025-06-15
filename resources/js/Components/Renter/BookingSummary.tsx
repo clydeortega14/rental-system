@@ -1,5 +1,5 @@
 import { BookingDetails, RentalDuration } from '@/types/rental';
-import { formatPrice } from '@/utils/dateUtils';
+import { computeDateBetweenTwoDates, formatDateLocale, formatPrice, formatTimeLocale } from '@/utils/dateUtils';
 import { useEffect, useState } from 'react';
 import Button from '../Renter/ui/Button';
 import PrimaryButton from '../PrimaryButton';
@@ -52,19 +52,21 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal}:
         {hasSelectedDateTime && (
           <>
             <div className="flex justify-between">
-              <span className="text-gray-600">Date</span>
+              <span className="text-gray-600">Start</span>
               <span className="font-medium">
-                {bookingDetails.startDate?.toLocaleDateString('en-US', { 
-                  month: 'short', 
-                  day: 'numeric', 
-                  year: 'numeric' 
-                })}
+                {
+                  bookingDetails.startDate && formatDateLocale(bookingDetails.startDate) + ' @ ' + bookingDetails.startTime
+                }
               </span>
             </div>
-            
+
             <div className="flex justify-between">
-              <span className="text-gray-600">Time</span>
-              <span className="font-medium">{bookingDetails.startTime}</span>
+              <span className="text-gray-600">End</span>
+              <span className="font-medium">
+                {
+                  bookingDetails.endDate && formatDateLocale(bookingDetails.endDate) + ' @ ' + bookingDetails.startTime
+                }
+              </span>
             </div>
           </>
         )}
@@ -72,7 +74,7 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal}:
         <div className="border-t border-gray-200 pt-3 mt-3">
           <div className="flex justify-between font-semibold text-lg">
             <span>Total</span>
-            <span>{calculatedTotal}</span>
+            <span>{formatPrice(calculatedTotal)}</span>
           </div>
         </div>
       </div>

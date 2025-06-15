@@ -18,6 +18,10 @@ return new class extends Migration
             $table->foreignId('rental_listing_id')->constrained();
             $table->unsignedBigInteger('booked_by')->references('id')->on('users');
             $table->unsignedSmallInteger('status')->references('id')->on('booking_statuses');
+            $table->date('start_date');
+            $table->time('start_time');
+            $table->date('end_date');
+            $table->time('end_time');
             $table->datetime('completed_at')->nullable();
             $table->decimal('partial_total', 10, 2);
             $table->integer('duration');

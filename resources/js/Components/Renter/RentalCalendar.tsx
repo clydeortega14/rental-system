@@ -1,6 +1,7 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay } from "date-fns";
 import { cn } from "@/lib/utils";
+import PrimaryButton from '../PrimaryButton';
 
 interface Availability {
   [date: string]: boolean; // true means available, false means unavailable
@@ -10,15 +11,17 @@ interface Availability {
 interface RentalCalendarProps {
     onSelectDate: (date: string) => void;
     selectedDate: string;
+    selectedEndDate: string;
+    setSelectedEndDate: (d: string | null) => void; 
 }
-const RentalCalendar = ({onSelectDate, selectedDate}: RentalCalendarProps) => {
+const RentalCalendar = ({onSelectDate, selectedDate, selectedEndDate, setSelectedEndDate}: RentalCalendarProps) => {
   
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [availability, setAvailability] = useState<Availability>({
         // Example unavailable dates
-        "2025-06-10": false,
-        "2025-06-12": false,
-        "2025-06-15": false,
+        "2025-06-20": false,
+        "2025-06-22": false,
+        "2025-06-25": false,
     });
 
     const days = eachDayOfInterval({
@@ -98,7 +101,8 @@ const RentalCalendar = ({onSelectDate, selectedDate}: RentalCalendarProps) => {
                 key={index}
                 className={cn(
                   "rounded-lg p-2 text-sm hover:cursor-pointer hover:border hover:border-green-200 bg-green-100 text-green-700",
-                  selectedDate === new_formated_date ? "bg-white border border-green-200" : ""
+                  selectedDate === new_formated_date ? "bg-white border border-green-700 text-xl font-bold" : "",
+                  selectedEndDate === new_formated_date ? 'bg-white text-blue-700 border border-blue-700 text-xl font-bold': ""
                 )}
               >
                 {format(day, "d")}
@@ -107,6 +111,13 @@ const RentalCalendar = ({onSelectDate, selectedDate}: RentalCalendarProps) => {
             )
           })
         }
+      </div>
+      <div className="py-4">
+        <PrimaryButton onClick={ () => {
+          setSelectedEndDate(null)
+        }}>
+          Reset
+        </PrimaryButton>
       </div>
     </div>
   )
