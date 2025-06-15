@@ -62,6 +62,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(UserContactDetail::class, 'user_id');
     }
+    
+    public function signUpForm()
+    {
+        return $this->hasOne(SignUpForm::class, 'user_id');
+    }
 
     public function userValidIds()
     {
@@ -87,4 +92,5 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->receivedRatings()->avg('rating');
     }
+    
 }

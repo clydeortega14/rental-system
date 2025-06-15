@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserCompanyInformation;
 use App\Models\User;
+use App\Models\SignUpForm;
 use App\Models\UserContactDetail;
 
 use Inertia\Inertia;
@@ -78,6 +79,13 @@ class LesseeController extends Controller
         UserContactDetail::updateOrCreate(
             ['user_id' => $userId],
             ['mobile' => $validated['phone']]
+        );
+
+        $user = User::where('id', $userId)->first();
+
+        SignUpForm::updateOrCreate(
+            ['user_uuid' => $user->uuid],
+            ['status_id' => $user->submitForm]
         );
 
         return back()->with('success', 'Company information has been saved.');
