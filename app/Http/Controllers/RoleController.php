@@ -12,7 +12,9 @@ class RoleController extends Controller
     public function index()
     {
         $roles = Role::with('permissions')->orderBy('name')->get();
-        return response()->json($roles);
+
+        return inertia('RolesTest');
+        // return response()->json($roles);
     }
 
     public function create()

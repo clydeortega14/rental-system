@@ -5,6 +5,8 @@ use App\Models\Booking;
 use App\Models\BookingStatus;
 use Carbon\Carbon;
 use App\Traits\CalendarTheme;
+use Illuminate\Support\Facades\DB;
+use Exception;
 
 class BookingService {
 
@@ -12,22 +14,39 @@ class BookingService {
 
     public function storeBooking(array $data)
     {
-        return Booking::create([
-            'category_id' => $data['category_id'],
-            'rental_listing_id' => $data['rental_listing_id'],
-            'booked_by' => $data['booked_by'],
-            'status' => $data['status'],
-            'pick_up_date' => $data['pick_up_date'],
-            'pick_up_time' => $data['pick_up_time'],
-            'pick_up_location' => $data['pick_up_location'],
-            'drop_off_date' => $data['drop_off_date'],
-            'drop_off_time' => $data['drop_off_time'],
-            'drop_off_location' => $data['drop_off_location'],
-            'service_fee' => $data['service_fee'],
-            'total_cost' => $data['total_cost'],
-            'duration' => $data['duration'],
-            'partial_total' => $data['partial_total']
-        ]);
+
+        DB::transaction( function() use ($data) {
+
+            try {
+
+                $booking = Booking::create([
+                    'category_id' => $data['category_id'],
+                    'rental_listing_id' => $data['rental_listing_id'],
+                    'booked_by' => $data['booked_by'],
+                    'status' => $data['status'],
+                    'start_date' => date('Y-m-d', strtotime( $data['startDate'])),
+                    'end_date' => date('Y-m-d', strtotime( $data['endDate'])),
+                    'start_time' => $data['startTime'],
+                    'end_time' => $data['endTime'],
+                    'total_cost' => $data['partial_total'] * $data['duration_quantity'],
+                    'duration' => $data['duration_quantity'],
+                    'duration_type' => $data['duration_type'],
+                    'partial_total' => $data['partial_total'],
+                    'service_fee' => $data['service_fee'],
+                ]);
+
+                DB::commit();
+
+            } catch (\Exception $e) {
+                //throw $th;
+                DB::rollback();
+
+                throw new Exception($e, 500);
+                
+            }
+            
+        });
+        
     }
 
     public function updateStatus($booking, array $data)

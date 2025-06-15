@@ -33,6 +33,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        if($request->has('checkout'))
+        {
+            return redirect()->back();
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

@@ -1,12 +1,13 @@
 import PrimaryButton from "@/Components/PrimaryButton";
 import { Link, useForm } from "@inertiajs/react";
 import { PageProps } from "@/types";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePage } from "@inertiajs/react";
 import { useCart } from "@/context/CartContext";
 import { Calendar, ChevronLeft, CreditCard, X } from "lucide-react";
 import Button from "../Renter/ui/Button";
 import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
+import LoginWithGoogle from "../LoginWithGoogle";
 
 export default function CheckOut() {
     const user = usePage<PageProps>().props.auth.user;
@@ -15,8 +16,6 @@ export default function CheckOut() {
 
     const checkOutNow = (e) => {
         e.preventDefault();
-
-        
     };
 
     const { cart, removeFromCart, clearCart, totalPrice } = useCart();
@@ -64,6 +63,17 @@ export default function CheckOut() {
         
         
     };
+
+
+    const handleSubmitLogin = (e: React.FormEvent) => {
+
+        e.preventDefault();
+
+        post(route('login'), {
+            preserveScroll: true,
+            preserveState: false
+        })
+    }
     return (
         <>
             <div className="bg-gray-100 container mx-auto px-4 py-8">
@@ -106,7 +116,7 @@ export default function CheckOut() {
                                 type="email"
                                 id="email"
                                 name="email"
-                                value={formData.email}
+                                value={user ? user.email : formData.email}
                                 onChange={handleInputChange}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 />
@@ -263,17 +273,29 @@ export default function CheckOut() {
                             )}
 
                             <div className="mt-6">
-                            <Button
-                                type="submit"
-                                variant="primary"
-                                fullWidth
-                                disabled={isProcessing}
-                            >
-                                {isProcessing ? 'Processing...' : `Complete Booking • ${formatPrice(totalPrice)}`}
-                            </Button>
+
+                            { 
+                                user && (
+                                    <Button
+                                        type="submit"
+                                        variant="primary"
+                                        fullWidth
+                                        disabled={isProcessing}
+                                    >
+                                        {isProcessing ? 'Processing...' : `Complete Booking • ${formatPrice(totalPrice)}`}
+                                    </Button>
+                                )
+                            }
+
+                            
+                            
                             </div>
                         </div>
                         </form>
+
+                        {
+                            !user && <LoginWithGoogle />
+                        }
                     </div>
                     </div>
 

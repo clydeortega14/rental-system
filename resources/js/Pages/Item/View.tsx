@@ -40,7 +40,7 @@ export default function View({
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
     const [selectedEndDate, setSelectedEndDate] = useState<string | null>(null);
-    const {post, errors} = useForm({});
+    
     const session_error_message = usePage<PageProps>().props.flash.error_message;
     
     const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
@@ -49,10 +49,15 @@ export default function View({
         startTime: null,
         endTime: null,
         duration: 'daily',
-        quantity: 1
+        quantity: 1,
+        duration: 'daily'
     });
 
     const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[duration]);
+
+    const {post, errors, processing } = useForm({});
+
+    
 
     const [value, setValue] = useState({
         startDate: new Date(),
@@ -134,6 +139,7 @@ export default function View({
             endDate: bookingDetails.endDate,
             startTime: bookingDetails.startTime,
             duration: bookingDetails.duration,
+            duration_quantity: 1,
             partial_total: calculatedTotal
         }), {
             preserveScroll: true,
@@ -176,8 +182,7 @@ export default function View({
             {errors.endDate && <p>{errors.endDate}</p>}
             {errors.startTime && <p>{errors.startTime}</p>}
             {errors.duration && <p>{errors.duration}</p>}
-            {errors.quantity && <p>{errors.quantity}</p>}
-              {errors.calculatedTotal && <p>{errors.calculatedTotal}</p>}
+            {errors.partial_total && <p>{errors.partial_total}</p>}
             <p>{session_error_message}</p>
 
             <div className="max-w-7xl mx-auto px-4 py-8">
@@ -258,6 +263,7 @@ export default function View({
                             itemPrice={item.price}
                             onBookNow={handleBookNow}
                             calculatedTotal={calculatedTotal}
+                            processing={processing}
                         />
                     </div>
                 </div>
