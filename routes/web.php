@@ -41,7 +41,7 @@ Route::get('rental-browser/{category}', [RentalItemController::class, 'rentalBro
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard.index');
 
-    Route::group(['prefix' => 'users'], function() {
+    Route::group(['prefix' => 'users'], function () {
         Route::get('/', [AdminUserController::class, 'index'])->name('admin.users.index');
         Route::get('/{uuid}', [AdminDashboardController::class, 'show'])->name('admin.users.show');
     });
@@ -61,7 +61,7 @@ Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->
 Route::middleware([
     'auth',
     'verified'
-])->group(function(){
+])->group(function () {
 
     Route::get('/completing/user/{uuid}', [UserController::class, 'getUserInfoPage'])->name('completing.user');
 
@@ -92,11 +92,19 @@ Route::middleware([
 Route::middleware([
     'auth', // auth middleware
     'verified', // email verification middleware
-    'check-user-info'// completed information details
-])->group(function(){
+    'check-user-info' // completed information details
+])->group(function () {
+
+
+
 
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
+
+
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+
+    Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
     // Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 
     /* -- Account Settings -- */
@@ -148,23 +156,39 @@ Route::middleware([
     /* -- Access Rights Routes -- */
     Route::prefix('access-rights')->group(function(){
         // Users
-        Route::prefix('users')->group(function(){
+        Route::prefix('users')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('users.index');
         });
 
         // Roles
-        Route::prefix('roles')->group(function(){
-            Route::get('/', [RoleController::class, 'index']);
+        Route::prefix('roles')->name('roles.')->group(function () {
+            Route::get('/', [RoleController::class, 'index'])->name('index');
+            Route::get('/create', [RoleController::class, 'create'])->name('create');
+            Route::post('/', [RoleController::class, 'store'])->name('store');
+            Route::get('/{role}/edit', action: [RoleController::class, 'edit'])->name('edit');
+            Route::put('/{role}', [RoleController::class, 'update'])->name('update');
+            Route::patch('/{role}/toggle', [RoleController::class, 'toggle'])->name('toggle');
+            Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');
         });
 
         // Permissions
-        Route::prefix('permissions')->group(function(){
+        Route::prefix('permissions')->group(function () {
             Route::get('/', [PermissionController::class, 'index']);
+        });
+
+        Route::prefix('permissions')->name('permissions.')->group(function () {
+            Route::get('/', [PermissionController::class, 'index'])->name('index');
+            Route::get('/create', [PermissionController::class, 'create'])->name('create');
+            Route::post('/', [PermissionController::class, 'store'])->name('store');
+            Route::get('/{permission}/edit', [PermissionController::class, 'edit'])->name('edit');
+            Route::put('/{permission}', [PermissionController::class, 'update'])->name('update');
+            Route::patch('/{permission}/toggle', [PermissionController::class, 'toggle'])->name('toggle');
+            Route::delete('/{permission}', [PermissionController::class, 'destroy'])->name('destroy');
         });
     });
 
     /* -- Workflows --*/
-    Route::prefix('workflows')->group(function(){
+    Route::prefix('workflows')->group(function () {
         Route::get('/', [WorkflowController::class, 'index'])->name('workflows.index');
     });
 
