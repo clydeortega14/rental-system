@@ -8,6 +8,8 @@ interface LandingPageProps {
 }
 
 export default function LandingPage({ auth, categories }: PageProps) {
+
+    console.log(categories)
     return (
         <>
             <Head title="Welcome" />

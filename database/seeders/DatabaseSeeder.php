@@ -23,7 +23,8 @@ class DatabaseSeeder extends Seeder
             DataTypesSeeder::class,
             FieldTypesSeeder::class,
             CategoryCustomFieldsSeeder::class,
-            CategoryCustomFieldValuesSeeder::class
+            CategoryCustomFieldValuesSeeder::class,
+            StatusSeeder::class
         ]);
     }
 }
