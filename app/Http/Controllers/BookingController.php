@@ -8,9 +8,12 @@ use App\Models\RentalAddItem;
 use App\Models\BookingStatus;
 use App\Services\BookingService;
 use Illuminate\Support\Facades\DB;
+use App\Http\Traits\DateHelpers;
 
 class BookingController extends Controller
 {
+    use DateHelpers;
+
     protected $booking_service;
 
     public function __construct(BookingService $booking_service)
@@ -21,28 +24,40 @@ class BookingController extends Controller
     public function bookingStore(Request $request)
     {
         // validate request
-        // $validated = $request->validated();
+        $validated = $request->validate([
+            'item_uuid' => 'nullable',
+            'startDate' => 'required|date',
+            'endDate' => 'required|date',
+            'startTime' => 'required',
+            'duration' => 'required|string',
+            'partial_total' => 'required'
+        ]);
 
-        // $item = RentalAddItem::where('uuid', $validated['item_uuid'])->first();
-        // $status = BookingStatus::where('name', 'pending')->first();
+        $item = RentalAddItem::where('uuid', $request->only('item_uuid'))->first();
+
+        $status = BookingStatus::where('name', 'pending')->first();
         
-        // if(is_null($item)) return back()->with('error', 'Item not found!');
+        if(is_null($item)) return back()->with('error', 'Item not found!');
 
-        // if(is_null($status)) return back()->with('error', 'Pending status does not exists');
+        if(is_null($status)) return back()->with('error', 'Pending status does not exists');
 
-        // // store requests to session
-        // $request->session()->put('booking_data', $validated + [
-        //     'category_id' => $item->category_id,
-        //     'rental_listing_id' => $item->id,
-        //     'status' => $status->id,
-        //     'partial_total' => $request->partial_total,
-        //     'service_fee' => $request->service_fee,
-        //     'total_cost' => $request->total_cost,
-        //     'duration' => $request->duration,
-        //     'drop_location' => is_null($validated['drop_off_location']) ?  $validated['pick_up_location'] : $validated['pick_up_location']
-        // ]);
+        // compute date duration
+        $duration = $this->getDateDuration($request->startDate, $request->endDate)->h;
 
-        return redirect(route('itemCheckout'));
+        // store requests to session
+        $request->session()->put('booking_data', $request->only(
+            'startDate', 'endDate', 'startTime', 'duration'
+        ) + [
+            'category_id' => $item->category_id,
+            'rental_listing_id' => $item->id,
+            'status' => $status->id,
+            'partial_total' => $request->calculatedTotal,
+            'service_fee' => $request->service_fee,
+            'total_cost' => $request->calculatedTotal,
+            'duration_quantity' => $duration,
+        ]);
+
+        return redirect(route('cart.index'));
     }
 
     public function checkOutBooking(Request $request)
@@ -75,7 +90,9 @@ class BookingController extends Controller
 
             $request->session()->forget(['booking_data']);
         }
-        return redirect(route('reservations.index'))->with('success', 'sucessfully booked a reservation');
+
+        return redirect(route('cart.index'));
+        // return redirect(route('reservations.index'))->with('success', 'sucessfully booked a reservation');
     }
 
     public function calendar()

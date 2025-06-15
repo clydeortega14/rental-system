@@ -7,6 +7,14 @@
     /* Add any other styles as needed */
 }
 
+
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari */
+}
 .bg-store1 {
     background-image: url("/resources/img/c11.png");
 }

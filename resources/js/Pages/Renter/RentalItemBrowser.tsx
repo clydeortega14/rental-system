@@ -7,7 +7,8 @@ import { RentalItem } from '@/Interface/RentalItems';
 import RenterLayout from '@/Layouts/RenterLayout';
 import { PageProps } from '@/types';
 import { IPriceRange } from '@/types/priceRange';
-import { ICategory, Category } from '@/types/rentalCategory';
+import { CategoryCustomField } from '@/types/rentalCategory';
+import { ICategory, Category, CategoryFilterType } from '@/types/rentalCategory';
 import { Head, usePage } from '@inertiajs/react';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import React, { useState } from 'react';
@@ -15,10 +16,20 @@ import React, { useState } from 'react';
 interface RentalBrowserProps {
     categories: ICategory,
     priceRanges: IPriceRange,
-    rentalItems: RentalItem[]
+    rentalItems: RentalItem[],
+    category_filters: CategoryFilterType[];
+    category: Category;
+    category_custom_fields: CategoryCustomField[];
 }
 
-const RentalItemBrowser = ({rentalItems, categories, priceRanges}: RentalBrowserProps) => {
+const RentalItemBrowser = ({
+    rentalItems, 
+    categories, 
+    priceRanges, 
+    category_filters, 
+    category,
+    category_custom_fields
+}: RentalBrowserProps) => {
 
     const error_message = usePage<PageProps>().props.flash.error_message;
 
@@ -44,18 +55,20 @@ const RentalItemBrowser = ({rentalItems, categories, priceRanges}: RentalBrowser
         const matchesSearch = !searchQuery || 
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
+      const default_price:number = item.price['daily'];
+
     const matchesCategory = selectedCategories.length === 0 || 
       selectedCategories.includes(item.category);
     
         let matchesPriceRange = true;
         if (selectedPriceRanges.length > 0) {
-        matchesPriceRange = selectedPriceRanges.some(range => {
-            if (range === '0-50') return item.price <= 50;
-            if (range === '50-100') return item.price > 50 && item.price <= 100;
-            if (range === '100-200') return item.price > 100 && item.price <= 200;
-            if (range === '200-500') return item.price > 200 && item.price <= 500;
-            if (range === '500+') return item.price > 500;
+        matchesPriceRange = selectedPriceRanges.some((range: string) => {
+            if (range === '0-50') return default_price <= 50;
+            if (range === '50-100') return default_price > 50 && default_price <= 100;
+            if (range === '100-200') return default_price > 100 && default_price <= 200;
+            if (range === '200-500') return default_price > 200 && default_price <= 500;
+            if (range === '500+') return default_price > 500;
             return true;
         });
         }
@@ -71,7 +84,7 @@ const RentalItemBrowser = ({rentalItems, categories, priceRanges}: RentalBrowser
   return (
     <RenterLayout>
 
-        <Head title="Reservations" />
+        <Head title={category.name} />
         <div className="px-4 py-8">
             <div>
                 { error_message && <p className="text-2xl text-red-500 pt-4">{error_message }</p> }
@@ -112,16 +125,17 @@ const RentalItemBrowser = ({rentalItems, categories, priceRanges}: RentalBrowser
                 <ItemFilter 
                     showFilters={showFilters}
                     clearAllFilters={clearAllFilters}
-                    categories={categories}
+                    categories={category_filters}
                     selectedCategories={selectedCategories}
                     setSelectedCategories={setSelectedCategories}
                     priceRanges={priceRanges}
                     selectedPriceRanges={selectedPriceRanges}
                     setSelectedPriceRanges={setSelectedPriceRanges}
+                    categoryCustomFields={category_custom_fields}
                 />
 
                 <div className="flex-1">
-                    <div className="flex flex-wrap items-center justify-between mb-4">
+                    {/* <div className="flex flex-wrap items-center justify-between mb-4">
                         <p className="text-gray-700">
                             Showing <span className="font-semibold">{filteredItems.length}</span> results
                         </p>
@@ -140,7 +154,7 @@ const RentalItemBrowser = ({rentalItems, categories, priceRanges}: RentalBrowser
                                 initialSelected={selectedPriceRanges}
                             />
                         </div>
-                    </div>
+                    </div> */}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredItems.map(item => (

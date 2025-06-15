@@ -43,3 +43,37 @@ export const isToday = (dateString: string): boolean => {
   const date = new Date(dateString);
   return today.toDateString() === date.toDateString();
 };
+
+
+export const formatTimeLocale = () =>
+{
+  const MyDate = new Date();
+  return MyDate.toLocaleTimeString('en-US', {hour: 'numeric', hour12: true})
+};
+
+export const formatDateLocale = (date: Date) => 
+{
+  return date.toLocaleDateString('en-US', {
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+}
+
+export const computeDateBetweenTwoDates = (startDate: Date, endDate: Date) =>
+{
+  const diffMs = endDate.getTime() - startDate.getTime(); // difference in milliseconds
+
+  const seconds = Math.floor(diffMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  return {
+    totalMilliseconds: diffMs,
+    totalSeconds: seconds,
+    totalMinutes: minutes,
+    totalHours: hours,
+    totalDays: days,
+  };
+}

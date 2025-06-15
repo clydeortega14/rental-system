@@ -1,3 +1,5 @@
+import { Category } from "@/Interface/CategoryInterface";
+
 export interface RentalItem {
   id: string;
   name: string;
@@ -11,10 +13,12 @@ export interface RentalItem {
   specifications: {
     [key: string]: string;
   };
-  category: string;
+  category: Category;
   rating: number;
   reviewCount: number;
   location: string;
+  itemName: string;
+  quantity: number | null
 }
 
 export interface TimeSlot {
@@ -35,10 +39,10 @@ export interface BookingDetails {
   id: string;
   itemId: string;
   userId: string;
-  startDate: string;
-  startTime?: string | null;
-  endDate?: string | null;
-  endTime?: string | null;
+  startDate: Date;
+  startTime?: Date | null;
+  endDate?: Date | null;
+  endTime?: Date | null;
   status: 'pending' | 'confirmed' | 'canceled' | 'completed';
   totalPrice: number;
   duration?: 'hourly' | 'daily' | 'weekly';

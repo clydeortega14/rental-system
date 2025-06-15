@@ -1,21 +1,19 @@
+import { Category } from "@/Interface/CategoryInterface";
 import LandingPageLayout from "@/Layouts/LandingPageLayout"
 import { Head } from '@inertiajs/react';
-
-interface Category {
-    id: number;
-    name: string;
-    // Add other category fields as needed
-}
+import { PageProps } from '@/types'
 
 interface LandingPageProps {
     categories: Category[];
 }
 
-export default function LandingPage({ categories }: LandingPageProps) {
+export default function LandingPage({ auth, categories }: PageProps) {
+
+    console.log(categories)
     return (
         <>
             <Head title="Welcome" />
-            <LandingPageLayout categories={categories} />
+            <LandingPageLayout auth={auth} categories={categories} />
         </>
     );
 }

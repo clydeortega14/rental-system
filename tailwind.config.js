@@ -27,11 +27,17 @@ export default {
                     '0%, 100%': { transform: 'translateY(0)' },
                     '50%': { transform: 'translateY(-10px)' },
                 },
+				slideLeft: {
+				'0%': { transform: 'translateX(0%)' },
+				'100%': { transform: 'translateX(-50%)' },
+				},
             },
             animation: {
                 float: 'float 3s ease-in-out infinite',
+				'slide-left': 'slideLeft 30s linear infinite',
             },
     		colors: {
+				'jaba-yellow': '#feb008',
     			'light-green': '#64A664',
     			'light-white': 'rgba(255,255,255,0.18)',
     			background: 'hsl(var(--background))',
@@ -73,7 +79,11 @@ export default {
     				'3': 'hsl(var(--chart-3))',
     				'4': 'hsl(var(--chart-4))',
     				'5': 'hsl(var(--chart-5))'
-    			}
+    			},
+				amber: {
+					500: '#ffab01',
+					},
+				
     		},
     		borderRadius: {
     			lg: 'var(--radius)',

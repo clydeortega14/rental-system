@@ -1,17 +1,18 @@
 import { IPriceRange } from '@/types/priceRange';
-import { Category } from '@/types/rentalCategory';
+import { Category, CategoryCustomField, CategoryFilterType, ChoiceType } from '@/types/rentalCategory';
 import { ICategory } from '@/types/rentalCategory';
 import React from 'react'
 
 interface ItemFilterProps {
     showFilters: boolean;
     clearAllFilters: () => void;
-    categories: ICategory;
+    categories: CategoryFilterType[];
     selectedCategories: ICategory;
     setSelectedCategories: () => void;
     priceRanges: IPriceRange;
     selectedPriceRanges: IPriceRange;
     setSelectedPriceRanges: () => void;
+    categoryCustomFields: CategoryCustomField[];
 }
 
 
@@ -24,15 +25,16 @@ const ItemFilter = ({
     setSelectedCategories,
     priceRanges,
     selectedPriceRanges,
-    setSelectedPriceRanges
+    setSelectedPriceRanges,
+    categoryCustomFields
 }: ItemFilterProps
 ) => {
-    const handleSelectedCategories = (category: Category) => {
-        if (selectedCategories.includes(category.category_id)) {
-            setSelectedCategories(selectedCategories.filter(id => id !== category.category_id));
-        } else {
-            setSelectedCategories([...selectedCategories, category.category_id]);
-        }
+    const handleSelectedCategories = (choice: string) => {
+        // if (selectedCategories.includes(choice.id)) {
+        //     setSelectedCategories(selectedCategories.filter(id => id !== choice.id));
+        // } else {
+        //     setSelectedCategories([...selectedCategories, choice.id]);
+        // }
     }
   return (
     <div className={`md:w-64 md:block ${showFilters ? 'block' : 'hidden'}`}>
@@ -48,27 +50,35 @@ const ItemFilter = ({
             </div>
 
             <div className="mb-6">
-              <h3 className="font-medium text-gray-700 mb-2">Categories</h3>
-              {categories.map((category, index) => (
-                <div key={index} className="flex items-center py-2">
-                  <input
-                    type="checkbox"
-                    id={`category-${category.category_id}`}
-                    checked={selectedCategories.includes(category.category_id)}
-                    onChange={ () => handleSelectedCategories(category) }
-                    className="h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
-                  />
-                  <label 
-                    htmlFor={`category-${category.category_id}`}
-                    className="ml-2 text-gray-700"
-                  >
-                    {category.label}
-                  </label>
+              {categoryCustomFields.map((category_filter, index) => (
+                <div key={category_filter.id} className="mb-5">
+                  <h3 className="font-2xl text-gray-700 mb-2 font-bold">{category_filter.label}</h3>
+                  {
+                    
+                    category_filter.options.map((choice, index) => (
+                      <div key={index} className="flex items-center p-2">
+                        <input
+                          type="checkbox"
+                          id={`category-${index}`}
+                          // checked={selectedCategories.includes(choice)}
+                          onChange={ () => handleSelectedCategories(choice) }
+                          className="h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
+                        />
+                        <label 
+                          htmlFor={`category-${index}`}
+                          className="ml-2 text-gray-700"
+                        >
+                          {choice}
+                        </label>
+                      </div>
+                    ))
+                  }
                 </div>
               ))}
+              
             </div>
 
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <h3 className="font-medium text-gray-700 mb-2">Price Range</h3>
               {priceRanges.map(range => (
                 <div key={range.id} className="flex items-center py-2">
@@ -93,9 +103,9 @@ const ItemFilter = ({
                   </label>
                 </div>
               ))}
-            </div>
+            </div> */}
 
-            <div className="bg-white rounded-xl mb-2">
+            {/* <div className="bg-white rounded-xl mb-2">
                 <h3 className="font-medium text-gray-700 mb-2">Availability</h3>
                 <div className="flex items-center py-2">
                 <input
@@ -110,7 +120,7 @@ const ItemFilter = ({
                     Available Now
                 </label>
                 </div>
-            </div>
+            </div> */}
 
             
         </div>

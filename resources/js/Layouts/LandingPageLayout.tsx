@@ -1,26 +1,26 @@
 import Footer from '@/Components/LandingPage/Utility/footer'
 import Header from '@/Components/LandingPage/Utility/header'
 import Slider from '@/Components/Slider'
+import FeaturedCategory from '@/Components/LandingPage/Category/FeaturedCategories'
+import ClientsFeedBack from '@/Components/ClientsFeedBack'
+import SupportSlider from '@/Components/SupportSlider'
+import { Category } from '@/Interface/CategoryInterface'
+import { PageProps } from '@/types'
 
 import { PropsWithChildren } from 'react'
 
-interface Category {
-  id: number
-  name: string
-  // add other fields if needed
-}
 
-interface LandingPageLayoutProps extends PropsWithChildren {
-  categories: Category[]
-}
 
-const LandingPageLayout = ({ children, categories }: LandingPageLayoutProps) => {
+const LandingPageLayout = ({ categories, auth, children }: PropsWithChildren<{categories: Category[], auth: PageProps}>) => {
   return (
     <div className="flex flex-col min-h-screen ">
-      <Header categories={categories} />
+      <Header auth={auth} categories={categories} />
       <main className="flex-grow">
         {children}
         <Slider categories={categories} />
+        <SupportSlider/>
+        <FeaturedCategory categories={categories} />
+        <ClientsFeedBack />
       </main>
       <Footer />
     </div>

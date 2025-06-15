@@ -1,5 +1,7 @@
 import { useState } from 'react'
+//@ts-ignore
 import { Swiper, SwiperSlide } from 'swiper/react'
+//@ts-ignore
 import { Pagination, Autoplay, EffectFade } from 'swiper/modules'
 import { BiSearchAlt  } from 'react-icons/bi';
 import 'swiper/css'
@@ -11,11 +13,8 @@ import cars from '@/../../resources/img/banner/banner1.png'
 import motorcycle from '@/../../resources/img/banner/2.png'
 import bags from '@/../../resources/img/banner/bags.png'
 import hotels from '@/../../resources/img/banner/hotels.png'
+import { Category } from '@/Interface/CategoryInterface';
 
-interface Category {
-  category_id: number;
-  label: string;
-}
 
 interface SliderProps {
   categories: Category[];
@@ -80,7 +79,6 @@ const slides = [
 ]
 
 const Slider = ({ categories }: SliderProps) => {
-  console.log(categories)
   const [activeIndex, setActiveIndex] = useState(0)
   const [textVisible, setTextVisible] = useState(true)
 
@@ -107,7 +105,7 @@ const Slider = ({ categories }: SliderProps) => {
                 {(() => {
                   const currentSlide = slides[activeIndex]
                   const matchedCategory = categories.find(
-                    (cat) => cat.label.toLowerCase() === currentSlide.label.toLowerCase()
+                    (cat) => cat.detail.label.toLowerCase() === currentSlide.label.toLowerCase()
                   )
 
                   if (!matchedCategory) return null
@@ -115,16 +113,16 @@ const Slider = ({ categories }: SliderProps) => {
                   return (
                     <>
                       <a
-                        href={`/rent/${matchedCategory.category_id}`}
+                        href={route('rental.browser.index', matchedCategory.name)}
                         className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-md transition text-center"
                       >
-                        Rent {matchedCategory.label}
+                        Rent {matchedCategory.detail.label}
                       </a>
                       <a
                         href={`/add/${matchedCategory.category_id}`}
                         className="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2 rounded-md transition text-center"
                       >
-                        Add Your {matchedCategory.label}
+                        Add Your {matchedCategory.detail.label}
                       </a>
                     </>
                   )
@@ -143,7 +141,7 @@ const Slider = ({ categories }: SliderProps) => {
               effect="fade"
               fadeEffect={{ crossFade: true }}
               onSlideChangeTransitionStart={() => setTextVisible(false)}
-              onSlideChangeTransitionEnd={(swiper) => {
+              onSlideChangeTransitionEnd={(swiper: Swiper) => {
                 setActiveIndex(swiper.realIndex)
                 setTextVisible(true)
               }}
@@ -160,38 +158,6 @@ const Slider = ({ categories }: SliderProps) => {
               ))}
             </Swiper>
           </div>
-        </div>
-
-        {/* Search Form */}
-        <div className="mt-12 bg-[#111] p-6 rounded-xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <select className="p-3 rounded bg-black text-white border border-gray-700 w-full">
-            <option>Pickup Location</option>
-            <option>New York</option>
-            <option>Dallas</option>
-            <option>Chicago</option>
-          </select>
-          <select className="p-3 rounded bg-black text-white border border-gray-700 w-full">
-            <option>Drop Location</option>
-            <option>San Francisco</option>
-            <option>Austin</option>
-            <option>Boston</option>
-          </select>
-          <input
-            type="text"
-            readOnly
-            defaultValue="2025-03-14 12:00"
-            className="p-3 rounded bg-black text-white border border-gray-700 w-full"
-          />
-          <input
-            type="text"
-            readOnly
-            defaultValue="2025-03-15 12:00"
-            className="p-3 rounded bg-black text-white border border-gray-700 w-full"
-          />
-          <button className="bg-orange-500 hover:bg-orange-600 p-3 rounded-md text-white w-full flex items-center justify-center gap-2">
-            <BiSearchAlt className="text-xl" />
-            Search
-          </button>
         </div>
       </div>
     </section>

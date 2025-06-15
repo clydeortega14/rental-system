@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Uuid;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Booking extends Model
 {
@@ -18,18 +19,17 @@ class Booking extends Model
         'rental_listing_id',
         'booked_by',
         'status',
+        'start_date',
+        'start_time',
+        'end_date',
+        'end_time',
         'completed_at',
-        'pick_up_date',
-        'pick_up_time',
-        'pick_up_location',
-        'drop_off_date',
-        'drop_off_time',
-        'drop_off_location',
-        'is_rescheduled',
+        'rating_reminder_sent_at',
         'service_fee',
         'total_cost',
         'partial_total',
-        'duration'
+        'duration',
+        'duration_type'
     ];
 
 
@@ -60,5 +60,9 @@ class Booking extends Model
     public function getFormatDropOffAttribute()
     {
         return date('l, F j, Y', strtotime($this->drop_off_date));
+    }
+        public function ratings(): HasMany
+    {
+        return $this->hasMany(Rating::class);
     }
 }

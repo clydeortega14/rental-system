@@ -24,7 +24,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
-        'active',
+        'google_id',
+        'avatar',
+        'submitForm',
     ];
 
     /**
@@ -62,6 +64,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(UserContactDetail::class, 'user_id');
     }
+    
+    public function signUpForm()
+    {
+        return $this->hasOne(SignUpForm::class, 'user_id');
+    }
 
     public function userValidIds()
     {
@@ -95,4 +102,20 @@ class User extends Authenticatable implements MustVerifyEmail
         }
         return $this->hasPermission($permissions);
     }
+    //added ratings relations
+    public function givenRatings()
+    {
+        return $this->hasMany(Rating::class, 'rater_id');
+    }
+
+    public function receivedRatings()
+    {
+        return $this->hasMany(Rating::class, 'ratee_id');
+    }
+
+    public function averageRating()
+    {
+        return $this->receivedRatings()->avg('rating');
+    }
+    
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\RentalItem;
 use App\Models\RentalAddItem;
+use Illuminate\Support\Facades\DB;
 
 class RentalItemService
 {
@@ -9,6 +10,65 @@ class RentalItemService
     public function getRentalItems()
     {
         return RentalAddItem::with(['attachment', 'user'])->get();
+    }
+
+
+    public function addItem($request)
+    {
+        $category_id = Category::findOrFail($request->category_id);
+
+        DB::transaction( function () {
+            try {
+
+                $request->validate([
+                    'itemName' => 'required|string|max:255',
+                    'description' => 'required|string',
+                    'price' => 'required',
+                    'category_id' => 'required'
+                ]);
+
+                $item = RentalAddItem::firstOrCreate($request->only(
+                    'itemName',
+                    'description',
+                    'price',
+                    'category_id'
+                ) + [
+                    'user_id' => $request->user()->id,
+                    'company_id' => $request->user()->company->id,
+                    'quantity' => $request->has('quantity') ? $request->quantity : 1
+                ]);
+
+                if($request->has('customFields'))
+                {
+                    $item->addCustomFields($request->customFields);
+                }
+
+                // check if request has images
+                if($request->hasFile('images'))
+                {
+
+                    // validate file
+                    $request->validate([
+                        'images.*' => 'required|mimes:jpg,jpeg,png|mimetypes:image/png,image/jpeg|max:2000'
+                    ]);
+
+                    $file = $request->file('images');
+                    
+                    $fileName = $this->storeFile(
+                        $item, // model
+                        $file, // file
+                        'public', // driver
+                        'images/' . $item->toCategory->name // path
+                    );
+                }
+
+            } catch (\Exception $e) {
+                //throw $th;
+
+                throw new Exception($e, 500);
+                
+            }
+        });
     }
 
     public function formattedRentalItems()

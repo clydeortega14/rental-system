@@ -17,11 +17,12 @@ use App\Traits\RentalItems\ItemDetails;
 use App\Models\Detailable;
 use App\Models\Category;
 use App\Services\Category\CategoryService;
+use App\Traits\RentalItems\RentalListing;
 
 
 class RentalItemController extends Controller
 {
-    use FileTraits, ItemDetails;
+    use FileTraits, ItemDetails, RentalListing;
 
     protected $category_service;
 
@@ -60,7 +61,10 @@ class RentalItemController extends Controller
                 'id' => $item->id,
                 'itemName' => $item->itemName,
                 'description' => $item->description,
-                'category' => $item->category,
+                'category' => [
+                    'id' => $item->toCategory->id,
+                    'name' => $item->toCategory->name
+                ],
                 'price' => $item->price,
                 'quantity' => $item->quantity,
                 'quality' => $item->quality,
@@ -70,7 +74,10 @@ class RentalItemController extends Controller
         }
       
         // Pass the formatted rental items data to the React component using compact
-        return Inertia::render('User/Partials/Rental', compact('rentalItems'));
+        return inertia('User/Partials/Rental', [
+            'rentalItems' => $rentalItems,
+            'categories' => $this->category_service->getCategories()
+        ]);
     }
 
     public function checkoutItem()
@@ -82,22 +89,26 @@ class RentalItemController extends Controller
     {
         $category = Category::where('name', $category_name)->first();
 
+        $category_custom_fields = $category->getCustomFields('Category');
+
         if(is_null($category)) return redirect()->back()->with('error', 'Category not found!');
         
         $categories = $this->category_service->getCategories($category->id);
 
-        $price_ranges = [
-            ['id' => '0-50', 'label' => '0 - 50'],
-            ['id' => '50-100', 'label' => '50 - 100'],
-            ['id' => '100-200', 'label' => '100 - 200'],
-            ['id' => '200-500', 'label' => '20 - 500'],
-            ['id' => '500+', 'label' => '500+']
-        ];
+        $category_filters = $category->filters()
+                            ->with('choices')
+                            ->get()
+                            ->toArray();
+
+        $price_ranges = [];
 
         return inertia('Renter/RentalItemBrowser', [
             'categories' => $categories,
             'priceRanges' => $price_ranges,
-            'rentalItems' => $this->getRentalItemsByCategory($category->id)
+            'rentalItems' => $this->getRentalItemsByCategory($category->id),
+            'category_filters' => $category_filters,
+            'category' => $category,
+            'category_custom_fields' => $category_custom_fields
         ]);
     }
 
@@ -122,7 +133,7 @@ class RentalItemController extends Controller
             'filename' => 'required|mimes:jpg,jpeg,png|mimetypes:image/png,image/jpeg|max:2000'
         ]);
 
-        $user = auth()->user();
+        $user = Auth::user();
         $userId = $user->id;
         // $user_rentalAddItems = $user->rentalAddItems();
         $category  = Category::where('name', 'cars')->first();

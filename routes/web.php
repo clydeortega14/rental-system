@@ -17,12 +17,23 @@ use App\Http\Controllers\WorkflowController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\RatingController;
+use App\Http\Controllers\FeedbackController;
+
+use App\Http\Controllers\Lessor\RentalController;
+use App\Http\Controllers\Lessor\LessorController;
+use App\Http\Controllers\LesseeController;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+// Google OAuth routes
+Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle']);
+Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
 
@@ -41,7 +52,11 @@ Route::get('/itemDetails/{uuid}', [RentalItemController::class, 'itemDetails'])-
 /* -- Submit for reservation -- */
 Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('booking.store');
 
-Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
+Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('checkout.item');
+
+Route::get('shopping-cart', [CartController::class, 'index'])->name('cart.index');
+
+Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 
 Route::middleware([
     'auth',
@@ -53,29 +68,25 @@ Route::middleware([
     // user must redirect to this route if first time using the platform.
     Route::post('/completing/user', [UserController::class, 'store'])->name('store.completing.user');
 
-    Route::get('/rentalListing', function () {
-        return Inertia::render('User/Partials/Rental');
-    })->middleware(['auth'])->name('rentalListing');
+    // Route::get('/rentalListing', function () {
+    //     return Inertia::render('User/Partials/Rental');
+    // })->middleware(['auth'])->name('rentalListing');
 
-    // Route::get('/itemDetails/{id}', function () {
-    //     return Inertia::render('Item/View');
-    // })->middleware(['auth'])->name('itemDetails');
+    // Route::get('rental-listings', [RentalItemController::class, 'rentalListings'])->name('rentalListing');
 
-    Route::get('/lessor', function () {
-        return Inertia::render('Lessor/Landing', [
-            'lessorName' => auth()->user()->name,
-        ]);
+    Route::group(['prefix' => 'lessor'], function () {
+        Route::get('/', [LessorController::class, 'dashboard']);
+        Route::get('/properties', [RentalController::class, 'index'])->name('lessor.properties');
+        Route::post('/properties', [RentalController::class, 'store'])->name('lessor.properties.store');
+        Route::put('/properties/{id}', [RentalController::class, 'update'])->name('lessor.properties.update');
+
     });
 
-    Route::get('/lessee', function () {
-        return Inertia::render('Lessee/Landing');
-    })->name('lessee.profile');
-
-
-
-    Route::get('/lessee', function () {
-        return Inertia::render('Lessee/Landing');
-    })->name('lessee.profile');
+    // Route::get('/lessee', function () {
+    //     return Inertia::render('Lessee/Landing');
+    // })->name('lessee.profile');
+    Route::get('/lessee', [LesseeController::class, 'index'])->name('lessee.profile');
+    Route::post('/lessor/signUserup', [LesseeController::class, 'store'])->name('lessor.signup.store');
 });
 
 Route::middleware([
@@ -87,12 +98,14 @@ Route::middleware([
 
 
 
+    Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
 
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 
     Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
+    // Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 
     /* -- Account Settings -- */
     Route::get('/account-settings', [ProfileController::class, 'accountSettings'])->name('account.settings');
@@ -131,20 +144,17 @@ Route::middleware([
     Route::post('/upload/valid-id', [FileUploadController::class, 'uploadFile'])->name('upload.valid-id');
 
     /* -- Categories Routes -- */
-    Route::prefix('categories')->group(function () {
-
+    Route::prefix('categories')->group(function(){
         Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
     });
 
     /* -- Forms Routes -- */
-    Route::prefix('forms')->group(function () {
-
+    Route::prefix('forms')->group(function(){
         Route::get('/', [FormController::class, 'index'])->name('forms.index');
     });
 
     /* -- Access Rights Routes -- */
-    Route::prefix('access-rights')->group(function () {
-
+    Route::prefix('access-rights')->group(function(){
         // Users
         Route::prefix('users')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('users.index');
@@ -189,28 +199,35 @@ Route::middleware([
     Route::get('/rentalListing/items/{id}', [RentalItemController::class, 'show'])->name('rentalListingView');
     Route::put('/rentalListing/items/update/{id}', [RentalItemController::class, 'update'])->name('rental.update');
 
-    // Route::get('/rentalListing', function () {
-    //     return Inertia::render('User/Partials/Rental');
-    // })->middleware(['auth'])->name('rentalListing');
-
-
-    Route::get('UserProfile', [UserController::class, 'index'])->name('user.profile');
-    Route::get('/RolesTest', function () {
-        return Inertia::render('RolesTest');
-    })->name('roles.test');
-    Route::get('/access-rights/roles', [RoleController::class, 'index']);
-    Route::get('/PermissionTest', function () {
-        return Inertia::render('PermissionTest');
-    })->name('permissions.test');
-    Route::get('/access-rights/permissions/all', [PermissionController::class, 'all']);
-    // Get all users (for the dropdown)
-    Route::get('/access-rights/users/all', [UserController::class, 'all']);
-    // Assign roles to user
-    Route::put('/access-rights/users/{user}/roles', [UserController::class, 'assignRoles']);
-    Route::get('/ManageUserTest', function () {
-        return Inertia::render('ManageUserTest');
+    /*-- Ratings --*/
+    Route::middleware(['web', 'auth'])->group(function () {
+    // Rating creation form
+    Route::get('/rating', [RatingController::class, 'create'])
+        ->name('ratings.create');
+    
+    // Handle form submission
+    Route::post('/bookings/{booking}/rate', [RatingController::class, 'store'])
+        ->name('ratings.store');
     });
-    Route::get('/access-rights/my-permissions', [UserController::class, 'myPermissions']);
-});
 
-require __DIR__ . '/auth.php';
+    // Public confirmation
+    Route::get('/ratings/confirmation', [RatingController::class, 'confirmation'])
+        ->name('ratings.confirmation');
+
+    /*-- Feedback --*/
+    Route::middleware(['web'])->group(function () {
+    // Feedback form (public or auth)
+    Route::get('/feedback', [FeedbackController::class, 'create'])
+        ->name('feedback.create');
+    
+    // Form submission
+    Route::post('/feedback', [FeedbackController::class, 'store'])
+        ->name('feedback.store');
+    });
+
+    // Public confirmation
+    Route::get('/feedback/confirmation', [FeedbackController::class, 'confirmation'])
+        ->name('feedback.confirmation');
+    });
+
+require __DIR__.'/auth.php';

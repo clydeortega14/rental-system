@@ -25,7 +25,7 @@ const TopNavigation = () => {
   ]);
 
   const [rightNavs, setRightNavs] = useState([
-    {title: 'Shopping Cart', link: route('cart.index'), display:  user === undefined || user === null ? false : true, icon: <CartIcon />},
+    // {title: 'Shopping Cart', link: route('cart.index'), display:  user === undefined || user === null ? false : true, icon: <CartIcon />},
     {title: 'Sign In', link: route('login'), display: user !== undefined || user !== null ? false : true, icon:  <LogIn />},
     {title: 'Sign Up', link: route('register'), display:  user !== undefined || user !== null ? false : true, icon: <Signature />},
     

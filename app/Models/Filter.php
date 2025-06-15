@@ -13,6 +13,8 @@ class Filter extends Model
 
     protected $fillable = ['name'];
 
+    protected $hidden = ['pivot'];
+
     public $timestamps = false;
 
     public function detail()
