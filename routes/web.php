@@ -23,6 +23,7 @@ use App\Http\Controllers\FeedbackController;
 
 use App\Http\Controllers\Lessor\RentalController;
 use App\Http\Controllers\Lessor\LessorController;
+use App\Http\Controllers\LesseeController;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Client\Request;
@@ -81,9 +82,11 @@ Route::middleware([
 
     });
 
-    Route::get('/lessee', function () {
-        return Inertia::render('Lessee/Landing');
-    })->name('lessee.profile');
+    // Route::get('/lessee', function () {
+    //     return Inertia::render('Lessee/Landing');
+    // })->name('lessee.profile');
+    Route::get('/lessee', [LesseeController::class, 'index'])->name('lessee.profile');
+    Route::post('/lessor/signUserup', [LesseeController::class, 'store'])->name('lessor.signup.store');
 });
 
 Route::middleware([
