@@ -103,8 +103,7 @@ Route::middleware([
 
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-
-    Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
+    
     // Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 
     /* -- Account Settings -- */

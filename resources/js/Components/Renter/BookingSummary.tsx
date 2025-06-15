@@ -13,8 +13,9 @@ interface BookingSummaryProps {
     }
     onBookNow: () => void;
     calculatedTotal: number;
+    processing: boolean;
 }
-const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal}: BookingSummaryProps) => {
+const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal, processing}: BookingSummaryProps) => {
 
     const [hasSelectedDateTime, setHasSelectedDateTime] = useState<boolean>(false);
     const getDurationText = (duration: RentalDuration) => {
@@ -79,7 +80,7 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal}:
         </div>
       </div>
 
-      <Button onClick={onBookNow} className={hasSelectedDateTime ? 'cursor-not-allowed bg-gray-400' : 'bg-blue-600'}>
+      <Button onClick={onBookNow} className={hasSelectedDateTime ? 'cursor-not-allowed bg-gray-400' : 'bg-blue-600'} disabled={processing}>
         {hasSelectedDateTime ? 'Book Now' : 'Select Date & Time'}
       </Button>
       
