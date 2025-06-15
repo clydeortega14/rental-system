@@ -14,8 +14,8 @@ import ItemSpecification from "@/Components/Renter/ItemSpecification";
 import ReviewsSection from "./ReviewsSection";
 import SimilarItems from "./SimilarItems";
 import { similarItems } from "@/data/similarItems";
-import { Head, useForm } from "@inertiajs/react";
-import { formatPrice } from "@/utils/dateUtils";
+import { Head, useForm, usePage } from "@inertiajs/react";
+import { computeDateBetweenTwoDates, formatPrice } from "@/utils/dateUtils";
 import RentalCalendar from "@/Components/Renter/RentalCalendar";
 
 const navigation = {
@@ -40,7 +40,8 @@ export default function View({
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
     const [selectedEndDate, setSelectedEndDate] = useState<string | null>(null);
-    const {post} = useForm({})
+    const {post, errors} = useForm({});
+    const session_error_message = usePage<PageProps>().props.flash.error_message;
     
     const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
         startDate: null,
@@ -70,7 +71,6 @@ export default function View({
     const handleDateSelect = (date: string) => {
 
         let formatDate = new Date(date);
-        let bookingDateFormat = new Date(date);
 
         if(bookingDetails.startDate === null){
             setBookingDetails({...bookingDetails, startDate: formatDate})
@@ -95,7 +95,7 @@ export default function View({
         const basePrice = item.price[duration];
 
         let calculate_total: number = Number(basePrice) * quantity;
-        setCalculatedTotal(formatPrice(calculate_total));
+        setCalculatedTotal(calculate_total);
 
     }, [duration, quantity]);
 
@@ -113,9 +113,11 @@ export default function View({
             }
         }
         
-    }, [bookingDetails])
+    }, [bookingDetails]);
 
     useEffect( () => {
+
+            // const durationText = computeDateBetweenTwoDates(selectedDate, selectedEndDate)s
 
             if(selectedDate === null){
                 setBookingDetails({...bookingDetails, startDate: selectedDate});
@@ -123,11 +125,16 @@ export default function View({
                 setSelectedEndDate(null);
             }
 
-    }, [selectedDate])
+    }, [selectedDate, selectedEndDate])
 
     const handleBookNow: FormEventHandler = (e) => {
         post(route('booking.store', {
-            bookingDetails,
+            item_uuid: item.uuid,
+            startDate: bookingDetails.startDate,
+            endDate: bookingDetails.endDate,
+            startTime: bookingDetails.startTime,
+            duration: bookingDetails.duration,
+            partial_total: calculatedTotal
         }), {
             preserveScroll: true,
             preserveState: true
@@ -164,6 +171,14 @@ export default function View({
         <RenterLayout>
             
             <Head title={"Item Detail"} />
+            {errors.item_uuid && <p>{errors.item_uuid}</p>}
+            {errors.startDate && <p>{errors.startDate}</p>}
+            {errors.endDate && <p>{errors.endDate}</p>}
+            {errors.startTime && <p>{errors.startTime}</p>}
+            {errors.duration && <p>{errors.duration}</p>}
+            {errors.quantity && <p>{errors.quantity}</p>}
+              {errors.calculatedTotal && <p>{errors.calculatedTotal}</p>}
+            <p>{session_error_message}</p>
 
             <div className="max-w-7xl mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

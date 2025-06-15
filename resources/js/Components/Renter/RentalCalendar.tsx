@@ -19,9 +19,9 @@ const RentalCalendar = ({onSelectDate, selectedDate, selectedEndDate, setSelecte
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [availability, setAvailability] = useState<Availability>({
         // Example unavailable dates
-        "2025-06-10": false,
-        "2025-06-12": false,
-        "2025-06-15": false,
+        "2025-06-20": false,
+        "2025-06-22": false,
+        "2025-06-25": false,
     });
 
     const days = eachDayOfInterval({
