@@ -182,7 +182,7 @@ function Index({ headerData, bodyData, status }) {
                                     <div className="py-16 text-center">
                                         <h3 className="text-lg font-medium text-gray-900 mb-2">No bookings found</h3>
                                         <p className="text-gray-600 mb-6">You don't have any {activeTab} bookings at the moment</p>
-                                        <Link href={route('landing-page.index')}>
+                                        <Link href={route('landing.page.index')}>
                                             <Button variant="primary">Browse Rentals</Button>
                                         </Link>
                                     </div>

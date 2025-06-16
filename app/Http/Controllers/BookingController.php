@@ -8,9 +8,12 @@ use App\Models\RentalAddItem;
 use App\Models\BookingStatus;
 use App\Services\BookingService;
 use Illuminate\Support\Facades\DB;
+use App\Http\Traits\DateHelpers;
 
 class BookingController extends Controller
 {
+    use DateHelpers;
+
     protected $booking_service;
 
     public function __construct(BookingService $booking_service)
@@ -21,63 +24,76 @@ class BookingController extends Controller
     public function bookingStore(Request $request)
     {
         // validate request
-        // $validated = $request->validated();
+        $validated = $request->validate([
+            'item_uuid' => 'nullable',
+            'startDate' => 'required',
+            'endDate' => 'required',
+            'startTime' => 'required',
+            'duration' => 'required|string',
+            'partial_total' => 'required',
+            'duration_quantity' => 'nullable|integer'
+        ]);
 
-        // $item = RentalAddItem::where('uuid', $validated['item_uuid'])->first();
-        // $status = BookingStatus::where('name', 'pending')->first();
+        $item = RentalAddItem::where('uuid', $request->only('item_uuid'))->first();
+
+        $status = BookingStatus::where('name', 'pending')->first();
         
-        // if(is_null($item)) return back()->with('error', 'Item not found!');
+        if(is_null($item)) return back()->with('error', 'Item not found!');
 
-        // if(is_null($status)) return back()->with('error', 'Pending status does not exists');
+        if(is_null($status)) return back()->with('error', 'Pending status does not exists');
 
-        // // store requests to session
-        // $request->session()->put('booking_data', $validated + [
-        //     'category_id' => $item->category_id,
-        //     'rental_listing_id' => $item->id,
-        //     'status' => $status->id,
-        //     'partial_total' => $request->partial_total,
-        //     'service_fee' => $request->service_fee,
-        //     'total_cost' => $request->total_cost,
-        //     'duration' => $request->duration,
-        //     'drop_location' => is_null($validated['drop_off_location']) ?  $validated['pick_up_location'] : $validated['pick_up_location']
-        // ]);
+        // compute date duration
+        $duration = $this->getDurationByDay($request->startDate, $request->endDate);
 
-        return redirect(route('cart.index'));
+        // store requests to session
+        $request->session()->put('booking_data', $request->only(
+            'startDate', 'endDate', 'startTime', 'duration'
+        ) + [
+            'category_id' => $item->category_id,
+            'rental_listing_id' => $item->id,
+            'status' => $status->id,
+            'partial_total' => $request->partial_total,
+            'service_fee' => 0,
+            'total_cost' => $request->partial_total,
+            'duration_quantity' => $duration,
+        ]);
+
+        // dd($request->session()->get('booking_data'));
+
+        return redirect(route('checkout.item'));
     }
 
     public function checkOutBooking(Request $request)
     {
+        if(!$request->session()->has('booking_data')) return;
+
+
+        // validate checkout inputs
         
-        if($request->session()->has('booking_data')){
 
-            $data = $request->session()->get('booking_data');
+        $data = $request->session()->get('booking_data');
 
-            DB::transaction(function() use ($data, $request){ 
+            $this->booking_service->storeBooking([
+                'category_id' => $data['category_id'],
+                'rental_listing_id' => $data['rental_listing_id'],
+                // 'booked_by' => $request->booked_by,
+                'booked_by' => 1,
+                'status' => $data['status'],
+                'startDate' => $data['startDate'],
+                'startTime' => $data['startTime'],
+                'endDate' => $data['endDate'],
+                'endTime' => $data['startTime'],
+                'service_fee' => $data['service_fee'],
+                'total_cost' => $data['total_cost'],
+                'partial_total' => $data['partial_total'],
+                'duration_quantity' => $data['duration_quantity'],
+                'duration_type' => $data['duration']
+            ]);
 
-                $this->booking_service->storeBooking([
-                    'category_id' => $data['category_id'],
-                    'rental_listing_id' => $data['rental_listing_id'],
-                    'booked_by' => $request->booked_by,
-                    'status' => $data['status'],
-                    'pick_up_date' => $data['pick_up_date'],
-                    'pick_up_time' => $data['pick_up_time'],
-                    'pick_up_location' => $data['pick_up_location'],
-                    'drop_off_date' => $data['drop_off_date'],
-                    'drop_off_time' => $data['drop_off_time'],
-                    'drop_off_location' => $data['drop_location'],
-                    'service_fee' => $data['service_fee'],
-                    'total_cost' => $data['total_cost'],
-                    'partial_total' => $data['partial_total'],
-                    'duration' => $data['duration']
-                ]);
+        $request->session()->forget(['booking_data']);
 
-            });
-
-            $request->session()->forget(['booking_data']);
-        }
-
-        return redirect(route('cart.index'));
-        // return redirect(route('reservations.index'))->with('success', 'sucessfully booked a reservation');
+        // return redirect(route('dashboard'));
+        return back();
     }
 
     public function calendar()

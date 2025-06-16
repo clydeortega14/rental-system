@@ -1,4 +1,5 @@
 import { TimeSlot } from '@/types/rental';
+import { formatTimeLocale } from '@/utils/dateUtils';
 import React from 'react'
 
 

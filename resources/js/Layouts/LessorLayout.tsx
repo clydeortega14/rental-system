@@ -17,6 +17,8 @@ interface LessorLayoutProps {
   reservationChartData?: any[];
   ratingsChartData?: any[];
   isLessorRegistered?: boolean;
+  initialActiveView?: string;
+  categories?: any[];
 }
 
 export default function LessorLayout({
@@ -26,11 +28,13 @@ export default function LessorLayout({
   reservationChartData,
   ratingsChartData,
   isLessorRegistered = false,
+  initialActiveView = isLessorRegistered ? "Dashboard" : "Profile",
+  categories = [],
 }: LessorLayoutProps) {
+console.log(categories);
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeView, setActiveView] = useState(
-    isLessorRegistered ? "Dashboard" : "Profile"
-  );
+  const [activeView, setActiveView] = useState(initialActiveView);
 
   useEffect(() => {
     document.body.style.overflow = sidebarOpen ? "hidden" : "";
@@ -48,7 +52,7 @@ export default function LessorLayout({
           />
         );
       case "Properties":
-        return <Properties />;
+        return <Properties categories={categories} />;  // <-- pass categories here
       case "Reservations":
         return <Reservations />;
       case "Invoice":

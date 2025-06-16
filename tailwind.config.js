@@ -27,9 +27,14 @@ export default {
                     '0%, 100%': { transform: 'translateY(0)' },
                     '50%': { transform: 'translateY(-10px)' },
                 },
+				slideLeft: {
+				'0%': { transform: 'translateX(0%)' },
+				'100%': { transform: 'translateX(-50%)' },
+				},
             },
             animation: {
                 float: 'float 3s ease-in-out infinite',
+				'slide-left': 'slideLeft 30s linear infinite',
             },
     		colors: {
 				'jaba-yellow': '#feb008',

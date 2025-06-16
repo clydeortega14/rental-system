@@ -3,36 +3,37 @@
 namespace App\Http\Traits\CustomFields;
 
 use App\Models\CustomField;
-use App\Http\Traits\Helper;
 use App\Models\CustomFieldValue;
+use App\Http\Traits\Helper;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\Log;
 
-trait HasCustomFieldValues {
-
+trait HasCustomFieldValues
+{
     use Helper;
 
-    public function fields() : MorphMany
+    public function fields(): MorphMany
     {
         return $this->morphMany(CustomFieldValue::class, 'custom_field_valueable');
     }
 
     public function getFieldsWithValue()
     {
-        return $this->fields()->select(
-            'id', 
-            'custom_field_id', 
-            'type', 
-            'string_answer',
-            'boolean_answer',
-            'decimal_answer', 
-            'date_answer',
-            'time_answer',
-            'date_time_answer',
-            'number_answer',
-            
-        )
-        ->with('customField:id,name,label,type,slug,string_answer,boolean_answer,decimal_answer,date_answer,time_answer,number_answer')
-        ->get();
+        return $this->fields()
+            ->select(
+                'id',
+                'custom_field_id',
+                'type',
+                'string_answer',
+                'boolean_answer',
+                'decimal_answer',
+                'date_answer',
+                'time_answer',
+                'date_time_answer',
+                'number_answer',
+            )
+            ->with('customField:id,name,label,type,slug')
+            ->get();
     }
 
     protected static function booted()
@@ -43,19 +44,21 @@ trait HasCustomFieldValues {
             }
         });
     }
+
     public function addCustomFields($customFields)
     {
-        foreach ($customFields as $index => $field) {
-            // if (! is_array($field)) {
-            //     $field = (array)$field;
-            // }
+        foreach ($customFields as $slug => $value) {
+            $customField = CustomField::where('slug', $slug)->first();
 
-            $customField = CustomField::where('slug', $index)->first();
+            if (!$customField) {
+                Log::warning("Custom field with slug '{$slug}' not found. Skipping...");
+                continue;
+            }
 
             $customFieldValue = [
                 'type' => $customField->type,
                 'custom_field_id' => $customField->id,
-                $this->getCustomFieldValueKey($customField->type) => $field,
+                $this->getCustomFieldValueKey($customField->type) => $value,
             ];
 
             $this->fields()->create($customFieldValue);
@@ -64,20 +67,21 @@ trait HasCustomFieldValues {
 
     public function updateCustomFields($customFields)
     {
-        
-        foreach ($customFields as $index => $field) {
-            // if (! is_array($field)) {
-            //     $field = (array)$field;
-            // }
+        foreach ($customFields as $slug => $value) {
+            $customField = CustomField::where('slug', $slug)->first();
 
-            $customField = CustomField::where('slug', $index)->first();
+            if (!$customField) {
+                Log::warning("Custom field with slug '{$slug}' not found during update. Skipping...");
+                continue;
+            }
+
             $customFieldValue = $this->fields()->firstOrCreate([
                 'custom_field_id' => $customField->id,
                 'type' => $customField->type,
             ]);
 
-            $type = $this->getCustomFieldValueKey($customField->type);
-            $customFieldValue->$type = $field;
+            $typeKey = $this->getCustomFieldValueKey($customField->type);
+            $customFieldValue->$typeKey = $value;
             $customFieldValue->save();
         }
     }
@@ -86,19 +90,14 @@ trait HasCustomFieldValues {
     {
         return $this->fields()
             ->with('customField')
-            ->whereHas('customField', function ($query) use ($slug) {
-                $query->where('slug', $slug);
-            })->first();
+            ->whereHas('customField', fn($query) => $query->where('slug', $slug))
+            ->first();
     }
 
     public function getCustomFieldValueBySlug($slug)
     {
         $value = $this->getCustomFieldBySlug($slug);
 
-        if ($value) {
-            return $value->defaultAnswer;
-        }
-
-        return null;
-    }   
+        return $value ? $value->defaultAnswer : null;
+    }
 }

@@ -7,17 +7,25 @@ import banner from '@/../../resources/img/banner/banner1.png'
 import icon from '@/../../resources/img/notVerifiedv1.png'
 
 export default function Dashboard({ auth }: PageProps) {
+
+    console.log(auth)
+
     return (
         <AuthenticatedLayout
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Dashboard
+                    Dashboardss
                 </h2>
             }
         >
             <Head title="Dashboard" />
-
+            <button
+                onClick={() => (window.location.href = "/UserProfile")}
+                className="px-4 py-2 bg-blue-600 text-white rounded"
+            >
+                Go to User Profile
+            </button>
             <div className="py-12 min-h-screen">
                 <div className="max-w-8xl mx-auto sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 items-start">

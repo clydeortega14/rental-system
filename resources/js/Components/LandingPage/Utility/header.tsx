@@ -51,7 +51,7 @@ const TopNavigation = ({ auth, categories }: PageProps<{categories:Category[]}>)
           <Link href="/" className="text-gray-700 hover:text-orange-500 transition">Home</Link>
 
           {/* Categories Dropdown */}
-          <div className="relative group">
+          {/* <div className="relative group">
             <div className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition cursor-pointer">
               <span>Categories</span>
               <svg className="w-4 h-4 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -67,14 +67,14 @@ const TopNavigation = ({ auth, categories }: PageProps<{categories:Category[]}>)
                     href={`${route('rental.browser.index', category.name)}`}
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100"
                   >
-                    {category.detail.label}
+                    {category.detail?.label ?? 'No Label'}
                   </Link>
                 ))
               ) : (
                 <div className="px-4 py-2 text-sm text-gray-400">No categories found</div>
               )}
             </div>
-          </div>
+          </div> */}
 
           <Link href="/about-us" className="text-gray-700 hover:text-orange-500 transition">About Us</Link>
           <Link href="/contact-us" className="text-gray-700 hover:text-orange-500 transition">Contact Us</Link>

@@ -19,19 +19,17 @@ class Booking extends Model
         'rental_listing_id',
         'booked_by',
         'status',
+        'start_date',
+        'start_time',
+        'end_date',
+        'end_time',
         'completed_at',
         'rating_reminder_sent_at',
-        'pick_up_date',
-        'pick_up_time',
-        'pick_up_location',
-        'drop_off_date',
-        'drop_off_time',
-        'drop_off_location',
-        'is_rescheduled',
         'service_fee',
         'total_cost',
         'partial_total',
-        'duration'
+        'duration',
+        'duration_type'
     ];
 
 

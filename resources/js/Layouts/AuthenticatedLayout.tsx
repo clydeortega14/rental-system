@@ -19,6 +19,8 @@ export default function Authenticated({
         useState(false);
     const [open, setOpen] = useState(true);
 
+
+
     return (
         <>
             <div className="relative">

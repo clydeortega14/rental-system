@@ -1,4 +1,5 @@
 export interface User {
+    submitForm: any;
     id: number;
     name: string;
     email: string;

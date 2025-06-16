@@ -26,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'google_id',
         'avatar',
+        'submitForm',
     ];
 
     /**
@@ -36,6 +37,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        'active',
     ];
 
     /**
@@ -48,6 +50,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'active' => 'boolean',
         ];
     }
 
@@ -61,15 +64,43 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(UserContactDetail::class, 'user_id');
     }
+    
+    public function signUpForm()
+    {
+        return $this->hasOne(SignUpForm::class, 'user_id');
+    }
 
     public function userValidIds()
     {
-       
+
         return $this->hasMany(UserValidId::class);
     }
     public function rentalAddItems(): HasMany
     {
-        return $this->hasMany(RentalAddItem::class,'user_id');
+        return $this->hasMany(RentalAddItem::class, 'user_id');
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_role',);
+    }
+
+    public function hasRole($role)
+    {
+        return $this->roles->contains('slug', $role);
+    }
+
+    public function hasPermission($permission)
+    {
+        return $this->roles->flatMap->permissions->contains('slug', $permission);
+    }
+
+    public function hasAnyPermission(array $permissions)
+    {
+        if (is_array($permissions)) {
+            return $this->roles->flatMap->permissions->whereIn('slug', $permissions)->count() > 0;
+        }
+        return $this->hasPermission($permissions);
     }
     //added ratings relations
     public function givenRatings()
@@ -86,4 +117,5 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->receivedRatings()->avg('rating');
     }
+    
 }

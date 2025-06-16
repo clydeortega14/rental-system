@@ -14,8 +14,9 @@ import ItemSpecification from "@/Components/Renter/ItemSpecification";
 import ReviewsSection from "./ReviewsSection";
 import SimilarItems from "./SimilarItems";
 import { similarItems } from "@/data/similarItems";
-import { Head, useForm } from "@inertiajs/react";
-import { formatPrice } from "@/utils/dateUtils";
+import { Head, useForm, usePage } from "@inertiajs/react";
+import { computeDateBetweenTwoDates, formatPrice } from "@/utils/dateUtils";
+import RentalCalendar from "@/Components/Renter/RentalCalendar";
 
 const navigation = {
     categories: [],
@@ -38,7 +39,9 @@ export default function View({
     const [quantity, setQuantity] = useState(1);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
-    const {post} = useForm({})
+    const [selectedEndDate, setSelectedEndDate] = useState<string | null>(null);
+    
+    const session_error_message = usePage<PageProps>().props.flash.error_message;
     
     const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
         startDate: null,
@@ -46,10 +49,15 @@ export default function View({
         startTime: null,
         endTime: null,
         duration: 'daily',
-        quantity: 1
+        quantity: 1,
+        duration: 'daily'
     });
 
     const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[duration]);
+
+    const {post, errors, processing } = useForm({});
+
+    
 
     const [value, setValue] = useState({
         startDate: new Date(),
@@ -66,9 +74,19 @@ export default function View({
     };
 
     const handleDateSelect = (date: string) => {
-        setBookingDetails({...bookingDetails, startDate: new Date(date)})
-        setSelectedDate(date);
-        setSelectedTimeSlot(null); // Reset time slot when date changes
+
+        let formatDate = new Date(date);
+
+        if(bookingDetails.startDate === null){
+            setBookingDetails({...bookingDetails, startDate: formatDate})
+            setSelectedDate(date);
+            setSelectedTimeSlot(null); // Reset time slot when date changes
+            setSelectedEndDate(null)
+        }else{
+            setBookingDetails({...bookingDetails, endDate: formatDate});
+            setSelectedEndDate(date);
+        }
+        
     };
 
     const handleTimeSlotSelect = (timeSlot: TimeSlot) => {
@@ -82,12 +100,51 @@ export default function View({
         const basePrice = item.price[duration];
 
         let calculate_total: number = Number(basePrice) * quantity;
-        setCalculatedTotal(formatPrice(calculate_total));
+        setCalculatedTotal(calculate_total);
 
     }, [duration, quantity]);
 
+    useEffect( () => {
+
+        if(bookingDetails.endDate){
+            if(bookingDetails.endDate < bookingDetails.startDate) {
+                setSelectedEndDate(null)
+                setBookingDetails({...bookingDetails, endDate: null})
+            }
+
+            if(bookingDetails.startDate === null)
+            {
+                setSelectedEndDate(null);
+            }
+        }
+        
+    }, [bookingDetails]);
+
+    useEffect( () => {
+
+            // const durationText = computeDateBetweenTwoDates(selectedDate, selectedEndDate)s
+
+            if(selectedDate === null){
+                setBookingDetails({...bookingDetails, startDate: selectedDate});
+                // setBookingDetails({...bookingDetails, endDate: null})
+                setSelectedEndDate(null);
+            }
+
+    }, [selectedDate, selectedEndDate])
+
     const handleBookNow: FormEventHandler = (e) => {
-        post(route('booking.store'))
+        post(route('booking.store', {
+            item_uuid: item.uuid,
+            startDate: bookingDetails.startDate,
+            endDate: bookingDetails.endDate,
+            startTime: bookingDetails.startTime,
+            duration: bookingDetails.duration,
+            duration_quantity: 1,
+            partial_total: calculatedTotal
+        }), {
+            preserveScroll: true,
+            preserveState: true
+        })
     };
 
 //   useEffect( () => {
@@ -120,6 +177,13 @@ export default function View({
         <RenterLayout>
             
             <Head title={"Item Detail"} />
+            {errors.item_uuid && <p>{errors.item_uuid}</p>}
+            {errors.startDate && <p>{errors.startDate}</p>}
+            {errors.endDate && <p>{errors.endDate}</p>}
+            {errors.startTime && <p>{errors.startTime}</p>}
+            {errors.duration && <p>{errors.duration}</p>}
+            {errors.partial_total && <p>{errors.partial_total}</p>}
+            <p>{session_error_message}</p>
 
             <div className="max-w-7xl mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -153,7 +217,7 @@ export default function View({
                             onSelectDuration={handleDurationChange} 
                         />
                     
-                        <div className="mb-6">
+                        {/* <div className="mb-6">
                             <h3 className="text-lg font-semibold mb-3">Duration Period</h3>
                             <div className="flex items-center">
                             <button 
@@ -171,19 +235,26 @@ export default function View({
                                 +
                             </button>
                             </div>
-                        </div>
+                        </div> */}
                     
-                        <DatePicker 
+                        {/* <DatePicker 
                             availabilityData={availabilityData} 
                             selectedDate={selectedDate} 
                             onSelectDate={handleDateSelect} 
+                        /> */}
+
+                        <RentalCalendar
+                            selectedDate={selectedDate}
+                            selectedEndDate={selectedEndDate}
+                            onSelectDate={handleDateSelect}
+                            setSelectedEndDate={setSelectedDate}
                         />
                         
                         {selectedDate && (
                             <TimeSlots
-                            timeSlots={timeSlots} 
-                            selectedTimeSlot={selectedTimeSlot} 
-                            onSelectTimeSlot={handleTimeSlotSelect} 
+                                timeSlots={timeSlots} 
+                                selectedTimeSlot={selectedTimeSlot} 
+                                onSelectTimeSlot={handleTimeSlotSelect} 
                             />
                         )}
                         
@@ -192,6 +263,7 @@ export default function View({
                             itemPrice={item.price}
                             onBookNow={handleBookNow}
                             calculatedTotal={calculatedTotal}
+                            processing={processing}
                         />
                     </div>
                 </div>

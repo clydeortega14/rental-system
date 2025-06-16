@@ -18,7 +18,17 @@ class UserCompanyInformation extends Model
         'user_id',
         'name',
         'email',
-        'tin'
+        'tin',
+        'business_type',
+        'business_reg_number',
+        'business_address',
+        'street',
+        'postal_code',
+        'region',
+        'province',
+        'city',
+        'barangay',
+        'country',
 
     ];
 
