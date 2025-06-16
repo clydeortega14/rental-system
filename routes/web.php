@@ -96,11 +96,7 @@ Route::middleware([
 ])->group(function () {
 
 
-
-
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
-
-
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     

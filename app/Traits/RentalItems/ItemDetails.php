@@ -48,6 +48,11 @@ trait ItemDetails {
             })->all()
         ];
 
+
+        // $unavailable_dates = $find_item->bookings()->select('start_date')->pluck('start_date')->toArray();
+
+        // return $unavailable_dates;
+
         return Inertia::render('Item/View', ['item' => $item_detail]);
     }
 

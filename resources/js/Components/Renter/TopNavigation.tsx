@@ -4,6 +4,7 @@ import { Link, usePage } from '@inertiajs/react'
 import { Menu, Search, ShoppingCart as CartIcon, X, LogIn, Signature } from 'lucide-react';
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import logoWeb from '../../../img/logo-web.png';
+import { BiLock, BiUser } from 'react-icons/bi';
 
 const TopNavigation = () => {
 
@@ -26,8 +27,20 @@ const TopNavigation = () => {
 
   const [rightNavs, setRightNavs] = useState([
     // {title: 'Shopping Cart', link: route('cart.index'), display:  user === undefined || user === null ? false : true, icon: <CartIcon />},
-    {title: 'Sign In', link: route('login'), display: user !== undefined || user !== null ? false : true, icon:  <LogIn />},
-    {title: 'Sign Up', link: route('register'), display:  user !== undefined || user !== null ? false : true, icon: <Signature />},
+    {
+      title: 'Sign In', 
+      link: route('login'), 
+      display: user !== undefined || user !== null ? false : true, 
+      icon:  <BiUser />,
+      className: 'flex items-center gap-1 px-4 py-2 rounded-md bg-gray-100 text-gray-800 hover:bg-gray-200'
+    },
+    {
+      title: 'Sign Up', 
+      link: route('register'), 
+      display:  user !== undefined || user !== null ? false : true, 
+      icon: <BiLock />,
+      className: 'flex items-center gap-1 px-4 py-2 rounded-md bg-orange-500 text-white hover:bg-orange-600'
+    },
     
     // {title: 'Avatar', link: route('cart.index'), display:  user === undefined ? false : true, },
   ])
@@ -61,19 +74,25 @@ const TopNavigation = () => {
                 ))}
               </nav>
 
-              <div className="flex items-center space-x-4">
-                {
-                  rightNavs.map((rightNav, index) => (
+              <div className="hidden md:flex col-span-3 justify-end space-x-4">
+                { user ? (
+                  <Link
+                    href={route('dashboard')}
+                    className="text-orange-600 font-semibold"
+                  >
+                    Dashboard
+                  </Link>
+                ): (
+                    rightNavs.map((rightNav, index) => (
                     <div key={index}>
-                      {<Link href={rightNav.link} className="text-gray-700 hover:text-blue-600 transition-colors duration-300">
-                      <div className="flex gap-x-2">
+                      {
+                        <Link href={rightNav.link} className={rightNav.className}>
                           {rightNav.icon } { rightNav.title}
-                      </div>
-                       
-                      </Link>}
+                        </Link>
+                      }
                     </div>
                   ))
-                }
+                )}
                 
                 {/* <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-300">
                 Sign Up
