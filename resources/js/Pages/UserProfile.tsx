@@ -1,22 +1,33 @@
 import React from "react";
 
-const UserProfile: React.FC = () => {
-    // Example static user data
-    const user = {
-        name: "Angelo Papas",
-        followers: 24,
-        following: 58,
-        membership: "Silver",
-        wallet: {
-            balance: 1500,
-            vouchers: 5,
-        },
-        rentals: {
-            toPay: 2,
-            toReceive: 1,
-            toReturn: 1,
-            toRate: 3,
-        },
+interface User {
+    name: string;
+    email: string;
+    // Add other fields as needed
+}
+
+interface PageProps {
+    auth: {
+        user: User;
+    };
+}
+
+const UserProfile: React.FC<PageProps> = ({ auth }) => {
+    const user = auth.user;
+
+    // Example fallback data for demonstration
+    const followers = 24;
+    const following = 58;
+    const membership = "Silver";
+    const wallet = {
+        balance: 1500,
+        vouchers: 5,
+    };
+    const rentals = {
+        toPay: 2,
+        toReceive: 1,
+        toReturn: 1,
+        toRate: 3,
     };
 
     return (
@@ -34,10 +45,10 @@ const UserProfile: React.FC = () => {
                     <div className="text-2xl font-bold text-gray-900">
                         {user.name}
                     </div>
-                    <div className="text-sm text-gray-500">{user.membership} Member</div>
+                    <div className="text-sm text-gray-500">{membership} Member</div>
                     <div className="flex space-x-4 mt-1 text-xs text-gray-500">
-                        <span>{user.followers} Followers</span>
-                        <span>{user.following} Following</span>
+                        <span>{followers} Followers</span>
+                        <span>{following} Following</span>
                     </div>
                 </div>
             </div>
@@ -56,25 +67,25 @@ const UserProfile: React.FC = () => {
                 <div className="grid grid-cols-4 gap-4 text-center">
                     <div>
                         <div className="text-2xl font-bold text-gray-900">
-                            {user.rentals.toPay}
+                            {rentals.toPay}
                         </div>
                         <div className="text-xs text-gray-500">To Pay</div>
                     </div>
                     <div>
                         <div className="text-2xl font-bold text-gray-900">
-                            {user.rentals.toReceive}
+                            {rentals.toReceive}
                         </div>
                         <div className="text-xs text-gray-500">To Receive</div>
                     </div>
                     <div>
                         <div className="text-2xl font-bold text-gray-900">
-                            {user.rentals.toReturn}
+                            {rentals.toReturn}
                         </div>
                         <div className="text-xs text-gray-500">To Return</div>
                     </div>
                     <div>
                         <div className="text-2xl font-bold text-gray-900">
-                            {user.rentals.toRate}
+                            {rentals.toRate}
                         </div>
                         <div className="text-xs text-gray-500">To Rate</div>
                     </div>
@@ -87,11 +98,11 @@ const UserProfile: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                         <div className="font-medium text-gray-700">Balance</div>
-                        <div className="text-xl font-bold text-gray-900">₱ {user.wallet.balance.toLocaleString()}</div>
+                        <div className="text-xl font-bold text-gray-900">₱ {wallet.balance.toLocaleString()}</div>
                     </div>
                     <div>
                         <div className="font-medium text-gray-700">Vouchers</div>
-                        <div className="text-xl font-bold text-gray-900">{user.wallet.vouchers} Available</div>
+                        <div className="text-xl font-bold text-gray-900">{wallet.vouchers} Available</div>
                     </div>
                 </div>
             </div>
