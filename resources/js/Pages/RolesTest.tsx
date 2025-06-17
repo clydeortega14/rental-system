@@ -130,6 +130,7 @@ const RolesTest: React.FC<PageProps> = ({ auth }) => {
                         document
                             .querySelector('meta[name="csrf-token"]')
                             ?.getAttribute("content") || "",
+                            "Accept": "application/json",
                 },
             });
 
