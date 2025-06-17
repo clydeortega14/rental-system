@@ -230,4 +230,9 @@ Route::middleware([
         ->name('feedback.confirmation');
     });
 
+    // User Profile Route
+    Route::get('/user-profile', function () {
+        return Inertia::render('UserProfile');
+        })->middleware(['auth', 'verified']);
+
 require __DIR__.'/auth.php';
