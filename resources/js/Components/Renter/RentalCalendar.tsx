@@ -12,9 +12,10 @@ interface RentalCalendarProps {
     onSelectDate: (date: string) => void;
     selectedDate: string;
     selectedEndDate: string;
-    setSelectedEndDate: (d: string | null) => void; 
+    setSelectedEndDate: (d: string | null) => void;
+    unavailableDates: string[];
 }
-const RentalCalendar = ({onSelectDate, selectedDate, selectedEndDate, setSelectedEndDate}: RentalCalendarProps) => {
+const RentalCalendar = ({onSelectDate, selectedDate, selectedEndDate, setSelectedEndDate, unavailableDates}: RentalCalendarProps) => {
   
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [availability, setAvailability] = useState<Availability>({
@@ -106,7 +107,6 @@ const RentalCalendar = ({onSelectDate, selectedDate, selectedEndDate, setSelecte
                 )}
               >
                 {format(day, "d")}
-                
               </div>
             )
           })

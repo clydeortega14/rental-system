@@ -18,12 +18,18 @@ import { Head, useForm, usePage } from "@inertiajs/react";
 import { computeDateBetweenTwoDates, formatPrice } from "@/utils/dateUtils";
 import RentalCalendar from "@/Components/Renter/RentalCalendar";
 
+
+interface IUnavailableDates  {
+    dates: string[]
+}
+
 const navigation = {
     categories: [],
 };
 
 export default function View({
     item,
+    unavailable_dates,
     auth,
     laravelVersion,
     phpVersion,
@@ -31,7 +37,7 @@ export default function View({
     laravelVersion: string; 
     phpVersion: string; 
     item: Item,
-    
+    unavailable_dates: IUnavailableDates
 }>) {
     const [open, setOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,6 +60,8 @@ export default function View({
     });
 
     const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[duration]);
+
+    // console.log(unavailable_dates)
 
     const {post, errors, processing } = useForm({});
 
@@ -248,6 +256,7 @@ export default function View({
                             selectedEndDate={selectedEndDate}
                             onSelectDate={handleDateSelect}
                             setSelectedEndDate={setSelectedDate}
+                            unavailableDates={unavailable_dates}
                         />
                         
                         {selectedDate && (

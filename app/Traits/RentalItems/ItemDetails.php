@@ -4,6 +4,8 @@ namespace App\Traits\RentalItems;
 
 use App\Models\RentalAddItem;
 use Inertia\Inertia;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 trait ItemDetails {
 
@@ -49,11 +51,31 @@ trait ItemDetails {
         ];
 
 
-        // $unavailable_dates = $find_item->bookings()->select('start_date')->pluck('start_date')->toArray();
+        $item_reserved_dates = $find_item->bookings()->select('start_date', 'end_date')->get();
 
-        // return $unavailable_dates;
+        $reserved_date_periods = [];
+        
 
-        return Inertia::render('Item/View', ['item' => $item_detail]);
+        foreach($item_reserved_dates as $reserved_date)
+        {
+            $dates = [];
+
+            $startDate = Carbon::parse($reserved_date->start_date);
+
+            $endDate = Carbon::parse($reserved_date->end_date);
+            
+            $period = CarbonPeriod::create($startDate, $endDate);
+
+            foreach ($period as $p_date) {
+                $dates[] = $p_date->toDateString(); // format: 'Y-m-d'
+                
+            }
+            $reserved_date_periods[] = $dates;
+        }
+        return Inertia::render('Item/View', [
+            'item' => $item_detail,
+            'unavailable_dates' => $reserved_date_periods
+        ]);
     }
 
     public function findItem($uuid)
