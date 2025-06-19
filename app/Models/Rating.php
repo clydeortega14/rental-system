@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use App\Enums\RatingType;
 
 class Rating extends Model
@@ -11,16 +12,19 @@ class Rating extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<string>
+     * @var array
      */
     protected $fillable = [
-        'rating', 
+        'rating',
         'review',
-        'booking_id',
         'rater_id',
-        'ratee_id',
-        'type'
+        'ratee_id',       // for compatibility
+        'booking_id',     // context
+        'type',           // enum
+        'rateable_id',    // New polymorphic
+        'rateable_type',  // New polymorphic
     ];
+
     /**
      * The attributes that should be cast.
      *
@@ -28,30 +32,15 @@ class Rating extends Model
      */
     protected $casts = [
         'rating' => 'integer',
-        'type' => RatingType::class, // Enum
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'type' => RatingType::class,
     ];
 
     /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
+     * Get the rateable entity (polymorphic).
      */
-    protected $with = [
-        'rater',
-        'ratee'
-    ];
-
-    /**
-     * Get the booking that owns the rating.
-     */
-    public function booking(): BelongsTo
+    public function rateable(): MorphTo
     {
-        return $this->belongsTo(Booking::class)->withDefault([
-            'id' => null,
-            'name' => 'Deleted Booking'
-        ]);
+        return $this->morphTo();
     }
 
     /**
@@ -59,28 +48,49 @@ class Rating extends Model
      */
     public function rater(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'rater_id')->withDefault([
-            'id' => null,
-            'name' => 'Anonymous Rater'
-        ]);
+        return $this->belongsTo(User::class, 'rater_id');
     }
 
     /**
-     * Get the user being rated.
+     * Get the user being rated (legacy system).
      */
     public function ratee(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'ratee_id')->withDefault([
-            'id' => null,
-            'name' => 'Former User'
-        ]);
+        return $this->belongsTo(User::class, 'ratee_id');
     }
 
     /**
-     * Scope for ratings of a specific type.
+     * Get the associated booking (optional context).
      */
-    public function scopeOfType($query, $type)
+    public function booking(): BelongsTo
     {
-        return $query->where('type', $type);
+        return $this->belongsTo(Booking::class);
+    }
+
+    /**
+     * Scope for filtering by rateable type.
+     */
+    public function scopeWhereRateableType($query, string $type)
+    {
+        return $query->where('rateable_type', $type);
+    }
+
+    /**
+     * Scope for filtering by rateable ID.
+     */
+    public function scopeWhereRateableId($query, int $id)
+    {
+        return $query->where('rateable_id', $id);
+    }
+
+    /**
+     * Get the average rating for a rateable model.
+     */
+    public static function averageFor(string $rateableType, int $rateableId): float
+    {
+        return static::query()
+            ->whereRateableType($rateableType)
+            ->whereRateableId($rateableId)
+            ->avg('rating') ?? 0.0;
     }
 }

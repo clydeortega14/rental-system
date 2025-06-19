@@ -39,7 +39,7 @@ export default function Create({ auth, booking, ratingTypes, existingRating }: P
     };
 
     return (
-        <AuthenticatedLayout user={auth.user as import("c:/xampp/htdocs/rental-system/resources/js/types/index").User}>
+        <AuthenticatedLayout user={auth.user as unknown as import("c:/xampp/htdocs/rental-system/resources/js/types/index").User}>
             <div className="py-8 bg-gray-50 min-h-screen">
                 <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="bg-white shadow-xl rounded-lg overflow-hidden">
