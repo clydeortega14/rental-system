@@ -36,15 +36,15 @@ export interface DateAvailability {
 export type RentalDuration = 'hourly' | 'daily' | 'weekly';
 
 export interface BookingDetails {
-  id: string;
-  itemId: string;
-  userId: string;
-  startDate: Date;
-  startTime?: Date | null;
+  id?: string;
+  itemId?: string;
+  userId?: string;
+  startDate?: Date | null;
+  startTime?: String | null;
   endDate?: Date | null;
   endTime?: Date | null;
   status: 'pending' | 'confirmed' | 'canceled' | 'completed';
-  totalPrice: number;
+  totalPrice?: number;
   duration?: 'hourly' | 'daily' | 'weekly';
   quantity?: number;
 }

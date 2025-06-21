@@ -13,17 +13,12 @@ interface RentalCalendarProps {
     selectedDate: string;
     selectedEndDate: string;
     setSelectedEndDate: (d: string | null) => void;
-    unavailableDates: string[];
+    unavailableDates: Availability;
 }
 const RentalCalendar = ({onSelectDate, selectedDate, selectedEndDate, setSelectedEndDate, unavailableDates}: RentalCalendarProps) => {
   
     const [currentMonth, setCurrentMonth] = useState(new Date());
-    const [availability, setAvailability] = useState<Availability>({
-        // Example unavailable dates
-        "2025-06-20": false,
-        "2025-06-22": false,
-        "2025-06-25": false,
-    });
+    const [availability, setAvailability] = useState<Availability>(unavailableDates);
 
     const days = eachDayOfInterval({
         start: startOfMonth(currentMonth),
@@ -89,7 +84,6 @@ const RentalCalendar = ({onSelectDate, selectedDate, selectedEndDate, setSelecte
                   )}
               >
                 {format(day, "d")}
-                
               </div>
               )
             }

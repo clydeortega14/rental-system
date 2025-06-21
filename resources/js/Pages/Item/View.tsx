@@ -48,6 +48,7 @@ export default function View({
     const [selectedEndDate, setSelectedEndDate] = useState<string | null>(null);
     
     const session_error_message = usePage<PageProps>().props.flash.error_message;
+    const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[duration]);
     
     const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
         startDate: null,
@@ -56,16 +57,13 @@ export default function View({
         endTime: null,
         duration: 'daily',
         quantity: 1,
-        duration: 'daily'
+        status: 'pending',
+        totalPrice: item.price[duration]
     });
 
-    const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[duration]);
-
-    // console.log(unavailable_dates)
+    
 
     const {post, errors, processing } = useForm({});
-
-    
 
     const [value, setValue] = useState({
         startDate: new Date(),
@@ -111,10 +109,12 @@ export default function View({
         setCalculatedTotal(calculate_total);
 
     }, [duration, quantity]);
+    
 
+    // side effects on booking details
     useEffect( () => {
 
-        if(bookingDetails.endDate){
+        if(bookingDetails.endDate && bookingDetails.startDate){
             if(bookingDetails.endDate < bookingDetails.startDate) {
                 setSelectedEndDate(null)
                 setBookingDetails({...bookingDetails, endDate: null})
@@ -128,6 +128,8 @@ export default function View({
         
     }, [bookingDetails]);
 
+
+    // side effects for selected start date and selected end date
     useEffect( () => {
 
             // const durationText = computeDateBetweenTwoDates(selectedDate, selectedEndDate)s
@@ -136,6 +138,18 @@ export default function View({
                 setBookingDetails({...bookingDetails, startDate: selectedDate});
                 // setBookingDetails({...bookingDetails, endDate: null})
                 setSelectedEndDate(null);
+            }
+
+            if(selectedEndDate !== null && selectedDate !== null)
+            {
+                let startOfDate = new Date(selectedDate);
+                let endOfDate = new Date(selectedEndDate);
+
+                const { totalDays } = computeDateBetweenTwoDates(startOfDate, endOfDate);
+
+                bookingDetails.totalPrice && setBookingDetails({...bookingDetails, quantity: totalDays, totalPrice: item.price[duration] * totalDays});
+                // bookingDetails.totalPrice && setBookingDetails({...bookingDetails, totalPrice: bookingDetails.totalPrice * totalDays});
+
             }
 
     }, [selectedDate, selectedEndDate])

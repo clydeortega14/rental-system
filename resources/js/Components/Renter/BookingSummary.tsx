@@ -41,14 +41,19 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal, 
           <span className="text-gray-600">Duration</span>
           <span className="font-medium">
             {bookingDetails.quantity} {getDurationText(bookingDetails.duration)}
-            {bookingDetails.quantity > 1 ? 's' : ''}
+            {bookingDetails.quantity && bookingDetails.quantity > 1 ? 's' : ''}
           </span>
         </div>
         
-        <div className="flex justify-between">
-          <span className="text-gray-600">Price per {getDurationText(bookingDetails.duration)}</span>
-          <span className="font-medium">{formatPrice(itemPrice[bookingDetails.duration])}</span>
-        </div>
+        {
+          bookingDetails.duration && (
+            <div className="flex justify-between">
+              <span className="text-gray-600">Price per {getDurationText(bookingDetails.duration)}</span>
+              <span className="font-medium">{formatPrice(itemPrice[bookingDetails.duration])}</span>
+            </div>
+          )
+        }
+        
         
         {hasSelectedDateTime && (
           <>
@@ -72,12 +77,17 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal, 
           </>
         )}
         
-        <div className="border-t border-gray-200 pt-3 mt-3">
-          <div className="flex justify-between font-semibold text-lg">
-            <span>Total</span>
-            <span>{formatPrice(calculatedTotal)}</span>
-          </div>
-        </div>
+        {
+          bookingDetails.totalPrice && (
+            <div className="border-t border-gray-200 pt-3 mt-3">
+              <div className="flex justify-between font-semibold text-lg">
+                <span>Total</span>
+                <span>{formatPrice(bookingDetails.totalPrice)}</span>
+              </div>
+            </div>
+          )
+        }
+        
       </div>
 
       <Button onClick={onBookNow} className={hasSelectedDateTime ? 'cursor-not-allowed bg-gray-400' : 'bg-blue-600'} disabled={processing}>
