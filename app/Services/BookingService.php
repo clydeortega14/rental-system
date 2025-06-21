@@ -104,40 +104,56 @@ class BookingService {
     {
         return $this->getBookings()->map(function($booking){
             return [
-
                 'id' => $booking->id,
-                'uuid' => $booking->uuid,
-                'category' => [
-                    'id' => $booking->category->id,
-                    'name' => $booking->category->name
+                'rentalItem' => [
+                    'id' => $booking->rental_listing_id,
+                    'imageUrl' => count($booking->rentalListing->attachment) > 0 ?  config('app.url').'/storage/'.$booking->rentalListing->attachment[0]->file_path : 'https://images.pexels.com/photos/147411/italy-mountains-dawn-daybreak-147411.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                    'name' => $booking->rentalListing->itemName
                 ],
-                'rental_item' => [
-                    'id' => $booking->rentalListing->id,
-                    'itemName' => $booking->rentalListing->itemName,
-                    'images' => $booking->rentalListing->attachment->map(function($item){
-                        return [
-                            'src' => config('app.url').'/storage/'.$item->file_path
-                        ];
-                    }),
-                ],
-                'booked_by' => [
-                    'id' => $booking->bookedBy->id,
-                    'name' => $booking->bookedBy->name
-                ],
-                'status' => [
-                    'id' => $booking->bookingStatus->id,
-                    'name' => $booking->bookingStatus->name,
-                    'className' => $booking->bookingStatus->class_name
-                ],
-                'completed_at' => $booking->completed_at,
-                'pick_up_date' => $booking->format_pick_up,
-                'pick_up_time' => $booking->pick_up_time,
-                'pick_up_location' => $booking->pick_up_location,
-                'drop_off_date' => $booking->format_drop_off,
-                'drop_off_time' => $booking->drop_off_time,
-                'drop_off_location' => $booking->drop_off_location,
-                'is_rescheduled' => $booking->is_rescheduled
+                'itemId' => $booking->rental_listing_id,
+                'userId' => $booking->bookedBy->id,
+                'startDate' =>$booking->start_date,
+                'endDate' => $booking->end_date,
+                'status' => $booking->bookingStatus->name,
+                'totalPrice' => $booking->total_cost
             ];
+
+
+            // return [
+
+            //     'id' => $booking->id,
+            //     'uuid' => $booking->uuid,
+            //     'category' => [
+            //         'id' => $booking->category->id,
+            //         'name' => $booking->category->name
+            //     ],
+            //     'rental_item' => [
+            //         'id' => $booking->rentalListing->id,
+            //         'itemName' => $booking->rentalListing->itemName,
+            //         'images' => $booking->rentalListing->attachment->map(function($item){
+            //             return [
+            //                 'src' => config('app.url').'/storage/'.$item->file_path
+            //             ];
+            //         }),
+            //     ],
+            //     'booked_by' => [
+            //         'id' => $booking->bookedBy->id,
+            //         'name' => $booking->bookedBy->name
+            //     ],
+            //     'status' => [
+            //         'id' => $booking->bookingStatus->id,
+            //         'name' => $booking->bookingStatus->name,
+            //         'className' => $booking->bookingStatus->class_name
+            //     ],
+            //     'completed_at' => $booking->completed_at,
+            //     'pick_up_date' => $booking->format_pick_up,
+            //     'pick_up_time' => $booking->pick_up_time,
+            //     'pick_up_location' => $booking->pick_up_location,
+            //     'drop_off_date' => $booking->format_drop_off,
+            //     'drop_off_time' => $booking->drop_off_time,
+            //     'drop_off_location' => $booking->drop_off_location,
+            //     'is_rescheduled' => $booking->is_rescheduled
+            // ];
         });
     }
 

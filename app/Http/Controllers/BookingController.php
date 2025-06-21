@@ -68,21 +68,28 @@ class BookingController extends Controller
 
         $data = $request->session()->get('booking_data');
 
-            $this->booking_service->storeBooking([
-                'category_id' => $data['category_id'],
-                'rental_listing_id' => $data['rental_listing_id'],
-                'booked_by' => $request->user()->id,
-                'status' => $data['status'],
-                'startDate' => $data['startDate'],
-                'startTime' => $data['startTime'],
-                'endDate' => $data['endDate'],
-                'endTime' => $data['startTime'],
-                'service_fee' => $request->service_fee,
-                'total_cost' => $request->total_cost,
-                'partial_total' => $data['partial_total'],
-                'duration_quantity' => $data['duration_quantity'],
-                'duration_type' => $data['duration']
-            ]);
+
+        // store booking details to database
+        $this->booking_service->storeBooking([
+            'category_id' => $data['category_id'],
+            'rental_listing_id' => $data['rental_listing_id'],
+            'booked_by' => $request->user()->id,
+            'status' => $data['status'],
+            'startDate' => $data['startDate'],
+            'startTime' => $data['startTime'],
+            'endDate' => $data['endDate'],
+            'endTime' => $data['startTime'],
+            'service_fee' => $request->service_fee,
+            'total_cost' => $request->total_cost,
+            'partial_total' => $data['partial_total'],
+            'duration_quantity' => $data['duration_quantity'],
+            'duration_type' => $data['duration']
+        ]);
+
+
+        // online payment processing
+        
+        // sending emails to users
 
         $request->session()->forget(['booking_data']);
 

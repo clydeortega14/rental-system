@@ -15,8 +15,8 @@ import RescheduleForm from "@/Components/Booking/RescheduleForm";
 import {Link} from "@inertiajs/react";
 import RenterLayout from "@/Layouts/RenterLayout";
 import { AlertCircle, Calendar, CheckCircle, ChevronRight, Clock, XCircle } from "lucide-react";
-import { bookings, getItemById } from "@/data/bookingsData";
-import { formatDateDisplay } from "@/utils/dateUtils";
+import { getItemById } from "@/data/bookingsData";
+import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
 import { BookingDetails } from "@/types/rental";
 import Button from "@/Components/Renter/ui/Button";
 import TabPanel from "@/Components/Renter/ui/TabPanel";
@@ -25,7 +25,12 @@ type Header = {
     name: string;
 };
 
-function Index({ headerData, bodyData, status }) {
+interface Props {
+
+    bookings: BookingDetails[]
+}
+
+function Index({ bookings, status }: Props) {
     // Current User state
     const auth = usePage<PageProps>().props.auth;
 
@@ -77,18 +82,18 @@ function Index({ headerData, bodyData, status }) {
     };
 
     const filterBookings = () => {
-            const today = new Date();
+        const today = new Date();
             
-            if (activeTab === 'Upcoming') {
+        if (activeTab === 'Upcoming') {
             return bookings.filter(booking => new Date(booking.endDate) >= today && booking.status !== 'canceled');
-            } else if (activeTab === 'Past') {
+        } else if (activeTab === 'Past') {
             return bookings.filter(booking => new Date(booking.endDate) < today || booking.status === 'canceled');
-            }
-            
-            return bookings;
-        };
-    
-        const filteredBookings = filterBookings();
+        }
+        
+        return bookings;
+    };
+
+    const filteredBookings = filterBookings();
 
     return (
         <RenterLayout user={auth.user}>
@@ -122,20 +127,20 @@ function Index({ headerData, bodyData, status }) {
                             <CustomTable>
                                 {filteredBookings.length > 0 ? (
                                     filteredBookings.map(booking => {
-                                    const item = getItemById(Number(booking.itemId));
+                                    // const item = getItemById(Number(booking.itemId));
                                     return (
                                         <div key={booking.id} className="p-6 hover:bg-gray-50 transition-colors">
                                         <div className="flex flex-col md:flex-row items-start md:items-center">
                                             <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
                                                 <img
-                                                    src={item?.imageUrl}
-                                                    alt={item?.name}
+                                                    src={booking.rentalItem.imageUrl}
+                                                    alt={booking.rentalItem.name}
                                                     className="w-20 h-20 object-cover rounded-lg"
                                                 />
                                             </div>
                                             <div className="flex-grow">
                                                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                                                    <h3 className="text-lg font-semibold text-gray-800">{item?.name}</h3>
+                                                    <h3 className="text-lg font-semibold text-gray-800">{booking.rentalItem.name}</h3>
                                                     <div className="mt-2 md:mt-0">
                                                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(booking.status)}`}>
                                                         {getStatusIcon(booking.status)}
@@ -155,7 +160,7 @@ function Index({ headerData, bodyData, status }) {
                                             </div>
                                             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                                                 <div className="text-gray-800">
-                                                    <span className="font-semibold">Total:</span> ${booking.totalPrice}
+                                                    <span className="font-semibold">Total:</span> {formatPrice( booking.totalPrice)}
                                                 </div>
                                                 <div className="flex mt-4 md:mt-0 space-x-2">
                                                     {booking.status === 'confirmed' && (
