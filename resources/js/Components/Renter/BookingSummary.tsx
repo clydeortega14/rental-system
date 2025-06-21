@@ -90,9 +90,15 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal, 
         
       </div>
 
-      <Button onClick={onBookNow} className={hasSelectedDateTime ? 'cursor-not-allowed bg-gray-400' : 'bg-blue-600'} disabled={processing}>
+      {/* <Button onClick={onBookNow} className={hasSelectedDateTime ? 'cursor-not-allowed bg-gray-400' : 'bg-blue-600'} disabled={processing}>
         {hasSelectedDateTime ? 'Book Now' : 'Select Date & Time'}
-      </Button>
+      </Button> */}
+      { hasSelectedDateTime && (
+        <PrimaryButton onClick={onBookNow} className={'w-full px-4 py-4 text-lg'} disabled={processing}>
+          {processing ? 'Processing...' : 'Submit Booking'}
+        </PrimaryButton>
+      ) }
+      
       
       {/* <button 
         className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all duration-300 ${

@@ -28,7 +28,7 @@ class BookingService {
                     'end_date' => date('Y-m-d', strtotime( $data['endDate'])),
                     'start_time' => $data['startTime'],
                     'end_time' => $data['endTime'],
-                    'total_cost' => $data['partial_total'] * $data['duration_quantity'],
+                    'total_cost' => $data['total_cost'],
                     'duration' => $data['duration_quantity'],
                     'duration_type' => $data['duration_type'],
                     'partial_total' => $data['partial_total'],

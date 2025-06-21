@@ -48,3 +48,17 @@ export interface BookingDetails {
   duration?: 'hourly' | 'daily' | 'weekly';
   quantity?: number;
 }
+
+
+export interface BookingSession {
+  startDate: Date;
+  endDate: Date;
+  startTime: Date;
+  endTime: Date;
+  duration: number;
+  category_id: number;
+  rental_listing_id: number;
+  status: number;
+  partial_total: number;
+  duration_quantity: number;
+}

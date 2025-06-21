@@ -161,8 +161,8 @@ export default function View({
             endDate: bookingDetails.endDate,
             startTime: bookingDetails.startTime,
             duration: bookingDetails.duration,
-            duration_quantity: 1,
-            partial_total: calculatedTotal
+            duration_quantity: bookingDetails.quantity,
+            partial_total: bookingDetails.totalPrice
         }), {
             preserveScroll: true,
             preserveState: true

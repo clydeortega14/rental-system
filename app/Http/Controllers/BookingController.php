@@ -53,21 +53,16 @@ class BookingController extends Controller
             'rental_listing_id' => $item->id,
             'status' => $status->id,
             'partial_total' => $request->partial_total,
-            'service_fee' => 0,
-            'total_cost' => $request->partial_total,
             'duration_quantity' => $duration,
         ]);
-
-        // dd($request->session()->get('booking_data'));
 
         return redirect(route('checkout.item'));
     }
 
     public function checkOutBooking(Request $request)
     {
+        
         if(!$request->session()->has('booking_data')) return;
-
-
         // validate checkout inputs
         
 
@@ -76,15 +71,14 @@ class BookingController extends Controller
             $this->booking_service->storeBooking([
                 'category_id' => $data['category_id'],
                 'rental_listing_id' => $data['rental_listing_id'],
-                // 'booked_by' => $request->booked_by,
-                'booked_by' => 1,
+                'booked_by' => $request->user()->id,
                 'status' => $data['status'],
                 'startDate' => $data['startDate'],
                 'startTime' => $data['startTime'],
                 'endDate' => $data['endDate'],
                 'endTime' => $data['startTime'],
-                'service_fee' => $data['service_fee'],
-                'total_cost' => $data['total_cost'],
+                'service_fee' => $request->service_fee,
+                'total_cost' => $request->total_cost,
                 'partial_total' => $data['partial_total'],
                 'duration_quantity' => $data['duration_quantity'],
                 'duration_type' => $data['duration']
@@ -93,7 +87,7 @@ class BookingController extends Controller
         $request->session()->forget(['booking_data']);
 
         // return redirect(route('dashboard'));
-        return back();
+        return to_route('reservations.index');
     }
 
     public function calendar()
