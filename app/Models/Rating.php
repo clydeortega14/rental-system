@@ -83,4 +83,9 @@ class Rating extends Model
     {
         return $query->where('type', $type);
     }
+
+    public function rateable()
+    {
+        return $this->morphTo();
+    }
 }
