@@ -105,6 +105,7 @@ class BookingService {
         return $this->getBookings()->map(function($booking){
             return [
                 'id' => $booking->id,
+                'uuid' => $booking->uuid,
                 'rentalItem' => [
                     'id' => $booking->rental_listing_id,
                     'imageUrl' => count($booking->rentalListing->attachment) > 0 ?  config('app.url').'/storage/'.$booking->rentalListing->attachment[0]->file_path : 'https://images.pexels.com/photos/147411/italy-mountains-dawn-daybreak-147411.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',

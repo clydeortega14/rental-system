@@ -73,11 +73,11 @@ function Index({ bookings, status }: Props) {
 
     const getStatusIcon = (status: string) => {
         switch (status) {
-        case 'confirmed': return <CheckCircle className="h-5 w-5 text-green-600" />;
-        case 'pending': return <AlertCircle className="h-5 w-5 text-yellow-600" />;
-        case 'canceled': return <XCircle className="h-5 w-5 text-red-600" />;
-        case 'completed': return <CheckCircle className="h-5 w-5 text-blue-600" />;
-        default: return null;
+            case 'confirmed': return <CheckCircle className="h-5 w-5 text-green-600" />;
+            case 'pending': return <AlertCircle className="h-5 w-5 text-yellow-600" />;
+            case 'canceled': return <XCircle className="h-5 w-5 text-red-600" />;
+            case 'completed': return <CheckCircle className="h-5 w-5 text-blue-600" />;
+            default: return null;
         }
     };
 
@@ -89,9 +89,12 @@ function Index({ bookings, status }: Props) {
         } else if (activeTab === 'Past') {
             return bookings.filter(booking => new Date(booking.endDate) < today || booking.status === 'canceled');
         }
-        
         return bookings;
     };
+
+    const handleViewItem = () => {
+        setShowBookingDetailModal(true);
+    }
 
     const filteredBookings = filterBookings();
 
@@ -168,9 +171,9 @@ function Index({ bookings, status }: Props) {
                                                         Cancel
                                                         </Button>
                                                     )}
-                                                    <Link href={`/items/${booking.itemId}`}>
+                                                    <Link href={route('booking.view', booking.uuid)}>
                                                         <Button variant="primary" size="sm">
-                                                        View Item
+                                                            View Item
                                                         </Button>
                                                     </Link>
                                                 </div>

@@ -9,6 +9,7 @@ use App\Models\BookingStatus;
 use App\Services\BookingService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Traits\DateHelpers;
+use App\Models\Booking;
 
 class BookingController extends Controller
 {
@@ -103,6 +104,35 @@ class BookingController extends Controller
         
         return inertia('BookingCalendar', [
             'events' => $events,
+        ]);
+    }
+
+    public function bookingView($uuid)
+    {
+        $booking = Booking::
+        leftJoin('users', 'bookings.booked_by', '=', 'users.id')
+        ->leftJoin('rental_listings as rl', 'bookings.rental_listing_id', '=', 'rl.id')
+        ->leftJoin('booking_statuses as bs', 'bookings.status', '=', 'bs.id')
+        ->select(
+            'bookings.id', 
+            'bookings.uuid',
+            'users.id as customerId',
+            'users.name as customerName', 
+            'bookings.start_date as startDate', 
+            'bookings.start_time as startTime', 
+            'bookings.end_date as endDate', 
+            'bookings.end_time as endTime',
+            'rl.itemName as itemName',
+            'rl.id as itemId',
+            'bs.name as status',
+            'bookings.total_cost as totalPrice'
+        )
+        ->where('bookings.uuid', $uuid)->first();
+
+        if(is_null($booking)) return back()->with('error', 'booking not found!');
+
+        return inertia('BookingView', [
+            'booking' => $booking
         ]);
     }
 }

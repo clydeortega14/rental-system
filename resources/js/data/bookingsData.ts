@@ -15,6 +15,18 @@ export const bookings: BookingDetails[] = [
   },
 ];
 
+
+//
+export const booking: BookingDetails = {
+    id: "BK202506",
+    userId: "Juan Dela Cruz",
+    itemId: "Toyota Vios 2020",
+    startDate: new Date("2025-07-01"),
+    endDate: new Date("2025-07-05"),
+    status: "pending" as const,
+    totalPrice: 12500,
+}
+
 // Helper function to get an item by ID
 export const getItemById = (id: number): RentalItem | undefined => {
   return rentalItems.find(item => item.id === id);

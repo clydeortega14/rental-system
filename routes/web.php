@@ -58,6 +58,12 @@ Route::get('shopping-cart', [CartController::class, 'index'])->name('cart.index'
 
 Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 
+
+// Route Group for lessee 
+Route::middleware(['auth'])->group(function(){
+    Route::get('booking/details/{uuid}', [BookingController::class, 'bookingView'])->name('booking.view');
+});
+
 Route::middleware([
     'auth',
     'verified'

@@ -95,8 +95,6 @@ class RentalItemController extends Controller
         $category_custom_fields = $category->getCustomFields('Category');
 
         if(is_null($category)) return redirect()->back()->with('error', 'Category not found!');
-
-        return $this->getRentalItemsByCategory($category->id);
         
         $categories = $this->category_service->getCategories($category->id);
 

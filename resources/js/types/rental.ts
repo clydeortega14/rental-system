@@ -38,7 +38,10 @@ export type RentalDuration = 'hourly' | 'daily' | 'weekly';
 export interface BookingDetails {
   id?: string;
   itemId?: string;
+  itemName?: string,
   userId?: string;
+  customerId: string;
+  customerName: string;
   startDate?: Date | null;
   startTime?: String | null;
   endDate?: Date | null;
