@@ -9,6 +9,7 @@ use App\Models\BookingStatus;
 use App\Services\BookingService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Traits\DateHelpers;
+use App\Models\Booking;
 
 class BookingController extends Controller
 {
@@ -53,47 +54,48 @@ class BookingController extends Controller
             'rental_listing_id' => $item->id,
             'status' => $status->id,
             'partial_total' => $request->partial_total,
-            'service_fee' => 0,
-            'total_cost' => $request->partial_total,
             'duration_quantity' => $duration,
         ]);
-
-        // dd($request->session()->get('booking_data'));
 
         return redirect(route('checkout.item'));
     }
 
     public function checkOutBooking(Request $request)
     {
+        
         if(!$request->session()->has('booking_data')) return;
-
-
         // validate checkout inputs
         
 
         $data = $request->session()->get('booking_data');
 
-            $this->booking_service->storeBooking([
-                'category_id' => $data['category_id'],
-                'rental_listing_id' => $data['rental_listing_id'],
-                // 'booked_by' => $request->booked_by,
-                'booked_by' => 1,
-                'status' => $data['status'],
-                'startDate' => $data['startDate'],
-                'startTime' => $data['startTime'],
-                'endDate' => $data['endDate'],
-                'endTime' => $data['startTime'],
-                'service_fee' => $data['service_fee'],
-                'total_cost' => $data['total_cost'],
-                'partial_total' => $data['partial_total'],
-                'duration_quantity' => $data['duration_quantity'],
-                'duration_type' => $data['duration']
-            ]);
+
+        // store booking details to database
+        $this->booking_service->storeBooking([
+            'category_id' => $data['category_id'],
+            'rental_listing_id' => $data['rental_listing_id'],
+            'booked_by' => $request->user()->id,
+            'status' => $data['status'],
+            'startDate' => $data['startDate'],
+            'startTime' => $data['startTime'],
+            'endDate' => $data['endDate'],
+            'endTime' => $data['startTime'],
+            'service_fee' => $request->service_fee,
+            'total_cost' => $request->total_cost,
+            'partial_total' => $data['partial_total'],
+            'duration_quantity' => $data['duration_quantity'],
+            'duration_type' => $data['duration']
+        ]);
+
+
+        // online payment processing
+        
+        // sending emails to users
 
         $request->session()->forget(['booking_data']);
 
         // return redirect(route('dashboard'));
-        return back();
+        return to_route('reservations.index');
     }
 
     public function calendar()
@@ -102,6 +104,35 @@ class BookingController extends Controller
         
         return inertia('BookingCalendar', [
             'events' => $events,
+        ]);
+    }
+
+    public function bookingView($uuid)
+    {
+        $booking = Booking::
+        leftJoin('users', 'bookings.booked_by', '=', 'users.id')
+        ->leftJoin('rental_listings as rl', 'bookings.rental_listing_id', '=', 'rl.id')
+        ->leftJoin('booking_statuses as bs', 'bookings.status', '=', 'bs.id')
+        ->select(
+            'bookings.id', 
+            'bookings.uuid',
+            'users.id as customerId',
+            'users.name as customerName', 
+            'bookings.start_date as startDate', 
+            'bookings.start_time as startTime', 
+            'bookings.end_date as endDate', 
+            'bookings.end_time as endTime',
+            'rl.itemName as itemName',
+            'rl.id as itemId',
+            'bs.name as status',
+            'bookings.total_cost as totalPrice'
+        )
+        ->where('bookings.uuid', $uuid)->first();
+
+        if(is_null($booking)) return back()->with('error', 'booking not found!');
+
+        return inertia('BookingView', [
+            'booking' => $booking
         ]);
     }
 }
