@@ -18,12 +18,18 @@ import { Head, useForm, usePage } from "@inertiajs/react";
 import { computeDateBetweenTwoDates, formatPrice } from "@/utils/dateUtils";
 import RentalCalendar from "@/Components/Renter/RentalCalendar";
 
+
+interface IUnavailableDates  {
+    dates: string[]
+}
+
 const navigation = {
     categories: [],
 };
 
 export default function View({
     item,
+    unavailable_dates,
     auth,
     laravelVersion,
     phpVersion,
@@ -31,7 +37,7 @@ export default function View({
     laravelVersion: string; 
     phpVersion: string; 
     item: Item,
-    
+    unavailable_dates: IUnavailableDates
 }>) {
     const [open, setOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,6 +48,7 @@ export default function View({
     const [selectedEndDate, setSelectedEndDate] = useState<string | null>(null);
     
     const session_error_message = usePage<PageProps>().props.flash.error_message;
+    const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[duration]);
     
     const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
         startDate: null,
@@ -50,14 +57,13 @@ export default function View({
         endTime: null,
         duration: 'daily',
         quantity: 1,
-        duration: 'daily'
+        status: 'pending',
+        totalPrice: item.price[duration]
     });
 
-    const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[duration]);
+    
 
     const {post, errors, processing } = useForm({});
-
-    
 
     const [value, setValue] = useState({
         startDate: new Date(),
@@ -103,10 +109,12 @@ export default function View({
         setCalculatedTotal(calculate_total);
 
     }, [duration, quantity]);
+    
 
+    // side effects on booking details
     useEffect( () => {
 
-        if(bookingDetails.endDate){
+        if(bookingDetails.endDate && bookingDetails.startDate){
             if(bookingDetails.endDate < bookingDetails.startDate) {
                 setSelectedEndDate(null)
                 setBookingDetails({...bookingDetails, endDate: null})
@@ -120,6 +128,8 @@ export default function View({
         
     }, [bookingDetails]);
 
+
+    // side effects for selected start date and selected end date
     useEffect( () => {
 
             // const durationText = computeDateBetweenTwoDates(selectedDate, selectedEndDate)s
@@ -128,6 +138,18 @@ export default function View({
                 setBookingDetails({...bookingDetails, startDate: selectedDate});
                 // setBookingDetails({...bookingDetails, endDate: null})
                 setSelectedEndDate(null);
+            }
+
+            if(selectedEndDate !== null && selectedDate !== null)
+            {
+                let startOfDate = new Date(selectedDate);
+                let endOfDate = new Date(selectedEndDate);
+
+                const { totalDays } = computeDateBetweenTwoDates(startOfDate, endOfDate);
+
+                bookingDetails.totalPrice && setBookingDetails({...bookingDetails, quantity: totalDays, totalPrice: item.price[duration] * totalDays});
+                // bookingDetails.totalPrice && setBookingDetails({...bookingDetails, totalPrice: bookingDetails.totalPrice * totalDays});
+
             }
 
     }, [selectedDate, selectedEndDate])
@@ -139,8 +161,8 @@ export default function View({
             endDate: bookingDetails.endDate,
             startTime: bookingDetails.startTime,
             duration: bookingDetails.duration,
-            duration_quantity: 1,
-            partial_total: calculatedTotal
+            duration_quantity: bookingDetails.quantity,
+            partial_total: bookingDetails.totalPrice
         }), {
             preserveScroll: true,
             preserveState: true
@@ -248,6 +270,7 @@ export default function View({
                             selectedEndDate={selectedEndDate}
                             onSelectDate={handleDateSelect}
                             setSelectedEndDate={setSelectedDate}
+                            unavailableDates={unavailable_dates}
                         />
                         
                         {selectedDate && (

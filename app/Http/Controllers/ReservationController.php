@@ -33,8 +33,7 @@ class ReservationController extends Controller
         return Inertia::render('Reservation/Index', [
 
             'headerData' => $headersData,
-            'bodyData' => $bookings
-
+            'bookings' => $bookings
         ]);
     }
 
