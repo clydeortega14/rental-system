@@ -100,7 +100,7 @@ export default function LesseeLayout({ auth }: PageProps) {
             <Suspense fallback={<div className="text-center p-6">Loading profile...</div>}>
               <Profile lessee={lessee} layout="header" />
             </Suspense>
-
+             <LesseeSidebarContent activeTab={activeTab} setActiveTab={setActiveTab}  submitForm={auth.user.submitForm} />
             <TabsList className="flex mt-4 gap-2 border-b border-gray-200 overflow-x-auto flex-nowrap scrollbar-hide">
               {tabs.map((tab) => (
                 <TabsTrigger
