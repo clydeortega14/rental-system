@@ -237,6 +237,8 @@ const RolesTest: React.FC<PageProps> = ({ auth }) => {
                                     onChange={handleChange}
                                     className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                     disabled={isLoading}
+                                    title="Active"
+                                    placeholder="Active"
                                 />
                                 <label className="ml-2 text-sm text-gray-600">
                                     Active
