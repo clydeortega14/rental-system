@@ -155,9 +155,12 @@ Route::middleware([
 
     /* -- Access Rights Routes -- */
     Route::prefix('access-rights')->group(function(){
+
         // Users
         Route::prefix('users')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('users.index');
+            Route::get('/all', [UserController::class, 'all']);
+            Route::put('/{user}/roles', [UserController::class, 'assignRoles']);
         });
 
         // Roles
@@ -172,12 +175,9 @@ Route::middleware([
         });
 
         // Permissions
-        Route::prefix('permissions')->group(function () {
-            Route::get('/', [PermissionController::class, 'index']);
-        });
-
         Route::prefix('permissions')->name('permissions.')->group(function () {
             Route::get('/', [PermissionController::class, 'index'])->name('index');
+            Route::get('/all', [PermissionController::class, 'all']);
             Route::get('/create', [PermissionController::class, 'create'])->name('create');
             Route::post('/', [PermissionController::class, 'store'])->name('store');
             Route::get('/{permission}/edit', [PermissionController::class, 'edit'])->name('edit');
@@ -185,6 +185,20 @@ Route::middleware([
             Route::patch('/{permission}/toggle', [PermissionController::class, 'toggle'])->name('toggle');
             Route::delete('/{permission}', [PermissionController::class, 'destroy'])->name('destroy');
         });
+
+        // My Permissions
+        Route::get('my-permissions', function () {
+            $user = auth()->user();
+            $permissions = $user->roles()
+                ->with('permissions')
+                ->get()
+                ->pluck('permissions')
+                ->flatten()
+                ->pluck('slug')
+                ->unique()
+                ->values();
+            return response()->json($permissions);
+        });        
     });
 
     /* -- Workflows --*/
@@ -230,9 +244,11 @@ Route::middleware([
         ->name('feedback.confirmation');
     });
 
-    // User Profile Route
-    Route::get('/user-profile', function () {
-        return Inertia::render('UserProfile');
-        })->middleware(['auth', 'verified']);
+    // Render routes of Roles, manage user and user profile
+    Route::get('/Roles', fn() => Inertia::render('RolesTest'))->middleware(['auth', 'verified']);
+    Route::get('/ManageUserTest', fn() => Inertia::render('ManageUserTest'))->middleware(['auth', 'verified', 'permission:can-view-user-management']);
+    Route::get('/user-profile', fn() => Inertia::render('UserProfile'))->middleware(['auth', 'verified']);
+
+    
 
 require __DIR__.'/auth.php';
