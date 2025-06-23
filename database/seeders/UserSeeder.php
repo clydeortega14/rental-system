@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Role;
 
 class UserSeeder extends Seeder
 {
@@ -31,5 +32,10 @@ class UserSeeder extends Seeder
         $user_contact = $user->contact()->create([
             'mobile' => '09398948226'
         ]);
+
+        $adminRole = Role::where('slug', 'admin')->first();
+        if ($adminRole) {
+            $user->roles()->syncWithoutDetaching([$adminRole->id]);
+        }
     }
 }
