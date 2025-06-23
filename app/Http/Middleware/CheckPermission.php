@@ -20,10 +20,13 @@ class CheckPermission
             abort(403, 'Unauthorized');
         }
         // Check if user has the permission via roles
-        if (!$user->roles()->whereHas('permissions', function ($q) use ($permission) {
-            $q->where('slug', $permission);
-        })->exists()) {
-            abort(403, 'Forbidden');
+        $hasPermission = $user->roles()
+            ->whereHas('permissions', function ($q) use ($permission) {
+                $q->where('slug', $permission);
+            })->exists();
+
+        if (!$hasPermission) {
+            abort(403, 'You do not have permission to access this page.');
         }
         return $next($request);
     }
