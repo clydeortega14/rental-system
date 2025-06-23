@@ -13,7 +13,13 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        Permission::firstOrCreate(['slug' => 'can-open-button-1'], ['name' => 'Can Open Button 1']);
-        Permission::firstOrCreate(['slug' => 'can-open-button-2'], ['name' => 'Can Open Button 2']);
+        Permission::firstOrCreate(['slug' => 'can-manage-roles'], [
+            'name' => 'Can Create, Delete, Update, Assign Permissions to Roles',
+            'description' => 'Allows creating, deleting, updating, and assigning permissions to roles'
+        ]);
+        Permission::firstOrCreate(['slug' => 'can-view-user-management'], [
+            'name' => 'Can View or Open User Management',
+            'description' => 'Allows viewing or opening the User Management section'
+        ]);
     }
 }
