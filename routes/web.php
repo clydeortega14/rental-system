@@ -30,6 +30,7 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 // Google OAuth routes
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle']);
@@ -197,16 +198,29 @@ Route::middleware([
     Route::get('/rentalListing', [RentalItemController::class, 'index'])->name('rentalListing');
     Route::get('/rentalListing/items/{id}', [RentalItemController::class, 'show'])->name('rentalListingView');
     Route::put('/rentalListing/items/update/{id}', [RentalItemController::class, 'update'])->name('rental.update');
-
-    /*-- Ratings --*/
-    Route::middleware(['web', 'auth'])->group(function () {
-    // Rating creation form
-    Route::get('/rating', [RatingController::class, 'create'])
-        ->name('ratings.create');
     
-    // Handle form submission
-    Route::post('/bookings/{booking}/rate', [RatingController::class, 'store'])
-        ->name('ratings.store');
+    /*-- Ratings --*/
+    Route::middleware(['auth', 'verified', 'check-user-info'])->group(function () {
+        // Rating creation form
+        Route::get('/bookings/{booking}/ratings/create', [RatingController::class, 'create'])
+            ->name('ratings.create')
+            ->middleware('can:rate,booking');
+        
+        // Handle form submission
+        Route::post('/bookings/{booking}/ratings', [RatingController::class, 'store'])
+            ->name('ratings.store');
+        
+        // Edit rating
+        Route::get('/ratings/{rating}/edit', [RatingController::class, 'edit'])
+            ->name('ratings.edit');
+        
+        // Update rating
+        Route::put('/ratings/{rating}', [RatingController::class, 'update'])
+            ->name('ratings.update');
+        
+        // Delete rating
+        Route::delete('/ratings/{rating}', [RatingController::class, 'destroy'])
+            ->name('ratings.destroy');
     });
 
     // Public confirmation

@@ -4,10 +4,12 @@ import { RatingType } from '@/types/Rating';
 import { PageProps } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
+
 interface Props extends PageProps {
     booking: {
         id: number;
         rentalListing: {
+            id: number;
             user: {
                 id: number;
             };
@@ -18,19 +20,23 @@ interface Props extends PageProps {
         rating?: number;
         review?: string;
     };
+    averageRating?: number;
 }
 
-export default function Create({ auth, booking, ratingTypes, existingRating }: Props) {
+export default function Create({ auth, booking, ratingTypes, existingRating, averageRating }: Props) {
     if (!booking || !booking.rentalListing) {
         return <div>Loading booking data...</div>;
     }
+
     const [rating, setRating] = useState(existingRating?.rating || 0);
     const { data, setData, post, processing } = useForm({
         rating: existingRating?.rating || 0,
         review: existingRating?.review || '',
         type: ratingTypes[0],
         booking_id: booking.id,
-        ratee_id: booking.rentalListing.user.id
+        ratee_id: booking.rentalListing.user.id,
+        rateable_type: 'App\\Models\\RentalAddItem',
+        rateable_id: booking.rentalListing.id
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -51,6 +57,13 @@ export default function Create({ auth, booking, ratingTypes, existingRating }: P
                                 Share your thoughts about your rental experience
                             </p>
                         </div>
+
+                        {/* Display average rating if available */}
+                        {averageRating && (
+                            <div className="text-center py-2 bg-orange-50">
+                                Current Average Rating: {averageRating.toFixed(1)}/5
+                            </div>
+                        )}
                         
                         <form onSubmit={handleSubmit} className="p-6 space-y-6">
                             <div className="space-y-2">
@@ -83,6 +96,17 @@ export default function Create({ auth, booking, ratingTypes, existingRating }: P
                                 />
                             </div>
 
+                            {/* Hidden fields for polymorphic relationship */}
+                            <input 
+                                type="hidden" 
+                                name="rateable_type" 
+                                value={data.rateable_type} 
+                            />
+                            <input 
+                                type="hidden" 
+                                name="rateable_id" 
+                                value={data.rateable_id} 
+                            />
                             <input type="hidden" name="type" value={data.type} />
 
                             <div className="flex justify-end">
