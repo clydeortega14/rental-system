@@ -16,7 +16,6 @@ interface CheckOutProps {
 
 export default function CheckOut({bookingData}: CheckOutProps) {
     const user = usePage<PageProps>().props.auth.user;
-
     const [serviceFee, setServiceFee] = useState<number>(0);
     const [allTotal, setAllTotal] = useState<number>(0);
 
@@ -43,12 +42,12 @@ export default function CheckOut({bookingData}: CheckOutProps) {
     const { cart, removeFromCart, clearCart, totalPrice } = useCart();
     const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
     const [formData, setFormData] = useState({
-            name: '',
-            email: '',
-            phone: '',
-            address: '',
-            city: '',
-            zipCode: '',
+            name: user ? user.name : '',
+            email: user ? user.email : '',
+            phone: user ? user.contact.mobile : '',
+            address: user ? user.company.street+', '+user.company.barangay : '',
+            city: user ? user.company.city : '',
+            zipCode: user ? user.company.postal_code : '',
             cardNumber: '',
             cardExpiry: '',
             cardCvv: ''

@@ -4,13 +4,24 @@ export interface User {
     name: string;
     email: string;
     email_verified_at: string;
+    contact: Contact;
     company: {
         id: number,
         uuid: string,
         name: string,
         tin: string,
-        email: string
+        email: string;
+        street: string;
+        barangay: string;
+        city: string;
+        postal_code: string;
+        
     };
+}
+
+export type Contact = {
+  id: number;
+  mobile: string;
 }
 
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {

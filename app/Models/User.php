@@ -117,5 +117,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->receivedRatings()->avg('rating');
     }
+
+
+    public function getBarangayStreetAttribute()
+    {
+        return $this->company()->street.', '.$this->company()->barangay;
+    }
     
 }
