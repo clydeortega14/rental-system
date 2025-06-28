@@ -11,10 +11,10 @@ import { PropsWithChildren } from 'react'
 
 
 
-const LandingPageLayout = ({ categories, auth, children }: PropsWithChildren<{categories: Category[], auth: PageProps}>) => {
+const LandingPageLayout = ({ categories, children }: PropsWithChildren<{categories: Category[]}>) => {
   return (
     <div className="flex flex-col min-h-screen ">
-      <Header auth={auth} categories={categories} />
+      <Header categories={categories} />
       <main className="flex-grow">
         {children}
         <Slider categories={categories} />

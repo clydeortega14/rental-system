@@ -60,12 +60,17 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(UserCompanyInformation::class, 'user_id');
     }
 
-    public function contact()
+    public function contact() : HasOne
     {
         return $this->hasOne(UserContactDetail::class, 'user_id');
     }
+
+    public function billingAddress() : HasOne
+    {
+        return $this->hasOne(UserBillingAddress::class, 'user_id');
+    }
     
-    public function signUpForm()
+    public function signUpForm() : HasOne
     {
         return $this->hasOne(SignUpForm::class, 'user_id');
     }

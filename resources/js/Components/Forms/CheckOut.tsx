@@ -44,10 +44,10 @@ export default function CheckOut({bookingData}: CheckOutProps) {
     const [formData, setFormData] = useState({
             name: user ? user.name : '',
             email: user ? user.email : '',
-            phone: user ? user.contact.mobile : '',
-            address: user ? user.company.street+', '+user.company.barangay : '',
-            city: user ? user.company.city : '',
-            zipCode: user ? user.company.postal_code : '',
+            phone: user ? user.contact?.mobile : '',
+            address: user && user.company && user.company?.street+', '+user.company?.barangay,
+            city: user ? user.company?.city : '',
+            zipCode: user ? user.company?.postal_code : '',
             cardNumber: '',
             cardExpiry: '',
             cardCvv: ''
@@ -82,9 +82,6 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                 // Simulate payment processing
             }
         });
-
-        
-        
     };
 
 
