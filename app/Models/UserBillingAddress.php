@@ -20,7 +20,7 @@ class UserBillingAddress extends Model
     ];
 
 
-    public function user() : BelongsTo
+    public function user():BelongsTo
     {
         return $this->belongsTo(User::class);
     }

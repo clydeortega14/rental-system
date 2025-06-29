@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_billing_addresses', function (Blueprint $table) {
+        Schema::create('user_card_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->string('street');
-            $table->string('postal_code');
-            $table->string('region')->nullable();
-            $table->string('province')->nullable();
-            $table->string('city')->nullable();
-            $table->string('barangay')->nullable();
-            $table->string('country')->nullable();
+            $table->string('card_number')->unique();
+            $table->string('card_expiry');
+            $table->integer('cvv');
             $table->timestamps();
         });
     }
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_billing_addresses');
+        Schema::dropIfExists('user_card_details');
     }
 };
