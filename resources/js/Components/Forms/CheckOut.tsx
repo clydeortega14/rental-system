@@ -9,6 +9,7 @@ import Button from "../Renter/ui/Button";
 import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
 import LoginWithGoogle from "../LoginWithGoogle";
 import { BookingSession } from "@/types/rental";
+import CardExpiryInput from "../CardExpiryInput";
 
 interface CheckOutProps {
     bookingData: BookingSession
@@ -16,14 +17,15 @@ interface CheckOutProps {
 
 export default function CheckOut({bookingData}: CheckOutProps) {
     const user = usePage<PageProps>().props.auth.user;
-
     const [serviceFee, setServiceFee] = useState<number>(0);
     const [allTotal, setAllTotal] = useState<number>(0);
+    const error_message = usePage<PageProps>().props.flash.error_message
 
     useEffect( () => {
 
         const service_fee = bookingData.partial_total * 0.03;
         setServiceFee(service_fee)
+        setData
     }, [bookingData.partial_total]);
 
 
@@ -43,25 +45,36 @@ export default function CheckOut({bookingData}: CheckOutProps) {
     const { cart, removeFromCart, clearCart, totalPrice } = useCart();
     const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
     const [formData, setFormData] = useState({
-            name: '',
-            email: '',
-            phone: '',
-            address: '',
-            city: '',
-            zipCode: '',
+            name: user ? user.name : '',
+            email: user ? user.email : '',
+            phone: user ? user.contact?.mobile : '',
+            address: user && user.company && user.company?.street+', '+user.company?.barangay,
+            city: user ? user.company?.city : '',
+            zipCode: user ? user.company?.postal_code : '',
             cardNumber: '',
             cardExpiry: '',
-            cardCvv: ''
+            cardCvv: '',
         });
     const [isProcessing, setIsProcessing] = useState(false);
     const [isComplete, setIsComplete] = useState(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData({
-        ...formData,
-        [name]: value
-        });
+        if(name === 'cardExpiry')
+        {
+            let exp_value = e.target.value;
+
+            if (/^\d{2}$/.test(exp_value)) {
+            exp_value += '/';
+            }
+            setFormData({...formData, [name]:exp_value})
+        }else{
+            setFormData({
+                ...formData,
+                [name]: value
+            });
+        }
+        
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -70,7 +83,11 @@ export default function CheckOut({bookingData}: CheckOutProps) {
         setIsProcessing(true);
 
         post(route("checkout.booking", {
-            ...formData, service_fee: serviceFee, total_cost: allTotal
+            ...formData, 
+            service_fee: serviceFee, 
+            total_cost: allTotal,
+            payment_method: paymentMethod,
+            status: 'Pending'
         }), {
             preserveScroll: true,
             onSuccess: () => {
@@ -83,9 +100,6 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                 // Simulate payment processing
             }
         });
-
-        
-        
     };
 
 
@@ -101,6 +115,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
     return (
         <>
             <div className="bg-gray-100 container mx-auto px-4 py-8">
+                <h1 className="font-semibold text-red-700">{error_message}</h1>
                 <div className="mb-6">
                     <Link href={route('cart.index')} className="inline-flex items-center text-blue-600 hover:text-blue-800">
                     <ChevronLeft className="h-4 w-4 mr-1" />
@@ -127,7 +142,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                 type="text"
                                 id="name"
                                 name="name"
-                                value={formData.name}
+                                value={user ? user.name : formData.name}
                                 onChange={handleInputChange}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 />
@@ -153,7 +168,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                 type="tel"
                                 id="phone"
                                 name="phone"
-                                value={formData.phone}
+                                value={ user && user.contact ? user.contact.mobile : formData.phone}
                                 onChange={handleInputChange}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 />
@@ -172,7 +187,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                 type="text"
                                 id="address"
                                 name="address"
-                                value={formData.address}
+                                value={user &&  user.billing_address ? user.billing_address.street : formData.address}
                                 onChange={handleInputChange}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 />
@@ -186,7 +201,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                     type="text"
                                     id="city"
                                     name="city"
-                                    value={formData.city}
+                                    value={user &&  user.billing_address ? user.billing_address.city : formData.city}
                                     onChange={handleInputChange}
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 />
@@ -199,7 +214,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                     type="text"
                                     id="zipCode"
                                     name="zipCode"
-                                    value={formData.zipCode}
+                                    value={user &&  user.billing_address ? user.billing_address.postal_code : formData.zipCode}
                                     onChange={handleInputChange}
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 />
@@ -249,7 +264,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                     type="text"
                                     id="cardNumber"
                                     name="cardNumber"
-                                    value={formData.cardNumber}
+                                    value={user && user.card_detail ? user.card_detail.card_number : formData.cardNumber}
                                     onChange={handleInputChange}
                                     placeholder="1234 5678 9012 3456"
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
@@ -257,17 +272,11 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label htmlFor="cardExpiry" className="block text-sm font-medium text-gray-700 mb-1">
-                                    Expiration Date
-                                    </label>
-                                    <input
-                                    type="text"
-                                    id="cardExpiry"
-                                    name="cardExpiry"
-                                    value={formData.cardExpiry}
-                                    onChange={handleInputChange}
-                                    placeholder="MM/YY"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                    
+                                    <CardExpiryInput 
+                                        name={"cardExpiry"}
+                                        onChange={handleInputChange}
+                                        value={user && user.card_detail ? user.card_detail.card_expiry :formData.cardExpiry}
                                     />
                                 </div>
                                 <div>
@@ -278,7 +287,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                     type="text"
                                     id="cardCvv"
                                     name="cardCvv"
-                                    value={formData.cardCvv}
+                                    value={user && user.card_detail ? user.card_detail.cvv :formData.cardCvv}
                                     onChange={handleInputChange}
                                     placeholder="123"
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"

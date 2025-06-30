@@ -9,11 +9,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\Uuid;
 use Illuminate\Support\Str;
 use App\Http\Traits\CustomFields\HasCustomFieldValues;
-
+use App\Http\Traits\HasPolymorphicRelation;
 
 class RentalAddItem extends Model
 {
-    use HasFactory, Uuid, HasCustomFieldValues;
+    use HasFactory, 
+    Uuid, 
+    HasCustomFieldValues, 
+    HasPolymorphicRelation;
 
     protected $table = 'rental_listings';
 
@@ -37,11 +40,7 @@ class RentalAddItem extends Model
             $model->uuid = Str::uuid();
         });
     }
-    
-    public function attachment()
-    {
-        return $this->morphMany(Attachment::class, 'attachable');
-    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

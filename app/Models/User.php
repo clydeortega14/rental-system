@@ -60,12 +60,21 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(UserCompanyInformation::class, 'user_id');
     }
 
-    public function contact()
+    public function contact() : HasOne
     {
         return $this->hasOne(UserContactDetail::class, 'user_id');
     }
+
+    public function billingAddress() : HasOne
+    {
+        return $this->hasOne(UserBillingAddress::class, 'user_id');
+    }
+    public function cardDetail() : HasOne
+    {
+        return $this->hasOne(UserCardDetail::class);
+    }
     
-    public function signUpForm()
+    public function signUpForm() : HasOne
     {
         return $this->hasOne(SignUpForm::class, 'user_id');
     }
@@ -116,6 +125,12 @@ class User extends Authenticatable implements MustVerifyEmail
     public function averageRating()
     {
         return $this->receivedRatings()->avg('rating');
+    }
+
+
+    public function getBarangayStreetAttribute()
+    {
+        return $this->company()->street.', '.$this->company()->barangay;
     }
     
 }
