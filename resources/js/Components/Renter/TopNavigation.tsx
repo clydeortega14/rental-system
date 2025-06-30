@@ -68,7 +68,7 @@ const TopNavigation = () => {
 
                 {navs.map((nav, index) => (
                   nav.display &&
-                  <Link key={index} href={nav.link} className={`hover:text-blue-600 transition-colors ${ nav.isActive ? 'text-blue-600' : 'text-gray-700'}`}>
+                  <Link key={index} href={nav.link} className={`hover:text-blue-600 transition-colors ${ nav.isActive ? 'text-blue-700' : 'text-gray-500'}`}>
                       {nav.title}
                   </Link>
                 ))}
@@ -78,7 +78,7 @@ const TopNavigation = () => {
                 { user ? (
                   <Link
                     href={route('dashboard')}
-                    className="text-orange-600 font-semibold"
+                    className="text-blue-700 font-semibold"
                   >
                     Dashboard
                   </Link>

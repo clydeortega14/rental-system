@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->string('card_number')->unique();
             $table->string('card_expiry');
-            $table->integer('cvv');
+            $table->integer('card_cvv');
             $table->timestamps();
         });
     }

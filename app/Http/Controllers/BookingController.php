@@ -116,19 +116,28 @@ class BookingController extends Controller
                 if(!$this->isDateFormatValid($request->cardExpiry)) return back()->with('error_message', 'invalid card format');
 
                 if($this->isDateExpired($request->cardExpiry)) return back()->with('error_message', 'card is expired!');
-
-
                 // then check card details
-                $card_detail = $request->user()->cardDetail()->firstOrCreate(
-                    ['card_number' => $request->cardNumber],
-                    ['card_expiry' => $request->cardExpiry],
-                    ['cvv' => $request->cardCvv]
-                );
+                // $card_detail = $request->user()->cardDetail()->firstOrCreate(
+                //     ['card_number' => $request->cardNumber],
+                //     ['card_expiry' => $request->cardExpiry],
+                //     ['card_cvv' => $request->cardCvv]
+                // );
+
+                $card_detail = $request->user()->cardDetail()->firstOrCreate([
+                    'card_number' => $request->cardNumber,
+                    'card_expiry' => $request->cardExpiry,
+                    'card_cvv' => $request->cardCvv
+                ]);
 
                 $payment = $card_detail->payments()->firstOrCreate(
-                    ['rental_listing_id' => $request->rental_listing_id],
-                    ['amount' => $request->total_cost],
-                    ['status' => $request->status]
+                    // ['rental_listing_id' => $request->rental_listing_id],
+                    // ['amount' => $request->total_cost],
+                    // ['status' => $request->status]
+                    [
+                        'rental_listing_id' => $request->rental_listing_id,
+                        'amount' => $request->total_cost,
+                        'status' => $request->status
+                    ]
                 );
             } 
         });
