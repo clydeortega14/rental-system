@@ -97,7 +97,7 @@ const RentalCalendar = ({onSelectDate, selectedDate, selectedEndDate, setSelecte
                 className={cn(
                   "rounded-lg p-2 text-sm hover:cursor-pointer hover:border hover:border-green-200 bg-green-100 text-green-700",
                   selectedDate === new_formated_date ? "bg-white border border-green-700 text-xl font-bold" : "",
-                  selectedEndDate === new_formated_date ? 'bg-white text-blue-700 border border-blue-700 text-xl font-bold': ""
+                  selectedEndDate === new_formated_date ? 'bg-white text-red-600 border border-red-600 text-xl font-bold hover:border-red-600': ""
                 )}
               >
                 {format(day, "d")}

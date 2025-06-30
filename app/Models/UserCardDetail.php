@@ -14,7 +14,7 @@ class UserCardDetail extends Model
         'user_id',
         'card_number',
         'card_expiry',
-        'cvv'
+        'card_cvv'
     ];
 
     public function user() : BelongsTo

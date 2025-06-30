@@ -20,6 +20,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
     const [serviceFee, setServiceFee] = useState<number>(0);
     const [allTotal, setAllTotal] = useState<number>(0);
     const error_message = usePage<PageProps>().props.flash.error_message
+    // console.log(bookingData)
 
     useEffect( () => {
 
@@ -45,6 +46,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
     const { cart, removeFromCart, clearCart, totalPrice } = useCart();
     const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
     const [formData, setFormData] = useState({
+            rental_listing_id: bookingData.rental_listing_id,
             name: user ? user.name : '',
             email: user ? user.email : '',
             phone: user ? user.contact?.mobile : '',
@@ -65,7 +67,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
             let exp_value = e.target.value;
 
             if (/^\d{2}$/.test(exp_value)) {
-            exp_value += '/';
+                exp_value += '/';
             }
             setFormData({...formData, [name]:exp_value})
         }else{
