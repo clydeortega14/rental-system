@@ -4,8 +4,11 @@ namespace App\Traits\RentalItems;
 
 use App\Models\RentalAddItem;
 use Inertia\Inertia;
+use App\Traits\DateTraits;
 
 trait ItemDetails {
+
+    use DateTraits;
 
 
     public function getRentalItemsByCategory(int $categoryId)
@@ -48,7 +51,13 @@ trait ItemDetails {
             })->all()
         ];
 
-        return Inertia::render('Item/View', ['item' => $item_detail]);
+
+        
+
+        return Inertia::render('Item/View', [
+            'item' => $item_detail,
+            'unavailable_dates' => $this->itemUnavailableDates($find_item)
+        ]);
     }
 
     public function findItem($uuid)

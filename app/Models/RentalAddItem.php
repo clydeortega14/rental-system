@@ -80,6 +80,7 @@ class RentalAddItem extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
 
+<<<<<<< HEAD
     /**
      * Get featured image URL
      */
@@ -123,3 +124,11 @@ class RentalAddItem extends Model
         return $this->morphMany(\App\Models\Rating::class, 'rateable');
     }
 }
+=======
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'rental_listing_id');
+    }
+   
+}
+>>>>>>> d3efe479d70b454b222e94d7a13c1a399e094c1e

@@ -7,12 +7,18 @@ import Button from "@/Components/Renter/ui/Button";
 import { CartProvider, useCart } from "@/context/CartContext";
 import RenterLayout from "@/Layouts/RenterLayout";
 import { User } from "@/types";
+import { BookingSession } from "@/types/rental";
 import { formatDateDisplay } from "@/utils/dateUtils";
 import { Head, Link } from "@inertiajs/react";
 import { Calendar, ChevronLeft, CreditCard, X } from "lucide-react";
 import { PropsWithChildren, useState } from "react";
 
-export default function Checkout({user, item, rent_detail}:PropsWithChildren<{user: User;}>){
+interface CheckOutProps {
+    booking_data: BookingSession;
+    user: User;
+}
+
+export default function Checkout({booking_data, user}: CheckOutProps){
     return (
 
         <RenterLayout
@@ -22,7 +28,9 @@ export default function Checkout({user, item, rent_detail}:PropsWithChildren<{us
             <Head title={"Checkout"} />
 
             <CartProvider>
-                <CheckOut />
+                <CheckOut 
+                    bookingData={booking_data}
+                />
             </CartProvider>
             
         </RenterLayout>

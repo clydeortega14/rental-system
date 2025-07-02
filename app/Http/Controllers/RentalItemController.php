@@ -82,7 +82,10 @@ class RentalItemController extends Controller
 
     public function checkoutItem()
     {
-        return inertia('Item/Checkout');
+        
+        return inertia('Item/Checkout', [
+            'booking_data' => request()->session()->has('booking_data') ? request()->session()->get('booking_data') : []
+        ]);
     }
 
     public function rentalBrowserIndex($category_name)

@@ -8,9 +8,31 @@ import { Calendar, ChevronLeft, CreditCard, X } from "lucide-react";
 import Button from "../Renter/ui/Button";
 import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
 import LoginWithGoogle from "../LoginWithGoogle";
+import { BookingSession } from "@/types/rental";
 
-export default function CheckOut() {
+interface CheckOutProps {
+    bookingData: BookingSession
+}
+
+export default function CheckOut({bookingData}: CheckOutProps) {
     const user = usePage<PageProps>().props.auth.user;
+
+    const [serviceFee, setServiceFee] = useState<number>(0);
+    const [allTotal, setAllTotal] = useState<number>(0);
+
+    useEffect( () => {
+
+        const service_fee = bookingData.partial_total * 0.03;
+        setServiceFee(service_fee)
+    }, [bookingData.partial_total]);
+
+
+    useEffect( () => {
+
+        let calculated_total = Number(bookingData.partial_total) + serviceFee;
+        setAllTotal(calculated_total);
+
+    }, [bookingData.partial_total, serviceFee])
 
     const { data, setData, post, processing, errors } = useForm({});
 
@@ -47,7 +69,9 @@ export default function CheckOut() {
 
         setIsProcessing(true);
 
-        post(route("checkout.booking", formData), {
+        post(route("checkout.booking", {
+            ...formData, service_fee: serviceFee, total_cost: allTotal
+        }), {
             preserveScroll: true,
             onSuccess: () => {
                 setTimeout(() => {
@@ -282,7 +306,7 @@ export default function CheckOut() {
                                         fullWidth
                                         disabled={isProcessing}
                                     >
-                                        {isProcessing ? 'Processing...' : `Complete Booking • ${formatPrice(totalPrice)}`}
+                                        {isProcessing ? 'Processing...' : `Complete Booking • ${formatPrice(allTotal)}`}
                                     </Button>
                                 )
                             }
@@ -349,17 +373,17 @@ export default function CheckOut() {
                         <div className="border-t border-b border-gray-200 py-4 mb-4">
                         <div className="flex justify-between mb-2">
                             <span className="text-gray-600">Subtotal</span>
-                            <span className="text-gray-900">{formatPrice(totalPrice)}</span>
+                            <span className="text-gray-900">{formatPrice(bookingData.partial_total)}</span>
                         </div>
                         <div className="flex justify-between mb-2">
                             <span className="text-gray-600">Service fee</span>
-                            <span className="text-gray-900">{formatPrice(10)}</span>
+                            <span className="text-gray-900">{formatPrice(serviceFee)}</span>
                         </div>
                         </div>
                         
                         <div className="flex justify-between mb-4">
                         <span className="font-semibold text-gray-900">Total</span>
-                        <span className="font-semibold text-gray-900">{formatPrice(totalPrice + 10) }</span>
+                        <span className="font-semibold text-gray-900">{formatPrice(allTotal) }</span>
                         </div>
                     </div>
                     </div>
