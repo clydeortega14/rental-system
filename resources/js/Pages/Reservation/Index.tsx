@@ -168,7 +168,7 @@ function Index({ bookings, status }: Props) {
                                                 <div className="flex mt-4 md:mt-0 space-x-2">
                                                     {booking.status === 'confirmed' && (
                                                         <Button variant="outline" size="sm">
-                                                        Cancel
+                                                            Cancel
                                                         </Button>
                                                     )}
                                                     <Link href={route('booking.view', booking.uuid)}>

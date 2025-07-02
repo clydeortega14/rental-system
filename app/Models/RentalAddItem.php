@@ -8,12 +8,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\Uuid;
 use Illuminate\Support\Str;
 use App\Http\Traits\CustomFields\HasCustomFieldValues;
+<<<<<<< HEAD
 use App\Traits\RentalItems\RentalListing;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class RentalAddItem extends Model
 {
     use HasFactory, Uuid, HasCustomFieldValues, RentalListing;
+=======
+use App\Http\Traits\HasPolymorphicRelation;
+
+class RentalAddItem extends Model
+{
+    use HasFactory, 
+    Uuid, 
+    HasCustomFieldValues, 
+    HasPolymorphicRelation;
+>>>>>>> 42318248658f826b0809f62cb6218bc65b0d59dd
 
     protected $table = 'rental_listings';
 
@@ -48,6 +59,7 @@ class RentalAddItem extends Model
         });
     }
 
+<<<<<<< HEAD
     /**
      * Get all attachments
      */
@@ -60,6 +72,9 @@ class RentalAddItem extends Model
      * Get the owner/user
      */
     public function user(): BelongsTo
+=======
+    public function user()
+>>>>>>> 42318248658f826b0809f62cb6218bc65b0d59dd
     {
         return $this->belongsTo(User::class, 'user_id');
     }

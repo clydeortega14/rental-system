@@ -6,7 +6,7 @@ import { PropsWithChildren } from 'react'
 
 const RenterLayout = ({user, children}:PropsWithChildren<{ user?: User}>) => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-50">
         <CartProvider>
           <TopNavigation />
 

@@ -1,5 +1,5 @@
 import { PageProps } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import logoWeb from '@/../../resources/img/logo-web.png';
 import logoMobile from '@/../../resources/img/logo.png';
@@ -14,16 +14,15 @@ interface User {
 }
 
 interface TopNavigationProps {
-  categories: Category[]
-  auth: {
-    user: User | null
-  }
+  categories: Category[];
 }
 
 
-const TopNavigation = ({ auth, categories }: PageProps<{categories:Category[]}>) => {
+const TopNavigation = ({ categories } : TopNavigationProps) => {
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const auth = usePage<PageProps>().props.auth;
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);

@@ -93,4 +93,9 @@ class Rating extends Model
             ->whereRateableId($rateableId)
             ->avg('rating') ?? 0.0;
     }
+
+    public function rateable()
+    {
+        return $this->morphTo();
+    }
 }
