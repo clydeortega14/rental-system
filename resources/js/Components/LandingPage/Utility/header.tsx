@@ -41,7 +41,7 @@ const TopNavigation = ({ auth, categories }: PageProps<{categories:Category[]}>)
             <img
               src={isMobile ? logoMobile : logoWeb}
               alt="Logo"
-              className="h-10 md:h-16 w-auto"
+              className="h-20 md:h-20 w-auto"
             />
           </Link>
         </div>
@@ -100,7 +100,7 @@ const TopNavigation = ({ auth, categories }: PageProps<{categories:Category[]}>)
                 </Link>
                 <Link
                   href={route('register')}
-                  className="flex items-center gap-1 px-4 py-2 rounded-md bg-orange-500 text-white hover:bg-orange-600"
+                  className="flex items-center gap-1 px-4 py-2 rounded-md bg-brandYellow text-white hover:bg-orange-600"
                 >
                   <BiLock /> Sign Up
                 </Link>

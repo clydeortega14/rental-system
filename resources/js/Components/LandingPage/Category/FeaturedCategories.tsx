@@ -27,13 +27,13 @@ const FeaturedCategories = ({ categories }: Props) => {
         </div>
 
         {/* Categories Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        <div className="flex flex-wrap justify-center gap-6">
           {categories.length > 0 ? (
             categories.map((category, index) => (
               <a
                 key={category.id}
                 href={route('rental.browser.index', category.name)}
-                className="bg-white border rounded-2xl shadow hover:shadow-lg transition-transform transform hover:scale-105 p-4 flex flex-col justify-between"
+                className="w-[150px] sm:w-[180px] md:w-[200px] lg:w-[220px] bg-white border rounded-2xl shadow hover:shadow-lg transition-transform transform hover:scale-105 p-4 flex flex-col justify-between"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div>
@@ -54,7 +54,7 @@ const FeaturedCategories = ({ categories }: Props) => {
               </a>
             ))
           ) : (
-            <p className="text-gray-400 col-span-full text-center">No categories found</p>
+            <p className="text-gray-400 w-full text-center">No categories found</p>
           )}
         </div>
 
@@ -62,7 +62,7 @@ const FeaturedCategories = ({ categories }: Props) => {
         <div className="text-center mt-10">
           <a
             href="/login"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-orange-500 text-white hover:bg-orange-600 transition"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-brandYellow text-white hover:bg-orange-600 transition"
           >
             <BiUser className="text-lg" />
             Login To See More
