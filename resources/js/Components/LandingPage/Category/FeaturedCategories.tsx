@@ -10,8 +10,17 @@ import hotels from '@/../../resources/img/banner/hotels.png';
 
 const categoryImages = [cars, phones, motorcycle, bags, hotels];
 
+interface User {
+  id: number
+  name: string
+  email: string
+}
+
 interface Props {
-  categories: Category[];
+  categories: Category[]
+  auth: {
+    user: User | null
+  }
 }
 
 const FeaturedCategories = ({ categories }: Props) => {
@@ -59,7 +68,7 @@ const FeaturedCategories = ({ categories }: Props) => {
         </div>
 
         {/* View All Button */}
-        <div className="text-center mt-10">
+        {/* <div className="text-center mt-10">
           <a
             href="/login"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-brandYellow text-white hover:bg-orange-600 transition"
@@ -68,7 +77,7 @@ const FeaturedCategories = ({ categories }: Props) => {
             Login To See More
             <ArrowRight className="w-4 h-4" />
           </a>
-        </div>
+        </div> */}
       </div>
     </section>
   );

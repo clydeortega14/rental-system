@@ -48,7 +48,7 @@ const TopNavigation = ({ auth, categories }: PageProps<{categories:Category[]}>)
 
         {/* Desktop Navigation */}
          <nav className="hidden md:flex col-span-6 justify-center space-x-6 md:col-span-6">
-          <Link href="/" className="text-gray-700 hover:text-orange-500 transition">Home</Link>
+          <Link href="/" className="text-gray-700 hover:text-brandYellow transition">Home</Link>
 
           {/* Categories Dropdown */}
           {/* <div className="relative group">
@@ -85,10 +85,10 @@ const TopNavigation = ({ auth, categories }: PageProps<{categories:Category[]}>)
         <div className="hidden md:flex col-span-3 justify-end space-x-4">
           {auth.user ? (
               <Link
-                href={route('dashboard')}
-                className="text-orange-600 font-semibold"
+                href={route('lessee.profile')}
+                className="flex items-center gap-1 px-4 py-2 rounded-md  text-gray-800 hover:text-brandYellow"
               >
-                Dashboard
+                <BiUser />  Dashboard
               </Link>
             ) : (
               <>
