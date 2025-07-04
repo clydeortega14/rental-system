@@ -42,6 +42,10 @@ class RentalController extends Controller
         $listing->company_id = Auth::user()->company->id;
         $listing->save();
 
+        if (!empty($validated['custom_fields'])) {
+            $listing->addCustomFields($validated['custom_fields']);
+        }
+
         return redirect()->back()->with('success', 'Rental listing added!');
     }
 
@@ -58,7 +62,6 @@ class RentalController extends Controller
 
         $listing = RentalListing::findOrFail($id);
 
-        // Optional: add ownership check
         if ($listing->user_id !== Auth::id()) {
             abort(403, 'Unauthorized to update this listing.');
         }
@@ -69,6 +72,10 @@ class RentalController extends Controller
         $listing->price = $validated['price'];
         $listing->quantity = $validated['quantity'];
         $listing->save();
+
+        if (!empty($validated['custom_fields'])) {
+            $listing->updateCustomFields($validated['custom_fields']);
+        }
 
         return redirect()->back()->with('success', 'Rental listing updated!');
     }
