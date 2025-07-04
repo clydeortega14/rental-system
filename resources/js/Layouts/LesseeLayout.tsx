@@ -1,6 +1,7 @@
 import React, { lazy, Suspense, useState } from "react";
-
+import { usePage } from "@inertiajs/react";
 import { PageProps } from "@/types";
+import { BookingDetails } from "@/types/rental";
 import {
   LayoutDashboard,
   StarIcon,
@@ -21,13 +22,26 @@ import {
 
 const Overview = lazy(() => import("@/Pages/Lessee/Overview"));
 const Bookings = lazy(() => import("@/Pages/Lessee/Bookings"));
+const Reservations = lazy(() => import("@/Pages/Reservation/Index"));
 const Review = lazy(() => import("@/Pages/Lessee/Review"));
 const LesseeSignForm = lazy(() => import("@/Pages/Lessee/LessorSignupForm"));
 
+interface Props extends PageProps {
+  bookings: BookingDetails[];
+  headerData: { name: string }[];
+}
 
 
-export default function LesseeLayout({ auth }: PageProps) {
-  const [activeTab, setActiveTab] = useState("overview");
+interface LayoutProps {
+  defaultTab?: string;
+}
+
+export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
+  const { auth, bookings, headerData } = usePage().props as Props;
+
+  const [activeTab, setActiveTab] = useState(defaultTab); // <- use defaultTab here
+
+  // const [activeTab, setActiveTab] = useState("overview");
   
   const lessee = {
     name: auth.user.name,
@@ -72,12 +86,13 @@ export default function LesseeLayout({ auth }: PageProps) {
     ],
   };
 
-  const tabs = [
-    { key: "overview", label: "Overview", icon: LayoutDashboard },
-    { key: "bookings", label: "Bookings", icon: CalendarCheck },
-    { key: "reviews", label: "Reviews", icon: StarIcon },
-    { key: "lessor", label: "Be a Lessor", icon: BiSolidUserCheck },
-  ];
+const tabs = [
+  { key: "overview", label: "Overview", icon: LayoutDashboard },
+  { key: "bookings", label: "Bookings", icon: CalendarCheck },
+  { key: "reservations", label: "Reservations", icon: CalendarCheck }, // You can use a different icon
+  { key: "reviews", label: "Reviews", icon: StarIcon },
+  { key: "lessor", label: "Be a Lessor", icon: BiSolidUserCheck },
+];
 
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-800 font-sans">
@@ -100,7 +115,7 @@ export default function LesseeLayout({ auth }: PageProps) {
             <Suspense fallback={<div className="text-center p-6">Loading profile...</div>}>
               <Profile lessee={lessee} layout="header" />
             </Suspense>
-
+             {/* <LesseeSidebarContent activeTab={activeTab} setActiveTab={setActiveTab}  submitForm={auth.user.submitForm} /> */}
             <TabsList className="flex mt-4 gap-2 border-b border-gray-200 overflow-x-auto flex-nowrap scrollbar-hide">
               {tabs.map((tab) => (
                 <TabsTrigger
@@ -126,7 +141,7 @@ export default function LesseeLayout({ auth }: PageProps) {
               <Overview recentActivities={lessee.recentActivities} />
             </TabsContent>
             <TabsContent value="bookings" className="h-full">
-              <Bookings bookings={lessee.bookings} />
+              <Bookings bookings={bookings} />
             </TabsContent>
             <TabsContent value="lessor" className="h-full">
               <LesseeSignForm signUser={auth} />
@@ -134,6 +149,11 @@ export default function LesseeLayout({ auth }: PageProps) {
             <TabsContent value="reviews" className="h-full">
               <Review reviews={lessee.reviews} />
             </TabsContent>
+              <TabsContent value="reservations" className="h-full">
+              
+                <Reservations bookings={lessee.bookings} />
+                {/* <Review reviews={lessee.reviews} /> */}
+              </TabsContent>
           </Suspense>
         </section>
       </Tabs>

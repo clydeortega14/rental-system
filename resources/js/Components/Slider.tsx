@@ -27,7 +27,7 @@ const slides = [
     label: 'Phones and Bags',
     title: (
       <>
-        Rent the latest gadgets <span className="text-orange-500">phones, laptops, cameras </span> & more!
+        Rent the latest gadgets <span className="text-brandYellow">phones, laptops, cameras </span> & more!
       </>
     ),
     description: 'Making equipment rental simple, reliable, and accessible for everyone.',
@@ -41,7 +41,7 @@ const slides = [
     label: 'cars',
     title: (
       <>
-        Reliable car rentals for city <span className="text-orange-500"> trips & long drives!</span>
+        Reliable car rentals for city <span className="text-brandYellow"> trips & long drives!</span>
       </>
     ),
     description: 'Making equipment rental simple, reliable, and accessible for everyone.'
@@ -51,7 +51,7 @@ const slides = [
     label: 'motorcycles',
     title: (
       <>
-        Affordable motorcycle <span className="text-orange-500"> rentals perfect for city </span> rides & island adventures!
+        Affordable motorcycle <span className="text-brandYellow"> rentals perfect for city </span> rides & island adventures!
       </>
     ),
     description: 'Making equipment rental simple, reliable, and accessible for everyone.'
@@ -61,7 +61,7 @@ const slides = [
     label: 'Phones and Bags',
     title: (
       <>
-        Style meets function from <span className="text-orange-500"> sleek totes to rugged backpacks, find the </span> perfect bag for every adventure!
+        Style meets function from <span className="text-brandYellow"> sleek totes to rugged backpacks, find the </span> perfect bag for every adventure!
       </>
     ),
     description: 'Making equipment rental simple, reliable, and accessible for everyone.'
@@ -71,7 +71,7 @@ const slides = [
     label: 'hotels',
     title: (
       <>
-        Find cozy stays, luxurious <span className="text-orange-500"> getaways,  and everything in between  book your </span> perfect hotel now!!
+        Find cozy stays, luxurious <span className="text-brandYellow"> getaways,  and everything in between  book your </span> perfect hotel now!!
       </>
     ),
     description: 'Making equipment rental simple, reliable, and accessible for everyone.'

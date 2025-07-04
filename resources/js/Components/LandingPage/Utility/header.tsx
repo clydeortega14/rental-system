@@ -40,14 +40,14 @@ const TopNavigation = ({ categories } : TopNavigationProps) => {
             <img
               src={isMobile ? logoMobile : logoWeb}
               alt="Logo"
-              className="h-10 md:h-16 w-auto"
+              className="h-20 md:h-20 w-auto"
             />
           </Link>
         </div>
 
         {/* Desktop Navigation */}
          <nav className="hidden md:flex col-span-6 justify-center space-x-6 md:col-span-6">
-          <Link href="/" className="text-gray-700 hover:text-orange-500 transition">Home</Link>
+          <Link href="/" className="text-gray-700 hover:text-brandYellow transition">Home</Link>
 
           {/* Categories Dropdown */}
           {/* <div className="relative group">
@@ -84,10 +84,10 @@ const TopNavigation = ({ categories } : TopNavigationProps) => {
         <div className="hidden md:flex col-span-3 justify-end space-x-4">
           {auth.user ? (
               <Link
-                href={route('dashboard')}
-                className="text-orange-600 font-semibold"
+                href={route('lessee.profile')}
+                className="flex items-center gap-1 px-4 py-2 rounded-md  text-gray-800 hover:text-brandYellow"
               >
-                Dashboard
+                <BiUser />  Dashboard
               </Link>
             ) : (
               <>
@@ -99,7 +99,7 @@ const TopNavigation = ({ categories } : TopNavigationProps) => {
                 </Link>
                 <Link
                   href={route('register')}
-                  className="flex items-center gap-1 px-4 py-2 rounded-md bg-orange-500 text-white hover:bg-orange-600"
+                  className="flex items-center gap-1 px-4 py-2 rounded-md bg-brandYellow text-white hover:bg-orange-600"
                 >
                   <BiLock /> Sign Up
                 </Link>

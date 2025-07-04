@@ -91,7 +91,6 @@ export default function RentalList({ rentalItems, categories }: RentalListProps)
     // Function to handle form submission
     const handleSubmit: FormEventHandler = (e) => {
         try {
-           
             e.preventDefault();
             const newErrors = {};
             let hasError = false;

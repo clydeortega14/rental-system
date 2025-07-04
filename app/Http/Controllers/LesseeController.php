@@ -6,7 +6,7 @@ use App\Models\UserCompanyInformation;
 use App\Models\User;
 use App\Models\SignUpForm;
 use App\Models\UserContactDetail;
-
+use App\Services\BookingService;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 
@@ -14,12 +14,33 @@ use Illuminate\Http\Request;
 
 class LesseeController extends Controller
 {
-    public function index()
+
+    protected $booking_service;
+
+    public function __construct(BookingService $booking_service)
     {
+        $this->booking_service = $booking_service;
+    }
+   public function index()
+    {
+        $headersData = [
+            ['name' => 'Item'],
+            ['name' => 'Reservation Detail'],
+            ['name' => 'Status'],
+            ['name' => 'Booked By'],
+            ['name' => 'Action']
+        ];
+
+        $bookings = $this->booking_service->formatBookings();
+
+       
+
         return Inertia::render('Lessee/Landing', [
             'auth' => [
                 'user' => Auth::user()?->load(['company', 'contact']),
             ],
+            'bookings' => $bookings,
+            'headerData' => $headersData,
         ]);
     }
 
