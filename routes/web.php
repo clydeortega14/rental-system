@@ -64,7 +64,7 @@ Route::get('shopping-cart', [CartController::class, 'index'])->name('cart.index'
 Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 
 
-// Route Group for lessee 
+// Route Group for lessee
 Route::middleware(['auth'])->group(function(){
     Route::get('booking/details/{uuid}', [BookingController::class, 'bookingView'])->name('booking.view');
 });
@@ -110,7 +110,7 @@ Route::middleware([
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    
+
     // Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 
     /* -- Account Settings -- */
@@ -210,7 +210,7 @@ Route::middleware([
     // Rating creation form
     Route::get('/rating', [RatingController::class, 'create'])
         ->name('ratings.create');
-    
+
     // Handle form submission
     Route::post('/bookings/{booking}/rate', [RatingController::class, 'store'])
         ->name('ratings.store');
@@ -225,7 +225,7 @@ Route::middleware([
     // Feedback form (public or auth)
     Route::get('/feedback', [FeedbackController::class, 'create'])
         ->name('feedback.create');
-    
+
     // Form submission
     Route::post('/feedback', [FeedbackController::class, 'store'])
         ->name('feedback.store');
@@ -237,3 +237,4 @@ Route::middleware([
     });
 
 require __DIR__.'/auth.php';
+require __DIR__.'/admin.php';

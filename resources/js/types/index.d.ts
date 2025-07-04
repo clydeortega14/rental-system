@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface User {
     submitForm: any;
     id: number;
@@ -33,6 +35,11 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
     }
 };
 
+export type PageWithAdminLayout<P = {}> = React.FC<P> & {
+    layout?: (page: ReactNode) => ReactNode;
+};
+
+
 export type IconProps = {
   className?: string;
 };
@@ -52,8 +59,8 @@ export type NavItemProps = {
 };
 export type AdminLayoutProps = {
     children: React.ReactNode;
-    activemenu: string;
-    activesubmenu: string;
+    active_keys?: string[];
+    active_selected_keys?: string[];
 };
 
 export type Notification = {
