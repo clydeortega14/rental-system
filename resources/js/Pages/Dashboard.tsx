@@ -7,9 +7,7 @@ import banner from '@/../../resources/img/banner/banner1.png'
 import icon from '@/../../resources/img/notVerifiedv1.png'
 
 export default function Dashboard({ auth }: PageProps) {
-
-    console.log(auth)
-
+    
     return (
         <AuthenticatedLayout
             user={auth.user}

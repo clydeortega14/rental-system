@@ -20,6 +20,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\Admin\LoginController;
 
 use App\Http\Controllers\Lessor\RentalController;
 use App\Http\Controllers\Lessor\LessorController;
@@ -35,6 +36,10 @@ use Inertia\Inertia;
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
+//Admin Login
+Route::get('/renthiveAdmin', [LoginController::class, 'index'])->name('admin.login.page.index');
+
+//ladingpage
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
 
 Route::get('rental-browser/{category}', [RentalItemController::class, 'rentalBrowserIndex'])->name('rental.browser.index');

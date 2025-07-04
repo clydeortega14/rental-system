@@ -4,6 +4,7 @@ import {
   BiCalendar,
   BiLinkAlt,
   BiSolidUserCheck,
+  BiLockOpen 
 } from "react-icons/bi";
 
 import { useState } from "react";
@@ -37,6 +38,12 @@ export default function LesseeSidebarContent({
       section: "Sign Up form",
       items: [
         { key: "signup", label: "Be A Lessor Now!", icon: <BiSolidUserCheck size={18} /> },
+      ],
+    },
+    {
+      section: "Settings",
+      items: [
+        { key: "logout", label: "Logout", icon: <BiLockOpen size={18} /> },
       ],
     },
   ];
