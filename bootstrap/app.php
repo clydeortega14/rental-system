@@ -22,6 +22,14 @@ return Application::configure(basePath: dirname(__DIR__))
 
         ]);
 
+        $middleware->appendToGroup('auth:admin', [
+            \App\Http\Middleware\AuthenticateAdmin::class,
+        ]);
+
+        $middleware->appendToGroup('guest:admin', [
+            \App\Http\Middleware\RedirectAdminIfAuthenticated::class,
+        ]);
+
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {

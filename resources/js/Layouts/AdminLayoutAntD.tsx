@@ -14,7 +14,7 @@ import {
 import AdminSiderAntd from './AdminSiderAntD';
 import { Button, Layout, Menu, MenuProps, theme, Image, Breadcrumb, ConfigProvider, Row, Col } from 'antd';
 import logo from '../../img/initialLogo.png';
-import { Link } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { AdminLayoutProps } from '@/types';
 import '../../css/admin-compact.css';
 
@@ -25,6 +25,7 @@ const App: React.FC<AdminLayoutProps> = ({ children, active_keys, active_selecte
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
+    const { post } = useForm();
 
     return (
         <ConfigProvider
@@ -49,6 +50,14 @@ const App: React.FC<AdminLayoutProps> = ({ children, active_keys, active_selecte
                                 height: 64,
                             }}
                         />
+
+                        <div
+                            onClick={() => {
+                                post(route('admin.logout'));
+                            }}
+                            style={{ float: 'right', marginRight: 20, cursor: 'pointer' }}>
+                            Logout
+                        </div>
                     </Header>
                     <Content
                         style={{
