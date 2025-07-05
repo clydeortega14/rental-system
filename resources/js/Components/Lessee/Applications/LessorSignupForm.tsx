@@ -31,9 +31,6 @@ interface Company {
 export default function LessorSignupForm() {
  const user = usePage<PageProps>().props.auth.user;
 
-  console.log(11111,user.company)
-
-
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     // Account Information

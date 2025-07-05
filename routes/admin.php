@@ -19,6 +19,7 @@ Route::post('/admin/logout', [AdminAuthenticatedSessionController::class, 'logou
 Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('admin')->name('admin.')->group(function () {
+        
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
         Route::group(['prefix' => 'users'], function () {
@@ -45,7 +46,7 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::prefix('lessors')->name('lessors.')->group(function () {
             Route::get('/', [AdminLessorController::class, 'index'])->name('index');
             Route::get('/applications', [AdminLessorController::class, 'applications'])->name('applications');
-            Route::get('/application/approve/{id}', [AdminLessorController::class, 'approveApplication'])->name('application.approve');
+            Route::get('/application/approve/{uuid}', [AdminLessorController::class, 'approveApplication'])->name('application.approve');
         });
 
     });

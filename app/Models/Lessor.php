@@ -12,15 +12,22 @@ class Lessor extends Model
     protected $table = 'lessors';
 
     protected $fillable = [
-        'user_id',
+        'uuid',
+        'lessorapplication_id',
+        'lessoruser_id',
         'status_id',
-        'approved_by',
-        'approved_at'
+        'approvedbyuser_id',
+        'approved_at',
     ];
 
     protected $casts = [
         'approved_at' => 'datetime',
     ];
+
+    public function application()
+    {
+        return $this->belongsTo(LessorApplication::class, 'lessorapplication_id');
+    }
 
     public function user()
     {

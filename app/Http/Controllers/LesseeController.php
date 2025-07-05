@@ -9,6 +9,7 @@ use App\Models\UserContactDetail;
 use App\Services\BookingService;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use App\Models\BusinessDocument;
 
 
 
@@ -46,7 +47,6 @@ class LesseeController extends Controller
 
     public function store(Request $request)
     {
-    
         $validated = $request->validate([
             'fullname' => 'required|string',
             'business_name' => 'required|string',
@@ -63,21 +63,23 @@ class LesseeController extends Controller
             'barangay' => 'nullable|string',
             'country' => 'nullable|string',
             'tin' => 'nullable|string',
+            'business_documents' => 'nullable|array',
+            'business_documents.*' => 'file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'document_names' => 'nullable|array',
+            'document_names.*' => 'string',
         ]);
 
-       
+        $userId = auth()->id();
 
-        $userId = auth()->id(); // assumes you're using auth
-
-        // ✅ Update User model
+        // ✅ Update User
         User::where('id', $userId)->update([
             'name' => $validated['fullname'],
             'email' => $validated['email'],
             'submitForm' => 1
         ]);
 
-         // ✅ Update or create UserCompanyInformation
-        UserCompanyInformation::updateOrCreate(
+        // ✅ Update or create Company Info
+        $company = UserCompanyInformation::updateOrCreate(
             ['user_id' => $userId],
             [
                 'name' => $validated['business_name'],
@@ -95,13 +97,48 @@ class LesseeController extends Controller
             ]
         );
 
-
-        // ✅ Update or create UserContactInformation
+        // ✅ Update or create Contact Info
         UserContactDetail::updateOrCreate(
             ['user_id' => $userId],
             ['mobile' => $validated['phone']]
         );
 
+        // ✅ Save uploaded business documents
+        $lastDocumentId = null;
+
+        if ($request->hasFile('business_documents')) {
+            $files = $request->file('business_documents');
+            $names = $request->input('document_names', []);
+
+            foreach ($files as $index => $file) {
+                if ($file instanceof \Illuminate\Http\UploadedFile) {
+                    $originalName = $file->getClientOriginalName();
+                    $customName = $names[$index] ?? $originalName;
+
+                    $filename = uniqid() . '_' . $originalName;
+                    $path = $file->storeAs('business_documents', $filename, 'public');
+
+                    $document = BusinessDocument::create([
+                        'company_id'    => $company->id,
+                        'document_name' => $customName,
+                        'file_name'     => $originalName,
+                        'file_path'     => $path,
+                        'file_type'     => $file->getClientMimeType(),
+                        'file_size'     => $file->getSize(),
+                    ]);
+
+                    $lastDocumentId = $document->id;
+                }
+            }
+          
+            // ✅ Update company with last uploaded document ID
+            if ($lastDocumentId) {
+                $documentCount = BusinessDocument::where('company_id', $company->id)->count();
+                $company->update(['documents_total' => $documentCount]);
+            }
+        }
+
+        // ✅ Update SignUpForm status
         $user = User::where('id', $userId)->first();
 
         SignUpForm::updateOrCreate(
@@ -110,5 +147,5 @@ class LesseeController extends Controller
         );
 
         return back()->with('success', 'Company information has been saved.');
-    } 
+    }
 }

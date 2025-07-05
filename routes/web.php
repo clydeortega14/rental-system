@@ -36,21 +36,19 @@ use Inertia\Inertia;
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
-//Admin Login
-Route::get('/renthiveAdmin', [LoginController::class, 'index'])->name('admin.login.page.index');
-
 //ladingpage
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
 
 Route::get('rental-browser/{category}', [RentalItemController::class, 'rentalBrowserIndex'])->name('rental.browser.index');
 Route::group(['prefix' => 'admin'], function () {
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard.index');
+    // Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', [AdminUserController::class, 'index'])->name('admin.users.index');
         Route::get('/{uuid}', [AdminDashboardController::class, 'show'])->name('admin.users.show');
     });
 });
+
 
 Route::get('/itemDetails/{uuid}', [RentalItemController::class, 'itemDetails'])->name('itemDetails');
 

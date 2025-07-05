@@ -76,7 +76,7 @@ class User extends Authenticatable implements MustVerifyEmail
     
     public function signUpForm() : HasOne
     {
-        return $this->hasOne(SignUpForm::class, 'user_id');
+        return $this->hasOne(SignUpForm::class, 'user_uuid', 'uuid');
     }
 
     public function userValidIds()
