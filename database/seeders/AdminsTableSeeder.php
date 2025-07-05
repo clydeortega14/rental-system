@@ -42,5 +42,10 @@ class AdminsTableSeeder extends Seeder
                 'password' => Hash::make('superadmin123'),
             ]
         );
+
+        $admin = Admin::where('email', 'admin@renthive.com')->first();
+        if ($admin) {
+            $admin->assignRole('admin');
+        }
     }
 }
