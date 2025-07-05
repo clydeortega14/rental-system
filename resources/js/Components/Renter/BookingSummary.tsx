@@ -1,6 +1,6 @@
 import { BookingDetails, RentalDuration } from '@/types/rental';
 import { computeDateBetweenTwoDates, formatDateLocale, formatPrice, formatTimeLocale } from '@/utils/dateUtils';
-import { useEffect, useState } from 'react';
+import { FormEventHandler, useEffect, useState } from 'react';
 import Button from '../Renter/ui/Button';
 import PrimaryButton from '../PrimaryButton';
 
