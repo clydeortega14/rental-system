@@ -31,7 +31,7 @@ class Lessor extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'lessoruser_id');
     }
 
     public function status()

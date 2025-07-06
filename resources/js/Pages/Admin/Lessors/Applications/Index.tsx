@@ -294,35 +294,35 @@ const ApplicationsIndex: PageWithAdminLayout = () => {
                 {selectedApp.user?.company?.documents?.length ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     {selectedApp.user.company.documents.map((doc, idx) => (
-                      <div
-                        key={idx}
-                        className="bg-white rounded-lg shadow-sm  p-4 flex flex-col items-center"
-                      >
-                        <div className="w-full text-center mb-2">
-                          <p className="text-sm font-semibold text-gray-800 mb-1">
-                            {doc.document_name}
+                        <div
+                          key={idx}
+                          className="bg-white rounded-lg shadow-sm  p-4 flex flex-col items-center"
+                        >
+                          <div className="w-full text-center mb-2">
+                            <p className="text-sm font-semibold text-gray-800 mb-1">
+                              {doc.document_name}
+                            </p>
+                          </div>
+
+                          <div className="w-full">
+                            <a
+                              href={`/storage/${doc.file_path}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <img
+                                src={`/storage/${doc.file_path}`}
+                                alt={doc.document_name}
+                                className="w-full h-48 object-contain rounded border hover:scale-105 transition-transform duration-200"
+                              />
+                            </a>
+                          </div>
+
+                          <p className="mt-2 text-xs text-gray-500 break-words">
+                            {doc.file_name}
                           </p>
                         </div>
-
-                        <div className="w-full">
-                          <a
-                            href={`/storage/${doc.file_path}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <img
-                              src={`/storage/${doc.file_path}`}
-                              alt={doc.document_name}
-                              className="w-full h-48 object-contain rounded border hover:scale-105 transition-transform duration-200"
-                            />
-                          </a>
-                        </div>
-
-                        <p className="mt-2 text-xs text-gray-500 break-words">
-                          {doc.file_name}
-                        </p>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 ) : (
                   <p className="text-gray-500">No business documents uploaded.</p>

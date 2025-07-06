@@ -14,9 +14,33 @@ use App\Models\Lessor;
 
 class LessorController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return inertia('Admin/Lessors/Index');
+        $search = $request->input('search');
+
+        $lessors = Lessor::with([
+                'user.contact',
+                'user.company',
+                'status',
+            ])
+            ->whereHas('user', function ($query) use ($search) {
+                if ($search) {
+                    $query->where('name', 'like', '%' . $search . '%')
+                        ->orWhereHas('company', function ($q) use ($search) {
+                            $q->where('name', 'like', '%' . $search . '%');
+                        });
+                }
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return inertia('Admin/Lessors/Lists/Index', [
+            'lessors' => $lessors,
+            'filters' => [
+                'search' => $search,
+            ],
+        ]);
     }
 
     public function applications()
@@ -29,8 +53,7 @@ class LessorController extends Controller
             ->latest()
             ->paginate(10)
             ->withQueryString();
-        
-
+      
         return inertia('Admin/Lessors/Applications/Index', [
             'applications' => $applications
         ]);
@@ -38,7 +61,6 @@ class LessorController extends Controller
 
     public function approveApplication($uuid)
     {
-        // Find the user using UUID with related contact, company, and status
          $user = User::with([
             'contact',
             'company.documents',
@@ -47,12 +69,14 @@ class LessorController extends Controller
 
         $now = Carbon::now();
         $adminId = Auth::guard('admin')->id();
+        $companyUuid = $user->company?->uuid ?? Str::uuid();
+
         $lessorApplication = LessorApplication::updateOrCreate(
             ['lessoruser_id' => $user->id],
             [
-                'uuid' => Str::uuid(),
+                'uuid' => $companyUuid,
                 'encodedbyadmin_id' => $adminId,
-                'status_id' => 2, // approved status id, adjust accordingly
+                'status_id' => 2,
                 'approved_by' => $adminId,
                 'approved_at' => $now,
             ]
@@ -61,7 +85,16 @@ class LessorController extends Controller
         $user->signupForm?->update([
             'status_id' => 2,
         ]);
-
+        Lessor::updateOrCreate(
+            ['lessorapplication_id' => $lessorApplication->id],
+            [
+                'uuid' => $companyUuid,
+                'lessoruser_id' => $lessorApplication->lessoruser_id,
+                'status_id' => 2,
+                'approvedbyuser_id' => $adminId,
+                'approved_at' => $now,
+            ]
+        );
         return back()->with('success', 'Approve!');
     }
 }

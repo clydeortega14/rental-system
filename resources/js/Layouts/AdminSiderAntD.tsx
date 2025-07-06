@@ -29,7 +29,7 @@ const AdminSiderAntD = ({ collapsible_status, active_keys, active_selected_keys 
             label: renderMenuLabel('/admin/dashboard', 'Dashboard'),
         },
         {
-        key: '/admin/lessors-menu', // ✅ unique key for parent
+        key: '/admin/lessors-menu',
         icon: <UserAddOutlined />,
         label: 'Lessors',
         children: [
