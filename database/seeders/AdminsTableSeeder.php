@@ -21,7 +21,7 @@ class AdminsTableSeeder extends Seeder
             return;
         }
 
-        Admin::firstOrCreate(
+        $admin = Admin::firstOrCreate(
             [
                 'email' => 'admin@renthive.com',
             ],
@@ -32,7 +32,7 @@ class AdminsTableSeeder extends Seeder
             ]
         );
 
-        Admin::firstOrCreate(
+        $superadmin = Admin::firstOrCreate(
             [
                 'email' => 'superadmin@renthive.com',
             ],
@@ -42,5 +42,9 @@ class AdminsTableSeeder extends Seeder
                 'password' => Hash::make('superadmin123'),
             ]
         );
+
+        if ($admin) {
+            $admin->assignRole('admin');
+        }
     }
 }
