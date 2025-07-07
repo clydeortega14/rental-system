@@ -55,10 +55,21 @@ trait HasCustomFieldValues
                 continue;
             }
 
+            $type = $customField->type;
+            $key = $this->getCustomFieldValueKey($type);
+
+            if (is_array($value)) {
+                if ($type === 'json' || $type === 'checkbox') {
+                    $value = json_encode($value);
+                } else {
+                    $value = $value[0] ?? null;
+                }
+            }
+
             $customFieldValue = [
-                'type' => $customField->type,
+                'type' => $type,
                 'custom_field_id' => $customField->id,
-                $this->getCustomFieldValueKey($customField->type) => $value,
+                $key => $value,
             ];
 
             $this->fields()->create($customFieldValue);
@@ -75,12 +86,21 @@ trait HasCustomFieldValues
                 continue;
             }
 
+            $typeKey = $this->getCustomFieldValueKey($customField->type);
+
+            if (is_array($value)) {
+                if (in_array($customField->type, ['json', 'checkbox'])) {
+                    $value = json_encode($value);
+                } else {
+                    $value = $value[0] ?? null;
+                }
+            }
+
             $customFieldValue = $this->fields()->firstOrCreate([
                 'custom_field_id' => $customField->id,
                 'type' => $customField->type,
             ]);
 
-            $typeKey = $this->getCustomFieldValueKey($customField->type);
             $customFieldValue->$typeKey = $value;
             $customFieldValue->save();
         }
