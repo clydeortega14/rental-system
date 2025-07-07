@@ -34,4 +34,9 @@ class Category extends Model
     {
         return $this->belongsToMany(Filter::class, 'category_filters', 'category_id', 'filter_id');
     }
+
+    public function custom_fields()
+    {
+        return $this->customFields();
+    }
 }

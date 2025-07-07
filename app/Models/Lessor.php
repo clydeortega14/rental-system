@@ -24,7 +24,7 @@ class Lessor extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'lessoruser_id');
     }
 
     public function status()
@@ -35,5 +35,10 @@ class Lessor extends Model
     public function approvedBy()
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function shops()
+    {
+        return $this->hasMany(Shop::class);
     }
 }

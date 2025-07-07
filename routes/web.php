@@ -24,6 +24,9 @@ use App\Http\Controllers\Admin\LoginController;
 
 use App\Http\Controllers\Lessor\RentalController;
 use App\Http\Controllers\Lessor\LessorController;
+use App\Http\Controllers\Lessor\ShopController;
+use App\Http\Controllers\Lessor\ReservationController as ProperReserveController;
+
 use App\Http\Controllers\LesseeController;
 
 use Illuminate\Foundation\Application;
@@ -86,11 +89,20 @@ Route::middleware([
     // Route::get('rental-listings', [RentalItemController::class, 'rentalListings'])->name('rentalListing');
 
     Route::group(['prefix' => 'lessor'], function () {
-        Route::get('/', [LessorController::class, 'dashboard']);
+
+        Route::get('/', [LessorController::class, 'dashboard'])->name('lessor.dashboard');
+        
         Route::get('/properties', [RentalController::class, 'index'])->name('lessor.properties');
         Route::post('/properties', [RentalController::class, 'store'])->name('lessor.properties.store');
-        Route::put('/properties/{id}', [RentalController::class, 'update'])->name('lessor.properties.update');
+        Route::put('/properties/{rental}', [RentalController::class, 'update'])->name('lessor.properties.update');
 
+        Route::get('/shop', [ShopController::class, 'index'])->name('lessor.shop');
+        Route::post('/shop', [ShopController::class, 'store'])->name('lessor.shop.store');
+        Route::put('/lessor/shop/{shop}', [ShopController::class, 'update'])->name('lessor.shop.update');
+
+        Route::get('/property-reserve', [ProperReserveController::class, 'index'])->name('lessor.property-reserve');
+        Route::put('/property-reserve/{booking}/status', [ProperReserveController::class, 'updateStatus'])->name('lessor.property-reserve.updateStatus');
+    
     });
 
     // Route::get('/lessee', function () {
