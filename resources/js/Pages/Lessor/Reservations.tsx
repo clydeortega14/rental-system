@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import LessorLayout from "@/Layouts/LessorLayout";
+import { usePage, router } from "@inertiajs/react";
 import { Card } from "@/Components/Lessor/ui/card";
 import { Button } from "@/Components/Lessor/ui/button";
 import {
@@ -19,69 +20,21 @@ import {
 } from "@/Components/Lessor/ui/dropdown-menu";
 import { CheckCircle, Clock, XCircle, MoreHorizontal } from "lucide-react";
 
-const reservationsData = [
-  {
-    id: 1,
-    guestName: "Johnny Wood",
-    property: "Cozy Apartment Downtown",
-    imageUrl: "/images/lease/cozy_condo.jpg",
-    acquire: "2025-06-01",
-    return: "2025-06-05",
-    status: "Confirmed",
-    location: "Downtown City, 123 Main St",
-    pricePerNight: 120,
-    description:
-      "A cozy, modern apartment in the heart of downtown, close to all amenities and public transport.",
-    amenities: ["WiFi", "Air Conditioning", "Kitchen", "Parking"],
-    contactInfo: "contact@propertyowner.com",
-  },
-  {
-    id: 2,
-    guestName: "Jane Smith",
-    property: "Beachfront Villa",
-    imageUrl: "/images/lease/seaside.jpeg",
-    acquire: "2025-06-10",
-    return: "2025-06-15",
-    status: "Pending",
-    location: "Ocean Drive, Malibu",
-    pricePerNight: 350,
-    description:
-      "Luxurious villa with private beach access and stunning ocean views.",
-    amenities: ["Pool", "WiFi", "Breakfast", "Parking", "Air Conditioning"],
-    contactInfo: "info@beachvilla.com",
-  },
-  {
-    id: 3,
-    guestName: "Mike Johnson",
-    property: "Harley Davidson Motorcycle",
-    imageUrl: "/images/lease/harley.jpg",
-    acquire: "2025-07-01",
-    return: "2025-07-07",
-    status: "Cancelled",
-    location: "Bike Rental Center, 45 Motorway",
-    pricePerNight: 80,
-    description:
-      "Experience the thrill of riding a Harley Davidson through the countryside.",
-    amenities: ["Helmet", "GPS", "Insurance"],
-    contactInfo: "rentals@harleymoto.com",
-  },
-];
-
 const statusBadge = (status: string) => {
   const base =
     "inline-flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded-full";
   const badges = {
-    Confirmed: {
+    RESERVED: {
       className: "bg-green-100 text-green-700",
       icon: <CheckCircle className="w-4 h-4" />,
       label: "Confirmed",
     },
-    Pending: {
+    PENDING: {
       className: "bg-yellow-100 text-yellow-800",
       icon: <Clock className="w-4 h-4" />,
       label: "Pending",
     },
-    Cancelled: {
+    CANCELLED: {
       className: "bg-red-100 text-red-700",
       icon: <XCircle className="w-4 h-4" />,
       label: "Rejected",
@@ -96,10 +49,28 @@ const statusBadge = (status: string) => {
   );
 };
 
-export default function Reservations() {
-  const [selectedRes, setSelectedRes] = useState<typeof reservationsData[0] | null>(null);
+function Reservations() {
+  const { reservations = [] } = usePage().props as {
+    reservations: Array<{
+      id: number;
+      guestName: string;
+      property: string;
+      imageUrl: string;
+      acquire: string;
+      return: string;
+      status: string;
+      location: string;
+      pricePerNight: number;
+      description: string;
+      amenities: string[];
+      contactInfo: string;
+    }>;
+  };
+
+  const [selectedRes, setSelectedRes] = useState<typeof reservations[0] | null>(null);
   const [actionType, setActionType] = useState<"confirm" | "reject" | null>(null);
-  const [viewingRes, setViewingRes] = useState<typeof reservationsData[0] | null>(null);
+  const [viewingRes, setViewingRes] = useState<typeof reservations[0] | null>(null);
+  const [filterStatus, setFilterStatus] = useState<string | null>(null);
   const { toast } = useToast();
 
   const closeDialog = () => {
@@ -109,26 +80,60 @@ export default function Reservations() {
 
   const handleAction = () => {
     if (!selectedRes || !actionType) return;
+    const status = actionType === "confirm" ? "RESERVED" : "CANCELLED";
 
-    toast({
-      title: `Reservation ${actionType === "confirm" ? "confirmed" : "rejected"}`,
-      description: `You have ${actionType}ed the booking for ${selectedRes.guestName}.`,
+    router.put(`/lessor/property-reserve/${selectedRes.id}/status`, {
+      status,
+    }, {
+      onSuccess: () => {
+        toast({
+          title: `Reservation ${status === "RESERVED" ? "confirmed" : "rejected"}`,
+          description: `Booking for ${selectedRes.guestName} is now ${status}.`,
+        });
+        closeDialog();
+      },
+      onError: () => {
+        toast({
+          title: "Failed to update",
+          description: "Something went wrong.",
+          variant: "destructive",
+        });
+      },
     });
-    closeDialog();
   };
+
+  const filteredReservations = filterStatus
+    ? reservations.filter((res) => res.status === filterStatus)
+    : reservations;
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
-      <header className="flex justify-between items-center">
+      <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <h1 className="text-3xl font-bold text-orange-600">Bookings</h1>
-        <Button className="bg-orange-600 text-white hover:bg-orange-500">Export CSV</Button>
+
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          {/* Status Filter Dropdown */}
+          <select
+            value={filterStatus || "ALL"}
+            onChange={(e) =>
+              setFilterStatus(e.target.value === "ALL" ? null : e.target.value)
+            }
+            className="border border-gray-300 rounded-md px-8 py-1.5 focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+          >
+            <option value="ALL">All</option>
+            <option value="PENDING">Pending</option>
+            <option value="RESERVED">Reserved</option>
+            <option value="CANCELLED">Cancelled</option>
+          </select>
+
+        </div>
       </header>
 
-      {reservationsData.length === 0 ? (
+      {filteredReservations.length === 0 ? (
         <p className="text-center py-10 text-gray-500 italic">No reservations found.</p>
       ) : (
         <div className="space-y-4">
-          {reservationsData.map((res) => (
+          {filteredReservations.map((res) => (
             <Card
               key={res.id}
               className="flex flex-col sm:flex-row gap-4 sm:gap-6 p-4 rounded-xl hover:shadow-lg transition-shadow"
@@ -166,7 +171,7 @@ export default function Reservations() {
                     <DropdownMenuItem onClick={() => setViewingRes(res)}>
                       View Details
                     </DropdownMenuItem>
-                    {res.status === "Pending" && (
+                    {res.status === "PENDING" && (
                       <>
                         <DropdownMenuItem
                           onClick={() => {
@@ -209,7 +214,7 @@ export default function Reservations() {
           </DialogHeader>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setActionType(null)}>
+            <Button variant="outline" onClick={closeDialog}>
               Cancel
             </Button>
             <Button
@@ -228,10 +233,7 @@ export default function Reservations() {
 
       {/* View Details Dialog */}
       <Dialog open={!!viewingRes} onOpenChange={() => setViewingRes(null)}>
-        <DialogContent
-          className="w-full max-w-md sm:max-w-lg max-h-[80vh] overflow-y-auto p-4 sm:p-6"
-          style={{ minWidth: "280px" }}
-        >
+        <DialogContent className="w-full max-w-md sm:max-w-lg max-h-[80vh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle className="text-lg sm:text-xl">{viewingRes?.property}</DialogTitle>
             <DialogDescription>
@@ -247,36 +249,14 @@ export default function Reservations() {
               loading="lazy"
             />
 
-            <p>
-              <strong>Guest:</strong> {viewingRes?.guestName}
-            </p>
-            <p>
-              <strong>Acquire:</strong>{" "}
-              <time dateTime={viewingRes?.acquire}>
-                {viewingRes ? new Date(viewingRes.acquire).toLocaleDateString() : ""}
-              </time>
-            </p>
-            <p>
-              <strong>Return:</strong>{" "}
-              <time dateTime={viewingRes?.return}>
-                {viewingRes ? new Date(viewingRes.return).toLocaleDateString() : ""}
-              </time>
-            </p>
-            <p>
-              <strong>Status:</strong> {viewingRes && statusBadge(viewingRes.status)}
-            </p>
-
+            <p><strong>Guest:</strong> {viewingRes?.guestName}</p>
+            <p><strong>Acquire:</strong> {new Date(viewingRes?.acquire || "").toLocaleDateString()}</p>
+            <p><strong>Return:</strong> {new Date(viewingRes?.return || "").toLocaleDateString()}</p>
+            <p><strong>Status:</strong> {viewingRes && statusBadge(viewingRes.status)}</p>
             <hr className="my-2" />
-            <p>
-              <strong>Location:</strong> {viewingRes?.location}
-            </p>
-            <p>
-              <strong>Reservation Fee:</strong> &#8369;{viewingRes?.pricePerNight}
-            </p>
-            <p>
-              <strong>Description:</strong> {viewingRes?.description}
-            </p>
-
+            <p><strong>Location:</strong> {viewingRes?.location}</p>
+            <p><strong>Reservation Fee:</strong> &#8369;{viewingRes?.pricePerNight}</p>
+            <p><strong>Description:</strong> {viewingRes?.description}</p>
             {viewingRes?.amenities?.length ? (
               <div>
                 <strong>Amenities:</strong>
@@ -287,11 +267,8 @@ export default function Reservations() {
                 </ul>
               </div>
             ) : null}
-
             {viewingRes?.contactInfo && (
-              <p>
-                <strong>Contact Info:</strong> {viewingRes.contactInfo}
-              </p>
+              <p><strong>Contact Info:</strong> {viewingRes.contactInfo}</p>
             )}
           </div>
 
@@ -305,3 +282,7 @@ export default function Reservations() {
     </div>
   );
 }
+
+export default Reservations;
+
+Reservations.layout = (page) => <LessorLayout>{page}</LessorLayout>;
