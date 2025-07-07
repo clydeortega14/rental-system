@@ -1,6 +1,7 @@
 export type Category = {
     category_id: number;
     label: string;
+    name: string
 }
 
 export interface ICategory {

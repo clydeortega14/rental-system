@@ -10,8 +10,8 @@ interface Availability {
 
 interface RentalCalendarProps {
     onSelectDate: (date: string) => void;
-    selectedDate: string;
-    selectedEndDate: string;
+    selectedDate: string | null;
+    selectedEndDate: string | null;
     setSelectedEndDate: (d: string | null) => void;
     unavailableDates: Availability;
 }

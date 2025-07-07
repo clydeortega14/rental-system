@@ -40,8 +40,8 @@ export interface BookingDetails {
   itemId?: string;
   itemName?: string,
   userId?: string;
-  customerId: string;
-  customerName: string;
+  customerId?: string;
+  customerName?: string;
   startDate?: Date | null;
   startTime?: String | null;
   endDate?: Date | null;
