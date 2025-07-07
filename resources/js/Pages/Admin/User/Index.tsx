@@ -1,17 +1,23 @@
 import React from 'react';
 import AdminLayoutAntD from '../../../../js/Layouts/AdminLayoutAntD';
+import { PageWithAdminLayout } from '@/types';
 
 
-const DashboardAntD: React.FC = () => {
+const DashboardAntD: PageWithAdminLayout = () => {
     return (
-        <AdminLayoutAntD
-            activemenu='admin/users'
-            activesubmenu='admin/users/index'>
-            <div>
-                <h1>Users</h1>
-                <p>Welcome to the admin users page!</p>
-            </div>
-        </AdminLayoutAntD>
+        <div>
+            <h1>Users</h1>
+            <p>Welcome to the admin users page!</p>
+        </div>
     );
 }
+
+DashboardAntD.layout = (page: React.ReactNode) => (
+    <AdminLayoutAntD
+        active_keys={['/admin/users/index']}
+        active_selected_keys={['/admin/users']}
+    >
+        {page}
+    </AdminLayoutAntD>
+);
 export default DashboardAntD;
