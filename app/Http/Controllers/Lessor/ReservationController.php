@@ -13,7 +13,6 @@ use App\Models\Booking;
 
 class ReservationController extends Controller
 {
-    use DateHelpers;
 
     protected $bookingService;
 
@@ -27,18 +26,26 @@ class ReservationController extends Controller
         $lessor = Lessor::with(['shops', 'user'])
             ->where('lessoruser_id', auth()->id())
             ->first();
-            
+
         if (!$lessor) {
             abort(403, 'Lessor not found for this user.');
         }
 
-        $bookings = Booking::with(['bookedBy', 'rentalListing.toShop'])
-                ->whereHas('rentalListing', function ($query) {
-                    $query->where('user_id', auth()->id());
-                })
-                ->get();
+        $bookings = Booking::with(['bookedBy', 'rentalListing.toShop', 'bookingStatus'])
+            ->whereHas('rentalListing', function ($query) {
+                $query->where('user_id', auth()->id());
+            })
+            ->get();
 
-        $books = $bookings->map(function ($booking) {
+        $grouped = $bookings->groupBy('rentalListing.id');
+
+        $books = $bookings->map(function ($booking) use ($grouped) {
+            $conflicts = $grouped[$booking->rentalListing->id]->filter(function ($other) use ($booking) {
+                return $other->id !== $booking->id &&
+                    $booking->start_date < $other->end_date &&
+                    $booking->end_date > $other->start_date;
+            });
+
             return [
                 'id' => $booking->id,
                 'guestName' => $booking->bookedBy?->name ?? 'N/A',
@@ -52,12 +59,13 @@ class ReservationController extends Controller
                 'description' => $booking->rentalListing?->description ?? '',
                 'amenities' => $booking->rentalListing?->amenities ?? [],
                 'contactInfo' => $booking->bookedBy?->email ?? '',
+                'hasConflict' => $conflicts->isNotEmpty(),
             ];
         });
 
         return inertia('Lessor/Reservations', [
             'reservations' => $books,
-            'lessorName' => $lessor->user->name
+            'lessorName' => $lessor->user->name,
         ]);
     }
 
@@ -67,13 +75,18 @@ class ReservationController extends Controller
             'status' => ['required', 'in:CONFIRMED,CANCELLED'],
         ]);
 
-        $statusMap = [
-            'CONFIRMED' => 2, // reserved
-            'CANCELLED' => 3, // cancelled
+        $actionMap = [
+            'CONFIRMED' => 'accept',
+            'CANCELLED' => 'cancelled',
         ];
 
-        $booking->status = $statusMap[$validated['status']];
-        $booking->save();
+        $action = $actionMap[$validated['status']];
+
+        try {
+            $this->bookingService->updateStatus($booking, ['action' => $action]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update booking status: ' . $e->getMessage());
+        }
 
         return redirect()->back()->with('success', "Booking status updated to {$validated['status']}");
 

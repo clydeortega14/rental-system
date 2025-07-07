@@ -150,12 +150,22 @@ function Reservations() {
                 <p className="text-gray-700">Guest: {res.guestName}</p>
                 <p className="text-gray-600 text-sm">
                   Acquire:{" "}
-                  <time dateTime={res.acquire}>{new Date(res.acquire).toLocaleDateString()}</time>
+                  <time dateTime={res.acquire}>
+                    {new Date(res.acquire).toLocaleDateString()}
+                  </time>
                 </p>
                 <p className="text-gray-600 text-sm">
                   Return:{" "}
-                  <time dateTime={res.return}>{new Date(res.return).toLocaleDateString()}</time>
+                  <time dateTime={res.return}>
+                    {new Date(res.return).toLocaleDateString()}
+                  </time>
                 </p>
+
+                {res.hasConflict && (
+                  <div className="mt-1 text-sm text-red-600 font-semibold">
+                    &#9888; Double Booking Detected for this property
+                  </div>
+                )}
               </div>
 
               <div className="flex sm:flex-col sm:items-end justify-between sm:justify-center gap-2 sm:gap-3">
@@ -176,19 +186,26 @@ function Reservations() {
                         <DropdownMenuItem
                           onClick={() => {
                             setSelectedRes(res);
-                            setActionType("confirm");
-                          }}
-                        >
-                          Confirm
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setSelectedRes(res);
                             setActionType("reject");
                           }}
                         >
                           Reject
                         </DropdownMenuItem>
+
+                        {res.hasConflict ? (
+                          <DropdownMenuItem disabled>
+                            <span className="text-gray-400">Confirm (conflict)</span>
+                          </DropdownMenuItem>
+                        ) : (
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setSelectedRes(res);
+                              setActionType("confirm");
+                            }}
+                          >
+                            Confirm
+                          </DropdownMenuItem>
+                        )}
                       </>
                     )}
                   </DropdownMenuContent>
