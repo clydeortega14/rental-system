@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useForm } from '@inertiajs/react'
 import AdminAuthLayout from '@/Layouts/AdminLogin'
-import SharedLoader from '@/Components/Shared/HiveLoader' // ✅ using SharedLoader here
+import SharedLoader from '@/Components/Shared/HiveLoader'
 
 const LoginAdmin: React.FC = () => {
   const { data, setData, post, processing, errors } = useForm({

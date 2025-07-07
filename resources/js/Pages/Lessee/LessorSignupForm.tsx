@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef  } from "react";
 import { useForm } from "@inertiajs/react";
 import {
   regions,
@@ -7,43 +7,48 @@ import {
   barangays,
 } from "select-philippines-address";
 import Swal from 'sweetalert2';
+import { router } from "@inertiajs/react";
 
 interface LessorsignUserupFormProps {
-  user: {
-    id: number;
-    name: string;
-    email: string;
-    fullname?: string;
-    middle_name?: string;
-    last_name?: string;
-    business_name?: string;
-    phone?: string;
-    contact?: {
-      mobile?: string;
-    };
-    company?: {
-      uuid: string;
-      tin: string;
-      business_address?: string;
-      street?: string;
-      city?: string;
-      state?: string;
-      country?: string;
-      postal_code?: string;
-      region?: string;
-      province?: string;
-      barangay?: string;
+  signUser: {
+    user: {
+      id: number;
+      name: string;
+      email: string;
+      fullname?: string;
+      middle_name?: string;
+      last_name?: string;
+      business_name?: string;
+      phone?: string;
+      contact?: {
+        mobile?: string;
+      };
+      company?: {
+        uuid: string;
+        name: string;
+        tin: string;
+        business_type?: string;
+        business_reg_number?: string;
+        business_address?: string;
+        street?: string;
+        city?: string;
+        state?: string;
+        country?: string;
+        postal_code?: string;
+        region?: string;
+        province?: string;
+        barangay?: string;
+      };
     };
   };
 }
-
 export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormProps) {
 
   const [step, setStep] = useState(1);
 
   const { data, setData, post, processing, errors } = useForm({
     fullname: signUser.user.name || "N/A",
-    business_name: signUser.user.company.name || "N/A",
+    business_name: signUser.user.company?.name || "N/A",
     email: signUser.user.email || "N/A",
     phone: signUser.user.contact?.mobile || "N/A",
     type: signUser.user.company?.business_type,
@@ -57,6 +62,7 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
     postal_code: signUser.user.company?.postal_code || "N/A",
     tin: signUser.user.company?.tin || "N/A",
     barangay: signUser.user.company?.barangay || "",
+    business_documents: [] as { file: File; type: string }[],
   });
 
   // Address dependencies
@@ -65,16 +71,77 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
   const [cityList, setCityList] = useState<any[]>([]);
   const [brgyList, setBrgyList] = useState<any[]>([]);
 
+  const [permitFile, setPermitFile] = useState<File | null>(null);
+  const [secFile, setSecFile] = useState<File | null>(null);
+  const [birFile, setBirFile] = useState<File | null>(null);
+
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
 
+  const permitRef = useRef<HTMLInputElement>(null);
+  const secRef = useRef<HTMLInputElement>(null);
+  const birRef = useRef<HTMLInputElement>(null);
+  
+
+
+  type Region = {
+    region_code: string;
+    region_name: string;
+  };
+
+  type Province = {
+    province_code: string;
+    province_name: string;
+  };
+
+  type City = {
+    city_code: string;
+    city_name: string;
+  };
+
+  type Barangay = {
+    brgy_code: string;
+    brgy_name: string;
+  };
+
+  type BusinessField =
+  | "type"
+  | "business_reg_number"
+  | "province"
+  | "fullname"
+  | "business_name"
+  | "email"
+  | "phone"
+  | "business_address"
+  | "street"
+  | "region"
+  | "city"
+  | "country"
+  | "postal_code"
+  | "tin"
+  | "barangay";
+
+  const fields: { key: BusinessField; label: string; type?: string }[] = [
+    { key: "fullname", label: "Name" },
+    { key: "business_name", label: "Business Name" },
+    { key: "email", label: "Email", type: "email" },
+    { key: "phone", label: "Phone Number" },
+  ];
+
+  const fieldsData: { key: BusinessField; label: string }[] = [
+  { key: "business_reg_number", label: "Business Registration Number" },
+  { key: "business_address", label: "Business Address" },
+  { key: "street", label: "Street" },
+  { key: "postal_code", label: "Postal Code" },
+  { key: "tin", label: "TIN (Tax ID)" },
+];
+
   useEffect(() => {
   // Initial region list
-  regions().then((regions) => {
+  regions().then((regions: Region[]) => {
     setRegionList(regions);
 
-    // Set preselected region if exists
     const userRegion = signUser.user.company?.region;
     const regionObj = regions.find(r => r.region_name === userRegion);
     if (regionObj) {
@@ -82,8 +149,7 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
       setSelectedRegion(regionCode);
       setData("region", regionObj.region_name);
 
-      // Load provinces for the region
-      provinces(regionCode).then((prov) => {
+      provinces(regionCode).then((prov: Province[]) => {
         setProvList(prov);
 
         const userProvince = signUser.user.company?.province;
@@ -93,8 +159,7 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
           setSelectedProvince(provCode);
           setData("province", provObj.province_name);
 
-          // Load cities
-          cities(provCode).then((cityList) => {
+          cities(provCode).then((cityList: City[]) => {
             setCityList(cityList);
 
             const userCity = signUser.user.company?.city;
@@ -104,8 +169,7 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
               setSelectedCity(cityCode);
               setData("city", cityObj.city_name);
 
-              // Load barangays
-              barangays(cityCode).then((brgyList) => {
+              barangays(cityCode).then((brgyList: Barangay[]) => {
                 setBrgyList(brgyList);
               });
             }
@@ -127,10 +191,9 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
     setData("barangay", "");
 
     // Fetch provinces
-    provinces(regionCode).then((prov) => {
+     provinces(regionCode).then((prov: Province[]) => {
       setProvList(prov);
 
-      // Set region name to form data
       const selectedRegionObj = regionList.find(r => r.region_code === regionCode);
       setData("region", selectedRegionObj?.region_name || "");
     });
@@ -145,7 +208,7 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
     setData("city", "");
     setData("barangay", "");
 
-    cities(provinceCode).then((cityList) => {
+    cities(provinceCode).then((cityList: City[]) => {
       setCityList(cityList);
 
       // Set province name and state
@@ -155,6 +218,7 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
     });
   };
 
+
   const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const cityCode = e.target.value;
     setSelectedCity(cityCode);
@@ -162,7 +226,7 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
     setData("city", "");
     setData("barangay", "");
 
-    barangays(cityCode).then((brgys) => {
+    barangays(cityCode).then((brgys: { brgy_code: string; brgy_name: string }[]) => {
       setBrgyList(brgys);
 
       const selectedCity = cityList.find(c => c.city_code === cityCode);
@@ -180,7 +244,38 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    post("/lessor/signUserup", {
+    const formData = new FormData();
+
+    // Append all form fields
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value as string);
+      }
+    });
+
+    // Validate required files before appending
+    if (!permitFile || !secFile || !birFile) {
+      Swal.fire({
+        title: "Missing Files",
+        text: "Please upload all required business documents.",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
+    formData.append("business_documents[]", permitFile);
+    formData.append("document_names[]", "Business Permit");
+
+    formData.append("business_documents[]", secFile);
+    formData.append("document_names[]", "SEC Certificate");
+
+    formData.append("business_documents[]", birFile);
+    formData.append("document_names[]", "BIR Form 2303");
+
+    // Submit using Inertia router (not useForm) because we’re using FormData
+    router.post("/lessor/signUserup", formData, {
+      forceFormData: true,
       onSuccess: () => {
         Swal.fire({
           title: "Success!",
@@ -188,7 +283,7 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
           icon: "success",
           confirmButtonText: "OK",
         }).then(() => {
-          window.location.href = "/lessee"; // Redirect after user clicks OK
+          window.location.href = "/lessee";
         });
       },
       onError: () => {
@@ -202,23 +297,113 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
     });
   };
 
+  const handleFileUpload = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setFile: React.Dispatch<React.SetStateAction<File | null>>,
+    label: string
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        Swal.fire({
+          title: "File Too Large",
+          text: `${label} must be less than 2MB.`,
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+        return;
+      }
+      setFile(file);
+    }
+  };
+
+  const UploadCard = ({
+    title,
+    file,
+    onClick,
+    onRemove,
+  }: {
+    title: string;
+    file: File | null;
+    onClick: () => void;
+    onRemove: () => void;
+  }) => {
+    const isImage = file?.type.startsWith("image/");
+    const previewUrl = file && isImage ? URL.createObjectURL(file) : null;
+
+    return (
+      <div
+        onClick={onClick}
+        className="relative cursor-pointer h-40 border-2 border-dashed border-orange-400 flex flex-col items-center justify-center rounded-lg hover:bg-orange-50 transition overflow-hidden"
+      >
+        {file ? (
+          <>
+            {/* Preview */}
+            {isImage ? (
+              <img
+                src={previewUrl!}
+                alt={title}
+                className="absolute inset-0 object-cover w-full h-full"
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-10 w-10 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </div>
+            )}
+
+            {/* Overlay Info */}
+            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2 flex justify-between items-center">
+              <span className="truncate">{file.name}</span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemove();
+                }}
+                className="ml-2 text-red-300 hover:text-red-500"
+              >
+                Remove
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-10 w-10 text-orange-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            <span className="mt-2 text-sm text-orange-600 font-semibold text-center">{title}</span>
+          </>
+        )}
+      </div>
+    );
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-8xl mx-auto">
       {step === 1 && (
         <div>
           <h3 className="text-2xl font-bold mb-6 text-orange-600">Account Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              { key: "fullname", label: "Name" },
-              { key: "business_name", label: "Business Name" },
-              { key: "email", label: "Email", type: "email" },
-              { key: "phone", label: "Phone Number" },
-            ].map(({ key, label, type }) => (
+            {fields.map(({ key, label, type }) => (
               <div key={key}>
                 <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>
                 <input
                   type={type || "text"}
-                  value={data[key as keyof typeof data]}
+                  value={data[key] || ""}
                   onChange={(e) => setData(key, e.target.value)}
                   className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
                 />
@@ -263,25 +448,19 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Business Registration and Address */}
-            {[
-              { key: "business_reg_number", label: "Business Registration Number" },
-              { key: "business_address", label: "Business Address" },
-              { key: "street", label: "Street" },
-              { key: "postal_code", label: "Postal Code" },
-              { key: "tin", label: "TIN (Tax ID)" },
-            
-            ].map(({ key, label }) => (
+            {fieldsData.map(({ key, label }) => (
               <div key={key}>
                 <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>
                 <input
                   type="text"
-                  value={data[key as keyof typeof data]}
+                  value={data[key] || ""}
                   onChange={(e) => setData(key, e.target.value)}
                   className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
                 />
                 {errors[key] && <p className="text-sm text-red-500 mt-1">{errors[key]}</p>}
               </div>
             ))}
+
 
             {/* Region */}
             <div>
@@ -362,6 +541,40 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
               />
               {errors.country && <p className="text-sm text-red-500 mt-1">{errors.country}</p>}
+            </div>
+          </div>
+
+          {/* Upload Card + Previews */}
+          <div className="mt-6">
+            <p className="text-sm font-semibold text-gray-700 mb-2">
+              Upload Business Documents <span className="text-red-400">(Required: Business Permit, SEC Certificate, BIR Form 2303)</span>
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {/* File inputs (hidden) */}
+              <input ref={permitRef} type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => handleFileUpload(e, setPermitFile, "Business Permit")} />
+              <input ref={secRef} type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => handleFileUpload(e, setSecFile, "SEC Certificate")} />
+              <input ref={birRef} type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => handleFileUpload(e, setBirFile, "BIR Form 2303")} />
+
+              {/* Upload cards */}
+              <UploadCard
+                title="Business Permit"
+                file={permitFile}
+                onClick={() => permitRef.current?.click()}
+                onRemove={() => setPermitFile(null)}
+              />
+              <UploadCard
+                title="SEC Certificate"
+                file={secFile}
+                onClick={() => secRef.current?.click()}
+                onRemove={() => setSecFile(null)}
+              />
+              <UploadCard
+                title="BIR Form 2303"
+                file={birFile}
+                onClick={() => birRef.current?.click()}
+                onRemove={() => setBirFile(null)}
+              />
             </div>
           </div>
 

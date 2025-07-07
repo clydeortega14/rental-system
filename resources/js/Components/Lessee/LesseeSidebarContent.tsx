@@ -8,8 +8,10 @@ import {
 } from "react-icons/bi";
 
 import { useState } from "react";
+// import { TabsList, TabsTrigger } from "@/Components/Lessee/ui/tabs";
 import { TabsList, TabsTrigger } from "@/Components/Lessee/ui/tabs";
 import LessorApplyModal from "@/Components/Lessee/Modal/LessorApplyModal";
+import { Link } from '@inertiajs/react';
 
 interface LesseeSidebarContentProps {
   activeTab: string;
@@ -66,39 +68,55 @@ export default function LesseeSidebarContent({
 
       {/* Sidebar Tabs */}
       <TabsList className="flex flex-col space-y-6 items-start">
-        {sidebarTabs.map((section) => (
-          <div key={section.section} className="w-full space-y-1">
+        {sidebarTabs.map((section, index) => (
+          <div key={`section-${section.section}-${index}`} className="w-full space-y-1">
             <p className="text-xs font-semibold text-gray-500 uppercase">{section.section}</p>
             {section.items
-              .filter((item) => item.label.toLowerCase().includes(search.toLowerCase()))
-              .map((item) => {
-                const isSignup = item.key === "signup";
+            .filter((item) => item.label.toLowerCase().includes(search.toLowerCase()))
+            .map((item) => {
+              const isSignup = item.key === "signup";
+              const isLogout = item.key === "logout";
 
+              if (isLogout) {
                 return (
-                  <TabsTrigger
-                    key={item.key}
-                    value={item.key}
-                    onClick={() => {
-                      if (isSignup) {
-                        setIsModalOpen(true);
-                      } else {
-                        setActiveTab(item.key);
-                      }
-                    }}
-                    className={`
-                      w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors
-                      ${
-                        isSignup
-                          ? "bg-orange-100 text-orange-600 hover:bg-orange-200 data-[state=active]:bg-orange-600 data-[state=active]:text-white"
-                          : "bg-gray-100 text-gray-600 hover:bg-orange-200 data-[state=active]:bg-orange-600 data-[state=active]:text-white"
-                      }
-                    `}
+                  <Link
+                    key={item.key} // ←✅ Add this line
+                    href={route('logout')}
+                    method="post"
+                    as="button"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors bg-red-100 text-red-600 hover:bg-red-200"
                   >
-                    {item.icon}
-                    {item.label}
-                  </TabsTrigger>
+                    <BiLockOpen size={18} />
+                    Logout
+                  </Link>
                 );
-              })}
+              }
+
+              return (
+                <TabsTrigger
+                  key={item.key}
+                  value={item.key}
+                  onClick={() => {
+                    if (isSignup) {
+                      setIsModalOpen(true);
+                    } else {
+                      setActiveTab(item.key);
+                    }
+                  }}
+                  className={`
+                    w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors
+                    ${
+                      isSignup
+                        ? "bg-orange-100 text-orange-600 hover:bg-orange-200 data-[state=active]:bg-orange-600 data-[state=active]:text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-orange-200 data-[state=active]:bg-orange-600 data-[state=active]:text-white"
+                    }
+                  `}
+                >
+                  {item.icon}
+                  {item.label}
+                </TabsTrigger>
+              );
+            })}
           </div>
         ))}
       </TabsList>

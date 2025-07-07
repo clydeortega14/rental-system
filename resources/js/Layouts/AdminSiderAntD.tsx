@@ -29,13 +29,13 @@ const AdminSiderAntD = ({ collapsible_status, active_keys, active_selected_keys 
             label: renderMenuLabel('/admin/dashboard', 'Dashboard'),
         },
         {
-            key: '/admin/lessors',
-            icon: <UserAddOutlined />,
-            label: 'Lessors',
-            children: [
-                { key: '/admin/lessors', label: renderMenuLabel('/admin/lessors', 'Lists') },
-                { key: '/admin/lessors/applications', label: renderMenuLabel('/admin/lessors/applications', 'Applications') },
-            ],
+        key: '/admin/lessors-menu',
+        icon: <UserAddOutlined />,
+        label: 'Lessors',
+        children: [
+            { key: '/admin/lessors', label: renderMenuLabel('/admin/lessors', 'Lists') },
+            { key: '/admin/lessors/applications', label: renderMenuLabel('/admin/lessors/applications', 'Applications') },
+        ],
         },
         {
             key: '/admin/users',

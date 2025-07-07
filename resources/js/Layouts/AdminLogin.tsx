@@ -13,7 +13,7 @@ const AdminAuthLayout: React.FC<Props> = ({ children }) => {
         {/* LOGO */}
         <div className="flex justify-center">
           <img
-            src={banner2} // Change to your actual logo path (e.g. `/storage/logo.png`)
+            src={banner2} 
             alt="Admin Logo"
             className="h-16 w-auto"
           />

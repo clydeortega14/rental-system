@@ -18,6 +18,7 @@ import { Link, useForm } from '@inertiajs/react';
 import { AdminLayoutProps } from '@/types';
 import '../../css/admin-compact.css';
 
+
 const { Header, Sider, Content, Footer } = Layout;
 
 const App: React.FC<AdminLayoutProps> = ({ children, active_keys, active_selected_keys }) => {

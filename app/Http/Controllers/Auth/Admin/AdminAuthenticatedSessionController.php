@@ -18,13 +18,17 @@ class AdminAuthenticatedSessionController extends Controller
         // dd($request->all());
         $credentials = $request->only('email', 'password');
 
+      
+
         if (Auth::guard('admin')->attempt($credentials, $request->filled('remember'))) {
 
+          
             if(!Auth::guard('admin')->user()->hasRole('admin')) {
                 return redirect()->route('admin.create')->withErrors([
                     'email' => 'You do not have permission to access this area.',
                 ])->withInput($request->only('email'));
             }
+
             return redirect()->intended(route('admin.dashboard'));
         }
 
