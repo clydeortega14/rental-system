@@ -72,11 +72,11 @@ class ReservationController extends Controller
     public function updateStatus(Request $request, Booking $booking)
     {
         $validated = $request->validate([
-            'status' => ['required', 'in:CONFIRMED,CANCELLED'],
+            'status' => ['required', 'in:RESERVED,CANCELLED'],
         ]);
 
         $actionMap = [
-            'CONFIRMED' => 'accept',
+            'RESERVED' => 'accept',
             'CANCELLED' => 'cancelled',
         ];
 
