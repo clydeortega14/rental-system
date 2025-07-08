@@ -9,7 +9,9 @@ use App\Models\UserContactDetail;
 use App\Services\BookingService;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use App\Models\Lessor;
 use App\Models\BusinessDocument;
+use App\Models\LessorApplication;
 
 
 
@@ -22,7 +24,7 @@ class LesseeController extends Controller
     {
         $this->booking_service = $booking_service;
     }
-   public function index()
+    public function index()
     {
         $headersData = [
             ['name' => 'Item'],
@@ -31,17 +33,30 @@ class LesseeController extends Controller
             ['name' => 'Booked By'],
             ['name' => 'Action']
         ];
-
+        $user = Auth::user()?->loadMissing(['company', 'contact']);
+        $isApprovedLessor = false;
+        $lessorApplicationStatus = null;
+        if ($user) {
+            // Check if user is already an approved lessor
+            $isApprovedLessor = Lessor::where('lessoruser_id', $user->id)
+                ->whereHas('status', fn($query) => $query->where('name', 'approved'))
+                ->exists();
+            // Check if user has an application and get its status
+            $application = \App\Models\LessorApplication::where('lessoruser_id', $user->id)->first();
+            if ($application) {
+                // Get the status name via relationship or lookup
+                $lessorApplicationStatus = optional($application->status)->name; // ← assumes status() relationship
+            }
+        }
         $bookings = $this->booking_service->formatBookings();
-
-       
-
         return Inertia::render('Lessee/Landing', [
             'auth' => [
-                'user' => Auth::user()?->load(['company', 'contact']),
+                'user' => $user,
             ],
             'bookings' => $bookings,
             'headerData' => $headersData,
+            'isApprovedLessor' => $isApprovedLessor,
+            'lessorApplicationStatus' => $lessorApplicationStatus, // ✅ added
         ]);
     }
 
@@ -144,6 +159,15 @@ class LesseeController extends Controller
         SignUpForm::updateOrCreate(
             ['user_uuid' => $user->uuid],
             ['status_id' => $user->submitForm]
+        );
+
+        // ✅ Store in lessor_applications table
+        LessorApplication::updateOrCreate(
+            ['lessoruser_id' => $userId],
+            [
+                'uuid' => $company->uuid,
+                'status_id' => 1, // e.g. pending
+            ]
         );
 
         return back()->with('success', 'Company information has been saved.');

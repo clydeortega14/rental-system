@@ -4,7 +4,14 @@ import {
   BiCalendar,
   BiLinkAlt,
   BiSolidUserCheck,
-  BiLockOpen 
+  BiLockOpen,
+  BiSolidDashboard,
+  BiBuildingHouse,
+  BiCalendarCheck,
+  BiReceipt,
+  BiMessageDetail,
+  BiStar,
+  BiUserCircle,
 } from "react-icons/bi";
 
 import { useState } from "react";
@@ -17,12 +24,14 @@ interface LesseeSidebarContentProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   submitForm: number; // 0 or 1
+  isApprovedLessor: boolean; // <-- Add this prop
 }
 
 export default function LesseeSidebarContent({
   setActiveTab,
   activeTab,
   submitForm,
+  isApprovedLessor,
 }: LesseeSidebarContentProps) {
   const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,12 +45,32 @@ export default function LesseeSidebarContent({
         { key: "reviews", label: "Reviews", icon: <BiLinkAlt size={18} /> },
       ],
     },
-    {
-      section: "Sign Up form",
-      items: [
-        { key: "signup", label: "Be A Lessor Now!", icon: <BiSolidUserCheck size={18} /> },
-      ],
-    },
+    ...(!isApprovedLessor
+      ? [
+          {
+            section: "Sign Up form",
+            items: [
+              { key: "signup", label: "Be A Lessor Now!", icon: <BiSolidUserCheck size={18} /> },
+            ],
+          },
+        ]
+      : []),
+    ...(isApprovedLessor
+      ? [
+          {
+            section: "Lessor Access",
+            items: [
+                { key: "lessorDashboard", label: "Dashboard Lessor", icon: <BiSolidDashboard size={18} /> },
+                { key: "lessorProperties", label: "Properties", icon: <BiBuildingHouse size={18} /> },
+                { key: "lessorReservations", label: "Reservations", icon: <BiCalendarCheck size={18} /> },
+                { key: "lessorInvoice", label: "Invoice", icon: <BiReceipt size={18} /> },
+                { key: "lessorInquiries", label: "Inquiries", icon: <BiMessageDetail size={18} /> },
+                { key: "lessorReviews", label: "Reviews", icon: <BiStar size={18} /> },
+                { key: "lessorReviews", label: "Profile", icon: <BiUserCircle size={18} /> },
+            ],
+          },
+        ]
+      : []),
     {
       section: "Settings",
       items: [
@@ -101,6 +130,7 @@ export default function LesseeSidebarContent({
                       setIsModalOpen(true);
                     } else {
                       setActiveTab(item.key);
+                      window.scrollTo({ top: 0, behavior: 'smooth' }); // 👈 this line ensures top scroll
                     }
                   }}
                   className={`
