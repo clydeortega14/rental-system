@@ -1,9 +1,9 @@
-import TextInput from "@/Components/TextInput";
-import InputLabel from "@/Components/InputLabel";
+import TextInput from "../Components/TextInput";
+import InputLabel from "../Components/InputLabel";
 import { useForm } from "@inertiajs/react";
-import PrimaryButton from "@/Components/PrimaryButton";
+import PrimaryButton from "../Components/PrimaryButton";
 import { FormEventHandler } from "react";
-import InputError from "@/Components/InputError";
+import InputError from "../Components/InputError";
 
 export default function FileUploader() {
     const { data, setData, post, processing, errors } = useForm({
@@ -24,12 +24,12 @@ export default function FileUploader() {
                     className="mt-6 space-y-6"
                     encType="multipart/form-data"
                 >
-                    <InputLabel htmlFor="file" name="file" />
+                    <InputLabel htmlFor="file" value="file" />
 
                     <TextInput
                         type="file"
                         id="file"
-                        onChange={(e) => setData("filename", e.target.files[0])}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => console.log(e.target.files)}
                     />
 
                     <InputError className="mt-2" message={errors.filename} />
