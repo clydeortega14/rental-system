@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, ReactElement } from "react";
 import LessorLayout from "@/Layouts/LessorLayout";
 import { usePage, router } from "@inertiajs/react";
 import { Card } from "@/Components/Lessor/ui/card";
@@ -19,11 +19,12 @@ import {
   DropdownMenuTrigger,
 } from "@/Components/Lessor/ui/dropdown-menu";
 import { CheckCircle, Clock, XCircle, MoreHorizontal } from "lucide-react";
+import { Reservation, ReservationPageProps } from "@/Pages/Lessor/types/ReservationProps";
 
 const statusBadge = (status: string) => {
   const base =
     "inline-flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded-full";
-  const badges = {
+  const badges: Record<string, { className: string; icon: React.ReactNode; label: string }> = {
     RESERVED: {
       className: "bg-green-100 text-green-700",
       icon: <CheckCircle className="w-4 h-4" />,
@@ -50,26 +51,11 @@ const statusBadge = (status: string) => {
 };
 
 function Reservations() {
-  const { reservations = [] } = usePage().props as {
-    reservations: Array<{
-      id: number;
-      guestName: string;
-      property: string;
-      imageUrl: string;
-      acquire: string;
-      return: string;
-      status: string;
-      location: string;
-      pricePerNight: number;
-      description: string;
-      amenities: string[];
-      contactInfo: string;
-    }>;
-  };
+  const { reservations = [] } = usePage<ReservationPageProps>().props;
 
-  const [selectedRes, setSelectedRes] = useState<typeof reservations[0] | null>(null);
+  const [selectedRes, setSelectedRes] = useState<Reservation | null>(null);
   const [actionType, setActionType] = useState<"confirm" | "reject" | null>(null);
-  const [viewingRes, setViewingRes] = useState<typeof reservations[0] | null>(null);
+  const [viewingRes, setViewingRes] = useState<Reservation | null>(null);
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -80,11 +66,10 @@ function Reservations() {
 
   const handleAction = () => {
     if (!selectedRes || !actionType) return;
+
     const status = actionType === "confirm" ? "RESERVED" : "CANCELLED";
 
-    router.put(`/lessor/property-reserve/${selectedRes.id}/status`, {
-      status,
-    }, {
+    router.put(`/lessor/property-reserve/${selectedRes.id}/status`, { status }, {
       onSuccess: () => {
         toast({
           title: `Reservation ${status === "RESERVED" ? "confirmed" : "rejected"}`,
@@ -111,22 +96,18 @@ function Reservations() {
       <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <h1 className="text-3xl font-bold text-orange-600">Bookings</h1>
 
-        <div className="flex flex-col sm:flex-row items-center gap-3">
-          {/* Status Filter Dropdown */}
-          <select
-            value={filterStatus || "ALL"}
-            onChange={(e) =>
-              setFilterStatus(e.target.value === "ALL" ? null : e.target.value)
-            }
-            className="border border-gray-300 rounded-md px-8 py-1.5 focus:outline-none focus:ring-orange-500 focus:border-orange-500"
-          >
-            <option value="ALL">All</option>
-            <option value="PENDING">Pending</option>
-            <option value="RESERVED">Reserved</option>
-            <option value="CANCELLED">Cancelled</option>
-          </select>
-
-        </div>
+        <select
+          value={filterStatus || "ALL"}
+          onChange={(e) =>
+            setFilterStatus(e.target.value === "ALL" ? null : e.target.value)
+          }
+          className="border border-gray-300 rounded-md px-8 py-1.5"
+        >
+          <option value="ALL">All</option>
+          <option value="PENDING">Pending</option>
+          <option value="RESERVED">Reserved</option>
+          <option value="CANCELLED">Cancelled</option>
+        </select>
       </header>
 
       {filteredReservations.length === 0 ? (
@@ -136,44 +117,34 @@ function Reservations() {
           {filteredReservations.map((res) => (
             <Card
               key={res.id}
-              className="flex flex-col sm:flex-row gap-4 sm:gap-6 p-4 rounded-xl hover:shadow-lg transition-shadow"
+              className="flex flex-col sm:flex-row gap-4 sm:gap-6 p-4 rounded-xl hover:shadow-lg"
             >
               <img
                 src={res.imageUrl}
                 alt={res.property}
                 className="w-full sm:w-32 h-40 sm:h-24 rounded-md object-cover"
-                loading="lazy"
               />
-
               <div className="flex-1 space-y-1">
                 <h2 className="text-lg font-semibold text-gray-900">{res.property}</h2>
                 <p className="text-gray-700">Guest: {res.guestName}</p>
                 <p className="text-gray-600 text-sm">
-                  Acquire:{" "}
-                  <time dateTime={res.acquire}>
-                    {new Date(res.acquire).toLocaleDateString()}
-                  </time>
+                  Acquire: <time dateTime={res.acquire}>{new Date(res.acquire).toLocaleDateString()}</time>
                 </p>
                 <p className="text-gray-600 text-sm">
-                  Return:{" "}
-                  <time dateTime={res.return}>
-                    {new Date(res.return).toLocaleDateString()}
-                  </time>
+                  Return: <time dateTime={res.return}>{new Date(res.return).toLocaleDateString()}</time>
                 </p>
-
                 {res.hasConflict && (
                   <div className="mt-1 text-sm text-red-600 font-semibold">
-                    &#9888; Double Booking Detected for this property
+                    ⚠ Double Booking Detected for this property
                   </div>
                 )}
               </div>
 
               <div className="flex sm:flex-col sm:items-end justify-between sm:justify-center gap-2 sm:gap-3">
                 {statusBadge(res.status)}
-
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" aria-label="Actions">
+                    <Button variant="ghost" size="icon">
                       <MoreHorizontal className="w-5 h-5" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -183,26 +154,15 @@ function Reservations() {
                     </DropdownMenuItem>
                     {res.status === "PENDING" && (
                       <>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setSelectedRes(res);
-                            setActionType("reject");
-                          }}
-                        >
+                        <DropdownMenuItem onClick={() => { setSelectedRes(res); setActionType("reject"); }}>
                           Reject
                         </DropdownMenuItem>
-
                         {res.hasConflict ? (
                           <DropdownMenuItem disabled>
                             <span className="text-gray-400">Confirm (conflict)</span>
                           </DropdownMenuItem>
                         ) : (
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setSelectedRes(res);
-                              setActionType("confirm");
-                            }}
-                          >
+                          <DropdownMenuItem onClick={() => { setSelectedRes(res); setActionType("confirm"); }}>
                             Confirm
                           </DropdownMenuItem>
                         )}
@@ -229,17 +189,10 @@ function Reservations() {
               <strong>{selectedRes?.guestName}</strong>?
             </DialogDescription>
           </DialogHeader>
-
           <DialogFooter>
-            <Button variant="outline" onClick={closeDialog}>
-              Cancel
-            </Button>
+            <Button variant="outline" onClick={closeDialog}>Cancel</Button>
             <Button
-              className={`${
-                actionType === "confirm"
-                  ? "bg-green-600 hover:bg-green-500 text-white"
-                  : "bg-red-600 hover:bg-red-500 text-white"
-              }`}
+              className={actionType === "confirm" ? "bg-green-600 text-white" : "bg-red-600 text-white"}
               onClick={handleAction}
             >
               {actionType === "confirm" ? "Confirm" : "Reject"}
@@ -250,49 +203,35 @@ function Reservations() {
 
       {/* View Details Dialog */}
       <Dialog open={!!viewingRes} onOpenChange={() => setViewingRes(null)}>
-        <DialogContent className="w-full max-w-md sm:max-w-lg max-h-[80vh] overflow-y-auto p-4 sm:p-6">
+        <DialogContent className="w-full max-w-md sm:max-w-lg max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-lg sm:text-xl">{viewingRes?.property}</DialogTitle>
+            <DialogTitle>{viewingRes?.property}</DialogTitle>
             <DialogDescription>
-              Detailed information about the booking and property for {viewingRes?.guestName}.
+              Detailed information about the booking for {viewingRes?.guestName}.
             </DialogDescription>
           </DialogHeader>
-
           <div className="space-y-4 mt-4">
-            <img
-              src={viewingRes?.imageUrl}
-              alt={viewingRes?.property}
-              className="w-full h-48 rounded-md object-cover"
-              loading="lazy"
-            />
-
+            <img src={viewingRes?.imageUrl} alt={viewingRes?.property} className="w-full h-48 object-cover rounded-md" />
             <p><strong>Guest:</strong> {viewingRes?.guestName}</p>
             <p><strong>Acquire:</strong> {new Date(viewingRes?.acquire || "").toLocaleDateString()}</p>
             <p><strong>Return:</strong> {new Date(viewingRes?.return || "").toLocaleDateString()}</p>
-            <p><strong>Status:</strong> {viewingRes && statusBadge(viewingRes.status)}</p>
-            <hr className="my-2" />
+            <p><strong>Status:</strong> {statusBadge(viewingRes?.status || "")}</p>
+            <hr />
             <p><strong>Location:</strong> {viewingRes?.location}</p>
-            <p><strong>Reservation Fee:</strong> &#8369;{viewingRes?.pricePerNight}</p>
+            <p><strong>Reservation Fee:</strong> ₱{viewingRes?.pricePerNight}</p>
             <p><strong>Description:</strong> {viewingRes?.description}</p>
             {viewingRes?.amenities?.length ? (
-              <div>
+              <>
                 <strong>Amenities:</strong>
-                <ul className="list-disc list-inside ml-4">
-                  {viewingRes.amenities.map((amenity, i) => (
-                    <li key={i}>{amenity}</li>
-                  ))}
+                <ul className="list-disc list-inside">
+                  {viewingRes.amenities.map((a, i) => <li key={i}>{a}</li>)}
                 </ul>
-              </div>
+              </>
             ) : null}
-            {viewingRes?.contactInfo && (
-              <p><strong>Contact Info:</strong> {viewingRes.contactInfo}</p>
-            )}
+            {viewingRes?.contactInfo && <p><strong>Contact Info:</strong> {viewingRes.contactInfo}</p>}
           </div>
-
           <DialogFooter>
-            <Button variant="outline" onClick={() => setViewingRes(null)}>
-              Close
-            </Button>
+            <Button variant="outline" onClick={() => setViewingRes(null)}>Close</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -300,6 +239,5 @@ function Reservations() {
   );
 }
 
+Reservations.layout = (page: ReactElement) => <LessorLayout>{page}</LessorLayout>;
 export default Reservations;
-
-Reservations.layout = (page) => <LessorLayout>{page}</LessorLayout>;

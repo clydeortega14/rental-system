@@ -4,8 +4,12 @@ import Footer from "@/Components/Lessor/Footer";
 import { Link, usePage } from "@inertiajs/react";
 import { route } from "ziggy-js";
 
-export default function LessorLayout({ children }: { children: React.ReactNode }) {
-  const { props } = usePage();
+interface LessorLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function LessorLayout({ children }: LessorLayoutProps) {
+  const { props } = usePage<{ lessorName?: string }>();
   const lessorName = props.lessorName ?? "Lessor";
 
   return (

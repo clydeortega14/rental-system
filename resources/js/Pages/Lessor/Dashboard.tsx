@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import LessorLayout from "@/Layouts/LessorLayout";
 import {
   LineChart,
@@ -32,14 +32,14 @@ interface DashboardProps {
   incomeSummary?: IncomeSummary;
   upcomingReservations?: Reservation[];
   reservationChartData?: ReservationChartData[];
-  ratingsChartData?: RatingsChartData[];
+  // ratingsChartData?: RatingsChartData[];
 }
 
 const Dashboard = ({
   incomeSummary = { total: 0, monthly: 0 },
   upcomingReservations = [],
   reservationChartData = [],
-  ratingsChartData = [],
+  // ratingsChartData = [],
 }: DashboardProps) => {
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -107,6 +107,6 @@ const Dashboard = ({
   );
 };
 
-Dashboard.layout = (page) => <LessorLayout>{page}</LessorLayout>;
+Dashboard.layout = (page: ReactElement) => <LessorLayout>{page}</LessorLayout>;
 
 export default Dashboard;
