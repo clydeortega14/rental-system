@@ -120,4 +120,19 @@ trait HasCustomFieldValues
 
         return $value ? $value->defaultAnswer : null;
     }
+
+    public function getCustomFieldAnswersAttribute()
+    {
+        return $this->fields()
+            ->with('customField')
+            ->get()
+            ->groupBy(fn ($field) => $field->customField?->slug)
+            ->map(function ($items) {
+                return collect($items)->map(function ($item) {
+                    return $item->defaultAnswer; // assumes you have an accessor in CustomFieldValue
+                })->filter()->all(); // removes nulls
+            })
+            ->filter()
+            ->toArray();
+    }
 }

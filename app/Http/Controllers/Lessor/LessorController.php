@@ -6,71 +6,61 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Category;
-use App\Models\RentalAddItem;
+use App\Models\Lessor;
+use App\Models\Booking;
 
 class LessorController extends Controller
 {
     public function dashboard()
     {
-        $lessorName = auth()->user()->name;
+        $lessor = Lessor::with(['shops', 'user'])
+            ->where('lessoruser_id', auth()->id())
+            ->first();
+            
+        if (!$lessor) {
+            abort(403, 'Lessor not found for this user.');
+        }
 
-        // Income summary example
-        $incomeSummary = [
-            'total' => 12000,
-            'monthly' => 2000,
-        ];
+        // Example: Get income data
+        $totalIncome = Booking::whereHas('rentalListing', fn($q) => $q->where('user_id', $lessor->user->id))
+            ->where('status', 2) // assuming 2 = reserved/completed
+            ->sum('total_cost');
 
-        // Upcoming reservations example
-        $upcomingReservations = [
-            ['property' => 'Ocean View Apartment', 'date' => '2025-06-05', 'lessee' => 'John Doe'],
-            ['property' => 'Downtown Studio', 'date' => '2025-06-12', 'lessee' => 'Jane Smith'],
-        ];
+        $monthlyIncome = Booking::whereHas('rentalListing', fn($q) => $q->where('user_id', $lessor->user->id))
+            ->where('status', 2)
+            ->whereMonth('start_date', now()->month)
+            ->whereYear('start_date', now()->year)
+            ->sum('total_cost');
 
-        // Reservations per month for chart (last 6 months)
-        $reservationChartData = [
-            ['month' => 'Dec', 'reservations' => 8],
-            ['month' => 'Jan', 'reservations' => 12],
-            ['month' => 'Feb', 'reservations' => 15],
-            ['month' => 'Mar', 'reservations' => 10],
-            ['month' => 'Apr', 'reservations' => 18],
-            ['month' => 'May', 'reservations' => 20],
-        ];
+        // Example: Upcoming reservations
+        $upcoming = Booking::with(['bookedBy', 'rentalListing'])
+            ->whereHas('rentalListing', fn($q) => $q->where('user_id', $lessor->user->id))
+            ->whereDate('start_date', '>=', now())
+            ->orderBy('start_date')
+            ->limit(5)
+            ->get()
+            ->map(fn($b) => [
+                'property' => $b->rentalListing?->itemName,
+                'date' => $b->start_date,
+                'lessee' => $b->bookedBy?->name,
+            ]);
 
-        // Ratings distribution for chart
-        $ratingsChartData = [
-            ['rating' => '5 Stars', 'count' => 30],
-            ['rating' => '4 Stars', 'count' => 12],
-            ['rating' => '3 Stars', 'count' => 5],
-            ['rating' => '2 Stars', 'count' => 3],
-            ['rating' => '1 Star',  'count' => 1],
-        ];
+        // Example: Reservation trend (past 6 months)
+        $reservationChartData = Booking::selectRaw('DATE_FORMAT(start_date, "%b") as month, COUNT(*) as reservations')
+            ->whereHas('rentalListing', fn($q) => $q->where('user_id', $lessor->user->id))
+            ->whereBetween('start_date', [now()->subMonths(5)->startOfMonth(), now()])
+            ->groupByRaw('MONTH(start_date), DATE_FORMAT(start_date, "%b")')
+            ->orderByRaw('MIN(start_date)')
+            ->get();
 
-        $categories = Category::with('customFields')->get();
-
-        $rentals = RentalAddItem::where('user_id', auth()->user()->id)->get();
-
-        $mappedRentals = $rentals->map(function ($rental) use ($categories) {
-            return [
-                'id' => $rental->id,
-                'name' => $rental->itemName,
-                'description' => $rental->description,
-                'categoryId' => $rental->category_id,
-                'categoryType' => $categories->firstWhere('id', $rental->category_id)?->name ?? '',
-                'reservationAmt' => $rental->price,
-                'imageUrl' => $rental->imageUrl ?? '',
-                'customFieldAnswers' => $rental->customFieldAnswers ?? [],
-                'address' => $rental->address ?? '',
-            ];
-        });
-
-        return Inertia::render('Lessor/Landing', [
-            'lessorName' => $lessorName,
-            'incomeSummary' => $incomeSummary,
-            'upcomingReservations' => $upcomingReservations,
+        return inertia('Lessor/Dashboard', [
+            'lessorName' => $lessor->user->name,
+            'incomeSummary' => [
+                'total' => $totalIncome,
+                'monthly' => $monthlyIncome,
+            ],
+            'upcomingReservations' => $upcoming,
             'reservationChartData' => $reservationChartData,
-            'ratingsChartData' => $ratingsChartData,
-            'categories' => $categories,
-            'rentals' => $mappedRentals
         ]);
 
     }
