@@ -62,7 +62,7 @@ export default function View({
 
     
 
-    const {post, errors, processing } = useForm(bookingDetails);
+    const {post, errors, processing } = useForm({});
 
     const selectedDateData = availabilityData.find(d => d.date === selectedDate);
     const timeSlots = selectedDateData?.timeSlots || [];
@@ -140,6 +140,7 @@ export default function View({
                 let endOfDate = new Date(selectedEndDate);
 
                 const { totalDays } = computeDateBetweenTwoDates(startOfDate, endOfDate);
+                setQuantity(totalDays);
 
                 bookingDetails.totalPrice && setBookingDetails({...bookingDetails, quantity: totalDays, totalPrice: item.price[duration] * totalDays});
                 // bookingDetails.totalPrice && setBookingDetails({...bookingDetails, totalPrice: bookingDetails.totalPrice * totalDays});
@@ -150,16 +151,17 @@ export default function View({
     const handleBookNow = () => {
         post(route('booking.store', {
             item_uuid: item.uuid,
-            startDate: bookingDetails.startDate,
-            endDate: bookingDetails.endDate,
-            startTime: bookingDetails.startTime,
-            duration: bookingDetails.duration,
+            startDate: selectedDate,
+            endDate: selectedEndDate,
+            startTime: selectedTimeSlot?.startTime,
+            duration: duration,
             duration_quantity: bookingDetails.quantity,
-            partial_total: bookingDetails.totalPrice
+            partial_total: item.price[duration] * quantity,
+
         }), {
             preserveScroll: true,
             preserveState: true
-        })
+        });
     };
 
 
@@ -170,12 +172,7 @@ export default function View({
         <RenterLayout>
             
             <Head title={"Item Detail"} />
-            {/* {errors.item_uuid && <p>{errors.item_uuid}</p>} */}
-            {errors.startDate && <p>{errors.startDate}</p>}
-            {errors.endDate && <p>{errors.endDate}</p>}
-            {errors.startTime && <p>{errors.startTime}</p>}
-            {errors.duration && <p>{errors.duration}</p>}
-            {errors.totalPrice && <p>{errors.totalPrice}</p>}
+            
             <p>{session_error_message}</p>
 
             <div className="max-w-7xl mx-auto px-4 py-8">

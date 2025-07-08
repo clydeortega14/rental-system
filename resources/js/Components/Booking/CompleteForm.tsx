@@ -10,7 +10,7 @@ export default function CompleteBookingForm({ bookingDetail }: Props) {
         action: "completed",
     });
 
-    const submitComplete = (e) => {
+    const submitComplete = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         post(route("reservation.update.status", bookingDetail.uuid));
