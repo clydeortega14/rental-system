@@ -1,6 +1,7 @@
 import { useForm } from "@inertiajs/react";
 import { Reservation } from "@/Interface/Reservation";
 import PrimaryButton from "../PrimaryButton";
+import React from "react";
 
 interface Props {
     bookingDetail: Reservation;
@@ -11,7 +12,7 @@ export default function AcceptForm({ bookingDetail }: Props) {
         action: "accept",
     });
 
-    const submitAccept = (e) => {
+    const submitAccept = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         post(route("reservation.update.status", bookingDetail.uuid));

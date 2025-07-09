@@ -39,16 +39,16 @@ export type RentalDuration = 'hourly' | 'daily' | 'weekly';
 
 export interface BookingDetails {
   id?: string;
-  uuid: string; // ✅ Add this
+  uuid?: string | null;
   itemId?: string;
   itemName?: string,
   userId?: string;
-  customerId: string;
-  customerName: string;
-  startDate?: Date | null;
-  startTime?: String | null;
-  endDate?: Date | null;
-  endTime?: Date | null;
+  customerId?: string;
+  customerName?: string;
+  startDate?: string | null;
+  startTime?: string | null;
+  endDate?: string | null;
+  endTime?: string | null;
   status: 'pending' | 'confirmed' | 'canceled' | 'completed';
   totalPrice?: number;
   duration?: 'hourly' | 'daily' | 'weekly';

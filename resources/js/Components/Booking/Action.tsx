@@ -1,15 +1,12 @@
-import SecondaryButton from "@/Components/SecondaryButton";
-import DangerButton from "@/Components/DangerButton";
-import PrimaryButton from "@/Components/PrimaryButton";
-import { useState } from "react";
+import SecondaryButton from "../../Components/SecondaryButton";
+import DangerButton from "../../Components/DangerButton";
 import { Reservation } from "@/Interface/Reservation";
-import SuccessButton from "../SuccessButton";
 import CompleteBookingForm from "./CompleteForm";
 import AcceptForm from "./AcceptForm";
 
 interface IAction {
     bookingDetail: Reservation;
-    onAcceptBooking: (e) => void;
+    onAcceptBooking: (e: React.FormEvent<HTMLFormElement>) => void;
     setShowTextBox: (status: boolean) => void;
     setIsRescheduled: (status: boolean) => void;
 }

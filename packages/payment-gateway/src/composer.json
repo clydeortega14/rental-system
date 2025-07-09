@@ -1,0 +1,26 @@
+{
+    "name": "packages/payment-gateway",
+    "description": "make an Inpendent payment gateway which handles emails to third party apis",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Clyde",
+            "email": "jah.clydeortega14@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4":  {
+            "Renthive\\PaymentGateway\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Renthive\\PaymentGateway\\PaymentGatewayServiceProvicer"
+            ]
+        }
+    }
+}

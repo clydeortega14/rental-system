@@ -43,4 +43,9 @@ class Lessor extends Model
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
+
+    public function shops()
+    {
+        return $this->hasMany(Shop::class);
+    }
 }
