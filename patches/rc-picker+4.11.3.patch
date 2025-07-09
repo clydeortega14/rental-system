@@ -1,0 +1,13 @@
+diff --git a/node_modules/rc-picker/lib/PickerPanel/index.d.ts b/node_modules/rc-picker/lib/PickerPanel/index.d.ts
+index a5ef771..5728548 100644
+--- a/node_modules/rc-picker/lib/PickerPanel/index.d.ts
++++ b/node_modules/rc-picker/lib/PickerPanel/index.d.ts
+@@ -39,7 +39,7 @@ export interface BasePickerPanelProps<DateType extends object = any> extends Pic
+ }
+ export interface SinglePickerPanelProps<DateType extends object = any> extends BasePickerPanelProps<DateType> {
+     multiple?: false;
+-    defaultValue?: DateType | null;
++    defaultValue?: DateType;
+     value?: DateType | null;
+     onChange?: (date: DateType) => void;
+ }

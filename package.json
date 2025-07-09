@@ -2,6 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "postinstall": "patch-package",
         "dev": "vite",
         "build": "tsc && vite build",
         "updates": "updates"
@@ -20,6 +21,7 @@
         "axios": "^1.6.4",
         "eslint-config-prettier": "^9.1.0",
         "laravel-vite-plugin": "^1.0",
+        "patch-package": "^8.0.0",
         "postcss": "^8.4.31",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
