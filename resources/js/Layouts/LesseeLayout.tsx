@@ -13,7 +13,7 @@ import Header from "@/Components/Lessee/Header";
 import Footer from "@/Components/Lessee/Footer";
 import Profile from "@/Components/Lessee/Profile";
 import LesseeSidebarContent from "@/Components/Lessee/LesseeSidebarContent";
-import LessorApplyModal from "@/Components/Lessee/Modal/LessorApplyModal"; // ✅ Add this line
+import LessorApplyModal from "@/Components/Lessee/Modal/LessorApplyModal";
 import {
   Tabs,
   TabsList,
@@ -27,12 +27,11 @@ import {
   BiReceipt,
   BiMessageDetail,
   BiStar,
-  BiUserCircle,
 } from "react-icons/bi";
 
 const Overview = lazy(() => import("@/Pages/Lessee/Overview"));
 const Bookings = lazy(() => import("@/Pages/Lessee/Bookings"));
-const Reservations = lazy(() => import("@/Pages/Reservation/Index"));
+// const Reservations = lazy(() => import("@/Pages/Reservation/Index"));
 const Review = lazy(() => import("@/Pages/Lessee/Review"));
 const LesseeSignForm = lazy(() => import("@/Pages/Lessee/LessorSignupForm"));
 const LessorDashboard = lazy(() => import("@/Pages/Lessor/Dashboard"));
@@ -204,7 +203,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
               <Review reviews={lessee.reviews} />
             </TabsContent>
             <TabsContent value="reservations" className="h-full">
-              <Reservations bookings={lessee.bookings} />
+              {/* <Reservations bookings={lessee.bookings} /> */}
               {/* <Review reviews={lessee.reviews} /> */}
             </TabsContent>
             {/* Start Lessor Access */}

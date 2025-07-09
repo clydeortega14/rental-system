@@ -19,6 +19,8 @@ export interface RentalItem {
   location: string;
   itemName: string;
   quantity: number | null
+  
+
 }
 
 export interface TimeSlot {
@@ -37,6 +39,7 @@ export type RentalDuration = 'hourly' | 'daily' | 'weekly';
 
 export interface BookingDetails {
   id?: string;
+  uuid: string; // ✅ Add this
   itemId?: string;
   itemName?: string,
   userId?: string;
@@ -50,6 +53,7 @@ export interface BookingDetails {
   totalPrice?: number;
   duration?: 'hourly' | 'daily' | 'weekly';
   quantity?: number;
+  rentalItem: RentalItem; 
 }
 
 
