@@ -1,12 +1,10 @@
-import ItemFilter from '@/Components/Renter/RentalBrowser/ItemFilter';
-import Button from '@/Components/Renter/ui/Button';
-import Card from '@/Components/Renter/ui/Card';
-import Filter from '@/Components/Renter/ui/Filter';
-import { rentalItems } from '@/data/rentalItemsData';
+import ItemFilter from '../../Components/Renter/RentalBrowser/ItemFilter';
+import Button from '../../Components/Renter/ui/Button';
+import Card from '../../Components/Renter/ui/Card';
 import { RentalItem } from '@/Interface/RentalItems';
 import RenterLayout from '@/Layouts/RenterLayout';
 import { PageProps } from '@/types';
-import { IPriceRange } from '@/types/priceRange';
+import { PriceRange } from '@/types/priceRange';
 import { CategoryCustomField } from '@/types/rentalCategory';
 import { ICategory, Category, CategoryFilterType } from '@/types/rentalCategory';
 import { Head, usePage } from '@inertiajs/react';
@@ -14,8 +12,8 @@ import { Search, SlidersHorizontal } from 'lucide-react';
 import React, { useState } from 'react';
 
 interface RentalBrowserProps {
-    categories: ICategory,
-    priceRanges: IPriceRange,
+    categories: Category[],
+    priceRanges: PriceRange[],
     rentalItems: RentalItem[],
     category_filters: CategoryFilterType[];
     category: Category;
@@ -35,49 +33,26 @@ const RentalItemBrowser = ({
 
     const [searchQuery, setSearchQuery] = useState('');
     const [showFilters, setShowFilters] = useState(false);
-    const [selectedCategories, setSelectedCategories] = useState<ICategory>([]);
-    const [selectedPriceRanges, setSelectedPriceRanges] = useState<IPriceRange>([]);
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        // In a real app, this would trigger a search API call
-        console.log('Searching for:', searchQuery);
-    };
+    const [selectedCategories, setSelectedCategories] = useState<string | ''>('');
+    const [selectedPriceRanges, setSelectedPriceRanges] = useState<PriceRange[]>([]);
 
-    const handleCategoryChange = (selected: Category[]) => {
-        setSelectedCategories(selected);
-    };
-
-    const handlePriceRangeChange = (selected: Category[]) => {
-        setSelectedPriceRanges(selected);
-    };
-
-    const filteredItems = rentalItems.filter((item, index) => {
+    const filteredItems = rentalItems.filter((item) => {
+        
         const matchesSearch = !searchQuery || 
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchQuery.toLowerCase());
+                                item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                item.description !== null && item.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const default_price:number = item.price['daily'];
+        const default_price:number = item.price['daily'];
 
-    const matchesCategory = selectedCategories.length === 0 || 
-      selectedCategories.includes(item.category);
+        const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(item.category);
     
         let matchesPriceRange = true;
-        if (selectedPriceRanges.length > 0) {
-        matchesPriceRange = selectedPriceRanges.some((range: string) => {
-            if (range === '0-50') return default_price <= 50;
-            if (range === '50-100') return default_price > 50 && default_price <= 100;
-            if (range === '100-200') return default_price > 100 && default_price <= 200;
-            if (range === '200-500') return default_price > 200 && default_price <= 500;
-            if (range === '500+') return default_price > 500;
-            return true;
-        });
-        }
-        
+
         return matchesSearch && matchesCategory && matchesPriceRange;
-    })
+    });
 
     const clearAllFilters = () => {
-        setSelectedCategories([]);
+        setSelectedCategories('');
         setSelectedPriceRanges([]);
     }
 
@@ -122,15 +97,10 @@ const RentalItemBrowser = ({
             </div>
 
             <div className="flex flex-col md:flex-row gap-6">
+                
                 <ItemFilter 
                     showFilters={showFilters}
                     clearAllFilters={clearAllFilters}
-                    categories={category_filters}
-                    selectedCategories={selectedCategories}
-                    setSelectedCategories={setSelectedCategories}
-                    priceRanges={priceRanges}
-                    selectedPriceRanges={selectedPriceRanges}
-                    setSelectedPriceRanges={setSelectedPriceRanges}
                     categoryCustomFields={category_custom_fields}
                 />
 

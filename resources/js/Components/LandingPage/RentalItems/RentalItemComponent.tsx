@@ -1,11 +1,10 @@
 import { IRentalItems } from "@/Interface/RentalItems";
-import StarRating from "@/Components/LandingPage/StarRating";
-import NavLink from "@/Components/NavLink";
+import StarRating from "../../..//Components/LandingPage/StarRating";
+import NavLink from "../../../Components/NavLink";
 import { useState } from "react";
-import FilterComponent from "./Filter";
 
 export default function RentalItemComponent({ items }: IRentalItems) {
-    console.log(items);
+
     const [isActive, setIsActive] = useState<boolean>(false);
     return (
         <div className="md:w-3/4 p-6 bg-gray-100 border-l">
@@ -30,11 +29,11 @@ export default function RentalItemComponent({ items }: IRentalItems) {
                                 className="relative"
                                 style={{ width: "100%", paddingTop: "75%" }}
                             >
-                                <img
+                                {/* <img
                                     className="absolute inset-0 w-full h-full rounded-lg object-cover"
                                     src={`/storage/${item.image}`}
                                     alt={item.name}
-                                />
+                                /> */}
                             </div>
                             {/* Details */}
                             <div className="flex flex-col justify-between bg-white bg-opacity-5 rounded-b-lg">

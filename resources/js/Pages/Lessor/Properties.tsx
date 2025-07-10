@@ -1,16 +1,26 @@
-import React, { useState } from "react";
-import RentalItemModal, { RentalItem, Category } from "@/Pages/Lessor/modals/RentalItemModal";
+import React, { useState, ReactElement } from "react";
+import RentalItemModal, { Category } from "@/Pages/Lessor/modals/RentalItemModal";
+import { Property as RentalItem } from "@/Pages/Lessor/types/Property";
 import { Button } from "@/Components/Lessor/ui/button";
 import { usePage, router } from "@inertiajs/react";
+import LessorLayout from "@/Layouts/LessorLayout";
 
-export default function Properties() {
-  const { rentals: initialRentals, categories } = usePage().props as {
+interface Shop {
+  id: number;
+  name: string;
+}
+
+function Properties() {
+  const { rentals: initialRentals, categories, shops } = usePage<{
     rentals: RentalItem[];
     categories: Category[];
-  };
+    shops: Shop[];
+  }>().props;
 
   const [rentals, setRentals] = useState<RentalItem[]>(initialRentals || []);
+  const [filteredShopId, setFilteredShopId] = useState<number | "all">("all");
   const [showModal, setShowModal] = useState(false);
+
   const [form, setForm] = useState<RentalItem>({
     id: 0,
     name: "",
@@ -19,12 +29,16 @@ export default function Properties() {
     categoryType: "",
     reservationAmt: 0,
     imageUrl: "",
+    shopId: null,
+    address: "",
+    customFieldAnswers: {},
   });
 
   const handleEdit = (rental: RentalItem) => {
     setForm({
       ...rental,
       categoryId: rental.categoryId ?? null,
+      shopId: rental.shopId ?? null,
     });
     setShowModal(true);
   };
@@ -36,14 +50,14 @@ export default function Properties() {
       category_id: form.categoryId,
       price: form.reservationAmt,
       quantity: 1,
+      shop_id: form.shopId,
       custom_fields: form.customFieldAnswers || {},
     };
 
     if (form.id) {
-      // Update existing rental
       router.put(`/lessor/properties/${form.id}`, payload, {
-        onSuccess: (page) => {
-          // Find and update rental in state
+        preserveScroll: true,
+        onSuccess: () => {
           setRentals((prev) =>
             prev.map((rental) =>
               rental.id === form.id ? { ...rental, ...form } : rental
@@ -53,53 +67,78 @@ export default function Properties() {
         },
       });
     } else {
-      // Create new rental
       router.post("/lessor/properties", payload, {
-        onSuccess: (page) => {
-          // Ideally, server response has new rental data
-          // Let's find the newly added rental in page.props.rentals
-          const newRental = page.props.rentals.find(
-            (r: RentalItem) => !rentals.some((existing) => existing.id === r.id)
-          );
-
-          if (newRental) {
-            setRentals((prev) => [...prev, newRental]);
-          } else {
-            // fallback: reload rentals from server props
-            setRentals(page.props.rentals);
-          }
-          setShowModal(false);
+        preserveScroll: true,
+        onSuccess: () => {
+          // After success, refetch data manually
+          router.reload({
+            only: ['rentals'],
+            onSuccess: (page) => {
+              const updatedRentals = (page.props as any).rentals as RentalItem[];
+              setRentals(updatedRentals);
+              setShowModal(false);
+            }
+          });
         },
       });
     }
   };
 
+  const filteredRentals =
+    filteredShopId === "all"
+      ? rentals
+      : rentals.filter((r) => r.shopId === filteredShopId);
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <header className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-orange-600">My Properties & Rentals</h1>
-        <Button
-          onClick={() => {
-            setForm({
-              id: 0,
-              name: "",
-              description: "",
-              categoryId: null,
-              categoryType: "",
-              reservationAmt: 0,
-              imageUrl: "",
-            });
-            setShowModal(true);
-          }}
-          className="bg-orange-600 hover:bg-orange-500 text-white font-semibold px-5 py-2 rounded-lg"
-        >
-          + Add New Rental
-        </Button>
+      <header className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+        <h1 className="text-3xl font-bold text-orange-600">
+          My Properties & Rentals
+        </h1>
+        <div className="flex gap-3 flex-col sm:flex-row">
+          <select
+            className="border border-gray-300 rounded-md px-3 py-1.5"
+            value={filteredShopId}
+            onChange={(e) =>
+              setFilteredShopId(
+                e.target.value === "all" ? "all" : Number(e.target.value)
+              )
+            }
+          >
+            <option value="all">All Shops</option>
+            {shops.map((shop) => (
+              <option key={shop.id} value={shop.id}>
+                {shop.name}
+              </option>
+            ))}
+          </select>
+          <Button
+            onClick={() => {
+              setForm({
+                id: 0,
+                name: "",
+                description: "",
+                categoryId: null,
+                categoryType: "",
+                reservationAmt: 0,
+                imageUrl: "",
+                shopId: null,
+                address: "",
+                customFieldAnswers: {},
+              });
+              setShowModal(true);
+            }}
+            className="bg-orange-600 hover:bg-orange-500 text-white font-semibold px-5 py-2 rounded-lg"
+          >
+            + Add New Rental
+          </Button>
+        </div>
       </header>
 
-      {rentals.length === 0 ? (
-        <p className="text-gray-500 italic text-center mt-12">No rentals added yet.</p>
+      {filteredRentals.length === 0 ? (
+        <p className="text-gray-500 italic text-center mt-12">
+          No rentals found for this shop.
+        </p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
           <table className="min-w-full table-auto divide-y divide-gray-200">
@@ -117,33 +156,42 @@ export default function Properties() {
                 <th className="hidden md:table-cell px-3 sm:px-6 py-2 text-left text-xs font-semibold text-orange-700 uppercase tracking-wider">
                   Address
                 </th>
+                <th className="px-3 sm:px-6 py-2 text-left text-xs font-semibold text-orange-700 uppercase tracking-wider">
+                  Shop
+                </th>
                 <th className="px-3 sm:px-6 py-2 text-right text-xs font-semibold text-orange-700 uppercase tracking-wider">
                   Reservation Fee
                 </th>
               </tr>
             </thead>
-
             <tbody className="bg-white divide-y divide-gray-200">
-              {rentals.map((rental, idx) => (
+              {filteredRentals.map((rental, idx) => (
                 <tr
                   key={rental.id}
-                  className={idx % 2 === 0 ? "bg-white cursor-pointer" : "bg-orange-50 cursor-pointer"}
+                  className={
+                    idx % 2 === 0
+                      ? "bg-white cursor-pointer"
+                      : "bg-orange-50 cursor-pointer"
+                  }
                   onClick={() => handleEdit(rental)}
                 >
-                  <td className="px-3 sm:px-6 py-3 whitespace-nowrap text-gray-900 font-medium text-sm sm:text-base">
+                  <td className="px-3 sm:px-6 py-3 text-gray-900 font-medium text-sm">
                     {rental.name}
                   </td>
-                  <td className="hidden sm:table-cell px-3 sm:px-6 py-3 whitespace-normal text-gray-700 max-w-xs text-sm sm:text-base">
+                  <td className="hidden sm:table-cell px-3 sm:px-6 py-3 text-gray-700 text-sm">
                     {rental.description || "-"}
                   </td>
-                  <td className="px-3 sm:px-6 py-3 whitespace-nowrap text-gray-800 text-sm sm:text-base">
+                  <td className="px-3 sm:px-6 py-3 text-gray-800 text-sm">
                     {rental.categoryType || "-"}
                   </td>
-                  <td className="hidden md:table-cell px-3 sm:px-6 py-3 whitespace-nowrap text-gray-700 max-w-xs text-sm sm:text-base">
+                  <td className="hidden md:table-cell px-3 sm:px-6 py-3 text-gray-700 text-sm">
                     {rental.address || "-"}
                   </td>
-                  <td className="px-3 sm:px-6 py-3 whitespace-nowrap text-right text-green-600 font-semibold text-sm sm:text-base">
-                    &#8369;{Number(rental.reservationAmt || 0).toFixed(2)}
+                  <td className="px-3 sm:px-6 py-3 text-sm text-gray-700">
+                    {shops.find((s) => s.id === rental.shopId)?.name || "-"}
+                  </td>
+                  <td className="px-3 sm:px-6 py-3 text-right text-green-600 font-semibold text-sm">
+                    ₱{Number(rental.reservationAmt || 0).toFixed(2)}
                   </td>
                 </tr>
               ))}
@@ -159,7 +207,8 @@ export default function Properties() {
           onClose={() => setShowModal(false)}
           onSave={handleSave}
           categories={categories}
-          onCategoryChange={(categoryId) =>
+          shops={shops}
+          onCategoryChange={(categoryId: number | null) =>
             setForm((prev) => ({
               ...prev,
               categoryId,
@@ -171,3 +220,7 @@ export default function Properties() {
     </div>
   );
 }
+
+Properties.layout = (page: ReactElement) => <LessorLayout>{page}</LessorLayout>;
+
+export default Properties;

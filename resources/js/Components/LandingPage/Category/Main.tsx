@@ -1,7 +1,5 @@
-import { Bars3Icon } from "@heroicons/react/24/outline";
-import CategoryItem from "@/Components/LandingPage/Category/CategoryItems";
 import { ICategory } from "@/Interface/CategoryInterface";
-import Checkbox from "@/Components/Checkbox";
+import Checkbox from "../../../Components/Checkbox";
 import { useState, Fragment } from "react";
 
 type CarFilter = {
@@ -16,7 +14,7 @@ type CarFilter = {
     }[];
 };
 
-function CategoryComponent({ categories }: ICategory) {
+function CategoryComponent() {
     const [carfilters, setCarfilters] = useState<CarFilter[]>([
         {
             header: {

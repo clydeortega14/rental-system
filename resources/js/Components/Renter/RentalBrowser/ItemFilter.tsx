@@ -1,4 +1,4 @@
-import { IPriceRange } from '@/types/priceRange';
+import { IPriceRange, PriceRange } from '@/types/priceRange';
 import { Category, CategoryCustomField, CategoryFilterType, ChoiceType } from '@/types/rentalCategory';
 import { ICategory } from '@/types/rentalCategory';
 import React from 'react'
@@ -6,12 +6,6 @@ import React from 'react'
 interface ItemFilterProps {
     showFilters: boolean;
     clearAllFilters: () => void;
-    categories: CategoryFilterType[];
-    selectedCategories: ICategory;
-    setSelectedCategories: () => void;
-    priceRanges: IPriceRange;
-    selectedPriceRanges: IPriceRange;
-    setSelectedPriceRanges: () => void;
     categoryCustomFields: CategoryCustomField[];
 }
 
@@ -20,12 +14,6 @@ interface ItemFilterProps {
 const ItemFilter = ({
     showFilters, 
     clearAllFilters, 
-    categories, 
-    selectedCategories, 
-    setSelectedCategories,
-    priceRanges,
-    selectedPriceRanges,
-    setSelectedPriceRanges,
     categoryCustomFields
 }: ItemFilterProps
 ) => {

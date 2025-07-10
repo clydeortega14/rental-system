@@ -1,9 +1,10 @@
-import TextArea from "@/Components/TextArea";
+import TextArea from "../../Components/TextArea";
 import PrimaryButton from "../PrimaryButton";
 import SecondaryButton from "../SecondaryButton";
 import { useForm } from "@inertiajs/react";
 import { Reservation } from "@/Interface/Reservation";
 import InputError from "../InputError";
+import React from "react";
 
 interface IReasonForm {
     setShowTextBox: (status: boolean) => void;
@@ -19,7 +20,7 @@ export default function ReasonForm({
         action: "cancelled",
     });
 
-    const submit = (e) => {
+    const submit = (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         post(route("reservation.update.status", bookingDetail.uuid), {
@@ -38,7 +39,7 @@ export default function ReasonForm({
                         className={`block w-full ${errors.reason && "border-red-400"}`}
                         placeholder="Reason for cancelling..."
                         value={data.reason}
-                        onChange={(e) => setData("reason", e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setData("reason", e.target.value)}
                     />
 
                     <InputError message={errors.reason} className="mb-4" />

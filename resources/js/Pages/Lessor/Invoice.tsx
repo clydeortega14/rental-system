@@ -148,7 +148,7 @@ export default function Invoice() {
               </tbody>
               <tfoot>
                 <tr>
-                  <td colSpan="2" className="text-right px-4 py-3 font-semibold border">Total</td>
+                  <td colSpan={2} className="text-right px-4 py-3 font-semibold border">Total</td>  // ✅ colSpan={2}
                   <td className="px-4 py-3 font-semibold border">&#8369;{invoiceData.totalAmount.toFixed(2)}</td>
                 </tr>
               </tfoot>
