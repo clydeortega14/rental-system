@@ -1,37 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, ReactElement } from "react";
 import { useForm, usePage } from "@inertiajs/react";
 import { route } from "ziggy-js";
+import { ShopProps, Shop, FormData } from "@/Pages/Lessor/types/ShopProps";
 import LessorLayout from "@/Layouts/LessorLayout";
 
-interface Shop {
-  id: number;
-  name: string;
-  description?: string;
-  location?: string;
-  created_at?: string;
-}
-
-interface ShopProps {
-  shops?: Shop[];
-}
-
-function Shop({ shops = [] }: ShopProps) {
+function ShopPage() {
+  const { shops = [], flash, errors } = usePage<ShopProps>().props;
   const [editingShopId, setEditingShopId] = useState<number | null>(null);
 
-  const { data, setData, post, put, reset, processing, errors } = useForm({
+  const { data, setData, post, put, reset, processing } = useForm<FormData>({
     name: "",
     description: "",
     location: "",
   });
 
-  const { props } = usePage();
-  const flash = props.flash as { success?: string };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (editingShopId) {
-      // ✅ Use route helper for named route
       put(route("lessor.shop.update", { shop: editingShopId }), {
         onSuccess: () => {
           setEditingShopId(null);
@@ -71,14 +57,13 @@ function Shop({ shops = [] }: ShopProps) {
         </div>
       )}
 
-      {errors.form && (
+      {errors?.form && (
         <div className="bg-red-100 border border-red-300 text-red-700 p-3 rounded mb-4">
           {errors.form}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded shadow">
-        {/* Name */}
         <div>
           <label className="block font-medium text-gray-700">Shop Name</label>
           <input
@@ -87,10 +72,9 @@ function Shop({ shops = [] }: ShopProps) {
             onChange={(e) => setData("name", e.target.value)}
             className="w-full p-2 border rounded"
           />
-          {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+          {errors?.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
         </div>
 
-        {/* Description */}
         <div>
           <label className="block font-medium text-gray-700">Description</label>
           <textarea
@@ -99,12 +83,11 @@ function Shop({ shops = [] }: ShopProps) {
             className="w-full p-2 border rounded"
             rows={3}
           />
-          {errors.description && (
+          {errors?.description && (
             <p className="text-red-500 text-sm mt-1">{errors.description}</p>
           )}
         </div>
 
-        {/* Location */}
         <div>
           <label className="block font-medium text-gray-700">Location</label>
           <input
@@ -113,12 +96,11 @@ function Shop({ shops = [] }: ShopProps) {
             onChange={(e) => setData("location", e.target.value)}
             className="w-full p-2 border rounded"
           />
-          {errors.location && (
+          {errors?.location && (
             <p className="text-red-500 text-sm mt-1">{errors.location}</p>
           )}
         </div>
 
-        {/* Buttons */}
         <div className="flex items-center gap-4">
           <button
             type="submit"
@@ -140,7 +122,6 @@ function Shop({ shops = [] }: ShopProps) {
         </div>
       </form>
 
-      {/* Shop List */}
       {shops.length > 0 ? (
         <div className="mt-10">
           <h3 className="text-2xl font-semibold text-gray-800 mb-4">Your Shop Listings</h3>
@@ -162,7 +143,9 @@ function Shop({ shops = [] }: ShopProps) {
                 <p className="text-gray-700 whitespace-pre-wrap">
                   {shop.description || "No description provided."}
                 </p>
-                <p className="text-gray-500 text-sm">&#x1F4CD; {shop.location || "No location"}</p>
+                <p className="text-gray-500 text-sm">
+                  📍 {shop.location || "No location"}
+                </p>
                 <p className="text-gray-400 text-xs">
                   Created:{" "}
                   {shop.created_at
@@ -182,6 +165,6 @@ function Shop({ shops = [] }: ShopProps) {
   );
 }
 
-Shop.layout = (page) => <LessorLayout>{page}</LessorLayout>;
+ShopPage.layout = (page: ReactElement) => <LessorLayout>{page}</LessorLayout>;
 
-export default Shop;
+export default ShopPage;
