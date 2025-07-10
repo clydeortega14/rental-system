@@ -19,7 +19,7 @@ export interface RentalItem {
   location: string;
   itemName: string;
   quantity: number | null
-  
+  imageUrl?: string
 
 }
 
@@ -35,7 +35,7 @@ export interface DateAvailability {
   timeSlots: TimeSlot[];
 }
 
-export type RentalDuration = 'hourly' | 'daily' | 'weekly';
+export type RentalDuration = 'hourly' | 'daily' | 'weekly' | undefined;
 
 export interface BookingDetails {
   id?: string;

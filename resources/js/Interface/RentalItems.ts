@@ -5,6 +5,7 @@ export type RentalItem = {
     name: string,
     role?: string | null,
     category: string,
+    imageUrl?: string,
     images: string[],
     price: {
         hourly: number;

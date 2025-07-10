@@ -65,9 +65,13 @@ class BookingController extends Controller
         
         if(!$request->session()->has('booking_data')) return;
         // validate checkout inputs
-        
+        $request->validate([
+            'phone' => 'required'
+        ]);
 
         $data = $request->session()->get('booking_data');
+
+        
         
 
         DB::transaction( function() use ($request, $data){
