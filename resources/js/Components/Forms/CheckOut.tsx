@@ -1,4 +1,3 @@
-import PrimaryButton from "@/Components/PrimaryButton";
 import { Link, useForm } from "@inertiajs/react";
 import { PageProps } from "@/types";
 import React, { useEffect, useState } from "react";
@@ -38,10 +37,6 @@ export default function CheckOut({bookingData}: CheckOutProps) {
     }, [bookingData.partial_total, serviceFee])
 
     const { data, setData, post, processing, errors } = useForm({});
-
-    const checkOutNow = (e) => {
-        e.preventDefault();
-    };
 
     const { cart, removeFromCart, clearCart, totalPrice } = useCart();
     const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');

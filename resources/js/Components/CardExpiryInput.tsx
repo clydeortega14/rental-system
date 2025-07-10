@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 interface Props {
     name: string;
-    onChange: React.ReactNode;
+    onChange: (e:React.ChangeEvent<HTMLInputElement>) => void;
     value: string;
 }
 const CardExpiryInput = ({name, onChange, value}:Props) => {

@@ -19,6 +19,21 @@ export interface User {
         postal_code: string;
         
     };
+    billing_address?: BillingAddress;
+    card_detail?: CardDetail;
+}
+
+export type BillingAddress = {
+  street: string;
+  city: string;
+  postal_code: number;
+
+}
+
+export type CardDetail = {
+    card_number: number;
+    card_expiry: string;
+    cvv: number;
 }
 
 export type Contact = {
