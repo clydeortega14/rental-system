@@ -59,32 +59,34 @@ class LessorController extends Controller
         ]);
     }
 
-    public function approveApplication($uuid)
+   public function approveApplication($uuid)
     {
-         $user = User::with([
+        $user = User::with([
             'contact',
             'company.documents',
             'signupForm.status',
         ])->where('uuid', $uuid)->firstOrFail();
 
-        $now = Carbon::now();
+        $now = now();
         $adminId = Auth::guard('admin')->id();
-        $companyUuid = $user->company?->uuid ?? Str::uuid();
 
+        $companyUuid = $user->company?->uuid ?? (string) Str::uuid();
+
+        // Update or create lessor_application row for this user
         $lessorApplication = LessorApplication::updateOrCreate(
             ['lessoruser_id' => $user->id],
             [
-                'uuid' => $companyUuid,
                 'encodedbyadmin_id' => $adminId,
-                'status_id' => 2,
+                'status_id' => 2,  // approved
                 'approved_by' => $adminId,
                 'approved_at' => $now,
             ]
-            
         );
-        $user->signupForm?->update([
-            'status_id' => 2,
-        ]);
+
+        // Update signupForm status if applicable
+        $user->signupForm?->update(['status_id' => 2]);
+
+        // Update or create Lessor related record
         Lessor::updateOrCreate(
             ['lessorapplication_id' => $lessorApplication->id],
             [
@@ -95,6 +97,7 @@ class LessorController extends Controller
                 'approved_at' => $now,
             ]
         );
-        return back()->with('success', 'Approve!');
+
+        return back()->with('success', 'Application approved successfully!');
     }
 }

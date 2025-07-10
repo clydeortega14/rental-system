@@ -1,12 +1,8 @@
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import { PageProps } from "@/types";
 import CustomTable from "@/Components/CustomTable";
 import SecondaryButton from "@/Components/SecondaryButton";
 import BookingAction from "@/Components/Booking/Action";
-import { FaEdit } from "react-icons/fa";
-import { FaEye } from "react-icons/fa";
-import { FaTrashAlt } from "react-icons/fa";
 import Modal from "@/Components/Modal";
 import { useState, FormEventHandler, useEffect } from "react";
 import { Reservation } from "@/Interface/Reservation";
@@ -15,7 +11,7 @@ import RescheduleForm from "@/Components/Booking/RescheduleForm";
 import {Link} from "@inertiajs/react";
 import RenterLayout from "@/Layouts/RenterLayout";
 import { AlertCircle, Calendar, CheckCircle, ChevronRight, Clock, XCircle } from "lucide-react";
-import { getItemById } from "@/data/bookingsData";
+// import { getItemById } from "@/data/bookingsData";
 import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
 import { BookingDetails } from "@/types/rental";
 import Button from "@/Components/Renter/ui/Button";
@@ -26,8 +22,8 @@ type Header = {
 };
 
 interface Props {
-
-    bookings: BookingDetails[]
+    bookings: BookingDetails[];
+    status: string;
 }
 
 function Index({ bookings, status }: Props) {
@@ -54,10 +50,10 @@ function Index({ bookings, status }: Props) {
     };
 
     // on edit booking function
-    const editBooking = (id: number) => {
-        let find_booking = bookings.find((book) => book.id === id);
-        setBookingDetail(find_booking);
-    };
+    // const editBooking = (id: number) => {
+    //     let find_booking = bookings.find((book) => book.id === id);
+    //     setBookingDetail(find_booking);
+    // };
 
     const [activeTab, setActiveTab] = useState<'Upcoming' | 'Past' | 'All Bookings'>('Upcoming');
 
@@ -83,12 +79,23 @@ function Index({ bookings, status }: Props) {
 
     const filterBookings = () => {
         const today = new Date();
-            
+
         if (activeTab === 'Upcoming') {
-            return bookings.filter(booking => new Date(booking.endDate) >= today && booking.status !== 'canceled');
+            return bookings.filter(
+                booking =>
+                    booking.endDate && // ✅ ensure it's defined
+                    new Date(booking.endDate) >= today &&
+                    booking.status !== 'canceled'
+            );
         } else if (activeTab === 'Past') {
-            return bookings.filter(booking => new Date(booking.endDate) < today || booking.status === 'canceled');
+            return bookings.filter(
+                booking =>
+                    !booking.endDate || // if no endDate, treat it as past
+                    new Date(booking.endDate) < today ||
+                    booking.status === 'canceled'
+            );
         }
+
         return bookings;
     };
 
@@ -154,7 +161,11 @@ function Index({ bookings, status }: Props) {
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
                                                 <div className="flex items-center text-gray-600">
                                                 <Calendar className="h-4 w-4 mr-2" />
-                                                <span>{formatDateDisplay(booking.startDate)} - {formatDateDisplay(booking.endDate)}</span>
+                                                <span>
+                                                {booking.startDate && booking.endDate
+                                                    ? `${formatDateDisplay(booking.startDate.toISOString())} - ${formatDateDisplay(booking.endDate.toISOString())}`
+                                                    : 'Date not available'}
+                                                </span>
                                                 </div>
                                                 <div className="flex items-center text-gray-600">
                                                 <Clock className="h-4 w-4 mr-2" />
@@ -163,7 +174,7 @@ function Index({ bookings, status }: Props) {
                                             </div>
                                             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                                                 <div className="text-gray-800">
-                                                    <span className="font-semibold">Total:</span> {formatPrice( booking.totalPrice)}
+                                                    <span className="font-semibold">Total:</span> {formatPrice(booking.totalPrice ?? 0)}
                                                 </div>
                                                 <div className="flex mt-4 md:mt-0 space-x-2">
                                                     {booking.status === 'confirmed' && (

@@ -1,9 +1,10 @@
 import { useState } from 'react'
 //@ts-ignore
 import { Swiper, SwiperSlide } from 'swiper/react'
+import type { Swiper as SwiperType } from 'swiper';
 //@ts-ignore
 import { Pagination, Autoplay, EffectFade } from 'swiper/modules'
-import { BiSearchAlt  } from 'react-icons/bi';
+
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/effect-fade'
@@ -141,9 +142,9 @@ const Slider = ({ categories }: SliderProps) => {
               effect="fade"
               fadeEffect={{ crossFade: true }}
               onSlideChangeTransitionStart={() => setTextVisible(false)}
-              onSlideChangeTransitionEnd={(swiper: Swiper) => {
-                setActiveIndex(swiper.realIndex)
-                setTextVisible(true)
+              onSlideChangeTransitionEnd={(swiper: SwiperType) => {
+                setActiveIndex(swiper.realIndex);
+                setTextVisible(true);
               }}
               className="rounded-xl"
             >
