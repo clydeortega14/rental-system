@@ -1,24 +1,24 @@
 import { Category } from "@/Interface/CategoryInterface";
 
 export interface RentalItem {
-  id: string;
+  id?: string;
   name: string;
   description: string;
-  images: string[];
+  images?: string[];
   price: {
     hourly: number;
     daily: number;
     weekly: number;
   };
-  specifications: {
+  specifications?: {
     [key: string]: string;
   };
   category: Category;
   rating: number;
   reviewCount: number;
   location: string;
-  itemName: string;
-  quantity: number | null
+  itemName?: string;
+  quantity?: number | null
   imageUrl?: string
 
 }
@@ -45,10 +45,10 @@ export interface BookingDetails {
   userId?: string;
   customerId?: string;
   customerName?: string;
-  startDate?: string | null;
-  startTime?: string | null;
-  endDate?: string | null;
-  endTime?: string | null;
+  startDate?: Date |string | null;
+  startTime?: Date | string | null;
+  endDate?: Date | string | null;
+  endTime?: Date | string | null;
   status: 'pending' | 'confirmed' | 'canceled' | 'completed';
   totalPrice?: number;
   duration?: 'hourly' | 'daily' | 'weekly';

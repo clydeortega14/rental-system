@@ -71,9 +71,6 @@ class BookingController extends Controller
 
         $data = $request->session()->get('booking_data');
 
-        
-        
-
         DB::transaction( function() use ($request, $data){
 
             // store booking details to database

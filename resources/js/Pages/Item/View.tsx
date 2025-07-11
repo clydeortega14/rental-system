@@ -40,14 +40,14 @@ export default function View({
 }>) {
     const [open, setOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [duration, setDuration] = useState<RentalDuration>('daily');
+    const [duration, setDuration] = useState<RentalDuration>(item.default_duration);
     const [quantity, setQuantity] = useState(1);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
     const [selectedEndDate, setSelectedEndDate] = useState<string | null>(null);
     
     const session_error_message = usePage<PageProps>().props.flash.error_message;
-    const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[duration]);
+    const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[item.default_duration]);
     
     const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
         startDate: null,
@@ -57,7 +57,24 @@ export default function View({
         duration: 'daily',
         quantity: 1,
         status: 'pending',
-        totalPrice: item.price[duration]
+        totalPrice: item.price[item.default_duration],
+        rentalItem: {
+            name: item.name,
+            description: item.description,
+            price: {
+                hourly: 0,
+                daily: item.price['daily'],
+                weekly: 0
+            },
+            category: {
+                label: item.category.label,
+                id: 0,
+                name: '',
+            },
+            rating: 4.7,
+            reviewCount: 255,
+            location: ''
+        }
     });
 
     
@@ -97,7 +114,7 @@ export default function View({
     useEffect( () => {
 
         // calculate total
-        const basePrice = item.price[duration];
+        const basePrice = item.price[item.default_duration];
 
         let calculate_total: number = Number(basePrice) * quantity;
         setCalculatedTotal(calculate_total);
@@ -142,7 +159,7 @@ export default function View({
                 const { totalDays } = computeDateBetweenTwoDates(startOfDate, endOfDate);
                 setQuantity(totalDays);
 
-                bookingDetails.totalPrice && setBookingDetails({...bookingDetails, quantity: totalDays, totalPrice: item.price[duration] * totalDays});
+                bookingDetails.totalPrice && setBookingDetails({...bookingDetails, quantity: totalDays, totalPrice: item.price[item.default_duration] * totalDays});
                 // bookingDetails.totalPrice && setBookingDetails({...bookingDetails, totalPrice: bookingDetails.totalPrice * totalDays});
 
             }
@@ -156,7 +173,7 @@ export default function View({
             startTime: selectedTimeSlot?.startTime,
             duration: duration,
             duration_quantity: bookingDetails.quantity,
-            partial_total: item.price[duration] * quantity,
+            partial_total: item.price[item.default_duration] * quantity,
 
         }), {
             preserveScroll: true,
@@ -185,7 +202,7 @@ export default function View({
                             <MapPin className="w-4 h-4 mr-1" />
                             <span>{item.location}</span>
                             <span className="mx-2">•</span>
-                            <span>{item.category}</span>
+                            <span>{item.category.label}</span>
                         </div>
                     
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">{item.name}</h1>

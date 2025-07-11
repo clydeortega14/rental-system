@@ -2,7 +2,6 @@ import React from "react";
 import Header from "@/Components/Lessor/Header";
 import Footer from "@/Components/Lessor/Footer";
 import { Link, usePage } from "@inertiajs/react";
-import { route } from "ziggy-js";
 
 interface LessorLayoutProps {
   children: React.ReactNode;

@@ -28,18 +28,20 @@ trait ItemDetails {
             'uuid' => $find_item->uuid,
             'name' => $find_item->itemName,
             'description' => $find_item->description,
+            'default_duration' => 'daily',
             'price' => [
                 'hourly' => 700,
                 'daily' => $find_item->price,
                 'weekly' => 5000
             ],
-            'specifications' => [
-                'Brand' => 'Sony',
-                'Model' => 'Aplha a7 III',
-                'Sensor' => 'Full Frame CMOS',
-                'Resolution' => '24.2 Megapixels'
+            'specifications' => $find_item->fields->mapWithKeys(function($field){
+                return [$field->customField->label => $field->defaultAnswer];
+            }),
+            'category' => [
+                'label' => $find_item->toCategory->name,
+                'id' => $find_item->toCategory->id,
+                'name' => $find_item->toCategory->name
             ],
-            'category' => $find_item->category,
             'rating' => 4.7,
             'reviewCount' => 89,
             'location' => 'Downtown Studio',
@@ -51,8 +53,7 @@ trait ItemDetails {
             })->all()
         ];
 
-
-        
+        // return $item_detail;
 
         return Inertia::render('Item/View', [
             'item' => $item_detail,
@@ -65,6 +66,8 @@ trait ItemDetails {
         $find_item = RentalAddItem::where('uuid', $uuid)->first();
 
         // if(is_null($find_item)) return redirect()->back()->with('error', 'Item Cannot be found!');
+
+        $find_item->load(['toCategory']);
 
         return $find_item;
     }
