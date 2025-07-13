@@ -2,7 +2,7 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
 import { PageProps } from "@/types";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import {Link} from "@inertiajs/react";
 
 export default function BookingCalendar({ auth, events }:PageProps)
@@ -11,12 +11,7 @@ export default function BookingCalendar({ auth, events }:PageProps)
         left: "prev,next",
         center: "title",
         right: "dayGridMonth,dayGridWeek,dayGridDay"
-    })
-
-
-    const handleEventClick = (e) => {
-        console.log(e)
-    }
+    });
     return (
 
         <AuthenticatedLayout
@@ -44,8 +39,8 @@ export default function BookingCalendar({ auth, events }:PageProps)
                         plugins={[ dayGridPlugin ]}
                         initialView="dayGridMonth"
                         headerToolbar={header}
-                        events={events}
-                        eventClick={ (e) => handleEventClick(e)}
+                        events={[]}
+                        eventClick={ (e) => console.log(e)}
                         
                     />
                 </div>

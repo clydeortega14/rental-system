@@ -15,13 +15,9 @@ interface BookingViewProps {
 
 const BookingView: React.FC<BookingViewProps> = ({booking}) => {
 
-  const auth = usePage<PageProps>().props.auth;
-
   return (
     
-    <RenterLayout
-      user={auth}
-    >
+    <RenterLayout>
       <Head title={"Booking Detail"}/>
 
 

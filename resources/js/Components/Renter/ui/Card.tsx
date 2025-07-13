@@ -1,11 +1,10 @@
 import React from 'react';
 import { Star, MapPin } from 'lucide-react';
-import { RentalItem } from '../../types';
 import Button from './Button';
 import NavLink from '@/Components/NavLink';
 import { Link } from '@inertiajs/react';
 import { formatPrice } from '@/utils/dateUtils';
-
+import { RentalItem } from '@/Interface/RentalItems';
 interface CardProps {
   item: RentalItem;
   compact?: boolean;
@@ -23,7 +22,7 @@ const Card: React.FC<CardProps> = ({ item, compact = false, link }) => {
           alt={item.name} 
           className={`w-full object-cover ${compact ? 'h-48' : 'h-64'}`}
         />
-        {!item.availability.available && (
+        {item.availability && !item.availability.available && (
           <div className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-3 py-1 m-2 rounded">
             Unavailable
           </div>
@@ -45,7 +44,7 @@ const Card: React.FC<CardProps> = ({ item, compact = false, link }) => {
         <div className="mt-auto">
           <div className="flex justify-between items-center mb-3">
             <div>
-              <span className="font-bold text-lg text-gray-900">{formatPrice(item.price[item.priceUnit])}</span>
+              <span className="font-bold text-lg text-gray-900">{formatPrice(item.price['daily'])}</span>
               <span className="text-gray-500 text-sm">/{item.priceUnit}</span>
             </div>
             <div className="text-xs font-medium px-2 py-1 bg-gray-100 rounded text-gray-700">
@@ -56,9 +55,9 @@ const Card: React.FC<CardProps> = ({ item, compact = false, link }) => {
             <Button 
               variant="primary" 
               fullWidth 
-              disabled={!item.availability.available}
+              disabled={item.availability ? !item.availability.available : false}
             >
-              {item.availability.available ? 'View Details' : 'Not Available'}
+              {item.availability && item.availability.available ? 'View Details' : 'Not Available'}
             </Button>
           </Link> 
         </div>

@@ -13,7 +13,7 @@ import Header from "@/Components/Lessee/Header";
 import Footer from "@/Components/Lessee/Footer";
 import Profile from "@/Components/Lessee/Profile";
 import LesseeSidebarContent from "@/Components/Lessee/LesseeSidebarContent";
-import LessorApplyModal from "@/Components/Lessee/Modal/LessorApplyModal";
+import LessorApplyModal from "../Components/Lessee/Modals/LessorApplyModal";
 import {
   Tabs,
   TabsList,
@@ -51,6 +51,7 @@ interface Props extends PageProps {
 
 interface LayoutProps {
   defaultTab?: string;
+  children?: React.ReactNode;
 }
 
 export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {

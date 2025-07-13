@@ -97,13 +97,13 @@ export default function Bookings() {
                     />
                   </td>
                   
-                  <td className="px-4 py-3">{booking.rentalItem.name}</td>
+                  <td className="px-4 py-3">{booking.rentalItem && booking.rentalItem.name}</td>
                   <td className="px-4 py-3">{booking.rentalItem?.category?.name || "N/A"}</td>
                   <td className="px-4 py-3">
                     {format(new Date(booking.startDate ?? ""), "PPP")} -{" "}
                     {format(new Date(booking.endDate ?? ""), "PPP")}
                   </td>
-                  <td className="px-4 py-3">{formatPrice( booking.totalPrice)}</td>
+                  <td className="px-4 py-3">{booking.totalPrice && formatPrice( booking.totalPrice)}</td>
                   <td className="px-4 py-3">
                     <span
                       className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusColor(

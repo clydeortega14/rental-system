@@ -1,7 +1,7 @@
 import Checkbox from "@/Components/Checkbox";
 import { useForm, usePage } from "@inertiajs/react";
 import { Iitem } from "@/Interface/Item";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import InputError from "@/Components/InputError";
 import { PageProps } from "@/types";
 import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
@@ -46,7 +46,7 @@ function ItemScheduleDetail({ item }: Iitem) {
         setData("total_cost", overall_total);
     };
 
-    const bookingSubmit = (e) => {
+    const bookingSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         
         post(route("booking.store"));
@@ -63,21 +63,21 @@ function ItemScheduleDetail({ item }: Iitem) {
     useEffect(() => {
         if(data.pick_up_date !== "" && data.drop_off_date !== "")
         {
-            calculateDays(new Date(data.pick_up_date), new Date(data.drop_off_date))
+            // calculateDays(new Date(data.pick_up_date), new Date(data.drop_off_date));
         }
         
     }, [data.pick_up_date, data.drop_off_date, data.duration])
 
-    const handleDateChange = (date_value:DateValueType) => {
+    // const handleDateChange = (date_value:DateValueType) => {
 
-        setDateRange(date_value);
+    //     setDateRange(date_value);
 
-        data.pick_up_date = date_value.startDate;
-        data.drop_off_date = date_value.endDate;
+    //     data.pick_up_date = date_value.startDate;
+    //     data.drop_off_date = date_value.endDate;
 
-        setData("pick_up_date", date_value.startDate);
-        setData("drop_off_date", date_value.endDate)
-    }
+    //     setData("pick_up_date", date_value.startDate);
+    //     setData("drop_off_date", date_value.endDate)
+    // }
 
     return (
         <>
@@ -166,7 +166,7 @@ function ItemScheduleDetail({ item }: Iitem) {
                         <div className="w-full px-3 md:1/2 mb-6">
                             <InputLabel htmlFor="date-range" value="Pick-up/Drop-off Date" />
 
-                            <Datepicker value={dateRange} onChange={date_value =>  handleDateChange(date_value)} />
+                            {/* <Datepicker value={dateRange} onChange={date_value =>  handleDateChange(date_value)} /> */}
                         </div>
                         
                         <div className="w-full md:w-1/2 px-3">

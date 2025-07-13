@@ -1,13 +1,17 @@
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, usePage } from "@inertiajs/react";
 import TextInput from "@/Components/TextInput";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { Transition } from "@headlessui/react";
 import { FormEventHandler } from "react";
 import InputError from "@/Components/InputError";
+import { PageProps } from "@/types";
 
-function CompleteUserDetails({ user }: { user: object }) {
+function CompleteUserDetails() {
+
+    const user = usePage<PageProps>().props.auth.user;
+
     const { data, setData, post, processing, errors } = useForm({
         id: user.id,
         name: user.name,
@@ -44,7 +48,7 @@ function CompleteUserDetails({ user }: { user: object }) {
                 <form
                     onSubmit={submit}
                     className="mt-6 space-y-6"
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                 >
                     <div>
                         <TextInput

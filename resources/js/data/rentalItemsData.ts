@@ -8,7 +8,11 @@ export const rentalItems: RentalItem[] = [
     name: 'Premium DSLR Camera',
     description: 'High-resolution professional DSLR camera perfect for photography enthusiasts and professionals.',
     category: 'Electronics',
-    price: 50,
+    price: {
+      hourly: 0,
+      daily: 0,
+      weekly: 0
+    },
     priceUnit: 'day',
     imageUrl: 'https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     rating: 4.8,
@@ -23,7 +27,11 @@ export const rentalItems: RentalItem[] = [
     name: 'Mountain Bike - Pro Series',
     description: 'Professional mountain bike suitable for rough terrains and long trails.',
     category: 'Sports',
-    price: 35,
+    price: {
+      hourly: 0,
+      daily: 0,
+      weekly: 0
+    },
     priceUnit: 'day',
     imageUrl: 'https://images.pexels.com/photos/100582/pexels-photo-100582.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     rating: 4.7,
@@ -38,7 +46,11 @@ export const rentalItems: RentalItem[] = [
     name: 'Luxury Cabin Retreat',
     description: 'Beautiful cabin in the woods with modern amenities and breathtaking views.',
     category: 'Real Estate',
-    price: 200,
+    price: {
+      hourly: 0,
+      daily: 0,
+      weekly: 0
+    },
     priceUnit: 'day',
     imageUrl: 'https://images.pexels.com/photos/147411/italy-mountains-dawn-daybreak-147411.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     rating: 4.9,
@@ -53,13 +65,16 @@ export const rentalItems: RentalItem[] = [
     name: 'Projector - 4K Ultra HD',
     description: 'State-of-the-art 4K projector perfect for home theaters and business presentations.',
     category: 'Electronics',
-    price: 40,
+    price: {
+      hourly: 0,
+      daily: 0,
+      weekly: 0
+    },
     priceUnit: 'day',
     imageUrl: 'https://images.pexels.com/photos/1782146/pexels-photo-1782146.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     rating: 4.6,
     availability: {
       available: false,
-      nextAvailableDate: '2025-05-20',
     },
     features: ['4K resolution', 'HDR support', '3000 lumens brightness', 'Bluetooth audio'],
     location: 'Seattle, WA'
@@ -69,7 +84,11 @@ export const rentalItems: RentalItem[] = [
     name: 'Event Space - Modern Loft',
     description: 'Spacious loft venue perfect for events, parties, and corporate functions.',
     category: 'Real Estate',
-    price: 500,
+    price: {
+      hourly: 0,
+      daily: 0,
+      weekly: 0
+    },
     priceUnit: 'day',
     imageUrl: 'https://images.pexels.com/photos/260931/pexels-photo-260931.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     rating: 4.7,
@@ -84,7 +103,11 @@ export const rentalItems: RentalItem[] = [
     name: 'Kayak - Tandem',
     description: 'Two-person kayak perfect for exploring lakes and calm rivers.',
     category: 'Sports',
-    price: 25,
+    price: {
+      hourly: 0,
+      daily: 0,
+      weekly: 0
+    },
     priceUnit: 'day',
     imageUrl: 'https://images.pexels.com/photos/1430672/pexels-photo-1430672.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     rating: 4.5,

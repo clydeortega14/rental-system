@@ -19,7 +19,8 @@ export interface RentalItem {
   location: string;
   itemName?: string;
   quantity?: number | null
-  imageUrl?: string
+  imageUrl?: string;
+  priceUnit?: string;
 
 }
 
@@ -53,7 +54,7 @@ export interface BookingDetails {
   totalPrice?: number;
   duration?: 'hourly' | 'daily' | 'weekly';
   quantity?: number;
-  rentalItem: RentalItem; 
+  rentalItem?: RentalItem; 
 }
 
 

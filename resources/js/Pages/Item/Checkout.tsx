@@ -21,9 +21,7 @@ interface CheckOutProps {
 export default function Checkout({booking_data, user}: CheckOutProps){
     return (
 
-        <RenterLayout
-            user={user}
-        >
+        <RenterLayout>
 
             <Head title={"Checkout"} />
 

@@ -106,7 +106,7 @@ const Slider = ({ categories }: SliderProps) => {
                 {(() => {
                   const currentSlide = slides[activeIndex]
                   const matchedCategory = categories.find(
-                    (cat) => cat.detail.label.toLowerCase() === currentSlide.label.toLowerCase()
+                    (cat) => cat.detail ? cat.detail.label.toLowerCase() : '' === currentSlide.label.toLowerCase()
                   )
 
                   if (!matchedCategory) return null
@@ -117,13 +117,13 @@ const Slider = ({ categories }: SliderProps) => {
                         href={route('rental.browser.index', matchedCategory.name)}
                         className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-md transition text-center"
                       >
-                        Rent {matchedCategory.detail.label}
+                        Rent {matchedCategory.detail && matchedCategory.detail.label}
                       </a>
                       <a
                         href={`/add/${matchedCategory.category_id}`}
                         className="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2 rounded-md transition text-center"
                       >
-                        Add Your {matchedCategory.detail.label}
+                        Add Your {matchedCategory.detail && matchedCategory.detail.label}
                       </a>
                     </>
                   )

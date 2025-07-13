@@ -2,11 +2,19 @@ import { RentalDuration } from '@/types/rental';
 import { formatPrice } from '@/utils/dateUtils';
 import React from 'react'
 
+interface Props {
+  prices: {
+    daily: number;
+  };
+  selectedDuration: string;
+  onSelectDuration: (value: string) => void;
+}
+
 const PricingOptions = ({
     prices,
     selectedDuration,
     onSelectDuration
-}) => {
+}: Props) => {
 
     const options: { value: RentalDuration; label: string; price: number }[] = [
         // { value: 'hourly', label: 'Hour', price: prices.hourly },
@@ -25,7 +33,6 @@ const PricingOptions = ({
                 ? 'border-blue-600 bg-blue-50 text-blue-700'
                 : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
             }`}
-            onClick={() => onSelectDuration(option.value)}
           >
             <div className="font-medium">{option.label}</div>
             <div className="text-lg font-semibold mt-1">{formatPrice(option.price)}</div>

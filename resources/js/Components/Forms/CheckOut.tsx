@@ -351,15 +351,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                 className="w-16 h-16 object-cover rounded mr-4"
                                 />
                                 <div className="flex-grow">
-                                <div className="flex justify-between">
-                                    <h3 className="text-sm font-medium text-gray-800">{cartItem.item.name}</h3>
-                                    <button
-                                    onClick={() => removeFromCart(cartItem.item.id)}
-                                    className="text-gray-400 hover:text-gray-600"
-                                    >
-                                    <X className="h-4 w-4" />
-                                    </button>
-                                </div>
+                                
                                 <div className="flex items-center text-xs text-gray-600 mt-1">
                                     <Calendar className="h-3 w-3 mr-1" />
                                     <span>
@@ -368,10 +360,10 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                 </div>
                                 <div className="mt-1 flex justify-between">
                                     <span className="text-xs text-gray-600">
-                                    ${cartItem.item.price} x {days} {cartItem.item.priceUnit}s
+                                    ${cartItem.item.price['daily']} x {days} {cartItem.item.priceUnit}s
                                     </span>
                                     <span className="text-sm font-medium">
-                                    ${(cartItem.item.price * days).toFixed(2)}
+                                    ${(cartItem.item.price['daily'] * days).toFixed(2)}
                                     </span>
                                 </div>
                                 </div>

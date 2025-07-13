@@ -82,7 +82,7 @@ function Index({ bookings, status }: Props) {
     const filteredBookings = filterBookings();
 
     return (
-        <RenterLayout user={auth.user}>
+        <RenterLayout>
             <Head title="Reservations" />
 
             {/* <div className="py-12"> */}
@@ -119,14 +119,14 @@ function Index({ bookings, status }: Props) {
                                         <div className="flex flex-col md:flex-row items-start md:items-center">
                                             <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
                                                 <img
-                                                    src={booking.rentalItem.imageUrl}
-                                                    alt={booking.rentalItem.name}
+                                                    src={booking.rentalItem && booking.rentalItem.imageUrl}
+                                                    alt={booking.rentalItem && booking.rentalItem.name}
                                                     className="w-20 h-20 object-cover rounded-lg"
                                                 />
                                             </div>
                                             <div className="flex-grow">
                                                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                                                    <h3 className="text-lg font-semibold text-gray-800">{booking.rentalItem.name}</h3>
+                                                    <h3 className="text-lg font-semibold text-gray-800">{booking.rentalItem && booking.rentalItem.name}</h3>
                                                     <div className="mt-2 md:mt-0">
                                                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(booking.status)}`}>
                                                         {getStatusIcon(booking.status)}

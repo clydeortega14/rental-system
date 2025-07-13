@@ -36,7 +36,9 @@ export default function View({
     laravelVersion: string; 
     phpVersion: string; 
     item: Item,
-    unavailable_dates: { [date:string]: boolean };
+    unavailable_dates: { 
+        [date:string]: boolean 
+    };
 }>) {
     const [open, setOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);

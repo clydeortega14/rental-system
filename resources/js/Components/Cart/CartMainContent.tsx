@@ -49,7 +49,7 @@ const CartMainContent = () => {
                         const start = new Date(cartItem.startDate);
                         const end = new Date(cartItem.endDate);
                         const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-                        const itemTotal = cartItem.item.price * days * cartItem.quantity;
+                        const itemTotal = cartItem.item.price['daily'] * days * cartItem.quantity;
                         
                         return (
                             <div key={cartItem.item.id} className="p-6">
@@ -83,7 +83,7 @@ const CartMainContent = () => {
                                     </span>
                                     </div>
                                     <div className="text-gray-600 text-sm">
-                                    <span>${cartItem.item.price} per {cartItem.item.priceUnit}</span>
+                                    <span>${cartItem.item.price['daily']} per {cartItem.item.priceUnit}</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-between">
@@ -110,7 +110,7 @@ const CartMainContent = () => {
                                     </button>
                                     </div>
                                     <button
-                                    onClick={() => removeFromCart(cartItem.item.id)}
+                                    onClick={() => console.log('remove cart')}
                                     className="text-red-600 hover:text-red-800 flex items-center"
                                     >
                                     <Trash2 className="h-4 w-4 mr-1" />

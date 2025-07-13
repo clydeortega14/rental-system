@@ -45,8 +45,8 @@ function Sidebar({ open }: SidebarProps) {
             type: "item",
             id: 4,
             name: "Rental Listings",
-            link: "/rentalListing",
-            status: route().current("rentalListing"),
+            link: route("rental.listing"),
+            status: route().current("rental.listing"),
             icon: <GiNotebook />,
         },
         {
@@ -57,7 +57,7 @@ function Sidebar({ open }: SidebarProps) {
             type: "item",
             id: 5,
             name: "Settings",
-            link: "",
+            link: route(""),
             status: "",
             icon: <CiSettings />,
             submenu: true,
@@ -114,8 +114,8 @@ function Sidebar({ open }: SidebarProps) {
                 >
                     <span className="text-2xl block float-left">{menu.icon}</span>
                     <NavLink
-                        href={menu.link}
-                        active={menu.status}
+                        href=""
+                        active={false}
                         className={`text-sm font-small flex-1 ${!open && "hidden"} ${menu.status && "font-bold text-lg"} hover:text-base hover:font-bold`}
                     >
                         {menu.name}
