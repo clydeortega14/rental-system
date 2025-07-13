@@ -24,7 +24,7 @@ const Profile = ({ auth }: PageProps) => {
                 <div className="py-4">
                     <div className="flex">
                         <div className="basis-1/4">
-                            <Summary asset={asset} />
+                            <Summary asset={""}/>
                         </div>
                         <div className="grow min-h-screen">
                             <About />

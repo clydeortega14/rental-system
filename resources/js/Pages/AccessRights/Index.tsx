@@ -42,13 +42,13 @@ const Index = ({ auth, className }: PageProps<{ className?: string }>) => {
                             </Box>
                             <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                                 {activeTab === 0 && (
-                                    <UserList className="max-w-xl" />
+                                    <UserList />
                                 )}
                                 {activeTab === 1 && (
-                                    <RoleList className="max-w-xl" />
+                                    <RoleList  />
                                 )}
                                 {activeTab === 2 && (
-                                    <PermissionList className="max-w-xl" />
+                                    <PermissionList />
                                 )}
                             </div>
                         </div>

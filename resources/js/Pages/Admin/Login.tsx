@@ -57,8 +57,6 @@ const LoginAdmin: React.FC = () => {
           {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
         </div>
 
-        {errors.message && <p className="text-red-500 text-sm text-center">{errors.message}</p>}
-
         <div>
          <button
             type="submit"

@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import { Link, Head } from "@inertiajs/react";
+import { Link, Head, usePage } from "@inertiajs/react";
 import { Dialog, Popover, Tab, Transition } from "@headlessui/react";
 import {
     Bars3Icon,
@@ -148,166 +148,21 @@ const navigation = {
     ],
 };
 
-function classNames(...classes) {
+function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
 }
 
+interface ViewProps {
+    itemId: number
+}
+
 export default function View({
-    itemId,
-    auth,
-    laravelVersion,
-    phpVersion,
-}: PageProps<{ laravelVersion: string; phpVersion: string }>) {
+    itemId
+}: ViewProps) {
+
+    const auth = usePage<PageProps>().props.auth;
     const [open, setOpen] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const [value, setValue] = useState({
-        startDate: new Date(),
-        endDate: new Date().setMonth(11),
-    });
-    const handleValueChange = (newValue) => {
-        console.log("newValue:", newValue);
-        setValue(newValue);
-    };
-
-    const Modal = ({ isOpen, onClose, title, description }) => {
-        return (
-            <Transition.Root show={isOpen} as={Fragment}>
-                <Dialog
-                    as="div"
-                    className="fixed inset-0 z-50 overflow-y-auto"
-                    onClose={onClose}
-                >
-                    <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                        <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0"
-                            enterTo="opacity-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
-                        >
-                            <Dialog.Overlay className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" />
-                        </Transition.Child>
-
-                        {/* This element is to trick the browser into centering the modal contents. */}
-                        <span
-                            className="hidden sm:inline-block sm:align-middle sm:h-screen"
-                            aria-hidden="true"
-                        >
-                            &#8203;
-                        </span>
-
-                        <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                            enterTo="opacity-100 translate-y-0 sm:scale-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        >
-                            <div
-                                className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle "
-                                style={{ width: "1000px" }}
-                            >
-                                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                                    <div className="sm:flex sm:items-start">
-                                        <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
-                                            <img src="https://content2.kawasaki.com/ContentStorage/KMC/Products/8797/b1200891-3315-46af-9575-185aed6b2892.png?w=675" />
-                                        </div>
-                                        <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                            <Dialog.Title
-                                                as="h3"
-                                                className="text-lg leading-6 font-medium text-gray-900"
-                                            >
-                                                {title}
-                                            </Dialog.Title>
-                                            <p className="text-sm text-gray-500 mt-2">
-                                                {description}
-                                            </p>{" "}
-                                            {/* Description */}
-                                            {/* Cards go here */}
-                                            <div className="flex flex-wrap mt-4">
-                                                {/* Example card */}
-                                                <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mr-3">
-                                                    <div className="px-6 py-4 mr-5">
-                                                        <div className="font-bold text-xl mb-2">
-                                                            Transmission Type
-                                                        </div>
-                                                        <p className="text-gray-700 text-base">
-                                                            Gasoline Manual
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mr-3">
-                                                    <div className="px-6 py-4 mr-5">
-                                                        <div className="font-bold text-xl mb-2">
-                                                            Maximum Power
-                                                        </div>
-                                                        <p className="text-gray-700 text-base">
-                                                            Gasoline 48.9 hp
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mr-3">
-                                                    <div className="px-6 py-4 mr-5">
-                                                        <div className="font-bold text-xl mb-2">
-                                                            Front Brake
-                                                        </div>
-                                                        <p className="text-gray-700 text-base">
-                                                            Gasoline Disc
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mr-3">
-                                                    <div className="px-6 py-4 mr-5">
-                                                        <div className="font-bold text-xl mb-2">
-                                                            Displacement
-                                                        </div>
-                                                        <p className="text-gray-700 text-base">
-                                                            Gasoline 399 cc
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mt-2 mr-3">
-                                                    <div className="px-6 py-4 mr-5">
-                                                        <div className="font-bold text-xl mb-2">
-                                                            Ground Clearance
-                                                        </div>
-                                                        <p className="text-gray-700 text-base">
-                                                            Gasoline 140 mm
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                {/* Add more cards as needed */}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                                    <button
-                                        type="button"
-                                        className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
-                                        onClick={onClose}
-                                    >
-                                        Close
-                                    </button>
-                                </div>
-                            </div>
-                        </Transition.Child>
-                    </div>
-                </Dialog>
-            </Transition.Root>
-        );
-    };
-
-    // Handler to toggle modal visibility
-    const toggleModal = () => {
-        setIsModalOpen(!isModalOpen);
-    };
     return (
         <>
             <div className="bg-white">
@@ -853,7 +708,7 @@ export default function View({
                 <div>
                     <div className="bg-white rounded-lg overflow-hidden">
                         {/* Checkout Form */}
-                        <CheckOutForm />
+                        {/* <CheckOutForm /> */}
 
                         {/* Card content goes here */}
                         <div className="p-12 flex flex-col lg:flex-row">
@@ -1011,14 +866,7 @@ export default function View({
                                                             </p>
                                                             {/* Button */}
                                                             <div className="mt-4">
-                                                                <button
-                                                                    onClick={() =>
-                                                                        handleCardClick(
-                                                                            itemId,
-                                                                        )
-                                                                    }
-                                                                    className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg w-full focus:outline-none focus:shadow-outline"
-                                                                >
+                                                                <button>
                                                                     Continue
                                                                 </button>
                                                             </div>

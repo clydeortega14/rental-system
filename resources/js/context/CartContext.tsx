@@ -1,8 +1,10 @@
+import { TCartItem } from '@/types/cart';
+import { RentalItem } from '@/types/rental';
 import React, { createContext, useContext, useState } from 'react';
-import { CartItem, RentalItem } from '../types';
+// import { CartItem, RentalItem } from '../';
 
 interface CartContextType {
-  cart: CartItem[];
+  cart: TCartItem[];
   addToCart: (item: RentalItem, startDate: string, endDate: string, quantity: number) => void;
   removeFromCart: (itemId: string) => void;
   clearCart: () => void;
@@ -13,7 +15,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<TCartItem[]>([]);
 
   const addToCart = (item: RentalItem, startDate: string, endDate: string, quantity: number = 1) => {
     // Check if item already exists in cart
@@ -48,7 +50,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const start = new Date(cartItem.startDate);
     const end = new Date(cartItem.endDate);
     const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-    const price = cartItem.item.price * (days || 1) * cartItem.quantity;
+    const price = cartItem.item.price['daily'] * (days || 1) * cartItem.quantity;
     return total + price;
   }, 0);
 

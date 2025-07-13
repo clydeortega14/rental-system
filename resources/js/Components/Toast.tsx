@@ -2,7 +2,12 @@ import React from "react";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const CustomToast = ({ message, type }) => {
+interface Props {
+  message: string;
+  type: string;
+}
+
+const CustomToast = ({ message, type }: Props) => {
   switch (type) {
     case "success":
       toast.success(message);

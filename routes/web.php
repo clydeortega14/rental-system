@@ -80,6 +80,9 @@ Route::middleware([
     // user must redirect to this route if first time using the platform.
     Route::post('/completing/user', [UserController::class, 'store'])->name('store.completing.user');
 
+    /* -- Reservations -- */
+    Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+
     // Route::get('/rentalListing', function () {
     //     return Inertia::render('User/Partials/Rental');
     // })->middleware(['auth'])->name('rentalListing');
@@ -140,9 +143,6 @@ Route::middleware([
 
     /* -- Profile Delete -- */
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    /* -- Reservations -- */
-    Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
 
     /* -- Booking Calendar -- */
     Route::get('/booking/calendar', [BookingController::class, 'calendar'])->name('booking.calendar');

@@ -1,9 +1,9 @@
 export type Category = {
     label: string;
-    category_id: number;
+    category_id?: number;
     id: number;
     name: string;
-    detail: {
+    detail?: {
         id: number;
         label: string;
         detailable_id: number;

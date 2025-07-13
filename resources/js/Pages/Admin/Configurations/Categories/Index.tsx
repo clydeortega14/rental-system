@@ -13,7 +13,6 @@ import AdminLayoutAntD from '../../../../../js/Layouts/AdminLayoutAntD';
 import { useState } from 'react';
 import { PageWithAdminLayout } from '@/types';
 import type { MenuProps, TableColumnsType } from 'antd';
-import { createStyles } from 'antd-style';
 
 const { Title, Text } = Typography;
 const { Search } = Input;

@@ -1,10 +1,20 @@
+import React from "react";
+
+interface Props {
+    type: "button" | "submit" | "reset";
+    className: string;
+    disabled: boolean;
+    children: React.ReactNode;
+} 
+
+
 export default function SuccessButton({
     type = "button",
     className = "",
     children,
     disabled,
     ...props
-}) {
+}:Props) {
     return (
         <button
             {...props}

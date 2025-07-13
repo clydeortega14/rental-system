@@ -9,6 +9,7 @@ import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
 import LoginWithGoogle from "../LoginWithGoogle";
 import { BookingSession } from "@/types/rental";
 import CardExpiryInput from "../CardExpiryInput";
+import InputError from "../InputError";
 
 interface CheckOutProps {
     bookingData: BookingSession
@@ -34,12 +35,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
         let calculated_total = Number(bookingData.partial_total) + serviceFee;
         setAllTotal(calculated_total);
 
-    }, [bookingData.partial_total, serviceFee])
-
-    const { data, setData, post, processing, errors } = useForm({});
-
-    const { cart, removeFromCart, clearCart, totalPrice } = useCart();
-    const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
+    }, [bookingData.partial_total, serviceFee]);
     const [formData, setFormData] = useState({
             rental_listing_id: bookingData.rental_listing_id,
             name: user ? user.name : '',
@@ -52,6 +48,12 @@ export default function CheckOut({bookingData}: CheckOutProps) {
             cardExpiry: '',
             cardCvv: '',
         });
+
+    const { data, setData, post, processing, errors } = useForm(formData);
+
+    const { cart, removeFromCart, clearCart, totalPrice } = useCart();
+    const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
+    
     const [isProcessing, setIsProcessing] = useState(false);
     const [isComplete, setIsComplete] = useState(false);
 
@@ -169,6 +171,8 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                 onChange={handleInputChange}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 />
+
+                                <InputError message={errors.phone} />
                             </div>
                             </div>
                         </div>
@@ -310,9 +314,9 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                         type="submit"
                                         variant="primary"
                                         fullWidth
-                                        disabled={isProcessing}
+                                        disabled={processing}
                                     >
-                                        {isProcessing ? 'Processing...' : `Complete Booking • ${formatPrice(allTotal)}`}
+                                        {processing ? 'Processing...' : `Complete Booking • ${formatPrice(allTotal)}`}
                                     </Button>
                                 )
                             }
@@ -347,15 +351,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                 className="w-16 h-16 object-cover rounded mr-4"
                                 />
                                 <div className="flex-grow">
-                                <div className="flex justify-between">
-                                    <h3 className="text-sm font-medium text-gray-800">{cartItem.item.name}</h3>
-                                    <button
-                                    onClick={() => removeFromCart(cartItem.item.id)}
-                                    className="text-gray-400 hover:text-gray-600"
-                                    >
-                                    <X className="h-4 w-4" />
-                                    </button>
-                                </div>
+                                
                                 <div className="flex items-center text-xs text-gray-600 mt-1">
                                     <Calendar className="h-3 w-3 mr-1" />
                                     <span>
@@ -364,10 +360,10 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                 </div>
                                 <div className="mt-1 flex justify-between">
                                     <span className="text-xs text-gray-600">
-                                    ${cartItem.item.price} x {days} {cartItem.item.priceUnit}s
+                                    ${cartItem.item.price['daily']} x {days} {cartItem.item.priceUnit}s
                                     </span>
                                     <span className="text-sm font-medium">
-                                    ${(cartItem.item.price * days).toFixed(2)}
+                                    ${(cartItem.item.price['daily'] * days).toFixed(2)}
                                     </span>
                                 </div>
                                 </div>

@@ -4,8 +4,8 @@ import logoMobile from '@/../../resources/img/logo.png';
 interface LessorApplyModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onProceed: () => void;
-  submitForm: number; // passed from parent
+  onProceed?: () => void;
+  submitForm?: number; // passed from parent
 }
 
 const benefits = [

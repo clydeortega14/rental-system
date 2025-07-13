@@ -1,10 +1,11 @@
 import LesseeLayout from '@/Layouts/LesseeLayout';
 
-const Index = ({ headerData, bookings }) => {
+const Index = () => {
+
   return <div />; // content not needed; content is in LesseeLayout tab
 };
 
-Index.layout = (page) => (
+Index.layout = (page:React.ReactNode) => (
   <LesseeLayout defaultTab="bookings">
     {page}
   </LesseeLayout>

@@ -1,6 +1,5 @@
 import React, { useState, ReactElement } from "react";
 import { useForm, usePage } from "@inertiajs/react";
-import { route } from "ziggy-js";
 import { ShopProps, Shop, FormData } from "@/Pages/Lessor/types/ShopProps";
 import LessorLayout from "@/Layouts/LessorLayout";
 

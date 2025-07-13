@@ -14,11 +14,11 @@ const SimilarItems = ({items}:SimilarItemsProps) => {
         {items.map(item => (
           <div key={item.id} className="border border-gray-200 rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md">
             <div className="aspect-w-16 aspect-h-9">
-              <img 
+              {item.images && <img 
                 src={item.images[0]} 
                 alt={item.name} 
                 className="w-full h-full object-cover"
-              />
+              />}
             </div>
             <div className="p-4">
               <h4 className="font-medium text-lg mb-1 text-gray-900">{item.name}</h4>
