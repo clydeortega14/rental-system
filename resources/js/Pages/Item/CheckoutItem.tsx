@@ -443,7 +443,7 @@ export default function View({
                                         <img
                                             style={{ width: "200px" }}
                                             className="h-30 w-100"
-                                            src={initialLogo}
+                                            src={"https://tailwindui.com/img/ecommerce-images/mega-menu-category-01.jpg"}
                                             alt=""
                                         />
                                     </a>

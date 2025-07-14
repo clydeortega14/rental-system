@@ -1,33 +1,29 @@
-import icon from '@/../../resources/img/background/testimonial-icon.svg';
-import background from '@/../../resources/img/background/feature-bg-01.png';
-import avatar1 from '@/../../resources/img/profiles/avatar-15.jpg';
-import avatar2 from '@/../../resources/img/profiles/avatar-15.jpg';
-import avatar3 from '@/../../resources/img/profiles/avatar-15.jpg';
+
 
 const testimonials = [
   {
     name: 'Kyle Roberts DVM',
     location: 'Newyork, USA',
     text: 'Renting a car from Dreams rent made my vacation so much smoother! The process was quick',
-    image: avatar1,
+    image: "img/profiles/avatar-15.jpg",
   },
   {
     name: 'Hardley Vanessa',
     location: 'Newyork, USA',
     text: 'Their wide selection of vehicles, convenient locations, and competitive prices',
-    image: avatar2,
+    image: "img/profiles/avatar-15.jpg",
   },
   {
     name: 'Wilson',
     location: 'Nevada, USA',
     text: 'The spacious SUV we rented comfortably fit our family and all our luggage',
-    image: avatar3,
+    image: "img/profiles/avatar-15.jpg",
   },
 ];
 
 const ClientsFeedback = () => {
   return (
-    <section className="bg-gray-50 py-16" style={{ backgroundImage: `url(${background})` }}>
+    <section className="bg-gray-50 py-16" style={{ backgroundImage: `url(img/background/feature-bg-01.png)` }}>
       <div className="container mx-auto px-4 text-center">
         <h2 className="text-3xl font-bold text-black mb-2 flex justify-center items-center gap-2">
           Our Clients Feedback
@@ -44,7 +40,7 @@ const ClientsFeedback = () => {
             >
               {/* Background Quote Icon */}
               <img
-                src={icon}
+                src={"img/background/testimonial-icon.svg"}
                 alt="quote"
                 className="absolute top-0 right-0 w-58  pointer-events-none"
               />

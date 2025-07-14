@@ -6,7 +6,6 @@ import { format } from 'date-fns';
 import AdminLayoutAntD from '../../../../../js/Layouts/AdminLayoutAntD';
 import type { ColumnsType } from 'antd/es/table';
 import { PageWithAdminLayout, PageProps } from '@/types';
-import logoMobile from '@/../../resources/img/defaultImage.png';
 import front from '@/../../resources/img/ids/front.png';
 import back from '@/../../resources/img/ids/back.png';
 import Swal from 'sweetalert2';
@@ -234,7 +233,7 @@ const ApplicationsIndex: PageWithAdminLayout = () => {
                 <h2 className="text-lg font-semibold text-gray-700">Lessor Details</h2>
                 <div className="bg-white p-4 rounded-lg shadow flex flex-col sm:flex-row items-center gap-4">
                     <img
-                    src={logoMobile}
+                    src={"img/defaultImage.png"}
                     alt="User Avatar"
                     className="w-24 h-24 rounded-full object-cover"
                     />
