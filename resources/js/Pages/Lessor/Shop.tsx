@@ -1,13 +1,6 @@
-<<<<<<< HEAD
 import React, { useState,useEffect } from "react";
 import { useForm, usePage } from "@inertiajs/react";
 // import { route } from "ziggy-js";
-=======
-import React, { useState, ReactElement } from "react";
-import { useForm, usePage } from "@inertiajs/react";
-import { route } from "ziggy-js";
-import { ShopProps, Shop, FormData } from "@/Pages/Lessor/types/ShopProps";
->>>>>>> 3b1a3ed8005a0f9703a026954c519011ec395186
 import LessorLayout from "@/Layouts/LessorLayout";
 import Modal from "@/Components/Modal"; // Make sure this path is correct
 import {
@@ -19,7 +12,6 @@ import {
 import Swal from "sweetalert2";
 import { Link } from "@inertiajs/react";
 
-<<<<<<< HEAD
 interface Shop {
   id: number;
   name: string;
@@ -45,13 +37,6 @@ function Shop({ shops = [] }: ShopProps) {
   const [showModal, setShowModal] = useState(false); // ✅ modal toggle
  
   const { data, setData, post, put, reset, processing, errors } = useForm({
-=======
-function ShopPage() {
-  const { shops = [], flash, errors } = usePage<ShopProps>().props;
-  const [editingShopId, setEditingShopId] = useState<number | null>(null);
-
-  const { data, setData, post, put, reset, processing } = useForm<FormData>({
->>>>>>> 3b1a3ed8005a0f9703a026954c519011ec395186
     name: "",
     description: "",
     location: "",
@@ -60,7 +45,6 @@ function ShopPage() {
     city: "",
     barangay: "",
   });
-<<<<<<< HEAD
   const { props } = usePage();
   const flash = props.flash as { success?: string };
 
@@ -159,8 +143,6 @@ function ShopPage() {
       setData("barangay", e.target.value);
     };
 
-=======
->>>>>>> 3b1a3ed8005a0f9703a026954c519011ec395186
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -212,7 +194,6 @@ function ShopPage() {
         </div>
       )}
 
-<<<<<<< HEAD
       {/* Grid of Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Add Shop Card */}
@@ -266,7 +247,7 @@ function ShopPage() {
               link.url ? (
                 <Link
                   key={index}
-                  href={link.url ? `/lessee${new URL(link.url).search}` : '#'}
+                   href={route('lessee.profile')}
                   preserveScroll
                   preserveState
                   replace // ✅ Don't change the URL
@@ -422,60 +403,6 @@ function ShopPage() {
             >
               {processing ? "Saving..." : editingShopId ? "Update Shop" : "Save Shop"}
             </button>
-=======
-      {errors?.form && (
-        <div className="bg-red-100 border border-red-300 text-red-700 p-3 rounded mb-4">
-          {errors.form}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded shadow">
-        <div>
-          <label className="block font-medium text-gray-700">Shop Name</label>
-          <input
-            type="text"
-            value={data.name}
-            onChange={(e) => setData("name", e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-          {errors?.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-        </div>
-
-        <div>
-          <label className="block font-medium text-gray-700">Description</label>
-          <textarea
-            value={data.description}
-            onChange={(e) => setData("description", e.target.value)}
-            className="w-full p-2 border rounded"
-            rows={3}
-          />
-          {errors?.description && (
-            <p className="text-red-500 text-sm mt-1">{errors.description}</p>
-          )}
-        </div>
-
-        <div>
-          <label className="block font-medium text-gray-700">Location</label>
-          <input
-            type="text"
-            value={data.location}
-            onChange={(e) => setData("location", e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-          {errors?.location && (
-            <p className="text-red-500 text-sm mt-1">{errors.location}</p>
-          )}
-        </div>
-
-        <div className="flex items-center gap-4">
-          <button
-            type="submit"
-            className="bg-orange-600 text-white px-5 py-2 rounded hover:bg-orange-700"
-            disabled={processing}
-          >
-            {processing ? "Saving..." : editingShopId ? "Update Shop" : "Save Shop"}
-          </button>
->>>>>>> 3b1a3ed8005a0f9703a026954c519011ec395186
 
             <button
               type="button"
@@ -484,45 +411,6 @@ function ShopPage() {
             >
               Cancel
             </button>
-<<<<<<< HEAD
-=======
-          )}
-        </div>
-      </form>
-
-      {shops.length > 0 ? (
-        <div className="mt-10">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Your Shop Listings</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {shops.map((shop) => (
-              <div
-                key={shop.id}
-                className="bg-white shadow-md rounded-lg p-6 space-y-2 border border-gray-200"
-              >
-                <div className="flex justify-between items-center">
-                  <h4 className="text-xl font-bold text-orange-600">{shop.name}</h4>
-                  <button
-                    onClick={() => handleEdit(shop)}
-                    className="text-sm text-blue-600 hover:underline"
-                  >
-                    Edit
-                  </button>
-                </div>
-                <p className="text-gray-700 whitespace-pre-wrap">
-                  {shop.description || "No description provided."}
-                </p>
-                <p className="text-gray-500 text-sm">
-                  📍 {shop.location || "No location"}
-                </p>
-                <p className="text-gray-400 text-xs">
-                  Created:{" "}
-                  {shop.created_at
-                    ? new Date(shop.created_at).toLocaleDateString()
-                    : "—"}
-                </p>
-              </div>
-            ))}
->>>>>>> 3b1a3ed8005a0f9703a026954c519011ec395186
           </div>
         </form>
       </Modal>
@@ -530,6 +418,6 @@ function ShopPage() {
   );
 }
 
-ShopPage.layout = (page: ReactElement) => <LessorLayout>{page}</LessorLayout>;
+Shop.layout = (page) => <LessorLayout>{page}</LessorLayout>;
 
-export default ShopPage;
+export default Shop;
