@@ -41,8 +41,12 @@ export default function RentalItemModal({
   shops,
   onCategoryChange,
 }: RentalItemModalProps) {
+
+ 
   const selectedCategory = categories.find((cat) => cat.id === form.categoryId);
   const customFields = selectedCategory?.custom_fields ?? [];
+
+   console.log(111111111,customFields);
 
   const initializeCustomFieldAnswers = (categoryId: number): { [slug: string]: string[] } => {
     const cat = categories.find((c) => c.id === categoryId);

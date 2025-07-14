@@ -148,7 +148,7 @@ class BookingController extends Controller
         $request->session()->forget(['booking_data']);
 
         // return redirect(route('dashboard'));
-        return to_route('reservations.index');
+        return to_route('lessee.profile');
     }
 
     public function calendar()

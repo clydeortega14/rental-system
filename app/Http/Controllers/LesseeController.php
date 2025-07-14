@@ -12,17 +12,29 @@ use Illuminate\Http\Request;
 use App\Models\Lessor;
 use App\Models\BusinessDocument;
 use App\Models\LessorApplication;
+use App\Models\Category;
+use App\Services\Category\CategoryService;
+use App\Services\RentalItem\RentalItemService;
+use App\Models\RentalAddItem as RentalListing;
+use App\Models\Shop;
+
 
 
 
 class LesseeController extends Controller
 {
-
     protected $booking_service;
+    protected $category_service;
+    protected $rental_items_service;
 
-    public function __construct(BookingService $booking_service)
-    {
+    public function __construct(
+        BookingService $booking_service,
+        CategoryService $category_service,
+        RentalItemService $rental_items_service
+    ) {
         $this->booking_service = $booking_service;
+        $this->category_service = $category_service;
+        $this->rental_items_service = $rental_items_service;
     }
     public function index()
     {
@@ -33,21 +45,66 @@ class LesseeController extends Controller
             ['name' => 'Booked By'],
             ['name' => 'Action']
         ];
+
         $user = Auth::user()?->loadMissing(['company', 'contact']);
         $isApprovedLessor = false;
         $lessorApplicationStatus = null;
+        $shops = [];
+        $rentals = collect(); // Default rentals
+
         if ($user) {
-            // Check if user is already an approved lessor
+            // Check approval
             $isApprovedLessor = Lessor::where('lessoruser_id', $user->id)
                 ->whereHas('status', fn($query) => $query->where('name', 'approved'))
                 ->exists();
-            // Check if user has an application and get its status
+
+            // Application status
             $application = \App\Models\LessorApplication::where('lessoruser_id', $user->id)->first();
             if ($application) {
-                // Get the status name via relationship or lookup
-                $lessorApplicationStatus = optional($application->status)->name; // ← assumes status() relationship
+                $lessorApplicationStatus = optional($application->status)->name;
+            }
+
+            // Get lessor
+            $lessor = Lessor::with('user')->where('lessoruser_id', $user->id)->first();
+
+            if ($lessor) {
+                $shops = $lessor->shops()
+                    ->select('id', 'lessor_id', 'name', 'description', 'location', 'created_at')
+                    ->latest()
+                    ->paginate(10)
+                    ->withQueryString();
+
+                // Rentals logic added here
+                $rawRentals = RentalListing::with(['toCategory', 'toShop'])
+                    ->where('user_id', $lessor->user->id)
+                    ->get();
+
+
+                    $rentals = $rawRentals->map(function ($rental) {
+                        return [
+                            'id' => $rental->id,
+                            'name' => $rental->itemName,
+                            'description' => $rental->description ?? '',
+                            'categoryId' => $rental->category_id,
+                            'categoryType' => optional($rental->toCategory)->name ?? '',
+                            'reservationAmt' => $rental->price,
+                            'imageUrl' => $rental->imageUrl ?? '',
+                            'customFieldAnswers' => $rental->customFieldAnswers ?? [],
+                            'address' => optional($rental->toShop)->location ?? '',
+                            'shopId' => optional($rental->toShop)->id ?? null, // Keep null for type clarity
+                        ];
+                    });
+
             }
         }
+
+        $categories = Category::with('customFields')->get()->map(function ($category) {
+            return [
+                'id' => $category->id,
+                'name' => $category->name,
+                'custom_fields' => $category->custom_fields, // Must exist
+            ];
+        });
         $bookings = $this->booking_service->formatBookings();
         return Inertia::render('Lessee/Landing', [
             'auth' => [
@@ -56,7 +113,10 @@ class LesseeController extends Controller
             'bookings' => $bookings,
             'headerData' => $headersData,
             'isApprovedLessor' => $isApprovedLessor,
-            'lessorApplicationStatus' => $lessorApplicationStatus, // ✅ added
+            'lessorApplicationStatus' => $lessorApplicationStatus,
+            'shops' => $shops,
+            'categories' => $categories,
+            'rentals' => $rentals, // ✅ Send rentals to frontend
         ]);
     }
 

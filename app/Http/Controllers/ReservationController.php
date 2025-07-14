@@ -38,7 +38,10 @@ class ReservationController extends Controller
 
         return Inertia::render('Lessee/Index', [
             'headerData' => $headersData,
-            'bookings' => $bookings
+            'bookings' => $bookings,
+            'auth' => [
+                'user' => auth()->user()
+            ]
         ]);
     }
 

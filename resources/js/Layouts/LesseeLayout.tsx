@@ -14,6 +14,7 @@ import Footer from "@/Components/Lessee/Footer";
 import Profile from "@/Components/Lessee/Profile";
 import LesseeSidebarContent from "@/Components/Lessee/LesseeSidebarContent";
 import LessorApplyModal from "../Components/Lessee/Modals/LessorApplyModal";
+
 import {
   Tabs,
   TabsList,
@@ -36,17 +37,51 @@ const Review = lazy(() => import("@/Pages/Lessee/Review"));
 const LesseeSignForm = lazy(() => import("@/Pages/Lessee/LessorSignupForm"));
 const LessorDashboard = lazy(() => import("@/Pages/Lessor/Dashboard"));
 const LessorProfile = lazy(() => import("@/Pages/Lessor/Profile"));
-const LessorProperties = lazy(() => import("@/Pages/Lessor/Properties"));
+const LessorProperties = lazy(() => import("@/Pages/Lessor/PropertiesV1"));
 const LessorReservations = lazy(() => import("@/Pages/Lessor/Reservations"));
 const LessorInvoice = lazy(() => import("@/Pages/Lessor/Invoice"));
 const LessorInquiries = lazy(() => import("@/Pages/Lessor/Inquiries"));
 const LessorReviews = lazy(() => import("@/Pages/Lessor/Reviews"));
+const LessorShop = lazy(() => import("@/Pages/Lessor/Shop"));
+
+export interface Category {
+  id: number;
+  name: string;
+  custom_fields: any[]; // Or use correct field type
+}
+
+interface RentalItem {
+  id: number;
+  name: string;
+  description?: string; // optional
+  categoryId?: number;
+  categoryType?: string;
+  reservationAmt?: number;
+  imageUrl?: string;
+  customFieldAnswers?: any;
+  address?: string;
+  shopId?: number;
+}
 
 interface Props extends PageProps {
   bookings: BookingDetails[];
   headerData: { name: string }[];
   isApprovedLessor: boolean;
   lessorApplicationStatus?: 'pending' | 'approved' | 'rejected' | null; 
+  shops: {
+    data: {
+      id: number;
+      name: string;
+      description?: string;
+      location?: string;
+      created_at?: string;
+    }[];
+    current_page: number;
+    last_page: number;
+    links: { url: string | null; label: string; active: boolean }[];
+  };
+  categories: Category[];
+  rentals: RentalItem[];
 }
 
 interface LayoutProps {
@@ -54,8 +89,16 @@ interface LayoutProps {
   children?: React.ReactNode;
 }
 
+interface Shop {
+  id: number;
+  name: string;
+  description?: string;
+  location?: string;
+  created_at?: string;
+}
+
 export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
- const { auth, bookings, headerData, isApprovedLessor, lessorApplicationStatus } = usePage().props as unknown as Props;
+  const { bookings, headerData, isApprovedLessor, lessorApplicationStatus, shops: rawShops, auth, categories, rentals } = usePage().props as unknown as Props;
   const [activeTab, setActiveTab] = useState(defaultTab); 
   // const [activeTab, setActiveTab] = useState("overview");
 
@@ -75,6 +118,11 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
       date: "2025-07-08",
     });
   }
+
+    // Provide fallback to ensure shape
+  const shops = rawShops && 'data' in rawShops
+  ? rawShops
+  : { data: [], current_page: 1, last_page: 1, links: [] };
 
   recentActivities.push(
     {
@@ -139,13 +187,13 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
       { key: "lessor", label: "Be a Lessor", icon: BiSolidUserCheck },
     ] : []),
     ...(isApprovedLessor ? [
-      { key: "lessorProfile", label: "Profile", icon: BiSolidUserCheck },
       { key: "lessorDashboard", label: "Dashboard", icon: BiSolidDashboard },
+      { key: "lessorShop", label: "Shop", icon: BiSolidUserCheck },
       { key: "lessorProperties", label: "Properties", icon: BiBuildingHouse },
-      { key: "lessorReservations", label: "Reservations", icon: BiCalendarCheck },
-      { key: "lessorInvoice", label: "Invoice", icon: BiReceipt },
-      { key: "lessorInquiries", label: "Inquiries", icon: BiMessageDetail },
-      { key: "lessorReviews", label: "Reviews", icon: BiStar },
+      // { key: "lessorReservations", label: "Reservations", icon: BiCalendarCheck },
+      // { key: "lessorInvoice", label: "Invoice", icon: BiReceipt },
+      // { key: "lessorInquiries", label: "Inquiries", icon: BiMessageDetail },
+      // { key: "lessorReviews", label: "Reviews", icon: BiStar },
     ] : []),
   ];
   return (
@@ -214,8 +262,8 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
             <TabsContent value="lessorDashboard" className="h-full">
               <LessorDashboard />
             </TabsContent>
-            <TabsContent value="lessorProperties" className="h-full">
-              <LessorProperties />
+           <TabsContent value="lessorProperties" className="h-full">
+              <LessorProperties shops={shops} categories={categories} rentals={rentals} />
             </TabsContent>
             <TabsContent value="lessorReservations" className="h-full">
               <LessorReservations />
@@ -228,6 +276,10 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
             </TabsContent>
             <TabsContent value="lessorReviews" className="h-full">
               <LessorReviews />
+            </TabsContent>
+            <TabsContent value="lessorShop" className="h-full">
+              {/* Pass shops to LessorShop */}
+              <LessorShop shops={shops} />
             </TabsContent>
               {/* End Lessor Access */}
         </Suspense>

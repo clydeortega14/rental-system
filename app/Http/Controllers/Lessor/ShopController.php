@@ -29,12 +29,32 @@ class ShopController extends Controller
 
     public function store(Request $request)
     {
-
-        $data = $request->validate([
+      
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'location' => 'nullable|string|max:255',
+            'region' => 'nullable|string',
+            'province' => 'nullable|string',
+            'city' => 'nullable|string',
+            'barangay' => 'nullable|string',
         ]);
+
+        // Combine the full location string from parts
+        $locationParts = [
+            $validated['barangay'] ?? null,
+            $validated['city'] ?? null,
+            $validated['province'] ?? null,
+            $validated['region'] ?? null,
+        ];
+
+        $fullLocation = implode(', ', array_filter($locationParts));
+
+        // Prepare data for saving, replacing location with the full combined string
+        $data = [
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+            'location' => $fullLocation,
+        ];
 
         $lessor = Lessor::where('lessoruser_id', Auth::id())->first();
     
