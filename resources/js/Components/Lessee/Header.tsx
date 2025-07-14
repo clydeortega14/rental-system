@@ -3,9 +3,9 @@ import { Link } from "@inertiajs/react";
 import { HelpCircle, Bell } from "lucide-react";
 import logoWeb from '@/../../resources/img/logo-web.png';
 import logoMobile from '@/../../resources/img/logo.png';
-import LessorApplyModal from "@/Components/Lessee/Modal/LessorApplyModal"; // adjust path as needed
+import LessorApplyModal from "../../Components/Lessee/modal/LessorApplyModal"; // adjust path as needed
 
-export default function LesseeHeader({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
+export default function LesseeHeader() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (

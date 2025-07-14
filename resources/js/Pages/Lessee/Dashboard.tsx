@@ -1,8 +1,12 @@
 import React from "react";
 import banner from '@/../../resources/img/banner/banner1.png'
 import icon from '@/../../resources/img/notVerifiedv1.png'
+import { usePage } from "@inertiajs/react";
+import { PageProps } from "@/types";
 
-const DashboardContent = ({ auth }) => {
+const DashboardContent = () => {4
+
+    const auth = usePage<PageProps>().props.auth;
   return (
     <div className="space-y-6">
     <h2 className="text-2xl font-semibold text-gray-900">Dashboard</h2>

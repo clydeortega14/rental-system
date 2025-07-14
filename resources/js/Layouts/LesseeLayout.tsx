@@ -1,6 +1,7 @@
-import React, { lazy, Suspense, useState } from "react";
-
+import React, { lazy, Suspense, useState, useEffect } from "react";
+import { usePage } from "@inertiajs/react";
 import { PageProps } from "@/types";
+import { BookingDetails } from "@/types/rental";
 import {
   LayoutDashboard,
   StarIcon,
@@ -12,22 +13,81 @@ import Header from "@/Components/Lessee/Header";
 import Footer from "@/Components/Lessee/Footer";
 import Profile from "@/Components/Lessee/Profile";
 import LesseeSidebarContent from "@/Components/Lessee/LesseeSidebarContent";
+import LessorApplyModal from "../Components/Lessee/Modals/LessorApplyModal";
 import {
   Tabs,
   TabsList,
   TabsTrigger,
   TabsContent,
 } from "@/Components/Lessee/ui/tabs";
+import {
+  BiSolidDashboard,
+  BiBuildingHouse,
+  BiCalendarCheck,
+  BiReceipt,
+  BiMessageDetail,
+  BiStar,
+} from "react-icons/bi";
 
 const Overview = lazy(() => import("@/Pages/Lessee/Overview"));
 const Bookings = lazy(() => import("@/Pages/Lessee/Bookings"));
+// const Reservations = lazy(() => import("@/Pages/Reservation/Index"));
 const Review = lazy(() => import("@/Pages/Lessee/Review"));
 const LesseeSignForm = lazy(() => import("@/Pages/Lessee/LessorSignupForm"));
+const LessorDashboard = lazy(() => import("@/Pages/Lessor/Dashboard"));
+const LessorProfile = lazy(() => import("@/Pages/Lessor/Profile"));
+const LessorProperties = lazy(() => import("@/Pages/Lessor/Properties"));
+const LessorReservations = lazy(() => import("@/Pages/Lessor/Reservations"));
+const LessorInvoice = lazy(() => import("@/Pages/Lessor/Invoice"));
+const LessorInquiries = lazy(() => import("@/Pages/Lessor/Inquiries"));
+const LessorReviews = lazy(() => import("@/Pages/Lessor/Reviews"));
 
+interface Props extends PageProps {
+  bookings: BookingDetails[];
+  headerData: { name: string }[];
+  isApprovedLessor: boolean;
+  lessorApplicationStatus?: 'pending' | 'approved' | 'rejected' | null; 
+}
 
+interface LayoutProps {
+  defaultTab?: string;
+  children?: React.ReactNode;
+}
 
-export default function LesseeLayout({ auth }: PageProps) {
-  const [activeTab, setActiveTab] = useState("overview");
+export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
+ const { auth, bookings, headerData, isApprovedLessor, lessorApplicationStatus } = usePage().props as unknown as Props;
+  const [activeTab, setActiveTab] = useState(defaultTab); 
+  // const [activeTab, setActiveTab] = useState("overview");
+
+  const [showLessorModal, setShowLessorModal] = useState(false);
+  const recentActivities = [];
+
+  if (lessorApplicationStatus === "pending") {
+    recentActivities.unshift({
+      message: "You applied to become a Lessor",
+      status: "Pending",
+      date: "2025-07-08",
+    });
+  } else if (lessorApplicationStatus === "approved") {
+    recentActivities.unshift({
+      message: "You are now an approved Lessor",
+      status: "Approved",
+      date: "2025-07-08",
+    });
+  }
+
+  recentActivities.push(
+    {
+      message: 'Booked "Mountain Cabin Retreat" for June 2025',
+      status: "Booking",
+      date: "2025-06-01",
+    },
+    {
+      message: 'Left a 5-star review for "Cozy City Apartment"',
+      status: "Review",
+      date: "2025-05-10",
+    }
+  );
   
   const lessee = {
     name: auth.user.name,
@@ -66,19 +126,28 @@ export default function LesseeLayout({ auth }: PageProps) {
         status: "Completed",
       },
     ],
-    recentActivities: [
-      'Booked "Mountain Cabin Retreat" for June 2025',
-      'Left a 5-star review for "Cozy City Apartment"',
-    ],
+    recentActivities,
   };
+
 
   const tabs = [
     { key: "overview", label: "Overview", icon: LayoutDashboard },
     { key: "bookings", label: "Bookings", icon: CalendarCheck },
+    { key: "reservations", label: "Reservations", icon: CalendarCheck },
     { key: "reviews", label: "Reviews", icon: StarIcon },
-    { key: "lessor", label: "Be a Lessor", icon: BiSolidUserCheck },
+    ...(!isApprovedLessor ? [
+      { key: "lessor", label: "Be a Lessor", icon: BiSolidUserCheck },
+    ] : []),
+    ...(isApprovedLessor ? [
+      { key: "lessorProfile", label: "Profile", icon: BiSolidUserCheck },
+      { key: "lessorDashboard", label: "Dashboard", icon: BiSolidDashboard },
+      { key: "lessorProperties", label: "Properties", icon: BiBuildingHouse },
+      { key: "lessorReservations", label: "Reservations", icon: BiCalendarCheck },
+      { key: "lessorInvoice", label: "Invoice", icon: BiReceipt },
+      { key: "lessorInquiries", label: "Inquiries", icon: BiMessageDetail },
+      { key: "lessorReviews", label: "Reviews", icon: BiStar },
+    ] : []),
   ];
-
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-800 font-sans">
       <Header />
@@ -90,7 +159,7 @@ export default function LesseeLayout({ auth }: PageProps) {
             <Profile lessee={lessee} layout="sidebar" />
           </Suspense>
 
-          <LesseeSidebarContent activeTab={activeTab} setActiveTab={setActiveTab}  submitForm={auth.user.submitForm} />
+          <LesseeSidebarContent activeTab={activeTab} setActiveTab={setActiveTab}  submitForm={auth.user.submitForm} isApprovedLessor={isApprovedLessor}  />
         </aside>
 
         {/* Main Content */}
@@ -100,7 +169,7 @@ export default function LesseeLayout({ auth }: PageProps) {
             <Suspense fallback={<div className="text-center p-6">Loading profile...</div>}>
               <Profile lessee={lessee} layout="header" />
             </Suspense>
-
+             {/* <LesseeSidebarContent activeTab={activeTab} setActiveTab={setActiveTab}  submitForm={auth.user.submitForm} /> */}
             <TabsList className="flex mt-4 gap-2 border-b border-gray-200 overflow-x-auto flex-nowrap scrollbar-hide">
               {tabs.map((tab) => (
                 <TabsTrigger
@@ -122,11 +191,11 @@ export default function LesseeLayout({ auth }: PageProps) {
 
           {/* Tab Content */}
           <Suspense fallback={<div className="text-center text-orange-600 py-10">Loading...</div>}>
-            <TabsContent value="overview" className="h-full">
+           <TabsContent value="overview" className="h-full">
               <Overview recentActivities={lessee.recentActivities} />
             </TabsContent>
             <TabsContent value="bookings" className="h-full">
-              <Bookings bookings={lessee.bookings} />
+              <Bookings />
             </TabsContent>
             <TabsContent value="lessor" className="h-full">
               <LesseeSignForm signUser={auth} />
@@ -134,9 +203,49 @@ export default function LesseeLayout({ auth }: PageProps) {
             <TabsContent value="reviews" className="h-full">
               <Review reviews={lessee.reviews} />
             </TabsContent>
-          </Suspense>
+            <TabsContent value="reservations" className="h-full">
+              {/* <Reservations bookings={lessee.bookings} /> */}
+              {/* <Review reviews={lessee.reviews} /> */}
+            </TabsContent>
+            {/* Start Lessor Access */}
+            <TabsContent value="lessorProfile" className="h-full">
+              <LessorProfile />
+            </TabsContent>
+            <TabsContent value="lessorDashboard" className="h-full">
+              <LessorDashboard />
+            </TabsContent>
+            <TabsContent value="lessorProperties" className="h-full">
+              <LessorProperties />
+            </TabsContent>
+            <TabsContent value="lessorReservations" className="h-full">
+              <LessorReservations />
+            </TabsContent>
+            <TabsContent value="lessorInvoice" className="h-full">
+              <LessorInvoice />
+            </TabsContent>
+            <TabsContent value="lessorInquiries" className="h-full">
+              <LessorInquiries />
+            </TabsContent>
+            <TabsContent value="lessorReviews" className="h-full">
+              <LessorReviews />
+            </TabsContent>
+              {/* End Lessor Access */}
+        </Suspense>
         </section>
       </Tabs>
+
+      {/* Conditionally show your modal */}
+      {showLessorModal && (
+        <LessorApplyModal
+          isOpen={showLessorModal}
+          onClose={() => setShowLessorModal(false)}
+          onProceed={() => {
+            setShowLessorModal(false);
+            setActiveTab("lessor"); // Open the lessor tab
+          }}
+          submitForm={auth.user.submitForm}
+        />
+      )}
 
       <Footer />
     </div>

@@ -6,26 +6,62 @@ use App\Models\UserCompanyInformation;
 use App\Models\User;
 use App\Models\SignUpForm;
 use App\Models\UserContactDetail;
-
+use App\Services\BookingService;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use App\Models\Lessor;
+use App\Models\BusinessDocument;
+use App\Models\LessorApplication;
 
 
 
 class LesseeController extends Controller
 {
+
+    protected $booking_service;
+
+    public function __construct(BookingService $booking_service)
+    {
+        $this->booking_service = $booking_service;
+    }
     public function index()
     {
+        $headersData = [
+            ['name' => 'Item'],
+            ['name' => 'Reservation Detail'],
+            ['name' => 'Status'],
+            ['name' => 'Booked By'],
+            ['name' => 'Action']
+        ];
+        $user = Auth::user()?->loadMissing(['company', 'contact']);
+        $isApprovedLessor = false;
+        $lessorApplicationStatus = null;
+        if ($user) {
+            // Check if user is already an approved lessor
+            $isApprovedLessor = Lessor::where('lessoruser_id', $user->id)
+                ->whereHas('status', fn($query) => $query->where('name', 'approved'))
+                ->exists();
+            // Check if user has an application and get its status
+            $application = \App\Models\LessorApplication::where('lessoruser_id', $user->id)->first();
+            if ($application) {
+                // Get the status name via relationship or lookup
+                $lessorApplicationStatus = optional($application->status)->name; // ← assumes status() relationship
+            }
+        }
+        $bookings = $this->booking_service->formatBookings();
         return Inertia::render('Lessee/Landing', [
             'auth' => [
-                'user' => Auth::user()?->load(['company', 'contact']),
+                'user' => $user,
             ],
+            'bookings' => $bookings,
+            'headerData' => $headersData,
+            'isApprovedLessor' => $isApprovedLessor,
+            'lessorApplicationStatus' => $lessorApplicationStatus, // ✅ added
         ]);
     }
 
     public function store(Request $request)
     {
-    
         $validated = $request->validate([
             'fullname' => 'required|string',
             'business_name' => 'required|string',
@@ -42,21 +78,23 @@ class LesseeController extends Controller
             'barangay' => 'nullable|string',
             'country' => 'nullable|string',
             'tin' => 'nullable|string',
+            'business_documents' => 'nullable|array',
+            'business_documents.*' => 'file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'document_names' => 'nullable|array',
+            'document_names.*' => 'string',
         ]);
 
-       
+        $userId = auth()->id();
 
-        $userId = auth()->id(); // assumes you're using auth
-
-        // ✅ Update User model
+        // ✅ Update User
         User::where('id', $userId)->update([
             'name' => $validated['fullname'],
             'email' => $validated['email'],
             'submitForm' => 1
         ]);
 
-         // ✅ Update or create UserCompanyInformation
-        UserCompanyInformation::updateOrCreate(
+        // ✅ Update or create Company Info
+        $company = UserCompanyInformation::updateOrCreate(
             ['user_id' => $userId],
             [
                 'name' => $validated['business_name'],
@@ -74,13 +112,48 @@ class LesseeController extends Controller
             ]
         );
 
-
-        // ✅ Update or create UserContactInformation
+        // ✅ Update or create Contact Info
         UserContactDetail::updateOrCreate(
             ['user_id' => $userId],
             ['mobile' => $validated['phone']]
         );
 
+        // ✅ Save uploaded business documents
+        $lastDocumentId = null;
+
+        if ($request->hasFile('business_documents')) {
+            $files = $request->file('business_documents');
+            $names = $request->input('document_names', []);
+
+            foreach ($files as $index => $file) {
+                if ($file instanceof \Illuminate\Http\UploadedFile) {
+                    $originalName = $file->getClientOriginalName();
+                    $customName = $names[$index] ?? $originalName;
+
+                    $filename = uniqid() . '_' . $originalName;
+                    $path = $file->storeAs('business_documents', $filename, 'public');
+
+                    $document = BusinessDocument::create([
+                        'company_id'    => $company->id,
+                        'document_name' => $customName,
+                        'file_name'     => $originalName,
+                        'file_path'     => $path,
+                        'file_type'     => $file->getClientMimeType(),
+                        'file_size'     => $file->getSize(),
+                    ]);
+
+                    $lastDocumentId = $document->id;
+                }
+            }
+          
+            // ✅ Update company with last uploaded document ID
+            if ($lastDocumentId) {
+                $documentCount = BusinessDocument::where('company_id', $company->id)->count();
+                $company->update(['documents_total' => $documentCount]);
+            }
+        }
+
+        // ✅ Update SignUpForm status
         $user = User::where('id', $userId)->first();
 
         SignUpForm::updateOrCreate(
@@ -88,6 +161,15 @@ class LesseeController extends Controller
             ['status_id' => $user->submitForm]
         );
 
+        // ✅ Store in lessor_applications table
+        LessorApplication::updateOrCreate(
+            ['lessoruser_id' => $userId],
+            [
+                'uuid' => $company->uuid,
+                'status_id' => 1, // e.g. pending
+            ]
+        );
+
         return back()->with('success', 'Company information has been saved.');
-    } 
+    }
 }

@@ -1,7 +1,10 @@
+import { Category } from "./CategoryInterface";
+
 export type Item = {
     uuid: string,
     name: string;
     description: string;
+    default_duration: 'weekly' | 'daily' | 'hourly';
     price: {
         hourly: number,
         daily: number,
@@ -13,7 +16,7 @@ export type Item = {
         Sensor: string;
         Resolution: string
     };
-    category: string;
+    category: Category;
     rating: number;
     reviewCount: number;
     location: string;

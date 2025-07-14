@@ -20,9 +20,13 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\Admin\LoginController;
 
 use App\Http\Controllers\Lessor\RentalController;
 use App\Http\Controllers\Lessor\LessorController;
+use App\Http\Controllers\Lessor\ShopController;
+use App\Http\Controllers\Lessor\ReservationController as ProperReserveController;
+
 use App\Http\Controllers\LesseeController;
 
 use Illuminate\Foundation\Application;
@@ -36,17 +40,19 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
+//ladingpage
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
 
 Route::get('rental-browser/{category}', [RentalItemController::class, 'rentalBrowserIndex'])->name('rental.browser.index');
 Route::group(['prefix' => 'admin'], function () {
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard.index');
+    // Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', [AdminUserController::class, 'index'])->name('admin.users.index');
         Route::get('/{uuid}', [AdminDashboardController::class, 'show'])->name('admin.users.show');
     });
 });
+
 
 Route::get('/itemDetails/{uuid}', [RentalItemController::class, 'itemDetails'])->name('itemDetails');
 
@@ -60,7 +66,7 @@ Route::get('shopping-cart', [CartController::class, 'index'])->name('cart.index'
 Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 
 
-// Route Group for lessee 
+// Route Group for lessee
 Route::middleware(['auth'])->group(function(){
     Route::get('booking/details/{uuid}', [BookingController::class, 'bookingView'])->name('booking.view');
 });
@@ -75,6 +81,9 @@ Route::middleware([
     // user must redirect to this route if first time using the platform.
     Route::post('/completing/user', [UserController::class, 'store'])->name('store.completing.user');
 
+    /* -- Reservations -- */
+    Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+
     // Route::get('/rentalListing', function () {
     //     return Inertia::render('User/Partials/Rental');
     // })->middleware(['auth'])->name('rentalListing');
@@ -82,11 +91,20 @@ Route::middleware([
     // Route::get('rental-listings', [RentalItemController::class, 'rentalListings'])->name('rentalListing');
 
     Route::group(['prefix' => 'lessor'], function () {
-        Route::get('/', [LessorController::class, 'dashboard']);
+
+        Route::get('/', [LessorController::class, 'dashboard'])->name('lessor.dashboard');
+        
         Route::get('/properties', [RentalController::class, 'index'])->name('lessor.properties');
         Route::post('/properties', [RentalController::class, 'store'])->name('lessor.properties.store');
-        Route::put('/properties/{id}', [RentalController::class, 'update'])->name('lessor.properties.update');
+        Route::put('/properties/{rental}', [RentalController::class, 'update'])->name('lessor.properties.update');
 
+        Route::get('/shop', [ShopController::class, 'index'])->name('lessor.shop');
+        Route::post('/shop', [ShopController::class, 'store'])->name('lessor.shop.store');
+        Route::put('/lessor/shop/{shop}', [ShopController::class, 'update'])->name('lessor.shop.update');
+
+        Route::get('/property-reserve', [ProperReserveController::class, 'index'])->name('lessor.property-reserve');
+        Route::put('/property-reserve/{booking}/status', [ProperReserveController::class, 'updateStatus'])->name('lessor.property-reserve.updateStatus');
+    
     });
 
     // Route::get('/lessee', function () {
@@ -106,7 +124,7 @@ Route::middleware([
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    
+
     // Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 
     /* -- Account Settings -- */
@@ -126,9 +144,6 @@ Route::middleware([
 
     /* -- Profile Delete -- */
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    /* -- Reservations -- */
-    Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
 
     /* -- Booking Calendar -- */
     Route::get('/booking/calendar', [BookingController::class, 'calendar'])->name('booking.calendar');
@@ -200,6 +215,7 @@ Route::middleware([
     Route::get('/rentalListing', [RentalItemController::class, 'index'])->name('rentalListing');
     Route::get('/rentalListing/items/{id}', [RentalItemController::class, 'show'])->name('rentalListingView');
     Route::put('/rentalListing/items/update/{id}', [RentalItemController::class, 'update'])->name('rental.update');
+<<<<<<< HEAD
     
     /*-- Ratings --*/
     Route::middleware(['auth', 'verified', 'check-user-info'])->group(function () {
@@ -223,6 +239,18 @@ Route::middleware([
         // Delete rating
         Route::delete('/ratings/{rating}', [RatingController::class, 'destroy'])
             ->name('ratings.destroy');
+=======
+
+    /*-- Ratings --*/
+    Route::middleware(['web', 'auth'])->group(function () {
+    // Rating creation form
+    Route::get('/rating', [RatingController::class, 'create'])
+        ->name('ratings.create');
+
+    // Handle form submission
+    Route::post('/bookings/{booking}/rate', [RatingController::class, 'store'])
+        ->name('ratings.store');
+>>>>>>> bc9e1cfb7b32927f9adc23e0cae7b41d7523f8a3
     });
 
     // Public confirmation
@@ -234,7 +262,7 @@ Route::middleware([
     // Feedback form (public or auth)
     Route::get('/feedback', [FeedbackController::class, 'create'])
         ->name('feedback.create');
-    
+
     // Form submission
     Route::post('/feedback', [FeedbackController::class, 'store'])
         ->name('feedback.store');
@@ -246,3 +274,4 @@ Route::middleware([
     });
 
 require __DIR__.'/auth.php';
+require __DIR__.'/admin.php';

@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface User {
     submitForm: any;
     id: number;
@@ -17,6 +19,21 @@ export interface User {
         postal_code: string;
         
     };
+    billing_address?: BillingAddress;
+    card_detail?: CardDetail;
+}
+
+export type BillingAddress = {
+  street: string;
+  city: string;
+  postal_code: number;
+
+}
+
+export type CardDetail = {
+    card_number: number;
+    card_expiry: string;
+    cvv: number;
 }
 
 export type Contact = {
@@ -32,6 +49,11 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
         error_message: string
     }
 };
+
+export type PageWithAdminLayout<P = {}> = React.FC<P> & {
+    layout?: (page: ReactNode) => ReactNode;
+};
+
 
 export type IconProps = {
   className?: string;
@@ -52,8 +74,8 @@ export type NavItemProps = {
 };
 export type AdminLayoutProps = {
     children: React.ReactNode;
-    activemenu: string;
-    activesubmenu: string;
+    active_keys?: string[];
+    active_selected_keys?: string[];
 };
 
 export type Notification = {

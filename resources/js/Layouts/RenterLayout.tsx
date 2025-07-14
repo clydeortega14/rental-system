@@ -4,7 +4,7 @@ import { CartProvider } from '@/context/CartContext'
 import { User } from '@/types'
 import { PropsWithChildren } from 'react'
 
-const RenterLayout = ({user, children}:PropsWithChildren<{ user?: User}>) => {
+const RenterLayout = ({children}:PropsWithChildren) => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
         <CartProvider>

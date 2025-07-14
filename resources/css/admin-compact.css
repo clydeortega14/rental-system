@@ -1,0 +1,33 @@
+.admin-compact {
+  font-size: 12px;
+}
+
+/* Table rows smaller */
+.admin-compact .ant-table-tbody > tr > td,
+.admin-compact .ant-table-thead > tr > th {
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+  font-size: 12px !important;
+}
+
+/* Inputs, Buttons, etc. */
+.admin-compact .ant-input,
+.admin-compact .ant-btn,
+.admin-compact .ant-select-selector {
+  font-size: 12px !important;
+  height: 28px !important;
+  padding: 4px 8px !important;
+}
+
+/* Smaller padding on layout */
+.admin-compact .ant-layout-header,
+.admin-compact .ant-layout-footer,
+.admin-compact .ant-layout-content {
+  padding: 6px 12px !important;
+}
+
+/* Sidebar menu item size */
+.admin-compact .ant-menu-item {
+  padding: 4px 12px !important;
+  font-size: 12px;
+}

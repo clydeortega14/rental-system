@@ -9,9 +9,7 @@ const Cart = ({user}:PropsWithChildren<{user:User}>) => {
 
   return (
     <>
-        <RenterLayout
-            user={user}
-        >
+        <RenterLayout>
             <Head title={"Cart"}/>
 
             <CartProvider>

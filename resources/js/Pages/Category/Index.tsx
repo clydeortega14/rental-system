@@ -9,18 +9,19 @@ import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
 import CustomTable from "@/Components/CustomTable";
 import { Fragment } from "react";
+import { Category } from "@/Interface/CategoryInterface";
 
-const Index = ({ auth, categories }: PageProps<{ categories: array }>) => {
-    const mapped_categories = categories.map((category, index) => (
+const Index = ({ auth, categories }: PageProps<{ categories: Category[] }>) => {
+    const mapped_categories = categories.map((category:Category, index: number) => (
         <Fragment key={index}>
             <TableRow
                 key={category.name}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
-                <TableCell>{category.detail.label}</TableCell>
+                <TableCell>{category.detail && category.detail.label}</TableCell>
                 <TableCell>{category.name}</TableCell>
                 <TableCell>
-                    {category.detail.active ? "Active" : "Inactive"}
+                    {category.detail && category.detail.active ? "Active" : "Inactive"}
                 </TableCell>
                 <TableCell>
                     <SecondaryButton className="mr-2">View</SecondaryButton>

@@ -1,12 +1,8 @@
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import { PageProps } from "@/types";
 import CustomTable from "@/Components/CustomTable";
 import SecondaryButton from "@/Components/SecondaryButton";
 import BookingAction from "@/Components/Booking/Action";
-import { FaEdit } from "react-icons/fa";
-import { FaEye } from "react-icons/fa";
-import { FaTrashAlt } from "react-icons/fa";
 import Modal from "@/Components/Modal";
 import { useState, FormEventHandler, useEffect } from "react";
 import { Reservation } from "@/Interface/Reservation";
@@ -15,19 +11,16 @@ import RescheduleForm from "@/Components/Booking/RescheduleForm";
 import {Link} from "@inertiajs/react";
 import RenterLayout from "@/Layouts/RenterLayout";
 import { AlertCircle, Calendar, CheckCircle, ChevronRight, Clock, XCircle } from "lucide-react";
-import { getItemById } from "@/data/bookingsData";
+// import { getItemById } from "@/data/bookingsData";
 import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
 import { BookingDetails } from "@/types/rental";
 import Button from "@/Components/Renter/ui/Button";
 import TabPanel from "@/Components/Renter/ui/TabPanel";
 
-type Header = {
-    name: string;
-};
 
 interface Props {
-
-    bookings: BookingDetails[]
+    bookings: BookingDetails[];
+    status: string;
 }
 
 function Index({ bookings, status }: Props) {
@@ -35,29 +28,12 @@ function Index({ bookings, status }: Props) {
     const auth = usePage<PageProps>().props.auth;
 
     // show booking detail modal state
-    const [showBookingDetailModal, setShowBookingDetailModal] = useState(false);
-
-    // Reason form cancelling state
-    const [showTextBox, setShowTextBox] = useState<boolean>(false);
-
-    // Reschedule State
-    const [isRescheduled, setIsRescheduled] = useState<boolean>(false);
-
-    // selected booking detail state
-    const [bookingDetail, setBookingDetail] = useState<Reservation | null>(
-        null,
-    );
-
-    // on close modal function
-    const onCloseBookingModal = () => {
-        setShowBookingDetailModal(false);
-    };
 
     // on edit booking function
-    const editBooking = (id: number) => {
-        let find_booking = bookings.find((book) => book.id === id);
-        setBookingDetail(find_booking);
-    };
+    // const editBooking = (id: number) => {
+    //     let find_booking = bookings.find((book) => book.id === id);
+    //     setBookingDetail(find_booking);
+    // };
 
     const [activeTab, setActiveTab] = useState<'Upcoming' | 'Past' | 'All Bookings'>('Upcoming');
 
@@ -83,23 +59,30 @@ function Index({ bookings, status }: Props) {
 
     const filterBookings = () => {
         const today = new Date();
-            
+
         if (activeTab === 'Upcoming') {
-            return bookings.filter(booking => new Date(booking.endDate) >= today && booking.status !== 'canceled');
+            return bookings.filter(
+                booking =>
+                    booking.endDate && // ✅ ensure it's defined
+                    new Date(booking.endDate) >= today &&
+                    booking.status !== 'canceled'
+            );
         } else if (activeTab === 'Past') {
-            return bookings.filter(booking => new Date(booking.endDate) < today || booking.status === 'canceled');
+            return bookings.filter(
+                booking =>
+                    !booking.endDate || // if no endDate, treat it as past
+                    new Date(booking.endDate) < today ||
+                    booking.status === 'canceled'
+            );
         }
+
         return bookings;
     };
-
-    const handleViewItem = () => {
-        setShowBookingDetailModal(true);
-    }
 
     const filteredBookings = filterBookings();
 
     return (
-        <RenterLayout user={auth.user}>
+        <RenterLayout>
             <Head title="Reservations" />
 
             {/* <div className="py-12"> */}
@@ -136,14 +119,14 @@ function Index({ bookings, status }: Props) {
                                         <div className="flex flex-col md:flex-row items-start md:items-center">
                                             <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
                                                 <img
-                                                    src={booking.rentalItem.imageUrl}
-                                                    alt={booking.rentalItem.name}
+                                                    src={booking.rentalItem && booking.rentalItem.imageUrl}
+                                                    alt={booking.rentalItem && booking.rentalItem.name}
                                                     className="w-20 h-20 object-cover rounded-lg"
                                                 />
                                             </div>
                                             <div className="flex-grow">
                                                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                                                    <h3 className="text-lg font-semibold text-gray-800">{booking.rentalItem.name}</h3>
+                                                    <h3 className="text-lg font-semibold text-gray-800">{booking.rentalItem && booking.rentalItem.name}</h3>
                                                     <div className="mt-2 md:mt-0">
                                                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(booking.status)}`}>
                                                         {getStatusIcon(booking.status)}
@@ -154,7 +137,11 @@ function Index({ bookings, status }: Props) {
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
                                                 <div className="flex items-center text-gray-600">
                                                 <Calendar className="h-4 w-4 mr-2" />
-                                                <span>{formatDateDisplay(booking.startDate)} - {formatDateDisplay(booking.endDate)}</span>
+                                                <span>
+                                                {booking.startDate && booking.endDate
+                                                    ? `${formatDateDisplay(booking.startDate.toString())} - ${formatDateDisplay(booking.endDate.toString())}`
+                                                    : 'Date not available'}
+                                                </span>
                                                 </div>
                                                 <div className="flex items-center text-gray-600">
                                                 <Clock className="h-4 w-4 mr-2" />
@@ -163,7 +150,7 @@ function Index({ bookings, status }: Props) {
                                             </div>
                                             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                                                 <div className="text-gray-800">
-                                                    <span className="font-semibold">Total:</span> {formatPrice( booking.totalPrice)}
+                                                    <span className="font-semibold">Total:</span> {formatPrice(booking.totalPrice ?? 0)}
                                                 </div>
                                                 <div className="flex mt-4 md:mt-0 space-x-2">
                                                     {booking.status === 'confirmed' && (
@@ -171,7 +158,9 @@ function Index({ bookings, status }: Props) {
                                                             Cancel
                                                         </Button>
                                                     )}
-                                                    <Link href={route('booking.view', booking.uuid)}>
+                                                    <Link href={route('booking.view', {
+                                                        uuid: booking.uuid
+                                                    })}>
                                                         <Button variant="primary" size="sm">
                                                             View Item
                                                         </Button>
@@ -202,119 +191,7 @@ function Index({ bookings, status }: Props) {
             {/* </div> */}
 
             {/* Booking Details Modal */}
-            <Modal show={showBookingDetailModal} onClose={onCloseBookingModal}>
-                <div className="p-6">
-                    <p>{status}</p>
-
-                    {!showTextBox && !isRescheduled && (
-                        <BookingAction
-                            bookingDetail={bookingDetail}
-                            setShowTextBox={setShowTextBox}
-                            setIsRescheduled={setIsRescheduled}
-                        />
-                    )}
-
-                    {/* Reason for Rescheduling */}
-                    {isRescheduled && (
-                        <RescheduleForm
-                            bookingDetail={bookingDetail}
-                            setIsRescheduled={setIsRescheduled}
-                        />
-                    )}
-
-                    {/* Reason for cancelling component */}
-                    {showTextBox && (
-                        <ReasonForm
-                            setShowTextBox={setShowTextBox}
-                            bookingDetail={bookingDetail}
-                        />
-                    )}
-
-                    <div className="mb-7 border-b border-gray-300 pb-4">
-                        <img
-                            src={bookingDetail?.rental_item.images[0].src}
-                            className="h-48 w-48 object-contain"
-                        />
-                    </div>
-
-                    <div className="mb-7 border-b border-gray-300 pb-4">
-                        <h2 className="text-lg font-medium text-gray-900">
-                            Pick-up date / time
-                        </h2>
-
-                        <p className="mt-1 text-sm text-gray-600">
-                            {bookingDetail?.pick_up_date}{" "}
-                            {bookingDetail?.pick_up_time}
-                        </p>
-                    </div>
-
-                    <div className="mb-7 border-b border-gray-300 pb-4">
-                        <h2 className="text-lg font-medium text-gray-900">
-                            Pick-up location
-                        </h2>
-
-                        <p className="mt-1 text-sm text-gray-600">
-                            {bookingDetail?.pick_up_location}
-                        </p>
-                    </div>
-
-                    <div className="mb-7 border-b border-gray-300 pb-4">
-                        <h2 className="text-lg font-medium text-gray-900">
-                            Drop-off date / time
-                        </h2>
-
-                        <p className="mt-1 text-sm text-gray-600">
-                            {bookingDetail?.drop_off_date}{" "}
-                            {bookingDetail?.drop_off_time}
-                        </p>
-                    </div>
-
-                    <div className="mb-7 border-b border-gray-300 pb-4">
-                        <h2 className="text-lg font-medium text-gray-900">
-                            Drop-off location
-                        </h2>
-
-                        <p className="mt-1 text-sm text-gray-600">
-                            {bookingDetail?.drop_off_location}
-                        </p>
-                    </div>
-
-                    <div className="mb-7 border-b border-gray-300 pb-4">
-                        <h2 className="text-lg font-medium text-gray-900">
-                            Item Description
-                        </h2>
-
-                        <p className="mt-1 text-sm text-gray-600">
-                            {bookingDetail?.rental_item.itemName}
-                        </p>
-                    </div>
-
-                    <div className="mb-7 border-b border-gray-300 pb-4">
-                        <h2 className="text-lg font-medium text-gray-900 mb-2">
-                            Status
-                        </h2>
-                        <span className={`p-1 ${bookingDetail?.status.className} rounded-md`}>
-                            {bookingDetail?.status.name}
-                        </span> <br />
-                        <small className="text-slate-500 text-xs">Completed at { bookingDetail?.status.name === 'completed' && bookingDetail?.completed_at}</small>
-                    </div>
-
-                    <div className="mb-7 border-b border-gray-300 pb-4">
-                        <h2 className="text-lg font-medium text-gray-900 mb-2">
-                            Booked By
-                        </h2>
-                        <p className="mt-1 text-sm text-gray-600">
-                            {bookingDetail?.booked_by.name}
-                        </p>
-                    </div>
-
-                    <div className="mt-6 flex justify-end">
-                        <SecondaryButton onClick={onCloseBookingModal}>
-                            close
-                        </SecondaryButton>
-                    </div>
-                </div>
-            </Modal>
+            
         </RenterLayout>
     );
 }

@@ -52,15 +52,15 @@ const BookingInfo: React.FC<BookingDetailsProps> = ({booking}) => {
           </div>
           <div>
             <p className="text-gray-600">Start Date:</p>
-            <p className="text-lg">{formatDateDisplay(booking.startDate)}</p>
+            <p className="text-lg">{formatDateDisplay(String(booking.startDate))}</p>
           </div>
           <div>
             <p className="text-gray-600">End Date:</p>
-            <p className="text-lg">{formatDateDisplay(booking.endDate)}</p>
+            <p className="text-lg">{formatDateDisplay(String(booking.endDate))}</p>
           </div>
           <div>
             <p className="text-gray-600">Total Amount:</p>
-            <p className="text-lg font-bold text-blue-600">{formatPrice(booking.totalPrice)}</p>
+            <p className="text-lg font-bold text-blue-600">{formatPrice(Number(booking.totalPrice))}</p>
           </div>
         </div>
   

@@ -7,24 +7,34 @@ import SupportSlider from '@/Components/SupportSlider'
 import { Category } from '@/Interface/CategoryInterface'
 import { PageProps } from '@/types'
 
-import { PropsWithChildren } from 'react'
+import React from 'react'
+import { usePage } from '@inertiajs/react'
+
+  interface LandingPageLayoutuProps {
+    categories: Category[];
+    children?: React.ReactNode
+
+  }
 
 
+const LandingPageLayout = ({ categories, children
+}: LandingPageLayoutuProps) => {
 
-const LandingPageLayout = ({ categories, children }: PropsWithChildren<{categories: Category[]}>) => {
-  return (
-    <div className="flex flex-col min-h-screen ">
-      <Header categories={categories} />
-      <main className="flex-grow">
-        {children}
-        <Slider categories={categories} />
-        <SupportSlider/>
-        <FeaturedCategory categories={categories} />
-        <ClientsFeedBack />
-      </main>
-      <Footer />
-    </div>
-  )
-}
+    const auth = usePage<PageProps>().props.auth;
 
-export default LandingPageLayout
+    return (
+      <div className="flex flex-col min-h-screen ">
+        <Header categories={categories} />
+        <main className="flex-grow">
+          {children}
+          <Slider categories={categories} />
+          <SupportSlider/>
+          <FeaturedCategory auth={auth} categories={categories} />
+          <ClientsFeedBack />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  export default LandingPageLayout

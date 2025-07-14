@@ -2,8 +2,8 @@ import React from 'react'
 
 interface ITabPanel {
     tabPanels: string[];
-    activeTab: "Upcoming" | "Past" | "All Bookings";
-    setActiveTab: (value: "Upcoming" | "Past" | "All Bookings") => void;
+    activeTab: string;
+    setActiveTab: (value: string) => void;
 }
 
 const TabPanel = ({ tabPanels, activeTab, setActiveTab } : ITabPanel) => {

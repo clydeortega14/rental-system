@@ -23,23 +23,11 @@ import NavHeader from "@/Components/Header";
 import CarRentalForm from "@/Components/Forms/CarRental";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { ICategory } from "@/Interface/CategoryInterface";
 
 const navigation = {
     pages: [],
 };
-
-function classNames(...classes) {
-    return classes.filter(Boolean).join(" ");
-}
-
-type Category = {
-    category_id: number;
-    label: string;
-};
-
-interface CategoryProps {
-    categories: Category[];
-}
 
 export default function Welcome1({
     auth,
@@ -50,10 +38,10 @@ export default function Welcome1({
 }: PageProps<{
     laravelVersion: string;
     phpVersion: string;
-    categories: CategoryProps;
+    categories: ICategory;
     rental_items: IRentalItems;
 }>) {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState<boolean>(false);
     
 
 
@@ -154,7 +142,7 @@ export default function Welcome1({
                     </Dialog>
                 </Transition.Root>
 
-                <NavHeader open={open} setOpen={setOpen} />
+                <NavHeader />
 
                 {/* CAR RENTAL FORM */}
                 <CarRentalForm />

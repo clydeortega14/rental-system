@@ -81,8 +81,8 @@ const Filter: React.FC<FilterProps> = ({
                 <input
                   type="checkbox"
                   id={`filter-${index}`}
-                  checked={selectedOptions.includes(index)}
-                  onChange={() => toggleOption(index)}
+                  checked={false}
+                  onChange={() => console.log('toggle option')}
                   className="h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
                 />
                 <label 

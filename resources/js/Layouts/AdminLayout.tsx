@@ -15,12 +15,13 @@ import {
 } from '../../js/Components/Icons';
 import { AdminLayoutProps, NavItemProps } from '../types';
 import NavItem from '../../js/Components/NavItem';
+import { NavigationInterface } from '@/Interface/NavigationInterface';
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
 
-    const navItems: NavItem[] = [
+    const navItems: NavigationInterface[] = [
         {
             icon: <DashboardIcon />,
             text: 'Dashboard',

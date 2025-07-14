@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Traits\Uuid;
+use App\Models\Lessor;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -76,7 +77,7 @@ class User extends Authenticatable implements MustVerifyEmail
     
     public function signUpForm() : HasOne
     {
-        return $this->hasOne(SignUpForm::class, 'user_id');
+        return $this->hasOne(SignUpForm::class, 'user_uuid', 'uuid');
     }
 
     public function userValidIds()
@@ -131,6 +132,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getBarangayStreetAttribute()
     {
         return $this->company()->street.', '.$this->company()->barangay;
+    }
+
+    public function lessorApplication()
+    {
+        return $this->hasOne(LessorApplication::class, 'lessoruser_id');
     }
     
 }

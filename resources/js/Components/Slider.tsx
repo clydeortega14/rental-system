@@ -1,9 +1,10 @@
 import { useState } from 'react'
 //@ts-ignore
 import { Swiper, SwiperSlide } from 'swiper/react'
+import type { Swiper as SwiperType } from 'swiper';
 //@ts-ignore
 import { Pagination, Autoplay, EffectFade } from 'swiper/modules'
-import { BiSearchAlt  } from 'react-icons/bi';
+
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/effect-fade'
@@ -27,7 +28,7 @@ const slides = [
     label: 'Phones and Bags',
     title: (
       <>
-        Rent the latest gadgets <span className="text-orange-500">phones, laptops, cameras </span> & more!
+        Rent the latest gadgets <span className="text-brandYellow">phones, laptops, cameras </span> & more!
       </>
     ),
     description: 'Making equipment rental simple, reliable, and accessible for everyone.',
@@ -41,7 +42,7 @@ const slides = [
     label: 'cars',
     title: (
       <>
-        Reliable car rentals for city <span className="text-orange-500"> trips & long drives!</span>
+        Reliable car rentals for city <span className="text-brandYellow"> trips & long drives!</span>
       </>
     ),
     description: 'Making equipment rental simple, reliable, and accessible for everyone.'
@@ -51,7 +52,7 @@ const slides = [
     label: 'motorcycles',
     title: (
       <>
-        Affordable motorcycle <span className="text-orange-500"> rentals perfect for city </span> rides & island adventures!
+        Affordable motorcycle <span className="text-brandYellow"> rentals perfect for city </span> rides & island adventures!
       </>
     ),
     description: 'Making equipment rental simple, reliable, and accessible for everyone.'
@@ -61,7 +62,7 @@ const slides = [
     label: 'Phones and Bags',
     title: (
       <>
-        Style meets function from <span className="text-orange-500"> sleek totes to rugged backpacks, find the </span> perfect bag for every adventure!
+        Style meets function from <span className="text-brandYellow"> sleek totes to rugged backpacks, find the </span> perfect bag for every adventure!
       </>
     ),
     description: 'Making equipment rental simple, reliable, and accessible for everyone.'
@@ -71,7 +72,7 @@ const slides = [
     label: 'hotels',
     title: (
       <>
-        Find cozy stays, luxurious <span className="text-orange-500"> getaways,  and everything in between  book your </span> perfect hotel now!!
+        Find cozy stays, luxurious <span className="text-brandYellow"> getaways,  and everything in between  book your </span> perfect hotel now!!
       </>
     ),
     description: 'Making equipment rental simple, reliable, and accessible for everyone.'
@@ -105,7 +106,7 @@ const Slider = ({ categories }: SliderProps) => {
                 {(() => {
                   const currentSlide = slides[activeIndex]
                   const matchedCategory = categories.find(
-                    (cat) => cat.detail.label.toLowerCase() === currentSlide.label.toLowerCase()
+                    (cat) => cat.detail ? cat.detail.label.toLowerCase() : '' === currentSlide.label.toLowerCase()
                   )
 
                   if (!matchedCategory) return null
@@ -116,13 +117,13 @@ const Slider = ({ categories }: SliderProps) => {
                         href={route('rental.browser.index', matchedCategory.name)}
                         className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-md transition text-center"
                       >
-                        Rent {matchedCategory.detail.label}
+                        Rent {matchedCategory.detail && matchedCategory.detail.label}
                       </a>
                       <a
                         href={`/add/${matchedCategory.category_id}`}
                         className="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2 rounded-md transition text-center"
                       >
-                        Add Your {matchedCategory.detail.label}
+                        Add Your {matchedCategory.detail && matchedCategory.detail.label}
                       </a>
                     </>
                   )
@@ -141,9 +142,9 @@ const Slider = ({ categories }: SliderProps) => {
               effect="fade"
               fadeEffect={{ crossFade: true }}
               onSlideChangeTransitionStart={() => setTextVisible(false)}
-              onSlideChangeTransitionEnd={(swiper: Swiper) => {
-                setActiveIndex(swiper.realIndex)
-                setTextVisible(true)
+              onSlideChangeTransitionEnd={(swiper: SwiperType) => {
+                setActiveIndex(swiper.realIndex);
+                setTextVisible(true);
               }}
               className="rounded-xl"
             >

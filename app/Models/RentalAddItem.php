@@ -36,6 +36,7 @@ class RentalAddItem extends Model
         'category',
         'description',
         'price',
+        'shop_id',
         'quantity',
         'category_id'
     ];
@@ -143,6 +144,11 @@ class RentalAddItem extends Model
     public function bookings()
     {
         return $this->hasMany(Booking::class, 'rental_listing_id');
+    }
+
+    public function toShop()
+    {
+        return $this->belongsTo(Shop::class, 'shop_id');
     }
    
 }

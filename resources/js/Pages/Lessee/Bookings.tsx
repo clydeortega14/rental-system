@@ -1,184 +1,173 @@
 import React, { useState } from "react";
-
-interface Booking {
-  id: number;
-  property: string;
-  category: string;
-  date: string;
-  status: string;
-  image: string;
-}
-
-const mockBookings: Booking[] = [
-  {
-    id: 1,
-    property: "Ocean View Apartment",
-    category: "Beach",
-    date: "2025-06-01 to 2025-06-05",
-    status: "Confirmed",
-    image: "/Images/lease/ocean_view_apt.jpg",
-  },
-  {
-    id: 2,
-    property: "Modern Loft",
-    category: "Apertment",
-    date: "2025-04-10 to 2025-04-12",
-    status: "Completed",
-    image: "/Images/lease/city_loft.jpg",
-  },
-  {
-    id: 3,
-    property: "Harley Davidson Motorcycle",
-    category: "Motorcycle",
-    date: "2025-07-10 to 2025-07-15",
-    status: "Pending",
-    image: "/Images/lease/harley.jpg",
-  },
-  {
-    id: 4,
-    property: "Beachfront Villa",
-    category: "Event",
-    date: "2025-08-01 to 2025-08-07",
-    status: "Confirmed",
-    image: "/Images/lease/seaside.jpeg",
-  },
-  // Add more for testing pagination...
-];
+import { usePage } from "@inertiajs/react";
+import { format } from "date-fns";
+import Modal from "@/Components/Modal";
+import Button from "@/Components/Renter/ui/Button";
+import SecondaryButton from "@/Components/SecondaryButton";
+import { BookingDetails } from "@/types/rental";
+import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
+const getStatusColor = (status: string) => {
+  switch (status.toLowerCase()) {
+    case "confirmed":
+      return "bg-green-100 text-green-700";
+    case "pending":
+      return "bg-yellow-100 text-yellow-700";
+    case "completed":
+      return "bg-blue-100 text-blue-700";
+    case "canceled":
+      return "bg-red-100 text-red-700";
+    default:
+      return "bg-gray-100 text-gray-700";
+  }
+};
 
 export default function Bookings() {
-  const [activeTab, setActiveTab] = useState<string>("Pending");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
+  const { bookings = [] } = usePage<{ bookings: BookingDetails[] }>().props;
 
-  const statuses = ["Pending", "Confirmed", "Completed"];
+  const [activeTab, setActiveTab] = useState<"Upcoming" | "Past" | "All">("Upcoming");
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<BookingDetails | null>(null);
 
-  const filteredBookings = mockBookings.filter(
-    (b) => b.status === activeTab
-  );
 
-  const totalPages = Math.ceil(filteredBookings.length / itemsPerPage);
-  const paginatedBookings = filteredBookings.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
 
-  const changePage = (page: number) => {
-    setCurrentPage(page);
+  const openModal = (booking: BookingDetails) => {
+    setSelectedBooking(booking);
+    setShowModal(true);
   };
+
+  const closeModal = () => {
+    setSelectedBooking(null);
+    setShowModal(false);
+  };
+
+  const today = new Date();
+  const filteredBookings = bookings.filter((booking) => {
+    const end = new Date(booking.endDate ?? "");
+    if (activeTab === "Upcoming") return end >= today && booking.status.toLowerCase() !== "canceled";
+    if (activeTab === "Past") return end < today || booking.status.toLowerCase() === "canceled";
+    return true;
+  });
 
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-semibold text-gray-900">Reservations</h2>
 
       {/* Tabs */}
-      <div className="flex justify-start mb-6 border-b border-gray-300 overflow-hidden">
-        {statuses.map((status) => (
+      <div className="flex gap-4 border-b pb-2">
+        {["Upcoming", "Past", "All"].map((tab) => (
           <button
-            key={status}
-            onClick={() => {
-              setActiveTab(status);
-              setCurrentPage(1);
-            }}
-            className={`px-4 py-2 font-medium rounded-t-lg transition-colors ${
-              activeTab === status
-                ? "bg-orange-600 text-white shadow"
-                : "text-gray-700 hover:bg-orange-100"
+            key={tab}
+            onClick={() => setActiveTab(tab as "Upcoming" | "Past" | "All")}
+            className={`py-2 px-4 font-medium ${
+              activeTab === tab
+                ? "border-b-2 border-orange-600 text-orange-600"
+                : "text-gray-500 hover:text-orange-600"
             }`}
           >
-            {status}
+            {tab}
           </button>
         ))}
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto border rounded-lg">
-        <table className="min-w-full divide-y divide-gray-200 bg-white">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Image
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Property
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Category
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Date
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Status
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {paginatedBookings.length === 0 ? (
+      {/* Table Display */}
+      <div className="overflow-x-auto rounded-lg shadow-sm border">
+        {filteredBookings.length ? (
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-100">
               <tr>
-                <td colSpan={4} className="px-4 py-4 text-gray-500 text-center">
-                  No {activeTab.toLowerCase()} bookings.
-                </td>
+                <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">ID</th>
+                <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Image</th>
+                <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Property</th>
+                <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Category</th>
+                <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Date</th>
+                <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Total</th>
+                <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Status</th>
+                <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Actions</th>
               </tr>
-            ) : (
-              paginatedBookings.map((booking) => (
-                <tr key={booking.id}>
+            </thead>
+            <tbody className="divide-y divide-gray-200 bg-white">
+              {filteredBookings.map((booking) => (
+                <tr key={booking.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3">Booking ID: {booking.id}</td>
                   <td className="px-4 py-3">
                     <img
-                      src={booking.image}
-                      alt={booking.property}
-                      className="w-16 h-12 object-cover rounded"
+                      src={booking.rentalItem?.imageUrl || "/placeholder.jpg"}
+                      alt={booking.itemName}
+                      className="w-16 h-16 object-cover rounded"
                     />
                   </td>
-                  <td className="px-4 py-3 font-medium text-gray-900">
-                    {booking.property}
+                  
+                  <td className="px-4 py-3">{booking.rentalItem && booking.rentalItem.name}</td>
+                  <td className="px-4 py-3">{booking.rentalItem?.category?.name || "N/A"}</td>
+                  <td className="px-4 py-3">
+                    {format(new Date(booking.startDate ?? ""), "PPP")} -{" "}
+                    {format(new Date(booking.endDate ?? ""), "PPP")}
                   </td>
-                  <td className="px-4 py-3 font-medium text-gray-900">
-                    {booking.category}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
-                    {booking.date}
-                  </td>
+                  <td className="px-4 py-3">{booking.totalPrice && formatPrice( booking.totalPrice)}</td>
                   <td className="px-4 py-3">
                     <span
-                      className={`px-3 py-1 text-xs rounded-full font-medium ${
-                        booking.status === "Confirmed"
-                          ? "bg-green-100 text-green-700"
-                          : booking.status === "Completed"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }`}
+                      className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusColor(
+                        booking.status
+                      )}`}
                     >
                       {booking.status}
                     </span>
                   </td>
+                  <td className="px-4 py-3">
+                    <Button variant="outline" size="sm" onClick={() => openModal(booking)}>
+                      View
+                    </Button>
+                  </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div className="text-center text-gray-500 py-12">No {activeTab.toLowerCase()} bookings</div>
+        )}
       </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-end items-center gap-2 mt-4">
-          {[...Array(totalPages)].map((_, index) => {
-            const page = index + 1;
-            return (
-              <button
-                key={page}
-                onClick={() => changePage(page)}
-                className={`px-3 py-1 rounded border text-sm ${
-                  currentPage === page
-                    ? "bg-orange-600 text-white border-orange-600"
-                    : "bg-white text-gray-700 hover:bg-orange-50 border-gray-300"
-                }`}
+      {/* Booking Detail Modal */}
+      <Modal show={showModal} onClose={closeModal}>
+        {selectedBooking && (
+          <div className="p-6 space-y-4">
+            <h2 className="text-xl font-semibold text-gray-800">Booking Details</h2>
+            <img
+              src={selectedBooking.rentalItem?.imageUrl || "/placeholder.jpg"}
+              className="w-full h-52 object-cover rounded-lg"
+              alt={selectedBooking.rentalItem?.name}
+            />
+            <div>
+              <p className="text-sm text-gray-500">Property</p>
+              <p className="font-medium">{selectedBooking.rentalItem?.name}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Customer</p>
+              <p className="font-medium">{selectedBooking.customerName}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Date</p>
+              <p className="font-medium">
+                {format(new Date(selectedBooking.startDate ?? ""), "PPP")} to{" "}
+                {format(new Date(selectedBooking.endDate ?? ""), "PPP")}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Status</p>
+              <span
+                className={`inline-block px-2 py-1 text-xs font-semibold rounded ${getStatusColor(
+                  selectedBooking.status
+                )}`}
               >
-                {page}
-              </button>
-            );
-          })}
-        </div>
-      )}
+                {selectedBooking.status}
+              </span>
+            </div>
+            <div className="flex justify-end mt-4">
+              <SecondaryButton onClick={closeModal}>Close</SecondaryButton>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

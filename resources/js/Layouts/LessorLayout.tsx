@@ -1,141 +1,57 @@
-import React, { useState, useEffect, lazy, Suspense } from "react";
+import React from "react";
 import Header from "@/Components/Lessor/Header";
 import Footer from "@/Components/Lessor/Footer";
-
-const Dashboard = lazy(() => import("@/Pages/Lessor/Dashboard"));
-const Properties = lazy(() => import("@/Pages/Lessor/Properties"));
-const Reservations = lazy(() => import("@/Pages/Lessor/Reservations"));
-const Invoice = lazy(() => import("@/Pages/Lessor/Invoice"));
-const Inquiries = lazy(() => import("@/Pages/Lessor/Inquiries"));
-const Reviews = lazy(() => import("@/Pages/Lessor/Reviews"));
-const Profile = lazy(() => import("@/Pages/Lessor/Profile"));
+import { Link, usePage } from "@inertiajs/react";
 
 interface LessorLayoutProps {
-  lessorName?: string;
-  incomeSummary?: any;
-  upcomingReservations?: any[];
-  reservationChartData?: any[];
-  ratingsChartData?: any[];
-  isLessorRegistered?: boolean;
-  initialActiveView?: string;
-  categories?: any[];
+  children: React.ReactNode;
 }
 
-export default function LessorLayout({
-  lessorName,
-  incomeSummary,
-  upcomingReservations,
-  reservationChartData,
-  ratingsChartData,
-  isLessorRegistered = false,
-  initialActiveView = isLessorRegistered ? "Dashboard" : "Profile",
-  categories = [],
-}: LessorLayoutProps) {
-console.log(categories);
-
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeView, setActiveView] = useState(initialActiveView);
-
-  useEffect(() => {
-    document.body.style.overflow = sidebarOpen ? "hidden" : "";
-  }, [sidebarOpen]);
-
-  const renderContent = () => {
-    switch (activeView) {
-      case "Dashboard":
-        return (
-          <Dashboard
-            incomeSummary={incomeSummary}
-            upcomingReservations={upcomingReservations}
-            reservationChartData={reservationChartData}
-            ratingsChartData={ratingsChartData}
-          />
-        );
-      case "Properties":
-        return <Properties categories={categories} />;  // <-- pass categories here
-      case "Reservations":
-        return <Reservations />;
-      case "Invoice":
-        return <Invoice />;
-      case "Inquiries":
-        return <Inquiries isLessorSidebarOpen={sidebarOpen} />;
-      case "Reviews":
-        return <Reviews />;
-      case "Profile":
-        return <Profile />;
-      default:
-        return null;
-    }
-  };
+export default function LessorLayout({ children }: LessorLayoutProps) {
+  const { props } = usePage<{ lessorName?: string }>();
+  const lessorName = props.lessorName ?? "Lessor";
 
   return (
     <>
-      <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      <Header />
 
       <div className="min-h-screen flex flex-col pt-16 bg-gray-100 text-gray-900">
         <div className="flex flex-1 overflow-hidden">
-          {/* Sidebar */}
-          <aside
-            className={`
-              w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white p-6 pt-8
-              transition-transform duration-300
-              fixed top-16 left-0 h-[calc(100vh-4rem)] z-40
-              ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-              md:static md:translate-x-0 md:z-auto md:h-auto md:flex md:flex-col md:justify-between
-            `}
-          >
+          <aside className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white p-6 pt-8">
             <div>
-              <h1 className="text-2xl font-bold text-orange-400 mb-6">
-                {lessorName || "Lessor"}
-              </h1>
+              <h1 className="text-2xl font-bold text-orange-400 mb-6">{lessorName}</h1>
               <nav className="flex flex-col gap-2">
                 {[
-                  "Dashboard",
-                  "Properties",
-                  "Reservations",
-                  "Invoice",
-                  "Inquiries",
-                  "Reviews",
-                  "Profile",
-                ].map((label) => (
-                  <button
+                  { label: "Dashboard", routeName: "lessor.dashboard" },
+                  { label: "Shops", routeName: "lessor.shop" },
+                  { label: "Properties", routeName: "lessor.properties" },
+                  { label: "Reservations", routeName: "lessor.property-reserve" },
+                  // { label: "Invoice", routeName: "lessor.invoices" },
+                  // { label: "Inquiries", routeName: "lessor.inquiries" },
+                  // { label: "Reviews", routeName: "lessor.reviews" },
+                  // { label: "Profile", routeName: "lessor.profile" },
+                ].map(({ label, routeName }) => (
+                  <Link
                     key={label}
-                    onClick={() => {
-                      setActiveView(label);
-                      setSidebarOpen(false);
-                    }}
-                    className={`text-left text-white hover:bg-orange-500 px-3 py-2 rounded-md ${
-                      activeView === label ? "bg-orange-500" : ""
-                    }`}
+                    href={route(routeName)}
+                    className="text-white hover:bg-orange-500 px-3 py-2 rounded-md"
                   >
                     {label}
-                  </button>
+                  </Link>
                 ))}
               </nav>
             </div>
 
             <form method="POST" action="/logout" className="mt-6">
-              <button
-                type="submit"
-                className="w-full bg-orange-700 text-white py-2 rounded-md hover:bg-orange-400 transition-colors"
-              >
+              <button className="w-full bg-orange-700 text-white py-2 rounded-md hover:bg-orange-400">
                 Logout
               </button>
             </form>
           </aside>
 
-          {/* Main content */}
-          <main
-            className="flex-1 bg-white overflow-auto p-6 pt-8"
-            style={{ overflowX: sidebarOpen ? "hidden" : undefined }}
-          >
-            <Suspense fallback={<div className="text-center text-gray-500">Loading...</div>}>
-              {renderContent()}
-            </Suspense>
-          </main>
+          <main className="flex-1 bg-white overflow-auto p-6 pt-8">{children}</main>
         </div>
 
-        {/* Footer */}
         <Footer />
       </div>
     </>

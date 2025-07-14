@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Dialog } from "@/Components/Lessor/ui/dialog";
 import { Button } from "@/Components/Lessor/ui/button";
 import { Input } from "@/Components/Lessor/ui/input";
+import { Property as RentalItem } from "@/Pages/Lessor/types/Property";
 
 export interface CustomField {
   id: number;
   label: string;
   slug: string;
-  options: string; // JSON or CSV string
+  options: string;
 }
 
 export interface Category {
@@ -16,27 +17,18 @@ export interface Category {
   custom_fields: CustomField[];
 }
 
-export interface RentalItem {
+export interface Shop {
   id: number;
   name: string;
-  description: string;
-  category: string;
-  categoryId?: number | null;
-  categoryType: string;
-  reservationAmt: number;
-  imageUrl: string;
-  address?: string;
-  customFieldAnswers?: {
-    [slug: string]: string[];
-  };
 }
 
 interface RentalItemModalProps {
   form: RentalItem;
-  setForm: (form: RentalItem) => void;
+  setForm: React.Dispatch<React.SetStateAction<RentalItem>>;
   onClose: () => void;
   onSave: () => void;
   categories: Category[];
+  shops: Shop[];
   onCategoryChange: (categoryId: number) => void;
 }
 
@@ -46,19 +38,39 @@ export default function RentalItemModal({
   onClose,
   onSave,
   categories,
+  shops,
   onCategoryChange,
 }: RentalItemModalProps) {
   const selectedCategory = categories.find((cat) => cat.id === form.categoryId);
   const customFields = selectedCategory?.custom_fields ?? [];
+
+  const initializeCustomFieldAnswers = (categoryId: number): { [slug: string]: string[] } => {
+    const cat = categories.find((c) => c.id === categoryId);
+    const answers: { [slug: string]: string[] } = {};
+    cat?.custom_fields?.forEach((field) => {
+      answers[field.slug] = form.customFieldAnswers?.[field.slug] ?? [];
+    });
+    return answers;
+  };
+
+  useEffect(() => {
+    if (form.categoryId && !form.customFieldAnswers) {
+      setForm((prev) => ({
+        ...prev,
+        customFieldAnswers: initializeCustomFieldAnswers(prev.categoryId!),
+      }));
+    }
+  }, [form.categoryId]);
 
   const handleInputChange = (field: keyof RentalItem, value: string | number) => {
     setForm({ ...form, [field]: value });
   };
 
   const handleCheckboxChange = (fieldSlug: string, value: string) => {
-    const selected = form.customFieldAnswers?.[fieldSlug] || [];
-    const updated = selected.includes(value)
-      ? selected.filter((v) => v !== value)
+    const selected: string[] = form.customFieldAnswers?.[fieldSlug] ?? [];
+
+    const updated: string[] = selected.includes(value)
+      ? selected.filter((v: string) => v !== value)
       : [...selected, value];
 
     setForm({
@@ -90,9 +102,7 @@ export default function RentalItemModal({
 
       return (
         <div key={field.id} className="mb-4">
-          <label className="block font-semibold mb-2 text-orange-600">
-            {field.label}
-          </label>
+          <label className="block font-semibold mb-2 text-orange-600">{field.label}</label>
           <div className="flex flex-wrap gap-3">
             {options.map((option) => (
               <label
@@ -105,7 +115,7 @@ export default function RentalItemModal({
                   onChange={() => handleCheckboxChange(field.slug, option)}
                   className="accent-orange-600 w-4 h-4"
                 />
-                <span className="select-none">{option}</span>
+                <span>{option}</span>
               </label>
             ))}
           </div>
@@ -115,10 +125,10 @@ export default function RentalItemModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40" onClick={onClose}>
-        <div
+      <div
         className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-2xl mx-auto max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
-        >
+      >
         <h2 className="text-2xl font-bold text-orange-600 mb-6 text-center sm:text-left">
           {form.id ? "Edit Rental Item" : "Add Rental Item"}
         </h2>
@@ -130,11 +140,8 @@ export default function RentalItemModal({
           }}
           className="space-y-5"
         >
-          {/* Name */}
           <div>
-            <label className="block font-medium mb-1" htmlFor="name">
-              Name
-            </label>
+            <label className="block font-medium mb-1" htmlFor="name">Name</label>
             <Input
               id="name"
               value={form.name}
@@ -144,34 +151,35 @@ export default function RentalItemModal({
             />
           </div>
 
-          {/* Description */}
           <div>
-            <label className="block font-medium mb-1" htmlFor="description">
-              Description
-            </label>
+            <label className="block font-medium mb-1" htmlFor="description">Description</label>
             <textarea
               id="description"
               value={form.description}
               onChange={(e) => handleInputChange("description", e.target.value)}
-              placeholder="Write a short description"
-              className="w-full border border-gray-300 rounded-md p-2 resize-y min-h-[80px] focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full border border-gray-300 rounded-md p-2 min-h-[80px]"
               required
             />
           </div>
 
-          {/* Category */}
           <div>
-            <label className="block font-medium mb-1" htmlFor="category">
-              Category
-            </label>
+            <label className="block font-medium mb-1" htmlFor="category">Category</label>
             <select
               id="category"
               value={form.categoryId ?? ""}
-              onChange={(e) => onCategoryChange(Number(e.target.value))}
-              className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              onChange={(e) => {
+                const id = Number(e.target.value);
+                setForm({
+                  ...form,
+                  categoryId: id,
+                  customFieldAnswers: initializeCustomFieldAnswers(id),
+                });
+                onCategoryChange(id);
+              }}
+              className="w-full border border-gray-300 rounded-md p-2"
               required
             >
-              <option value="">Select category</option>
+              <option value="">Select Category</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>
                   {cat.name}
@@ -180,38 +188,41 @@ export default function RentalItemModal({
             </select>
           </div>
 
-          {/* Reservation Amount */}
+          {renderCustomFields()}
+
           <div>
-            <label className="block font-medium mb-1" htmlFor="reservationAmt">
-              Reservation Fee
-            </label>
+            <label className="block font-medium mb-1" htmlFor="shop">Shop</label>
+            <select
+              id="shop"
+              value={form.shopId ?? ""}
+              onChange={(e) => handleInputChange("shopId", Number(e.target.value))}
+              className="w-full border border-gray-300 rounded-md p-2"
+            >
+              <option value="">Select Shop</option>
+              {shops.map((shop) => (
+                <option key={shop.id} value={shop.id}>
+                  {shop.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-medium mb-1" htmlFor="reservationAmt">Reservation Fee</label>
             <Input
               id="reservationAmt"
               type="number"
               min={0}
               value={form.reservationAmt}
-              onChange={(e) =>
-                handleInputChange("reservationAmt", parseFloat(e.target.value))
-              }
+              onChange={(e) => handleInputChange("reservationAmt", parseFloat(e.target.value))}
               required
               step="0.01"
             />
           </div>
 
-          {/* Custom Fields */}
-          {renderCustomFields()}
-
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
-            <Button variant="outline" onClick={onClose} type="button">
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              className="bg-orange-600 text-white hover:bg-orange-500"
-            >
-              Save
-            </Button>
+          <div className="flex justify-end gap-3 mt-6">
+            <Button variant="outline" onClick={onClose} type="button">Cancel</Button>
+            <Button type="submit" className="bg-orange-600 text-white hover:bg-orange-500">Save</Button>
           </div>
         </form>
       </div>

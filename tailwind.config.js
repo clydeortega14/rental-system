@@ -37,6 +37,7 @@ export default {
 				'slide-left': 'slideLeft 30s linear infinite',
             },
     		colors: {
+				brandYellow: '#f1bb00',
 				'jaba-yellow': '#feb008',
     			'light-green': '#64A664',
     			'light-white': 'rgba(255,255,255,0.18)',

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { RatingType } from '@/types/Rating';
-import { PageProps } from '@inertiajs/react';
+import { PageProps } from '@/types/index';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 
@@ -23,11 +23,19 @@ interface Props extends PageProps {
     averageRating?: number;
 }
 
+<<<<<<< HEAD
 export default function Create({ auth, booking, ratingTypes, existingRating, averageRating }: Props) {
+=======
+export default function Create({ booking, ratingTypes, existingRating }: Props) {
+>>>>>>> bc9e1cfb7b32927f9adc23e0cae7b41d7523f8a3
     if (!booking || !booking.rentalListing) {
         return <div>Loading booking data...</div>;
     }
 
+<<<<<<< HEAD
+=======
+    const auth = usePage<PageProps>().props.auth;
+>>>>>>> bc9e1cfb7b32927f9adc23e0cae7b41d7523f8a3
     const [rating, setRating] = useState(existingRating?.rating || 0);
     const { data, setData, post, processing } = useForm({
         rating: existingRating?.rating || 0,
@@ -45,7 +53,12 @@ export default function Create({ auth, booking, ratingTypes, existingRating, ave
     };
 
     return (
+<<<<<<< HEAD
         <AuthenticatedLayout user={auth.user as unknown as import("c:/xampp/htdocs/rental-system/resources/js/types/index").User}>
+=======
+        <AuthenticatedLayout user={auth.user}>
+            {/* START OF VISUAL ENHANCEMENTS */}
+>>>>>>> bc9e1cfb7b32927f9adc23e0cae7b41d7523f8a3
             <div className="py-8 bg-gray-50 min-h-screen">
                 <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="bg-white shadow-xl rounded-lg overflow-hidden">
