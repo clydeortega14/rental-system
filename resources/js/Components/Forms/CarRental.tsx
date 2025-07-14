@@ -1,6 +1,6 @@
-import InputLabel from "@/Components/InputLabel";
-import TextInput from "@/Components/TextInput";
-import PrimaryButton from "@/Components/PrimaryButton";
+import InputLabel from "../../Components/InputLabel";
+import TextInput from "../../Components/TextInput";
+import PrimaryButton from "../../Components/PrimaryButton";
 import DatePicker from "react-tailwindcss-datepicker";
 import { useState } from "react";
 
@@ -27,7 +27,7 @@ function CarRental() {
                 </div>
 
                 <div className="sm:col-span-2 mr-2 mt-5">
-                    <DatePicker value={value} onChange={newValue => setValue(newValue)} />
+                    {/* <DatePicker value={value} onChange={newValue => setValue(newValue)} /> */}
                 </div>
                 <div className="sm:col-span-2 mr-2">
                     <InputLabel htmlFor="pick-up-date" value="Pick-up date" />

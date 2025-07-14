@@ -39,7 +39,7 @@ export default function ReasonForm({
                         className={`block w-full ${errors.reason && "border-red-400"}`}
                         placeholder="Reason for cancelling..."
                         value={data.reason}
-                        onChange={(e: React.ChangeEvent) => setData("reason", e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setData("reason", e.target.value)}
                     />
 
                     <InputError message={errors.reason} className="mb-4" />

@@ -5,8 +5,16 @@ import PrimaryButton from "../PrimaryButton";
 import SecondaryButton from "../SecondaryButton";
 import { useForm } from "@inertiajs/react";
 import { Input } from "@mui/material";
+import { BookingDetails } from "@/types/rental";
+import React from "react";
 
-export default function RescheduleForm({ bookingDetail, setIsRescheduled }) {
+
+interface RescheduleFormProps {
+    bookingDetail: BookingDetails;
+    setIsRescheduled: (data: boolean) => void;
+}
+
+export default function RescheduleForm({ bookingDetail, setIsRescheduled }: RescheduleFormProps) {
     const { data, setData, post, processing, errors } = useForm({
         action: "rescheduled",
         pick_up_date: "",
@@ -15,14 +23,14 @@ export default function RescheduleForm({ bookingDetail, setIsRescheduled }) {
         drop_off_time: "",
     });
 
-    const submitReschedule = (e) => {
+    const submitReschedule = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        post(route("reservation.update.status", bookingDetail.uuid), {
-            onSuccess: () => {
-                setIsRescheduled(false)
-            }
-        });
+        // post(route("reservation.update.status", bookingDetail.uuid), {
+        //     onSuccess: () => {
+        //         setIsRescheduled(false)
+        //     }
+        // });
     };
 
     return (
