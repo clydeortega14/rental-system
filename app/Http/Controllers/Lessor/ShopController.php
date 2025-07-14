@@ -16,25 +16,41 @@ class ShopController extends Controller
         $lessor = Lessor::with(['shops', 'user'])
             ->where('lessoruser_id', auth()->id())
             ->first();
-            
-        if (!$lessor) {
-            abort(403, 'Lessor not found for this user.');
-        }
 
         return Inertia::render('Lessor/Shop', [
-            'shops' => $lessor->shops,
+            'shops' => $lessor->shops, // ✅ return all shops, not paginated
             'lessorName' => $lessor->user->name,
         ]);
     }
 
     public function store(Request $request)
     {
-
-        $data = $request->validate([
+      
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'location' => 'nullable|string|max:255',
+            'region' => 'nullable|string',
+            'province' => 'nullable|string',
+            'city' => 'nullable|string',
+            'barangay' => 'nullable|string',
         ]);
+
+        // Combine the full location string from parts
+        $locationParts = [
+            $validated['barangay'] ?? null,
+            $validated['city'] ?? null,
+            $validated['province'] ?? null,
+            $validated['region'] ?? null,
+        ];
+
+        $fullLocation = implode(', ', array_filter($locationParts));
+
+        // Prepare data for saving, replacing location with the full combined string
+        $data = [
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+            'location' => $fullLocation,
+        ];
 
         $lessor = Lessor::where('lessoruser_id', Auth::id())->first();
     

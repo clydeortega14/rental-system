@@ -43,7 +43,7 @@ class RentalController extends Controller
             ];
         });
 
-        return Inertia::render('Lessor/Properties', [
+        return Inertia::render('Layouts/LesseeLayout', [
             'rentals' => $mappedRentals,
             'categories' => $categories,
             'shops' => $shops,

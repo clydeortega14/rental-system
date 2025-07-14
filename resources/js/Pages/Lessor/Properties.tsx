@@ -17,6 +17,10 @@ function Properties() {
     shops: Shop[];
   };
 
+  console.log(111111111111);
+
+  
+
   const [rentals, setRentals] = useState<RentalItem[]>(initialRentals || []);
   const [filteredShopId, setFilteredShopId] = useState<number | "all">("all");
   const [showModal, setShowModal] = useState(false);
@@ -179,6 +183,6 @@ function Properties() {
   );
 }
 
-Properties.layout = (page) => <LessorLayout>{page}</LessorLayout>;
+// Properties.layout = (page) => <LessorLayout>{page}</LessorLayout>;
 
 export default Properties;

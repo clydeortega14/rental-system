@@ -31,10 +31,28 @@ export default {
 				'0%': { transform: 'translateX(0%)' },
 				'100%': { transform: 'translateX(-50%)' },
 				},
+				heartbeat: {
+				'0%, 100%': { transform: 'scale(1)' },
+				'25%': { transform: 'scale(1.15)' },
+				'50%': { transform: 'scale(1)' },
+				'75%': { transform: 'scale(1.15)' },
+				},
+				ripple: {
+				'0%': {
+					transform: 'scale(1)',
+					opacity: 0.6,
+				},
+				'100%': {
+					transform: 'scale(2.2)',
+					opacity: 0,
+				},
+				},
             },
             animation: {
                 float: 'float 3s ease-in-out infinite',
 				'slide-left': 'slideLeft 30s linear infinite',
+				heartbeat: 'heartbeat 1.5s ease-in-out infinite',
+				ripple: 'ripple 1.5s ease-in-out infinite',
             },
     		colors: {
 				brandYellow: '#f1bb00',

@@ -1,11 +1,17 @@
 import React, { useState } from "react";
-import { usePage } from "@inertiajs/react";
 import { format } from "date-fns";
 import Modal from "@/Components/Modal";
 import Button from "@/Components/Renter/ui/Button";
 import SecondaryButton from "@/Components/SecondaryButton";
 import { BookingDetails } from "@/types/rental";
 import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
+
+interface BookingsProps {
+  bookings: BookingDetails[];
+}
+
+
+
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
     case "confirmed":
@@ -21,14 +27,12 @@ const getStatusColor = (status: string) => {
   }
 };
 
-export default function Bookings() {
-  const { bookings = [] } = usePage<{ bookings: BookingDetails[] }>().props;
-
+export default function Bookings({ bookings }: BookingsProps) {
   const [activeTab, setActiveTab] = useState<"Upcoming" | "Past" | "All">("Upcoming");
   const [showModal, setShowModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<BookingDetails | null>(null);
 
-
+  console.log(bookings)
 
   const openModal = (booking: BookingDetails) => {
     setSelectedBooking(booking);
@@ -91,19 +95,19 @@ export default function Bookings() {
                   <td className="px-4 py-3">Booking ID: {booking.id}</td>
                   <td className="px-4 py-3">
                     <img
-                      src={booking.rentalItem?.imageUrl || "/placeholder.jpg"}
+                      src={booking.rentalItem.imageUrl || "/placeholder.jpg"}
                       alt={booking.itemName}
                       className="w-16 h-16 object-cover rounded"
                     />
                   </td>
-                  
-                  <td className="px-4 py-3">{booking.rentalItem.name}</td>
+                  <td className="px-4 py-3">{booking.rentalItem?.name || "N/A"}</td>
                   <td className="px-4 py-3">{booking.rentalItem?.category?.name || "N/A"}</td>
                   <td className="px-4 py-3">
                     {format(new Date(booking.startDate ?? ""), "PPP")} -{" "}
                     {format(new Date(booking.endDate ?? ""), "PPP")}
                   </td>
-                  <td className="px-4 py-3">{formatPrice( booking.totalPrice)}</td>
+                 
+                  <td className="px-4 py-3"> {booking.totalPrice !== undefined ? formatPrice(booking.totalPrice) : "N/A"}</td>
                   <td className="px-4 py-3">
                     <span
                       className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusColor(
@@ -127,7 +131,7 @@ export default function Bookings() {
         )}
       </div>
 
-      {/* Booking Detail Modal */}
+      {/* Modal */}
       <Modal show={showModal} onClose={closeModal}>
         {selectedBooking && (
           <div className="p-6 space-y-4">

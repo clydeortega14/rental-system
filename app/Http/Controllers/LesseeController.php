@@ -36,16 +36,26 @@ class LesseeController extends Controller
         $user = Auth::user()?->loadMissing(['company', 'contact']);
         $isApprovedLessor = false;
         $lessorApplicationStatus = null;
+        $shops = [];
         if ($user) {
-            // Check if user is already an approved lessor
+            // Check approval
             $isApprovedLessor = Lessor::where('lessoruser_id', $user->id)
                 ->whereHas('status', fn($query) => $query->where('name', 'approved'))
                 ->exists();
-            // Check if user has an application and get its status
+            // Application status
             $application = \App\Models\LessorApplication::where('lessoruser_id', $user->id)->first();
             if ($application) {
-                // Get the status name via relationship or lookup
-                $lessorApplicationStatus = optional($application->status)->name; // ← assumes status() relationship
+                $lessorApplicationStatus = optional($application->status)->name;
+            }
+            // Get lessor
+            $lessor = Lessor::where('lessoruser_id', $user->id)->first();
+            if ($lessor) {
+                // Paginate shops
+                $shops = $lessor->shops()
+                    ->select('id', 'lessor_id', 'name', 'description', 'location', 'created_at')
+                    ->latest()
+                    ->paginate(4) // change as needed
+                    ->withQueryString();
             }
         }
         $bookings = $this->booking_service->formatBookings();
@@ -56,7 +66,8 @@ class LesseeController extends Controller
             'bookings' => $bookings,
             'headerData' => $headersData,
             'isApprovedLessor' => $isApprovedLessor,
-            'lessorApplicationStatus' => $lessorApplicationStatus, // ✅ added
+            'lessorApplicationStatus' => $lessorApplicationStatus,
+            'shops' => $shops, // now paginated
         ]);
     }
 

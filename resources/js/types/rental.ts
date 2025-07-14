@@ -5,6 +5,7 @@ export interface RentalItem {
   name: string;
   description: string;
   images: string[];
+  imageUrl?: string; 
   price: {
     hourly: number;
     daily: number;
@@ -19,8 +20,6 @@ export interface RentalItem {
   location: string;
   itemName: string;
   quantity: number | null
-  
-
 }
 
 export interface TimeSlot {

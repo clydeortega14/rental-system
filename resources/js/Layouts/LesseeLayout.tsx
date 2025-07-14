@@ -14,6 +14,8 @@ import Footer from "@/Components/Lessee/Footer";
 import Profile from "@/Components/Lessee/Profile";
 import LesseeSidebarContent from "@/Components/Lessee/LesseeSidebarContent";
 import LessorApplyModal from "@/Components/Lessee/Modal/LessorApplyModal";
+
+
 import {
   Tabs,
   TabsList,
@@ -41,25 +43,51 @@ const LessorReservations = lazy(() => import("@/Pages/Lessor/Reservations"));
 const LessorInvoice = lazy(() => import("@/Pages/Lessor/Invoice"));
 const LessorInquiries = lazy(() => import("@/Pages/Lessor/Inquiries"));
 const LessorReviews = lazy(() => import("@/Pages/Lessor/Reviews"));
+const LessorShop = lazy(() => import("@/Pages/Lessor/Shop"));
 
 interface Props extends PageProps {
   bookings: BookingDetails[];
   headerData: { name: string }[];
   isApprovedLessor: boolean;
   lessorApplicationStatus?: 'pending' | 'approved' | 'rejected' | null; 
+  shops: {
+    data: {
+      id: number;
+      name: string;
+      description?: string;
+      location?: string;
+      created_at?: string;
+    }[];
+    current_page: number;
+    last_page: number;
+    links: { url: string | null; label: string; active: boolean }[];
+  };
 }
-
 interface LayoutProps {
   defaultTab?: string;
+  auth: PageProps["auth"]; // <-- Add this line
 }
 
-export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
- const { auth, bookings, headerData, isApprovedLessor, lessorApplicationStatus } = usePage().props as unknown as Props;
+interface Shop {
+  id: number;
+  name: string;
+  description?: string;
+  location?: string;
+  created_at?: string;
+}
+
+export default function LesseeLayout({ defaultTab = "overview", auth }: LayoutProps) {
+ const { bookings, headerData, isApprovedLessor, lessorApplicationStatus, shops: rawShops } = usePage().props as unknown as Props;
   const [activeTab, setActiveTab] = useState(defaultTab); 
   // const [activeTab, setActiveTab] = useState("overview");
 
   const [showLessorModal, setShowLessorModal] = useState(false);
   const recentActivities = [];
+
+  // Provide fallback to ensure shape
+  const shops = rawShops && 'data' in rawShops
+  ? rawShops
+  : { data: [], current_page: 1, last_page: 1, links: [] };
 
   if (lessorApplicationStatus === "pending") {
     recentActivities.unshift({
@@ -138,13 +166,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
       { key: "lessor", label: "Be a Lessor", icon: BiSolidUserCheck },
     ] : []),
     ...(isApprovedLessor ? [
-      { key: "lessorProfile", label: "Profile", icon: BiSolidUserCheck },
-      { key: "lessorDashboard", label: "Dashboard", icon: BiSolidDashboard },
-      { key: "lessorProperties", label: "Properties", icon: BiBuildingHouse },
-      { key: "lessorReservations", label: "Reservations", icon: BiCalendarCheck },
-      { key: "lessorInvoice", label: "Invoice", icon: BiReceipt },
-      { key: "lessorInquiries", label: "Inquiries", icon: BiMessageDetail },
-      { key: "lessorReviews", label: "Reviews", icon: BiStar },
+      { key: "lessorShop", label: "Shop", icon: BiBuildingHouse },
     ] : []),
   ];
   return (
@@ -194,7 +216,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
               <Overview recentActivities={lessee.recentActivities} />
             </TabsContent>
             <TabsContent value="bookings" className="h-full">
-              <Bookings />
+               <Bookings bookings={bookings} />
             </TabsContent>
             <TabsContent value="lessor" className="h-full">
               <LesseeSignForm signUser={auth} />
@@ -225,8 +247,9 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
             <TabsContent value="lessorInquiries" className="h-full">
               <LessorInquiries />
             </TabsContent>
-            <TabsContent value="lessorReviews" className="h-full">
-              <LessorReviews />
+            <TabsContent value="lessorShop" className="h-full">
+              {/* Pass shops to LessorShop */}
+              <LessorShop shops={shops} />
             </TabsContent>
               {/* End Lessor Access */}
         </Suspense>

@@ -6,8 +6,8 @@
   import SupportSlider from '@/Components/SupportSlider'
   import { Category } from '@/Interface/CategoryInterface'
   import { PageProps } from '@/types'
-
-  import { PropsWithChildren } from 'react'
+  import BeePulseLoader from "@/Components/Loader/BeePulseLoader";
+  import { useEffect, useState ,PropsWithChildren} from "react";
 
 
 const LandingPageLayout = ({
@@ -15,6 +15,16 @@ const LandingPageLayout = ({
   categories,
   children,
 }: PropsWithChildren<{ auth: any; categories: Category[] }>) => {
+   const [loading, setLoading] = useState(true);
+
+   useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1200); // simulate loading delay
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <BeePulseLoader />;
+  }
     return (
       <div className="flex flex-col min-h-screen ">
         <Header categories={categories} />
@@ -23,7 +33,7 @@ const LandingPageLayout = ({
           <Slider categories={categories} />
           <SupportSlider/>
           <FeaturedCategory auth={auth} categories={categories} />
-          <ClientsFeedBack />
+          {/* <ClientsFeedBack /> */}
         </main>
         <Footer />
       </div>
