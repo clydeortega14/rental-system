@@ -2,8 +2,14 @@ import { IRentalItems } from "@/Interface/RentalItems";
 import StarRating from "../../..//Components/LandingPage/StarRating";
 import NavLink from "../../../Components/NavLink";
 import { useState } from "react";
+import { RentalItem } from "@/types/rental";
 
-export default function RentalItemComponent({ items }: IRentalItems) {
+
+interface RentalItemComponentProps {
+    items: RentalItem[]
+}
+
+export default function RentalItemComponent({ items }: RentalItemComponentProps) {
 
     const [isActive, setIsActive] = useState<boolean>(false);
     return (
@@ -44,7 +50,7 @@ export default function RentalItemComponent({ items }: IRentalItems) {
                                                 {item.name}
                                             </h5>
                                             <p className="text-sm text-gray-500">
-                                                {item.role}
+                                                {/* {item.role} */}
                                             </p>
                                         </div>
                                     </div>
@@ -56,7 +62,7 @@ export default function RentalItemComponent({ items }: IRentalItems) {
                                             className="px-1 py-1 bg-gray-200 text-gray-800 text-xs uppercase font-semibold rounded"
                                             style={{ fontSize: "10px" }}
                                         >
-                                            {item.category}
+                                            {/* {item.category} */}
                                         </span>
                                     </div>
                                     {/* Star Rating (hidden on small screens) */}

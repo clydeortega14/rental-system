@@ -1,9 +1,5 @@
-import React, { ReactNode } from 'react';
 import AdminLayoutAntD from '../../../js/Layouts/AdminLayoutAntD';
-
 import { PageWithAdminLayout } from '@/types';
-import banner from '@/../../resources/img/banner/banner1.png'
-import icon from '@/../../resources/img/notVerifiedv1.png'
 
 const DashboardAntD: PageWithAdminLayout = () => {
     return (
@@ -56,7 +52,7 @@ const DashboardAntD: PageWithAdminLayout = () => {
 
                                 <div className="w-full max-w-xs mt-6 lg:mt-0 lg:ml-4">
                                 <img
-                                    src={icon}
+                                    src={"img/notVerifiedv1.png"}
                                     alt="Welcome Illustration"
                                     className="object-contain w-full h-full"
                                 />
@@ -95,7 +91,7 @@ const DashboardAntD: PageWithAdminLayout = () => {
 
                             <div className="mb-4">
                                 <img
-                                    src={banner}
+                                    src={"img/banner/banner1.png"}
                                     alt="New Car"
                                     className="rounded w-full object-cover"
                                 />

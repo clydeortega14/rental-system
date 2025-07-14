@@ -1,5 +1,4 @@
-import React from 'react';
-import star from '@/../../resources/img/background/star-icon.svg';
+
 
 const messages = [
   'Reliable Service',
@@ -29,7 +28,7 @@ const SupportSlider = () => {
               <h2 className="whitespace-nowrap">{text}</h2>
               {!isLast && (
                 <img
-                  src={star}
+                  src={"img/background/star-icon.svg"}
                   alt="star icon"
                   className="w-5 h-5 flex-shrink-0"
                 />

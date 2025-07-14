@@ -51,9 +51,10 @@ export const formatTimeLocale = () =>
   return MyDate.toLocaleTimeString('en-US', {hour: 'numeric', hour12: true})
 };
 
-export const formatDateLocale = (date: Date) => 
+export const formatDateLocale = (date: string) => 
 {
-  return date.toLocaleDateString('en-US', {
+  const new_date = new Date(date);
+  return new_date.toLocaleDateString('en-US', {
     month: 'short', 
     day: 'numeric', 
     year: 'numeric' 

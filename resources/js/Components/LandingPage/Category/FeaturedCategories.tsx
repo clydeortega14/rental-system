@@ -1,14 +1,13 @@
 import { Category } from '@/Interface/CategoryInterface';
-import { BiUser } from 'react-icons/bi';
 import { ArrowRight } from 'lucide-react';
 
-import phones from '@/../../resources/img/banner/1.png';
-import cars from '@/../../resources/img/banner/banner1.png';
-import motorcycle from '@/../../resources/img/banner/2.png';
-import bags from '@/../../resources/img/banner/bags.png';
-import hotels from '@/../../resources/img/banner/hotels.png';
-
-const categoryImages = [cars, phones, motorcycle, bags, hotels];
+const categoryImages = [
+  "img/banner/1.png", 
+  "img/banner/1.png", 
+  "img/banner/2.png", 
+  "img/banner/bags.png", 
+  "img/banner/hotels.png"
+];
 
 interface User {
   id: number

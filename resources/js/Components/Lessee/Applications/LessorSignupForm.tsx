@@ -34,11 +34,11 @@ export default function LessorSignupForm() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     // Account Information
-    firstName: user.user.name || "",
-    middleName: user.user.middle_name || "",
-    lastName: user.user.last_name || "",
-    email: user.user.email || "",
-    phone: user.user.phone || "",
+    firstName: user.name || "",
+    middleName: user.name || "",
+    lastName: user.name || "",
+    email: user.email || "",
+    phone: user.contact.mobile || "",
 
     // // Business Profile
     // businessName: company?.business_name || "",

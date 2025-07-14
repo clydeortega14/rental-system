@@ -155,7 +155,7 @@ export default function Welcome1({
                         <div>
                             <ItemLaningPage
                                 categories={categories}
-                                items={rental_items}
+                                items={[]}
                             />
                         </div>
                     </div>

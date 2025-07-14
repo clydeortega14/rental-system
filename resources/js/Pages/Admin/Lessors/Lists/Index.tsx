@@ -3,7 +3,6 @@ import { Table, Input, Button, Card } from 'antd';
 import { usePage, router } from '@inertiajs/react';
 import type { ColumnsType } from 'antd/es/table';
 import { PageWithAdminLayout, PageProps } from '@/types';
-import defaultImage from '@/../../resources/img/defaultImage.png';
 import AdminLayoutAntD from '../../../../../js/Layouts/AdminLayoutAntD';
 
 interface Lessor {
@@ -60,7 +59,7 @@ const LessorList: PageWithAdminLayout = () => {
       key: 'image',
       render: (_, record) => (
         <img
-          src={record.user?.photo ? `/storage/${record.user.photo}` : defaultImage}
+          src={record.user?.photo ? `/storage/${record.user.photo}` : 'img/defaultImage.png'}
           alt="user"
           className="w-12 h-12 rounded-full object-cover"
         />

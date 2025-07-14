@@ -35,7 +35,7 @@ function Index({ bookings, status }: Props) {
     //     setBookingDetail(find_booking);
     // };
 
-    const [activeTab, setActiveTab] = useState<'Upcoming' | 'Past' | 'All Bookings'>('Upcoming');
+    const [activeTab, setActiveTab] = useState<string>('Upcoming');
 
     const getStatusColor = (status: string) => {
         switch (status) {

@@ -46,10 +46,10 @@ export interface BookingDetails {
   userId?: string;
   customerId?: string;
   customerName?: string;
-  startDate?: Date |string | null;
-  startTime?: Date | string | null;
-  endDate?: Date | string | null;
-  endTime?: Date | string | null;
+  startDate?: string | null;
+  startTime?: string | null;
+  endDate?:string | null;
+  endTime?:string | null;
   status: 'pending' | 'confirmed' | 'canceled' | 'completed';
   totalPrice?: number;
   duration?: 'hourly' | 'daily' | 'weekly';

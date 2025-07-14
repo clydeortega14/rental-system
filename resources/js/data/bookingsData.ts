@@ -8,8 +8,8 @@ export const bookings: BookingDetails[] = [
     id: 'b1',
     itemId: '1',
     userId: 'u1',
-    startDate: new Date('2025-05-15'),
-    endDate: new Date('2025-05-18'),
+    startDate: '2025-05-15',
+    endDate: '2025-05-18',
     status: 'confirmed',
     totalPrice: 150
   },
@@ -21,8 +21,8 @@ export const booking: BookingDetails = {
     id: "BK202506",
     userId: "Juan Dela Cruz",
     itemId: "Toyota Vios 2020",
-    startDate: new Date("2025-07-01"),
-    endDate: new Date("2025-07-05"),
+    startDate: "2025-07-01",
+    endDate: "2025-07-05",
     status: "pending" as const,
     totalPrice: 12500,
 }

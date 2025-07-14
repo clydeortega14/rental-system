@@ -1,10 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { PageProps } from "@/types";
-import FileUploader from "@/Components/FileUploader";
-import motorcycle from '@/../../resources/img/banner/2.png'
-import banner from '@/../../resources/img/banner/banner1.png'
-import icon from '@/../../resources/img/notVerifiedv1.png'
 
 export default function Dashboard({ auth }: PageProps) {
     
@@ -73,7 +69,7 @@ export default function Dashboard({ auth }: PageProps) {
 
                                 <div className="w-full max-w-xs mt-6 lg:mt-0 lg:ml-4">
                                 <img
-                                    src={icon}
+                                    src={"img/notVerifiedv1.png"}
                                     alt="Welcome Illustration"
                                     className="object-contain w-full h-full"
                                 />
@@ -112,7 +108,7 @@ export default function Dashboard({ auth }: PageProps) {
 
                             <div className="mb-4">
                                 <img
-                                    src={banner}
+                                    src={"img/banner/banner1.png"}
                                     alt="New Car"
                                     className="rounded w-full object-cover"
                                 />
