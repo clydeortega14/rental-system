@@ -17,7 +17,7 @@ import {
 import { useState } from "react";
 // import { TabsList, TabsTrigger } from "@/Components/Lessee/ui/tabs";
 import { TabsList, TabsTrigger } from "@/Components/Lessee/ui/tabs";
-import LessorApplyModal from "@/Components/Lessee/Modal/LessorApplyModal";
+import LessorApplyModal from "../../Components/Lessee/modal/LessorApplyModal";
 import { Link } from '@inertiajs/react';
 
 interface LesseeSidebarContentProps {

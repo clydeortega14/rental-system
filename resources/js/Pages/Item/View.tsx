@@ -94,15 +94,15 @@ export default function View({
 
     const handleDateSelect = (date: string) => {
 
-        let formatDate = new Date(date);
+        // let formatDate = new Date(date);
 
         if(bookingDetails.startDate === null){
-            setBookingDetails({...bookingDetails, startDate: formatDate})
+            setBookingDetails({...bookingDetails, startDate: date})
             setSelectedDate(date);
             setSelectedTimeSlot(null); // Reset time slot when date changes
             setSelectedEndDate(null)
         }else{
-            setBookingDetails({...bookingDetails, endDate: formatDate});
+            setBookingDetails({...bookingDetails, endDate: date});
             setSelectedEndDate(date);
         }
         
@@ -222,8 +222,7 @@ export default function View({
                     
                         <PricingOptions
                             prices={item.price} 
-                            selectedDuration={duration} 
-                            onSelectDuration={handleDurationChange} 
+                            selectedDuration={duration}
                         />
 
                         <RentalCalendar

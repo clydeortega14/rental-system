@@ -3,16 +3,16 @@ export default function LocationForm() {
         <>
             <div className="sm:col-span-2">
                 <label
-                    for="city"
+                    htmlFor="city"
                     className="block text-sm font-medium leading-6 text-gray-900"
                 >
                     State / Province
                 </label>
-                <div class="mt-2">
+                <div className="mt-2">
                     <select
                         id="province"
                         name="province"
-                        autocomplete="province-name"
+                        autoComplete="province-name"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                     >
                         <option value="08">Region VII</option>
@@ -23,7 +23,7 @@ export default function LocationForm() {
 
             <div className="sm:col-span-2">
                 <label
-                    for="city"
+                    htmlFor="city"
                     className="block text-sm font-medium leading-6 text-gray-900"
                 >
                     City
@@ -32,7 +32,7 @@ export default function LocationForm() {
                     <select
                         name="city"
                         id="city"
-                        autocomplete="city"
+                        autoComplete="city"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                     >
                         <option>City of Talisay</option>

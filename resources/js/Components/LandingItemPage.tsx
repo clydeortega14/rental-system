@@ -1,19 +1,12 @@
-import { SetStateAction, useState } from "react";
-import { Box, Typography, IconButton, TextField } from "@mui/material";
-
-import CloseIcon from "@mui/icons-material/Close";
-import { Modal, Dialog } from "@mui/material";
-import { BrowserRouter as Router, Link, Route } from "react-router-dom";
-
 import CategoryComponent from "../Components/LandingPage/Category/Main";
 import RentalItemComponent from "../Components/LandingPage/RentalItems/RentalItemComponent";
 import { ICategory } from "../Interface/CategoryInterface";
-import { IRentalItems } from "@/Interface/RentalItems";
+import { RentalItem } from "@/types/rental";
 
 
 interface LandingItemPageProps {
     categories: ICategory;
-    items: IRentalItems
+    items: RentalItem[]
 }
 
 export default function LandingItemPage({

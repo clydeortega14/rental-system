@@ -5,7 +5,7 @@ interface IRating {
     rating: number;
 }
 
-function StarRating({ rating }: Irating) {
+function StarRating({ rating }: IRating) {
     const [hoveredRating, setHoveredRating] = useState(null);
 
     // Generate an array of 5 elements representing each star
@@ -15,22 +15,21 @@ function StarRating({ rating }: Irating) {
         if (index + 1 <= rating) {
             filled = true;
         } else if (index < rating && rating % 1 !== 0) {
-            filled = null; // For half-filled star
+            filled = false; // For half-filled star
         }
         return (
             <span
                 key={index}
-                onMouseEnter={() => setHoveredRating(index + 1)}
                 onMouseLeave={() => setHoveredRating(null)}
             >
-                <StartIcon
+                {/* <StartIcon
                     filled={
                         filled === true ||
                         (filled === null &&
                             hoveredRating !== null &&
                             index < hoveredRating)
                     }
-                />
+                /> */}
             </span>
         );
     });

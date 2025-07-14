@@ -6,14 +6,12 @@ interface Props {
   prices: {
     daily: number;
   };
-  selectedDuration: string;
-  onSelectDuration: (value: string) => void;
+  selectedDuration?: string;
 }
 
 const PricingOptions = ({
     prices,
-    selectedDuration,
-    onSelectDuration
+    selectedDuration
 }: Props) => {
 
     const options: { value: RentalDuration; label: string; price: number }[] = [
