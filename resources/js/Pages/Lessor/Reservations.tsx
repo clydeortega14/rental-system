@@ -11,6 +11,10 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/Components/Lessor/ui/dialog";
+import {
+  BiCalendarCheck,
+} from "react-icons/bi";
+
 import { useToast } from "@/hooks/use-toast";
 import {
   DropdownMenu,
@@ -97,7 +101,10 @@ function Reservations({ bookings }: ReservationsProps) {
   return (
     <div className="space-y-6">
       <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h2 className="text-2xl font-semibold text-gray-900">Bookings</h2>
+        <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
+          <BiCalendarCheck className="w-6 h-6 text-orange-500 mr-2" />
+          Reservation Bookings
+        </h1>
 
         <select
           value={filterStatus || "ALL"}

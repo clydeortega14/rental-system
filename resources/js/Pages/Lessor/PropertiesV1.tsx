@@ -4,6 +4,7 @@ import RentalItemModal, { Category } from "@/Pages/Lessor/modals/RentalItemModal
 import { Button } from "@/Components/Lessor/ui/button";
 import { Property as RentalItem } from "@/Pages/Lessor/types/Property";
 import { router } from "@inertiajs/react";
+import { BiBuildingHouse } from "react-icons/bi";
 
 interface Shop {
   id: number;
@@ -106,7 +107,10 @@ const Properties = ({ shops, categories,initialRentals, rentals }: PropertiesPro
   return (
     <div className="space-y-6">
       <header className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
-         <h2 className="text-2xl font-semibold text-gray-900">My Properties & Rentals</h2>
+        <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
+          <BiBuildingHouse className="w-6 h-6 text-orange-500 mr-2" />
+          My Properties & Rentals
+        </h1>
         <div className="flex gap-3 flex-col sm:flex-row">
           <select
             className="border border-gray-300 rounded-md px-3 py-1.5"

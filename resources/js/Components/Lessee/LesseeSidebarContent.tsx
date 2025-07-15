@@ -11,6 +11,7 @@ import {
   BiReceipt,
   BiMessageDetail,
   BiStar,
+  BiSolidStore,
   BiUserCircle,
 } from "react-icons/bi";
 
@@ -61,7 +62,7 @@ export default function LesseeSidebarContent({
             section: "Lessor Access",
             items: [
                 { key: "lessorDashboard", label: "Dashboard Lessor", icon: <BiSolidDashboard size={18} /> },
-                { key: "lessorShop", label: "Shop", icon: <BiStar size={18} /> },
+                { key: "lessorShop", label: "Shop", icon: <BiSolidStore size={18} /> },
                 { key: "lessorProperties", label: "Properties", icon: <BiBuildingHouse size={18} /> },
                 { key: "lessorReservations", label: "Reservations", icon: <BiCalendarCheck size={18} /> },
                 // { key: "lessorInvoice", label: "Invoice", icon: <BiReceipt size={18} /> },

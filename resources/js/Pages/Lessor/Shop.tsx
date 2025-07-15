@@ -11,6 +11,10 @@ import {
 } from "select-philippines-address";
 import Swal from "sweetalert2";
 import { Link } from "@inertiajs/react";
+import {
+  BiSolidStore,
+} from "react-icons/bi";
+
 
 interface Shop {
   id: number;
@@ -247,7 +251,10 @@ function Shop({
 
   return (
     <div className="max-w-7xl mx-auto p-6">
-      <h2 className="text-3xl font-bold mb-6 text-orange-700">Shops</h2>
+      <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
+        <BiSolidStore className="w-6 h-6 text-orange-500 mr-2" />
+        Shops
+      </h1>
 
       {flash?.success && (
         <div className="bg-green-100 border border-green-300 text-green-800 p-3 rounded mb-4">

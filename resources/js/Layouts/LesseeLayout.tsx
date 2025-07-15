@@ -110,9 +110,6 @@ interface Shop {
 export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
   const { bookings, headerData, isApprovedLessor, lessorApplicationStatus, shops: rawShops, auth, categories, rentals,lessorReservations,lessorDashboard } = usePage().props as unknown as Props;
   const [activeTab, setActiveTab] = useState(defaultTab); 
-  // const [activeTab, setActiveTab] = useState("overview");
-
-  console.log(lessorReservations)
 
   const [showLessorModal, setShowLessorModal] = useState(false);
   const recentActivities = [];
