@@ -65,7 +65,7 @@ const invoiceHistory = [
 
 export default function Invoice() {
   return (
-    <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-8">
+    <div className="max-w-8xl mx-auto p-6 space-y-6">
       <h1 className="text-3xl font-bold text-orange-600">Billing Statement</h1>
 
       {/* Wallet Summary Section */}

@@ -65,10 +65,11 @@ export default function LesseeSidebarContent({
                 { key: "lessorShop", label: "Shop", icon: <BiSolidStore size={18} /> },
                 { key: "lessorProperties", label: "Properties", icon: <BiBuildingHouse size={18} /> },
                 { key: "lessorReservations", label: "Reservations", icon: <BiCalendarCheck size={18} /> },
-                // { key: "lessorInvoice", label: "Invoice", icon: <BiReceipt size={18} /> },
-                // { key: "lessorInquiries", label: "Inquiries", icon: <BiMessageDetail size={18} /> },
-                // { key: "lessorReviews", label: "Reviews", icon: <BiStar size={18} /> },
-                // { key: "lessorReviews", label: "Profile", icon: <BiUserCircle size={18} /> },
+                //ongoing --- need backend and ui-----
+                { key: "lessorInvoice", label: "Invoice", icon: <BiReceipt size={18} /> },
+                { key: "lessorInquiries", label: "Inquiries", icon: <BiMessageDetail size={18} /> },
+                { key: "LessorReviews", label: "Reviews", icon: <BiStar size={18} /> },
+                { key: "lessorProfile", label: "Profile", icon: <BiUserCircle size={18} /> },
             ],
           },
         ]

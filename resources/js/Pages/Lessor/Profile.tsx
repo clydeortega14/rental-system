@@ -81,7 +81,8 @@ export default function Profile() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 sm:px-6 lg:px-8 space-y-10">
+    
+    <div className="max-w-8xl mx-auto p-6 space-y-6">
       <header>
         <h1 className="text-3xl font-extrabold text-orange-600 leading-tight">Account Settings</h1>
         <p className="mt-1 text-gray-600 max-w-xl">Manage your profile, identity verification, and security settings.</p>

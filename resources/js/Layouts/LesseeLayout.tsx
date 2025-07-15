@@ -214,9 +214,11 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
       { key: "lessorShop", label: "Shop", icon: BiSolidUserCheck },
       { key: "lessorProperties", label: "Properties", icon: BiBuildingHouse },
       { key: "lessorReservations", label: "Reservations", icon: BiCalendarCheck },
-      // { key: "lessorInvoice", label: "Invoice", icon: BiReceipt },
-      // { key: "lessorInquiries", label: "Inquiries", icon: BiMessageDetail },
-      // { key: "lessorReviews", label: "Reviews", icon: BiStar },
+       //ongoing --- need backend and ui-----
+      { key: "lessorInvoice", label: "Invoice", icon: BiReceipt },
+      { key: "lessorInquiries", label: "Inquiries", icon: BiMessageDetail },
+      { key: "LessorReviews", label: "Reviews", icon: BiStar },
+  
     ] : []),
   ];
 
@@ -307,7 +309,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
             <TabsContent value="lessorInquiries" className="h-full">
               <LessorInquiries />
             </TabsContent>
-            <TabsContent value="lessorReviews" className="h-full">
+            <TabsContent value="LessorReviews" className="h-full">
               <LessorReviews />
             </TabsContent>
             <TabsContent value="lessorShop" className="h-full">
