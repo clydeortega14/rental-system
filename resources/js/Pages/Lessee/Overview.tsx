@@ -1,4 +1,5 @@
 import React from "react";
+import { BiFile } from "react-icons/bi";
 
 interface RecentActivity {
   message: string;
@@ -24,8 +25,12 @@ export default function Overview({ recentActivities }: OverviewTabProps) {
   yesterday.setDate(today.getDate() - 1);
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-gray-900">Recent Activity</h2>
+    <div className="max-w-8xl mx-auto p-6 space-y-6">
+    
+      <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
+        <BiFile className="w-6 h-6 text-orange-500 mr-2" />
+        Recent Activity
+      </h1>
 
       <ul className="space-y-4">
         {recentActivities.map((activity, index) => {

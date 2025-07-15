@@ -2,7 +2,6 @@ import {
   BiSearch,
   BiFile,
   BiCalendar,
-  BiLinkAlt,
   BiSolidUserCheck,
   BiLockOpen,
   BiSolidDashboard,
@@ -13,6 +12,7 @@ import {
   BiStar,
   BiSolidStore,
   BiUserCircle,
+  BiCalendarEvent 
 } from "react-icons/bi";
 
 import { useState } from "react";
@@ -43,7 +43,7 @@ export default function LesseeSidebarContent({
       items: [
         { key: "overview", label: "Overview", icon: <BiFile size={18} /> },
         { key: "bookings", label: "Bookings", icon: <BiCalendar size={18} /> },
-        { key: "reviews", label: "Reviews", icon: <BiLinkAlt size={18} /> },
+        { key: "reviews", label: "Reviews", icon: <BiCalendarEvent size={18} /> },
       ],
     },
     ...(!isApprovedLessor
