@@ -2,6 +2,10 @@ import React from "react";
 import LessorLayout from "@/Layouts/LessorLayout";
 import { Card, CardContent } from "@/Components/Lessor/ui/card";
 import { Button } from "@/Components/Lessor/ui/button";
+import {
+  BiReceipt,
+} from "react-icons/bi";
+ 
 
 // Wallet icon SVG (Heroicons - Wallet)
 const WalletIcon = () => (
@@ -66,7 +70,10 @@ const invoiceHistory = [
 export default function Invoice() {
   return (
     <div className="max-w-8xl mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-bold text-orange-600">Billing Statement</h1>
+      <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
+        <BiReceipt className="w-6 h-6 text-orange-500 mr-2" />
+          Billing Statement
+      </h1>
 
       {/* Wallet Summary Section */}
       <Card className="shadow-md">

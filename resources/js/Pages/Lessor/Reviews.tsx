@@ -20,6 +20,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/Components/Lessor/ui/dialog";
+import {
+  BiStar,
+} from "react-icons/bi";
 
 interface Review {
   id: number;
@@ -192,8 +195,9 @@ export default function Reviews() {
 
   return (
     <div className="max-w-8xl mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-extrabold text-orange-600 mb-8 tracking-tight">
-        Reviews & Ratings
+      <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
+        <BiStar className="w-6 h-6 text-orange-500 mr-2" />
+          Reviews & Ratings
       </h1>
 
       {/* Lessor Rating (from lessees) */}

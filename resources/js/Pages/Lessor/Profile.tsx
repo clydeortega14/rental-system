@@ -1,5 +1,8 @@
 import React, { useState, lazy, Suspense } from "react";
 import type { Lessor } from "@/Pages/Lessor/types/Profile";
+import {
+  BiCog,
+} from "react-icons/bi";
 
 const ProfileModal = lazy(() => import("@/Pages/Lessor/modals/ProfileModal"));
 const KycModal = lazy(() => import("@/Pages/Lessor/modals/KycModal"));
@@ -84,7 +87,10 @@ export default function Profile() {
     
     <div className="max-w-8xl mx-auto p-6 space-y-6">
       <header>
-        <h1 className="text-3xl font-extrabold text-orange-600 leading-tight">Account Settings</h1>
+        <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
+          <BiCog className="w-6 h-6 text-orange-500 mr-2" />
+          Account Settings
+        </h1>
         <p className="mt-1 text-gray-600 max-w-xl">Manage your profile, identity verification, and security settings.</p>
       </header>
 

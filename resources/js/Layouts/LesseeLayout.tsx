@@ -28,6 +28,7 @@ import {
   BiReceipt,
   BiMessageDetail,
   BiStar,
+  BiCog,
 } from "react-icons/bi";
 
 const Overview = lazy(() => import("@/Pages/Lessee/Overview"));
@@ -218,7 +219,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
       { key: "lessorInvoice", label: "Invoice", icon: BiReceipt },
       { key: "lessorInquiries", label: "Inquiries", icon: BiMessageDetail },
       { key: "LessorReviews", label: "Reviews", icon: BiStar },
-  
+      { key: "lessorProfile", label: "Account Settings", icon: BiCog },
     ] : []),
   ];
 

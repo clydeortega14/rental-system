@@ -12,7 +12,8 @@ import {
   BiStar,
   BiSolidStore,
   BiUserCircle,
-  BiCalendarEvent 
+  BiCalendarEvent,
+  BiCog 
 } from "react-icons/bi";
 
 import { useState } from "react";
@@ -69,7 +70,7 @@ export default function LesseeSidebarContent({
                 { key: "lessorInvoice", label: "Invoice", icon: <BiReceipt size={18} /> },
                 { key: "lessorInquiries", label: "Inquiries", icon: <BiMessageDetail size={18} /> },
                 { key: "LessorReviews", label: "Reviews", icon: <BiStar size={18} /> },
-                { key: "lessorProfile", label: "Profile", icon: <BiUserCircle size={18} /> },
+                { key: "lessorProfile", label: "Account Settings", icon: <BiCog size={18} /> },
             ],
           },
         ]
