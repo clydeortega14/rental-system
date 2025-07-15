@@ -5,6 +5,7 @@ import { Button } from "@/Components/Lessor/ui/button";
 import { Property as RentalItem } from "@/Pages/Lessor/types/Property";
 import { router } from "@inertiajs/react";
 import { BiBuildingHouse } from "react-icons/bi";
+import Swal from "sweetalert2";
 
 interface Shop {
   id: number;
@@ -26,14 +27,16 @@ interface ShopsData {
   }[];
 }
 
+
+
 interface PropertiesProps {
   shops: ShopsData;
   categories: Category[];
-  initialRentals: ''
   rentals: RentalItem[];
 }
 
-const Properties = ({ shops, categories,initialRentals, rentals }: PropertiesProps): ReactElement => {
+
+const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactElement => {
   const [rentalList, setRentalList] = useState<RentalItem[]>(rentals || []);
   const [filteredShopId, setFilteredShopId] = useState<number | "all">("all");
   const [showModal, setShowModal] = useState(false);
@@ -81,6 +84,27 @@ const Properties = ({ shops, categories,initialRentals, rentals }: PropertiesPro
             )
           );
           setShowModal(false);
+
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "success",
+            title: "Rental updated successfully!",
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+          });
+        },
+        onError: () => {
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "error",
+            title: "Failed to update rental.",
+            showConfirmButton: false,
+            timer: 2500,
+            timerProgressBar: true,
+          });
         },
       });
     } else {
@@ -93,7 +117,28 @@ const Properties = ({ shops, categories,initialRentals, rentals }: PropertiesPro
               const updatedRentals = (page.props as any).rentals as RentalItem[];
               setRentalList(updatedRentals);
               setShowModal(false);
+
+              Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "success",
+                title: "Rental added successfully!",
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+              });
             },
+          });
+        },
+        onError: () => {
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "error",
+            title: "Failed to add rental.",
+            showConfirmButton: false,
+            timer: 2500,
+            timerProgressBar: true,
           });
         },
       });
@@ -105,7 +150,7 @@ const Properties = ({ shops, categories,initialRentals, rentals }: PropertiesPro
   : rentalList.filter(rental => rental.shopId === filteredShopId);
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-8xl mx-auto p-6">
       <header className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
         <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
           <BiBuildingHouse className="w-6 h-6 text-orange-500 mr-2" />

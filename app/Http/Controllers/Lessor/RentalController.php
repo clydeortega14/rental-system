@@ -87,8 +87,9 @@ class RentalController extends Controller
             $listing->addCustomFields($validated['custom_fields']);
         }
 
-        return redirect()->route('lessor.properties')
-            ->with('success', 'Rental listing added!');
+        // return redirect()->route('lessor.properties')
+        //     ->with('success', 'Rental listing added!');
+        return redirect()->back()->with('success', 'Rental listing added!');
     }
 
     public function update(Request $request, $id)
@@ -125,6 +126,6 @@ class RentalController extends Controller
 
         // return redirect()->route('lessor.properties')
         //     ->with('success', 'Rental listing updated!');
-         return redirect()->back()->with('success', 'Rental listing added!');
+         return redirect()->back()->with('success', 'Rental listing updated!');
     }
 }

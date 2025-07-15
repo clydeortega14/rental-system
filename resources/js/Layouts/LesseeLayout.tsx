@@ -54,7 +54,7 @@ export interface Category {
 interface RentalItem {
   id: number;
   name: string;
-  description?: string; // optional
+  description: string; // optional
   categoryId?: number;
   categoryType?: string;
   reservationAmt?: number;
@@ -92,8 +92,6 @@ interface Props extends PageProps {
   } | null;
 }
 
-
-
 interface LayoutProps {
   defaultTab?: string;
   children?: React.ReactNode;
@@ -106,6 +104,22 @@ interface Shop {
   location?: string;
   created_at?: string;
 }
+
+function normalizeRental(rental: Partial<RentalItem>): RentalItem {
+  return {
+    id: rental.id!,
+    name: rental.name!,
+    description: rental.description ?? "",
+    categoryId: rental.categoryId,
+    categoryType: rental.categoryType ?? "General",
+    reservationAmt: rental.reservationAmt ?? 0,
+    imageUrl: rental.imageUrl ?? "/placeholder.jpg",
+    shopId: rental.shopId,
+    address: rental.address,
+    customFieldAnswers: rental.customFieldAnswers ?? {},
+  };
+}
+
 
 export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
   const { bookings, headerData, isApprovedLessor, lessorApplicationStatus, shops: rawShops, auth, categories, rentals,lessorReservations,lessorDashboard } = usePage().props as unknown as Props;
@@ -205,6 +219,8 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
       // { key: "lessorReviews", label: "Reviews", icon: BiStar },
     ] : []),
   ];
+
+  
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-800 font-sans">
       <Header />
@@ -260,10 +276,6 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
             <TabsContent value="reviews" className="h-full">
               <Review reviews={lessee.reviews} />
             </TabsContent>
-            <TabsContent value="reservations" className="h-full">
-              {/* <Reservations bookings={lessee.bookings} /> */}
-              {/* <Review reviews={lessee.reviews} /> */}
-            </TabsContent>
             {/* Start Lessor Access */}
             <TabsContent value="lessorProfile" className="h-full">
               <LessorProfile />
@@ -272,7 +284,19 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
               {lessorDashboard && <LessorDashboard dashboardData={lessorDashboard} />}
             </TabsContent>
             <TabsContent value="lessorProperties" className="h-full">
-              <LessorProperties shops={shops} categories={categories} rentals={rentals} />
+           <LessorProperties
+              shops={shops}
+              categories={categories}
+              rentals={rentals.map((rental) => ({
+                ...rental,
+                categoryId: rental.categoryId ?? null,
+                shopId: rental.shopId ?? null,
+                description: rental.description ?? "",
+                categoryType: rental.categoryType ?? "General",
+                reservationAmt: rental.reservationAmt ?? 0,
+                imageUrl: rental.imageUrl ?? "/placeholder.jpg",
+              }))}
+            />
             </TabsContent>
             <TabsContent value="lessorReservations" className="h-full">
               <LessorReservations bookings={lessorReservations} />
