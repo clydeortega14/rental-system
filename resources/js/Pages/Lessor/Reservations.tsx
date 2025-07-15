@@ -1,6 +1,6 @@
 import React, { useState, ReactElement } from "react";
 import LessorLayout from "@/Layouts/LessorLayout";
-import { usePage, router } from "@inertiajs/react";
+import { router } from "@inertiajs/react";
 import { Card } from "@/Components/Lessor/ui/card";
 import { Button } from "@/Components/Lessor/ui/button";
 import {
@@ -19,7 +19,12 @@ import {
   DropdownMenuTrigger,
 } from "@/Components/Lessor/ui/dropdown-menu";
 import { CheckCircle, Clock, XCircle, MoreHorizontal } from "lucide-react";
-import { Reservation, ReservationPageProps } from "@/Pages/Lessor/types/ReservationProps";
+import { Reservation } from "@/Pages/Lessor/types/ReservationProps";
+
+// ✅ Accept props instead of usePage()
+type ReservationsProps = {
+  bookings: Reservation[];
+};
 
 const statusBadge = (status: string) => {
   const base =
@@ -50,9 +55,7 @@ const statusBadge = (status: string) => {
   );
 };
 
-function Reservations() {
-  const { reservations = [] } = usePage<ReservationPageProps>().props;
-
+function Reservations({ bookings }: ReservationsProps) {
   const [selectedRes, setSelectedRes] = useState<Reservation | null>(null);
   const [actionType, setActionType] = useState<"confirm" | "reject" | null>(null);
   const [viewingRes, setViewingRes] = useState<Reservation | null>(null);
@@ -88,13 +91,13 @@ function Reservations() {
   };
 
   const filteredReservations = filterStatus
-    ? reservations.filter((res) => res.status === filterStatus)
-    : reservations;
+    ? bookings.filter((res) => res.status === filterStatus)
+    : bookings;
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
+    <div className="space-y-6">
       <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 className="text-3xl font-bold text-orange-600">Bookings</h1>
+        <h2 className="text-2xl font-semibold text-gray-900">Bookings</h2>
 
         <select
           value={filterStatus || "ALL"}
@@ -239,5 +242,7 @@ function Reservations() {
   );
 }
 
+// ✅ Keep layout for Inertia
 Reservations.layout = (page: ReactElement) => <LessorLayout>{page}</LessorLayout>;
+
 export default Reservations;

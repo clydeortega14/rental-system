@@ -30,6 +30,8 @@ class ReservationController extends Controller
 
         $bookings = $this->booking_service->formatBookings();
 
+        dd($bookings);
+
       
         // return Inertia::render('Layouts/LesseeLayout', [
         //     'headerData' => $headersData,

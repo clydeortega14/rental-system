@@ -50,6 +50,7 @@ export interface Category {
   custom_fields: any[]; // Or use correct field type
 }
 
+
 interface RentalItem {
   id: number;
   name: string;
@@ -82,7 +83,16 @@ interface Props extends PageProps {
   };
   categories: Category[];
   rentals: RentalItem[];
+  lessorReservations: BookingDetails[];
+    lessorDashboard: {
+    lessorName: string;
+    incomeSummary: { total: number; monthly: number };
+    upcomingReservations: { property: string; date: string; lessee: string }[];
+    reservationChartData: { month: string; reservations: number }[];
+  } | null;
 }
+
+
 
 interface LayoutProps {
   defaultTab?: string;
@@ -98,9 +108,11 @@ interface Shop {
 }
 
 export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
-  const { bookings, headerData, isApprovedLessor, lessorApplicationStatus, shops: rawShops, auth, categories, rentals } = usePage().props as unknown as Props;
+  const { bookings, headerData, isApprovedLessor, lessorApplicationStatus, shops: rawShops, auth, categories, rentals,lessorReservations,lessorDashboard } = usePage().props as unknown as Props;
   const [activeTab, setActiveTab] = useState(defaultTab); 
   // const [activeTab, setActiveTab] = useState("overview");
+
+  console.log(lessorReservations)
 
   const [showLessorModal, setShowLessorModal] = useState(false);
   const recentActivities = [];
@@ -190,7 +202,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
       { key: "lessorDashboard", label: "Dashboard", icon: BiSolidDashboard },
       { key: "lessorShop", label: "Shop", icon: BiSolidUserCheck },
       { key: "lessorProperties", label: "Properties", icon: BiBuildingHouse },
-      // { key: "lessorReservations", label: "Reservations", icon: BiCalendarCheck },
+      { key: "lessorReservations", label: "Reservations", icon: BiCalendarCheck },
       // { key: "lessorInvoice", label: "Invoice", icon: BiReceipt },
       // { key: "lessorInquiries", label: "Inquiries", icon: BiMessageDetail },
       // { key: "lessorReviews", label: "Reviews", icon: BiStar },
@@ -260,13 +272,13 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
               <LessorProfile />
             </TabsContent>
             <TabsContent value="lessorDashboard" className="h-full">
-              <LessorDashboard />
+              {lessorDashboard && <LessorDashboard dashboardData={lessorDashboard} />}
             </TabsContent>
-           <TabsContent value="lessorProperties" className="h-full">
+            <TabsContent value="lessorProperties" className="h-full">
               <LessorProperties shops={shops} categories={categories} rentals={rentals} />
             </TabsContent>
             <TabsContent value="lessorReservations" className="h-full">
-              <LessorReservations />
+              <LessorReservations bookings={lessorReservations} />
             </TabsContent>
             <TabsContent value="lessorInvoice" className="h-full">
               <LessorInvoice />

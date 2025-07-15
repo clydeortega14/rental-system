@@ -8,8 +8,6 @@ import {
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
-  BarChart,
-  Bar,
 } from "recharts";
 
 type Reservation = {
@@ -29,23 +27,25 @@ type IncomeSummary = {
 };
 
 interface DashboardProps {
-  incomeSummary?: IncomeSummary;
-  upcomingReservations?: Reservation[];
-  reservationChartData?: ReservationChartData[];
-  // ratingsChartData?: RatingsChartData[];
+  dashboardData: {
+    incomeSummary: IncomeSummary;
+    upcomingReservations: Reservation[];
+    reservationChartData: ReservationChartData[];
+  };
 }
 
-const Dashboard = ({
-  incomeSummary = { total: 0, monthly: 0 },
-  upcomingReservations = [],
-  reservationChartData = [],
-  // ratingsChartData = [],
-}: DashboardProps) => {
+const Dashboard = ({ dashboardData }: DashboardProps) => {
+  const {
+    incomeSummary = { total: 0, monthly: 0 },
+    upcomingReservations = [],
+    reservationChartData = [],
+  } = dashboardData;
+
   return (
     <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6 text-orange-600">Dashboard</h1>
 
-      {/* Income Summary */}
+      {/* Income Summary & Upcoming Reservations */}
       <section className="mb-10 grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded shadow">
           <h2 className="text-xl font-semibold mb-3">Income Summary</h2>
@@ -66,7 +66,11 @@ const Dashboard = ({
                 <li key={i} className="border-b pb-2">
                   <p className="font-semibold">{res.property}</p>
                   <p className="text-gray-600 text-sm">
-                    {new Date(res.date).toLocaleDateString()}
+                    {new Date(res.date).toLocaleDateString(undefined, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
                   </p>
                   <p className="text-gray-700">{res.lessee}</p>
                 </li>
@@ -78,7 +82,7 @@ const Dashboard = ({
         </div>
       </section>
 
-      {/* Charts */}
+      {/* Reservation Chart */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div className="bg-white p-6 rounded shadow">
           <h2 className="text-xl font-semibold mb-4">Reservations (Last 6 Months)</h2>
@@ -101,7 +105,6 @@ const Dashboard = ({
             <p className="text-gray-500">No data available</p>
           )}
         </div>
-
       </section>
     </div>
   );
