@@ -99,9 +99,9 @@
 "EC2Instance": {
 "Type": "AWS::EC2::Instance",
 "Properties": {
-"ImageId": "ami-0fa377108253bf620",
+"ImageId": "ami-02c7683e4ca3ebf58",
 "InstanceType": "t2.micro",
-"KeyName": "",
+"KeyName": "renthive-keypair",
 "SubnetId": {
 "Ref": "PublicSubnet"
 },
