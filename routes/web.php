@@ -36,6 +36,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Google OAuth routes
+///
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
