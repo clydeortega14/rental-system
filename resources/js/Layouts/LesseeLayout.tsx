@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useState, useEffect } from "react";
 import { usePage } from "@inertiajs/react";
 import { PageProps } from "@/types";
 import { BookingDetails } from "@/types/rental";
+import { Reservation } from "@/Pages/Lessor/types/ReservationProps";
 import {
   LayoutDashboard,
   StarIcon,
@@ -51,7 +52,6 @@ export interface Category {
   custom_fields: any[]; // Or use correct field type
 }
 
-
 interface RentalItem {
   id: number;
   name: string;
@@ -91,6 +91,12 @@ interface Props extends PageProps {
     upcomingReservations: { property: string; date: string; lessee: string }[];
     reservationChartData: { month: string; reservations: number }[];
   } | null;
+  recentActivities: {
+    id: number;
+    message: string;
+    status: string;
+    date: string;
+  }[];
 }
 
 interface LayoutProps {
@@ -98,26 +104,21 @@ interface LayoutProps {
   children?: React.ReactNode;
 }
 
-interface Shop {
-  id: number;
-  name: string;
-  description?: string;
-  location?: string;
-  created_at?: string;
-}
-
-function normalizeRental(rental: Partial<RentalItem>): RentalItem {
+function transformBookingToReservation(booking: BookingDetails): Reservation {
   return {
-    id: rental.id!,
-    name: rental.name!,
-    description: rental.description ?? "",
-    categoryId: rental.categoryId,
-    categoryType: rental.categoryType ?? "General",
-    reservationAmt: rental.reservationAmt ?? 0,
-    imageUrl: rental.imageUrl ?? "/placeholder.jpg",
-    shopId: rental.shopId,
-    address: rental.address,
-    customFieldAnswers: rental.customFieldAnswers ?? {},
+    id: Number(booking.id) || 0,
+    guestName: booking.customerName ?? "Unknown Guest",
+    property: booking.rentalItem?.name ?? booking.itemName ?? "Unnamed",
+    imageUrl: booking.rentalItem?.imageUrl ?? "/placeholder.jpg",
+    acquire: `${booking.startDate ?? ""} ${booking.startTime ?? ""}`,
+    return: `${booking.endDate ?? ""} ${booking.endTime ?? ""}`,
+    status: booking.status,
+    location: booking.rentalItem?.location ?? "Unknown location",
+    pricePerNight: booking.totalPrice ?? 0,
+    description: booking.rentalItem?.description ?? "",
+    amenities: [], // optional
+    contactInfo: booking.customerName ?? "Unknown contact",
+    hasConflict: false // optional logic if needed
   };
 }
 
@@ -127,40 +128,13 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
   const [activeTab, setActiveTab] = useState(defaultTab); 
 
   const [showLessorModal, setShowLessorModal] = useState(false);
-  const recentActivities = [];
-
-  if (lessorApplicationStatus === "pending") {
-    recentActivities.unshift({
-      message: "You applied to become a Lessor",
-      status: "Pending",
-      date: "2025-07-08",
-    });
-  } else if (lessorApplicationStatus === "approved") {
-    recentActivities.unshift({
-      message: "You are now an approved Lessor",
-      status: "Approved",
-      date: "2025-07-08",
-    });
-  }
+  const { recentActivities } = usePage().props as unknown as Props;
 
     // Provide fallback to ensure shape
   const shops = rawShops && 'data' in rawShops
   ? rawShops
   : { data: [], current_page: 1, last_page: 1, links: [] };
 
-  recentActivities.push(
-    {
-      message: 'Booked "Mountain Cabin Retreat" for June 2025',
-      status: "Booking",
-      date: "2025-06-01",
-    },
-    {
-      message: 'Left a 5-star review for "Cozy City Apartment"',
-      status: "Review",
-      date: "2025-05-10",
-    }
-  );
-  
   const lessee = {
     name: auth.user.name,
     email: auth.user.email,
@@ -268,7 +242,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
           {/* Tab Content */}
           <Suspense fallback={<div className="text-center text-orange-600 py-10">Loading...</div>}>
            <TabsContent value="overview" className="h-full">
-              <Overview recentActivities={lessee.recentActivities} />
+              <Overview recentActivities={recentActivities} />
             </TabsContent>
             <TabsContent value="bookings" className="h-full">
               <Bookings />
@@ -302,7 +276,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
             />
             </TabsContent>
             <TabsContent value="lessorReservations" className="h-full">
-              <LessorReservations bookings={lessorReservations} />
+              <LessorReservations bookings={lessorReservations.map(transformBookingToReservation)} />
             </TabsContent>
             <TabsContent value="lessorInvoice" className="h-full">
               <LessorInvoice />
@@ -329,7 +303,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
           onClose={() => setShowLessorModal(false)}
           onProceed={() => {
             setShowLessorModal(false);
-            setActiveTab("lessor"); // Open the lessor tab
+            setActiveTab("lessor");
           }}
           submitForm={auth.user.submitForm}
         />

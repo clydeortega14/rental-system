@@ -90,6 +90,8 @@ function Shop({
     brgy_name: string;
   };
 
+  
+
   useEffect(() => {
     // Initial region list
     regions().then((regions: Region[]) => {
@@ -155,31 +157,10 @@ function Shop({
       setData("barangay", e.target.value);
     };
 
-
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   // Now submit
-  //   if (editingShopId) {
-  //     put(route("lessor.shop.update", { shop: editingShopId }), {
-  //       onSuccess: () => {
-  //         setEditingShopId(null);
-  //         reset();
-  //         setShowModal(false);
-  //       },
-  //     });
-  //   } else {
-  //     post(route("lessor.shop.store"), {
-  //       onSuccess: () => {
-  //         reset();
-  //         setShowModal(false);
-  //       },
-  //     });
-  //   }
-  // };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    console.log(editingShopId)
 
     const toastOptions = {
       toast: true,
@@ -232,12 +213,47 @@ function Shop({
   };
 
   const handleEdit = (shop: Shop) => {
+    const locationParts = (shop.location || "").split(",").map(part => part.trim());
+    const [barangay, city, province, region] = locationParts;
+
     setEditingShopId(shop.id);
     setData({
       name: shop.name || "",
       description: shop.description || "",
       location: shop.location || "",
+      region: region || "",
+      province: province || "",
+      city: city || "",
+      barangay: barangay || "",
     });
+
+    const selectedRegionObj = regionList.find((r: Region) => r.region_name === region);
+    if (selectedRegionObj) {
+      setSelectedRegion(selectedRegionObj.region_code);
+
+      provinces(selectedRegionObj.region_code).then((provs: Province[]) => {
+        setProvList(provs);
+
+        const selectedProv = provs.find((p: Province) => p.province_name === province);
+        if (selectedProv) {
+          setSelectedProvince(selectedProv.province_code);
+
+          cities(selectedProv.province_code).then((cityData: City[]) => {
+            setCityList(cityData);
+
+            const selectedCity = cityData.find((c: City) => c.city_name === city);
+            if (selectedCity) {
+              setSelectedCity(selectedCity.city_code);
+
+              barangays(selectedCity.city_code).then((brgyData: Barangay[]) => {
+                setBrgyList(brgyData);
+              });
+            }
+          });
+        }
+      });
+    }
+
     setShowModal(true);
   };
 
@@ -499,6 +515,6 @@ function Shop({
   );
 }
 
-Shop.layout = (page) => <LessorLayout>{page}</LessorLayout>;
+// Shop.layout = (page) => <LessorLayout>{page}</LessorLayout>;
 
 export default Shop;

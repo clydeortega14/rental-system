@@ -17,6 +17,7 @@ use App\Services\Category\CategoryService;
 use App\Services\RentalItem\RentalItemService;
 use App\Models\RentalAddItem as RentalListing;
 use App\Models\Shop;
+use App\Models\RecentActivity;
 
 
 use Illuminate\Support\Facades\DB;
@@ -110,9 +111,11 @@ class LesseeController extends Controller
                 'custom_fields' => $category->custom_fields, // Must exist
             ];
         });
-        $bookings = $this->booking_service->formatBookings();
+        $bookings = $this->booking_service->getBookingsByUser(auth()->id());
+
         $lessorReservations = $this->getLessorReservations($user->id);
         $lessorDashboard = $this->getLessorDashboardData($user->id);
+        $recentActivities = $this->getRecentActivities($user->id);
        
         return Inertia::render('Lessee/Landing', [
             'auth' => [
@@ -126,7 +129,8 @@ class LesseeController extends Controller
             'lessorDashboard' => $lessorDashboard,
             'shops' => $shops,
             'categories' => $categories,
-            'rentals' => $rentals, // ✅ Send rentals to frontend
+            'rentals' => $rentals,
+            'recentActivities' => $recentActivities,
         ]);
     }
 
@@ -240,6 +244,12 @@ class LesseeController extends Controller
             ]
         );
 
+        RecentActivity::create([
+            'user_id' => $userId,
+            'message' => 'You applied to become a Lessor',
+            'status' => '1',
+        ]);
+
         return back()->with('success', 'Company information has been saved.');
     }
 
@@ -340,5 +350,21 @@ class LesseeController extends Controller
             'upcomingReservations' => $upcoming,
             'reservationChartData' => $chartData,
         ];
+    }
+
+    private function getRecentActivities($userId)
+    {
+        return RecentActivity::where('user_id', $userId)
+            ->latest()
+            ->take(10)
+            ->get()
+            ->map(function ($activity) {
+                return [
+                    'id' => $activity->id,
+                    'message' => $activity->message,
+                    'status' => $activity->status,
+                    'date' => $activity->created_at->format('Y-m-d'),
+                ];
+            });
     }
 }

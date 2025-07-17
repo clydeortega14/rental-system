@@ -10,6 +10,7 @@ use App\Services\BookingService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Traits\DateHelpers;
 use App\Models\Booking;
+use App\Models\RecentActivity;
 
 class BookingController extends Controller
 {
@@ -62,7 +63,7 @@ class BookingController extends Controller
 
     public function checkOutBooking(Request $request)
     {
-        
+
         if(!$request->session()->has('booking_data')) return;
         // validate checkout inputs
         // $request->validate([
@@ -142,6 +143,13 @@ class BookingController extends Controller
                 );
             } 
         });
+
+        RecentActivity::create([
+            'user_id' => $request->user()->id,
+            'message' => 'You booked a rental item successfully.',
+            'status' => '1',
+        ]);
+
         
         // sending emails to users
 

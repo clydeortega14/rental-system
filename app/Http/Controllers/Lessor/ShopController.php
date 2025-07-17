@@ -70,13 +70,33 @@ class ShopController extends Controller
 
     public function update(Request $request, Shop $shop)
     {
-        $validated = $request->validate([
+
+         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'location' => 'nullable|string|max:255',
+            'region' => 'nullable|string',
+            'province' => 'nullable|string',
+            'city' => 'nullable|string',
+            'barangay' => 'nullable|string',
         ]);
 
-        $shop->update($validated);
+        // Combine the full location string from parts
+        $locationParts = [
+            $validated['barangay'] ?? null,
+            $validated['city'] ?? null,
+            $validated['province'] ?? null,
+            $validated['region'] ?? null,
+        ];
+
+        $fullLocation = implode(', ', array_filter($locationParts));
+
+        $data = [
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+            'location' => $fullLocation,
+        ];
+
+        $shop->update($data);
 
         return redirect()->back()->with('success', 'Shop updated successfully!');
     }
