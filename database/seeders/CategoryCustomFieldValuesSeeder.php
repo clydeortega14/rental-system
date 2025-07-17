@@ -29,19 +29,19 @@ class CategoryCustomFieldValuesSeeder extends Seeder
 
     protected function createRentalItem(User $user, Category $category, array $data): void
     {
-        $item = RentalAddItem::firstOrCreate([
-            'itemName'    => $data['itemName'],
-            'description' => $data['description'],
-            'user_id'     => $user->id,
-            'company_id'  => $user->company->id,
-            'category_id' => $category->id,
-            'price'       => $data['price'],
-            'quantity'    => $data['quantity'] ?? 1,
-        ]);
+        // $item = RentalAddItem::firstOrCreate([
+        //     'itemName'    => $data['itemName'],
+        //     'description' => $data['description'],
+        //     'user_id'     => $user->id,
+        //     'company_id'  => $user->company->id,
+        //     'category_id' => $category->id,
+        //     'price'       => $data['price'],
+        //     'quantity'    => $data['quantity'] ?? 1,
+        // ]);
 
-        if (!empty($data['custom_fields'])) {
-            $item->addCustomFields($data['custom_fields']);
-        }
+        // if (!empty($data['custom_fields'])) {
+        //     $item->addCustomFields($data['custom_fields']);
+        // }
     }
 
     protected function carRentalData(): array
