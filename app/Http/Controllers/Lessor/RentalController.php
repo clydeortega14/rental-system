@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\RentalAddItem as RentalListing;
 use App\Models\Category;
-use App\Models\Shop;
 use App\Models\Lessor;
 
 class RentalController extends Controller
@@ -26,7 +25,7 @@ class RentalController extends Controller
 
         $rentals = RentalListing::where('user_id', $lessor->user->id)->get();
 
-        $shops = Shop::whereHas('lessor')->get(['id', 'name']);
+        $shops = $lessor->shops()->get(['id', 'name']);
 
         $mappedRentals = $rentals->map(function ($rental) use ($categories, $shops) {
             return [
