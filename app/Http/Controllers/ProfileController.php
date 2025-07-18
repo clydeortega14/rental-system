@@ -29,6 +29,16 @@ class ProfileController extends Controller
     }
 
     /**
+     * Fetch user kyc exists.
+     */
+    public function showKYC(Request $request)
+    {
+        $kyc = $request->user()->kyc;
+
+        return response()->json($kyc);
+    }
+
+    /**
      * Store user kyc for verification.
      */
     public function userKYC(Request $request): RedirectResponse
