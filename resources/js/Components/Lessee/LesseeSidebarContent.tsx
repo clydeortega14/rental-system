@@ -2,7 +2,6 @@ import {
   BiSearch,
   BiFile,
   BiCalendar,
-  BiLinkAlt,
   BiSolidUserCheck,
   BiLockOpen,
   BiSolidDashboard,
@@ -11,7 +10,10 @@ import {
   BiReceipt,
   BiMessageDetail,
   BiStar,
+  BiSolidStore,
   BiUserCircle,
+  BiCalendarEvent,
+  BiCog 
 } from "react-icons/bi";
 
 import { useState } from "react";
@@ -42,7 +44,7 @@ export default function LesseeSidebarContent({
       items: [
         { key: "overview", label: "Overview", icon: <BiFile size={18} /> },
         { key: "bookings", label: "Bookings", icon: <BiCalendar size={18} /> },
-        { key: "reviews", label: "Reviews", icon: <BiLinkAlt size={18} /> },
+        { key: "reviews", label: "Reviews", icon: <BiCalendarEvent size={18} /> },
       ],
     },
     ...(!isApprovedLessor
@@ -61,12 +63,14 @@ export default function LesseeSidebarContent({
             section: "Lessor Access",
             items: [
                 { key: "lessorDashboard", label: "Dashboard Lessor", icon: <BiSolidDashboard size={18} /> },
+                { key: "lessorShop", label: "Shop", icon: <BiSolidStore size={18} /> },
                 { key: "lessorProperties", label: "Properties", icon: <BiBuildingHouse size={18} /> },
                 { key: "lessorReservations", label: "Reservations", icon: <BiCalendarCheck size={18} /> },
+                //ongoing --- need backend and ui-----
                 { key: "lessorInvoice", label: "Invoice", icon: <BiReceipt size={18} /> },
                 { key: "lessorInquiries", label: "Inquiries", icon: <BiMessageDetail size={18} /> },
-                { key: "lessorReviews", label: "Reviews", icon: <BiStar size={18} /> },
-                { key: "lessorReviews", label: "Profile", icon: <BiUserCircle size={18} /> },
+                { key: "LessorReviews", label: "Reviews", icon: <BiStar size={18} /> },
+                { key: "lessorProfile", label: "Account Settings", icon: <BiCog size={18} /> },
             ],
           },
         ]

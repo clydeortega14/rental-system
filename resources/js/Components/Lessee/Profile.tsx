@@ -1,6 +1,6 @@
 import React from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/Components/Lessee/ui/avatar";
-import { Star } from "lucide-react";
+import { Star, StarHalf, StarOff } from "lucide-react";
 
 interface ProfileProps {
   lessee: {
@@ -8,55 +8,70 @@ interface ProfileProps {
     email: string;
     phone: string;
     image: string;
-    rating: number;
+    rating: number; // Ex: 4.5
     joined: string;
   };
-  /** Optional: controls layout mode, 'sidebar' (default) or 'header' (mobile) */
   layout?: "sidebar" | "header";
 }
 
 const Profile: React.FC<ProfileProps> = ({ lessee, layout = "sidebar" }) => {
   const isSidebar = layout === "sidebar";
 
+  // Create star array based on rating
+  const renderStars = (rating: number) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const totalStars = 5;
+
+    return (
+      <div className="flex items-center gap-0.5 text-orange-500">
+        {[...Array(fullStars)].map((_, idx) => (
+          <Star key={`full-${idx}`} className="w-4 h-4 fill-orange-500" />
+        ))}
+        {hasHalfStar && <StarHalf className="w-4 h-4 fill-orange-500" />}
+        {[...Array(totalStars - fullStars - (hasHalfStar ? 1 : 0))].map((_, idx) => (
+          <StarOff key={`empty-${idx}`} className="w-4 h-4 text-gray-300" />
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div
-      className={`flex flex-col items-center ${
-        isSidebar ? "space-y-6 p-8" : "space-y-3 p-4"
-      } bg-white rounded-md shadow-sm`}
+      className={`bg-white rounded-xl shadow-md transition-all duration-200 
+        ${isSidebar ? "p-6 space-y-6" : "p-4 space-y-4 flex items-center gap-4"}`}
     >
-      <Avatar
-        className={isSidebar ? "w-32 h-32" : "w-20 h-20"}
-      >
-        <AvatarImage src={lessee.image} alt={lessee.name} />
-        <AvatarFallback>{lessee.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-      </Avatar>
+      {isSidebar ? (
+        <div className="flex justify-center">
+          <Avatar className="w-24 h-24 rounded-full">
+            <AvatarImage src={lessee.image} alt={lessee.name} />
+            <AvatarFallback>{lessee.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+          </Avatar>
+        </div>
+      ) : (
+        <Avatar className="w-16 h-16 rounded-full">
+          <AvatarImage src={lessee.image} alt={lessee.name} />
+          <AvatarFallback>{lessee.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+        </Avatar>
+      )}
 
-      <div className={`text-center ${isSidebar ? "text-lg" : "text-sm"}`}>
-        <h2 className={`font-bold ${isSidebar ? "text-2xl" : "text-lg"} text-black`}>
+      <div className={`${isSidebar ? "text-center" : "flex-1"}`}>
+        <h2 className={`font-semibold ${isSidebar ? "text-xl" : "text-base"} text-gray-800`}>
           {lessee.name}
         </h2>
-        <p className="text-gray-600">{lessee.email}</p>
-        <p className="text-gray-600">{lessee.phone}</p>
-        <p className="text-gray-500 mt-1">{`Joined ${lessee.joined}`}</p>
+        <p className="text-sm text-gray-500">{lessee.email}</p>
+        <p className="text-sm text-gray-500">{lessee.phone}</p>
+        <p className="text-xs text-gray-400 mt-1">{`Joined ${lessee.joined}`}</p>
       </div>
 
       <div
-        className={`flex items-center justify-center gap-3 ${
-          isSidebar ? "mt-auto p-4 border border-orange-300 rounded-md" : "mt-2 p-2 border border-orange-200 rounded-md"
-        } bg-white shadow-sm`}
+        className={`flex items-center gap-1 rounded-lg border border-orange-300 bg-orange-50 px-3 py-2
+          ${isSidebar ? "justify-center" : "ml-auto"}`}
       >
-        <Star className={`text-orange-500 ${isSidebar ? "w-7 h-7" : "w-5 h-5"}`} />
-        <div className="text-center">
-          <p
-            className={`font-semibold text-orange-600 ${
-              isSidebar ? "text-3xl" : "text-xl"
-            }`}
-          >
-            {lessee.rating.toFixed(1)}
-          </p>
-          <p className={`text-gray-500 ${isSidebar ? "text-sm" : "text-xs"}`}>
-            Overall Rating
-          </p>
+        <div className="flex items-center gap-1 text-orange-500">
+          {renderStars(lessee.rating)}
+          <span className="font-bold text-sm text-orange-600">{lessee.rating.toFixed(1)}</span>
+          <span className="font-bold text-sm text-orange-600">Nice!</span>
         </div>
       </div>
     </div>

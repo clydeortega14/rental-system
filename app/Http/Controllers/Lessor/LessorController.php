@@ -64,4 +64,13 @@ class LessorController extends Controller
         ]);
 
     }
+    public function markActivityAsRead($id)
+    {
+        $activity = \App\Models\RecentActivity::find($id);
+
+        if ($activity) {
+            $activity->status = 0; // mark as read/closed
+            $activity->save();
+        }
+    }
 }

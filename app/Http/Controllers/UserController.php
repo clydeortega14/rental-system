@@ -58,7 +58,7 @@ class UserController extends Controller
             $this->createUserContact($user, $request->only(['telephone', 'mobile']));
         }
 
-        return redirect()->route('dashboard');
+        return redirect()->route('lessee.profile');
     }
 
     public function addItem(RentalAddItem $rentalAdd, Request $request): RedirectResponse

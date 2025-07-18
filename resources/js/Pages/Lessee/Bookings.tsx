@@ -6,6 +6,7 @@ import Button from "@/Components/Renter/ui/Button";
 import SecondaryButton from "@/Components/SecondaryButton";
 import { BookingDetails } from "@/types/rental";
 import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
+import { BiCalendar } from "react-icons/bi";
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
     case "confirmed":
@@ -49,9 +50,11 @@ export default function Bookings() {
   });
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-gray-900">Reservations</h2>
-
+    <div className="max-w-8xl mx-auto p-6 space-y-6">
+      <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
+        <BiCalendar className="w-6 h-6 text-orange-500 mr-2" />
+        Reservations
+      </h1>
       {/* Tabs */}
       <div className="flex gap-4 border-b pb-2">
         {["Upcoming", "Past", "All"].map((tab) => (

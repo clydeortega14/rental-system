@@ -1,54 +1,276 @@
-import React, { useState, ReactElement } from "react";
+import React, { useState,useEffect } from "react";
 import { useForm, usePage } from "@inertiajs/react";
-import { ShopProps, Shop, FormData } from "@/Pages/Lessor/types/ShopProps";
+// import { route } from "ziggy-js";
 import LessorLayout from "@/Layouts/LessorLayout";
+import Modal from "@/Components/Modal"; // Make sure this path is correct
+import {
+  regions,
+  provinces,
+  cities,
+  barangays,
+} from "select-philippines-address";
+import Swal from "sweetalert2";
+import { Link } from "@inertiajs/react";
+import {
+  BiSolidStore,
+} from "react-icons/bi";
 
-function ShopPage() {
-  const { shops = [], flash, errors } = usePage<ShopProps>().props;
+
+interface Shop {
+  id: number;
+  name: string;
+  description?: string;
+  location?: string;
+  created_at?: string;
+  logo_url?: string; // ← optional logo image
+}
+
+interface ShopProps {
+  shops: {
+    data: Shop[];
+    current_page: number;
+    last_page: number;
+    links: {
+      url: string | null;
+      label: string;
+      active: boolean;
+    }[];
+  };
+}
+function Shop({
+  shops = {
+    data: [],
+    current_page: 1,
+    last_page: 1,
+    links: [],
+  },
+}: ShopProps) {
   const [editingShopId, setEditingShopId] = useState<number | null>(null);
-
-  const { data, setData, post, put, reset, processing } = useForm<FormData>({
+  const [showModal, setShowModal] = useState(false); // ✅ modal toggle
+ 
+  const { data, setData, post, put, reset, processing, errors } = useForm({
     name: "",
     description: "",
     location: "",
+    region: "",
+    province: "",
+    city: "",
+    barangay: "",
   });
+  const { props } = usePage();
+  const flash = props.flash as { success?: string };
+
+   // Address dependencies
+  const [regionList, setRegionList] = useState<any[]>([]);
+  const [provList, setProvList] = useState<any[]>([]);
+  const [cityList, setCityList] = useState<any[]>([]);
+  const [brgyList, setBrgyList] = useState<any[]>([]);
+
+  const [selectedRegion, setSelectedRegion] = useState("");
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+
+  type Region = {
+    region_code: string;
+    region_name: string;
+  };
+
+  type Province = {
+    province_code: string;
+    province_name: string;
+  };
+
+  type City = {
+    city_code: string;
+    city_name: string;
+  };
+
+  type Barangay = {
+    brgy_code: string;
+    brgy_name: string;
+  };
+
+  
+
+  useEffect(() => {
+    // Initial region list
+    regions().then((regions: Region[]) => {
+    setRegionList(regions);
+  });
+  }, []);
+    const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const regionCode = e.target.value;
+      setSelectedRegion(regionCode);
+      setProvList([]);
+      setCityList([]);
+      setBrgyList([]);
+      setData("region", ""); // reset
+      setData("province", "");
+      setData("city", "");
+      setData("barangay", "");
+  
+      // Fetch provinces
+       provinces(regionCode).then((prov: Province[]) => {
+        setProvList(prov);
+  
+        const selectedRegionObj = regionList.find(r => r.region_code === regionCode);
+        setData("region", selectedRegionObj?.region_name || "");
+      });
+    };
+  
+    const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const provinceCode = e.target.value;
+      setSelectedProvince(provinceCode);
+      setCityList([]);
+      setBrgyList([]);
+      setData("province", "");
+      setData("city", "");
+      setData("barangay", "");
+  
+      cities(provinceCode).then((cityList: City[]) => {
+        setCityList(cityList);
+  
+        // Set province name and state
+        const selectedProv = provList.find(p => p.province_code === provinceCode);
+        const name = selectedProv?.province_name || "";
+        setData("province", name);
+      });
+    };
+  
+  
+    const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const cityCode = e.target.value;
+      setSelectedCity(cityCode);
+      setBrgyList([]);
+      setData("city", "");
+      setData("barangay", "");
+  
+      barangays(cityCode).then((brgys: { brgy_code: string; brgy_name: string }[]) => {
+        setBrgyList(brgys);
+  
+        const selectedCity = cityList.find(c => c.city_code === cityCode);
+        setData("city", selectedCity?.city_name || "");
+      });
+    };
+  
+    const handleBarangayChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setData("barangay", e.target.value);
+    };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log(editingShopId)
+
+    const toastOptions = {
+      toast: true,
+      position: "top-end" as const,
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+    };
+
     if (editingShopId) {
       put(route("lessor.shop.update", { shop: editingShopId }), {
         onSuccess: () => {
+          Swal.fire({
+            ...toastOptions,
+            icon: "success",
+            title: "Shop updated successfully!",
+          });
           setEditingShopId(null);
           reset();
+          setShowModal(false);
+        },
+        onError: () => {
+          Swal.fire({
+            ...toastOptions,
+            icon: "error",
+            title: "Update failed. Please check your form.",
+          });
         },
       });
     } else {
       post(route("lessor.shop.store"), {
-        onSuccess: () => reset(),
+        onSuccess: () => {
+          Swal.fire({
+            ...toastOptions,
+            icon: "success",
+            title: "Shop created successfully!",
+          });
+          reset();
+          setShowModal(false);
+        },
+        onError: () => {
+          Swal.fire({
+            ...toastOptions,
+            icon: "error",
+            title: "Creation failed. Please check your form.",
+          });
+        },
       });
     }
   };
 
   const handleEdit = (shop: Shop) => {
+    const locationParts = (shop.location || "").split(",").map(part => part.trim());
+    const [barangay, city, province, region] = locationParts;
+
     setEditingShopId(shop.id);
     setData({
       name: shop.name || "",
       description: shop.description || "",
       location: shop.location || "",
+      region: region || "",
+      province: province || "",
+      city: city || "",
+      barangay: barangay || "",
     });
+
+    const selectedRegionObj = regionList.find((r: Region) => r.region_name === region);
+    if (selectedRegionObj) {
+      setSelectedRegion(selectedRegionObj.region_code);
+
+      provinces(selectedRegionObj.region_code).then((provs: Province[]) => {
+        setProvList(provs);
+
+        const selectedProv = provs.find((p: Province) => p.province_name === province);
+        if (selectedProv) {
+          setSelectedProvince(selectedProv.province_code);
+
+          cities(selectedProv.province_code).then((cityData: City[]) => {
+            setCityList(cityData);
+
+            const selectedCity = cityData.find((c: City) => c.city_name === city);
+            if (selectedCity) {
+              setSelectedCity(selectedCity.city_code);
+
+              barangays(selectedCity.city_code).then((brgyData: Barangay[]) => {
+                setBrgyList(brgyData);
+              });
+            }
+          });
+        }
+      });
+    }
+
+    setShowModal(true);
   };
 
   const cancelEdit = () => {
     setEditingShopId(null);
     reset();
+    setShowModal(false);
   };
 
+
+
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h2 className="text-3xl font-bold mb-6 text-orange-700">
-        {editingShopId ? "Edit Shop" : "Shop Settings"}
-      </h2>
+    <div className="max-w-8xl mx-auto p-6">
+      <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
+        <BiSolidStore className="w-6 h-6 text-orange-500 mr-2" />
+        Shops
+      </h1>
 
       {flash?.success && (
         <div className="bg-green-100 border border-green-300 text-green-800 p-3 rounded mb-4">
@@ -56,60 +278,229 @@ function ShopPage() {
         </div>
       )}
 
-      {errors?.form && (
-        <div className="bg-red-100 border border-red-300 text-red-700 p-3 rounded mb-4">
-          {errors.form}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded shadow">
-        <div>
-          <label className="block font-medium text-gray-700">Shop Name</label>
-          <input
-            type="text"
-            value={data.name}
-            onChange={(e) => setData("name", e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-          {errors?.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-        </div>
-
-        <div>
-          <label className="block font-medium text-gray-700">Description</label>
-          <textarea
-            value={data.description}
-            onChange={(e) => setData("description", e.target.value)}
-            className="w-full p-2 border rounded"
-            rows={3}
-          />
-          {errors?.description && (
-            <p className="text-red-500 text-sm mt-1">{errors.description}</p>
-          )}
+      {/* Grid of Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Add Shop Card */}
+        <div
+          onClick={() => {
+            reset(); // reset form before opening
+            setEditingShopId(null);
+            setShowModal(true);
+          }}
+          className="cursor-pointer border-2 border-dashed border-orange-400 hover:border-orange-600 flex items-center justify-center rounded-lg h-40 text-orange-600 hover:text-orange-800 transition-all"
+        >
+          <div className="flex flex-col items-center">
+            <span className="text-4xl">＋</span>
+            <span className="mt-2 font-medium">Add Shop</span>
+          </div>
         </div>
 
-        <div>
-          <label className="block font-medium text-gray-700">Location</label>
-          <input
-            type="text"
-            value={data.location}
-            onChange={(e) => setData("location", e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-          {errors?.location && (
-            <p className="text-red-500 text-sm mt-1">{errors.location}</p>
-          )}
-        </div>
-
-        <div className="flex items-center gap-4">
-          <button
-            type="submit"
-            className="bg-orange-600 text-white px-5 py-2 rounded hover:bg-orange-700"
-            disabled={processing}
+        {/* Existing Shop Cards */}
+        {shops.data.map((shop) => (
+          <div
+            key={shop.id}
+            className="bg-white shadow-md rounded-lg p-6 space-y-2 border border-gray-200"
           >
-            {processing ? "Saving..." : editingShopId ? "Update Shop" : "Save Shop"}
-          </button>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                {shop.logo_url ? (
+                  <img
+                    src={shop.logo_url}
+                    alt={shop.name}
+                    className="w-10 h-10 rounded-full object-cover border border-orange-300"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-700 font-bold text-lg">
+                    {shop.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <h4 className="text-xl font-bold text-orange-600">{shop.name}</h4>
+              </div>
+              <button
+                onClick={() => handleEdit(shop)}
+                className="text-sm text-blue-600 hover:underline"
+              >
+                Edit
+              </button>
+            </div>
+            <p className="text-gray-700 whitespace-pre-wrap">
+              {shop.description || "No description provided."}
+            </p>
+            <p className="text-gray-500 text-sm">&#x1F4CD; {shop.location || "No location"}</p>
+            <p className="text-gray-400 text-xs">
+              Created:{" "}
+              {shop.created_at
+                ? new Date(shop.created_at).toLocaleDateString()
+                : "—"}
+            </p>
+          </div>
+        ))}
+      </div>
+      {/* Pagination Centered Below */}
+      {/* {shops.links.length > 3 && (
+        <div className="mt-6 flex justify-center">
+          <div className="flex gap-2">
+            {shops.links.map((link, index) =>
+              link.url ? (
+                <Link
+                  key={index}
+                   href={route('lessee.profile')}
+                  preserveScroll
+                  preserveState
+                  replace // ✅ Don't change the URL
+                  className={`px-4 py-2 rounded text-sm transition-colors ${
+                    link.active
+                      ? "bg-orange-600 text-white"
+                      : "bg-gray-200 text-gray-800 hover:bg-orange-400"
+                  }`}
+                  dangerouslySetInnerHTML={{ __html: link.label }}
+                />
+              ) : (
+                <span
+                  key={index}
+                  className="px-4 py-2 rounded text-sm bg-gray-100 text-gray-400"
+                  dangerouslySetInnerHTML={{ __html: link.label }}
+                />
+              )
+            )}
+          </div>
+        </div>
+      )} */}
 
-          {editingShopId && (
+      {/* Modal Form */}
+      <Modal show={showModal} onClose={cancelEdit}>
+        <form onSubmit={handleSubmit} className="space-y-6 p-6">
+          <h2 className="text-xl font-semibold text-orange-700">
+            {editingShopId ? "Edit Shop" : "Create Shop"}
+          </h2>
+
+          <div>
+            <label className="block font-medium text-gray-700">Shop Name</label>
+            <input
+              type="text"
+              value={data.name}
+              onChange={(e) => setData("name", e.target.value)}
+              className="w-full p-2 border rounded"
+            />
+            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+          </div>
+
+          <div>
+            <label className="block font-medium text-gray-700">Description</label>
+            <textarea
+              value={data.description}
+              onChange={(e) => setData("description", e.target.value)}
+              className="w-full p-2 border rounded"
+              rows={3}
+            />
+            {errors.description && (
+              <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+            )}
+          </div>
+
+          {/* <div>
+            <label className="block font-medium text-gray-700">Location</label>
+            <input
+              type="text"
+              value={data.location}
+              onChange={(e) => setData("location", e.target.value)}
+              className="w-full p-2 border rounded"
+            />
+            {errors.location && (
+              <p className="text-red-500 text-sm mt-1">{errors.location}</p>
+            )}
+          </div> */}
+
+          {/* Location Selects */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Region */}
+            <div>
+              <label className="block font-medium text-gray-700">Region</label>
+              <select
+                value={selectedRegion}
+                onChange={handleRegionChange}
+                className="w-full p-2 border rounded"
+                required
+              >
+                <option value="">Select Region</option>
+                {regionList.map((region) => (
+                  <option key={region.region_code} value={region.region_code}>
+                    {region.region_name}
+                  </option>
+                ))}
+              </select>
+              {errors.region && <p className="text-red-500 text-sm mt-1">{errors.region}</p>}
+            </div>
+
+            {/* Province */}
+            <div>
+              <label className="block font-medium text-gray-700">Province</label>
+              <select
+                value={selectedProvince}
+                onChange={handleProvinceChange}
+                className="w-full p-2 border rounded"
+                required
+                disabled={!provList.length}
+              >
+                <option value="">Select Province</option>
+                {provList.map((prov) => (
+                  <option key={prov.province_code} value={prov.province_code}>
+                    {prov.province_name}
+                  </option>
+                ))}
+              </select>
+              {errors.province && <p className="text-red-500 text-sm mt-1">{errors.province}</p>}
+            </div>
+
+            {/* City */}
+            <div>
+              <label className="block font-medium text-gray-700">City</label>
+              <select
+                value={selectedCity}
+                onChange={handleCityChange}
+                className="w-full p-2 border rounded"
+                required
+                disabled={!cityList.length}
+              >
+                <option value="">Select City</option>
+                {cityList.map((city) => (
+                  <option key={city.city_code} value={city.city_code}>
+                    {city.city_name}
+                  </option>
+                ))}
+              </select>
+              {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
+            </div>
+
+            {/* Barangay */}
+            <div>
+              <label className="block font-medium text-gray-700">Barangay</label>
+              <select
+                onChange={handleBarangayChange}
+                className="w-full p-2 border rounded"
+                required
+                disabled={!brgyList.length}
+                value={data.barangay || ""}
+              >
+                <option value="">Select Barangay</option>
+                {brgyList.map((brgy) => (
+                  <option key={brgy.brgy_code} value={brgy.brgy_name}>
+                    {brgy.brgy_name}
+                  </option>
+                ))}
+              </select>
+              {errors.barangay && <p className="text-red-500 text-sm mt-1">{errors.barangay}</p>}
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <button
+              type="submit"
+              className="bg-orange-600 text-white px-5 py-2 rounded hover:bg-orange-700"
+              disabled={processing}
+            >
+              {processing ? "Saving..." : editingShopId ? "Update Shop" : "Save Shop"}
+            </button>
+
             <button
               type="button"
               onClick={cancelEdit}
@@ -117,53 +508,13 @@ function ShopPage() {
             >
               Cancel
             </button>
-          )}
-        </div>
-      </form>
-
-      {shops.length > 0 ? (
-        <div className="mt-10">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Your Shop Listings</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {shops.map((shop) => (
-              <div
-                key={shop.id}
-                className="bg-white shadow-md rounded-lg p-6 space-y-2 border border-gray-200"
-              >
-                <div className="flex justify-between items-center">
-                  <h4 className="text-xl font-bold text-orange-600">{shop.name}</h4>
-                  <button
-                    onClick={() => handleEdit(shop)}
-                    className="text-sm text-blue-600 hover:underline"
-                  >
-                    Edit
-                  </button>
-                </div>
-                <p className="text-gray-700 whitespace-pre-wrap">
-                  {shop.description || "No description provided."}
-                </p>
-                <p className="text-gray-500 text-sm">
-                  📍 {shop.location || "No location"}
-                </p>
-                <p className="text-gray-400 text-xs">
-                  Created:{" "}
-                  {shop.created_at
-                    ? new Date(shop.created_at).toLocaleDateString()
-                    : "—"}
-                </p>
-              </div>
-            ))}
           </div>
-        </div>
-      ) : (
-        <div className="mt-10 text-gray-600 text-center">
-          You haven’t created any shops yet.
-        </div>
-      )}
+        </form>
+      </Modal>
     </div>
   );
 }
 
-ShopPage.layout = (page: ReactElement) => <LessorLayout>{page}</LessorLayout>;
+// Shop.layout = (page) => <LessorLayout>{page}</LessorLayout>;
 
-export default ShopPage;
+export default Shop;

@@ -4,6 +4,7 @@
     "scripts": {
         "postinstall": "patch-package",
         "dev": "vite",
+        "check": "tsc",
         "build": "tsc && vite build",
         "updates": "updates"
     },

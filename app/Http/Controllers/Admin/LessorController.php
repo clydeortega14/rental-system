@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Models\LessorApplication;
 use App\Models\Lessor;
+use App\Models\RecentActivity;
 
 class LessorController extends Controller
 {
@@ -97,6 +98,12 @@ class LessorController extends Controller
                 'approved_at' => $now,
             ]
         );
+
+        RecentActivity::create([
+            'user_id' => $user->id,
+            'message' => 'Your lessor application has been approved.',
+            'status' => 1,
+        ]);
 
         return back()->with('success', 'Application approved successfully!');
     }
