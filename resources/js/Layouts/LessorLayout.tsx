@@ -29,7 +29,7 @@ export default function LessorLayout({ children }: LessorLayoutProps) {
                   // { label: "Invoice", routeName: "lessor.invoices" },
                   // { label: "Inquiries", routeName: "lessor.inquiries" },
                   // { label: "Reviews", routeName: "lessor.reviews" },
-                  // { label: "Profile", routeName: "lessor.profile" },
+                  { label: "Profile", routeName: "user.profile" },
                 ].map(({ label, routeName }) => (
                   <Link
                     key={label}
