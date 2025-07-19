@@ -296,7 +296,7 @@ function Shop({
         </div>
 
         {/* Existing Shop Cards */}
-        {shops.data.map((shop) => (
+        {(shops?.data || []).map((shop) => (
           <div
             key={shop.id}
             className="bg-white shadow-md rounded-lg p-6 space-y-2 border border-gray-200"

@@ -31,7 +31,7 @@ const Profile = () => {
   const closeModal = (type: keyof typeof modals) =>
     setModals((prev) => ({ ...prev, [type]: false }));
 
-  const [userKyc, setUserKyc] = useState<User["kyc"] | null>(user.kyc ?? null);
+  const [userKyc, setUserKyc] = useState<User["kyc"] | null>(user?.kyc ?? null);
 
   const fetchKyc = async () => {
     try {
@@ -69,7 +69,7 @@ const Profile = () => {
     });
   };
 
-  const kycStatus = userKyc?.kyc_status ?? user.kyc?.kyc_status;
+  const kycStatus = userKyc?.kyc_status ?? user?.kyc?.kyc_status;
 
   const kycStatusDisplayMap: Record<
     string,
@@ -95,19 +95,19 @@ const Profile = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700">
           <div>
             <p className="text-gray-500">Full Name</p>
-            <p className="font-medium">{user.name}</p>
+            <p className="font-medium">{user?.name}</p>
           </div>
           <div>
             <p className="text-gray-500">Email Address</p>
-            <p className="font-medium">{user.email}</p>
+            <p className="font-medium">{user?.email}</p>
           </div>
           <div>
             <p className="text-gray-500">Phone Number</p>
-            <p className="font-medium">{user.contact?.mobile ?? "—"}</p>
+            <p className="font-medium">{user?.contact?.mobile ?? "—"}</p>
           </div>
           <div>
             <p className="text-gray-500">Company</p>
-            <p className="font-medium">{user.company?.name ?? "—"}</p>
+            <p className="font-medium">{user?.company?.name ?? "—"}</p>
           </div>
         </div>
         <div className="mt-6">
@@ -177,9 +177,9 @@ const Profile = () => {
         )}
         {modals.kyc && (
           <KycModal
-            user_id={user.id}
+            user_id={user?.id}
             userKyc={
-              user.kyc
+              user?.kyc
                 ? {
                     full_name: user.kyc.full_name ?? "",
                     document_number: user.kyc.document_number ?? "",

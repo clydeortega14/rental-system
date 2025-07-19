@@ -81,7 +81,7 @@ export default function ProfileModal({ isOpen, user, onClose, onSave }: ProfileM
             <input
               id="name"
               name="name"
-              value={formData.name}
+              value={formData?.name}
               onChange={handleChange}
               required
               placeholder="Enter Name"
@@ -97,7 +97,7 @@ export default function ProfileModal({ isOpen, user, onClose, onSave }: ProfileM
               id="email"
               name="email"
               type="email"
-              value={formData.email}
+              value={formData?.email}
               onChange={handleChange}
               required
               placeholder="example@domain.com"
@@ -113,7 +113,7 @@ export default function ProfileModal({ isOpen, user, onClose, onSave }: ProfileM
               id="contact.mobile"
               name="contact.mobile"
               type="tel"
-              value={formData.contact?.mobile || ""}
+              value={formData?.contact?.mobile || ""}
               onChange={handleChange}
               placeholder="e.g. +1 555 123 4567"
               className={inputClass}
@@ -127,7 +127,7 @@ export default function ProfileModal({ isOpen, user, onClose, onSave }: ProfileM
             <input
               id="billingAddress.street"
               name="billingAddress.street"
-              value={formData.billingAddress?.street || ""}
+              value={formData?.billingAddress?.street || ""}
               onChange={handleChange}
               placeholder="Enter street address"
               className={inputClass}
@@ -142,7 +142,7 @@ export default function ProfileModal({ isOpen, user, onClose, onSave }: ProfileM
               <input
                 id="billingAddress.city"
                 name="billingAddress.city"
-                value={formData.billingAddress?.city || ""}
+                value={formData?.billingAddress?.city || ""}
                 onChange={handleChange}
                 placeholder="City"
                 className={inputClass}
@@ -155,7 +155,7 @@ export default function ProfileModal({ isOpen, user, onClose, onSave }: ProfileM
               <input
                 id="billingAddress.region"
                 name="billingAddress.region"
-                value={formData.billingAddress?.region || ""}
+                value={formData?.billingAddress?.region || ""}
                 onChange={handleChange}
                 placeholder="Region"
                 className={inputClass}
@@ -171,7 +171,7 @@ export default function ProfileModal({ isOpen, user, onClose, onSave }: ProfileM
               <input
                 id="billingAddress.province"
                 name="billingAddress.province"
-                value={formData.billingAddress?.province || ""}
+                value={formData?.billingAddress?.province || ""}
                 onChange={handleChange}
                 placeholder="Province"
                 className={inputClass}
@@ -184,7 +184,7 @@ export default function ProfileModal({ isOpen, user, onClose, onSave }: ProfileM
               <input
                 id="billingAddress.postal_code"
                 name="billingAddress.postal_code"
-                value={formData.billingAddress?.postal_code || ""}
+                value={formData?.billingAddress?.postal_code || ""}
                 onChange={handleChange}
                 placeholder="Postal Code"
                 className={inputClass}
