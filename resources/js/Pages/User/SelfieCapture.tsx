@@ -41,7 +41,7 @@ export default function SelfieCapture({ onCapture }: Props) {
             className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 shadow-md transition-all"
           >
             <Camera size={16} />
-            Capture Selfie
+            Capture Selfie with ID
           </button>
         </>
       ) : (
