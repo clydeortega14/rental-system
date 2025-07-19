@@ -19,6 +19,9 @@ export interface User {
         postal_code: string;
         
     };
+    kyc?: {
+      kyc_verified?: boolean;
+    }
     billing_address?: BillingAddress;
     card_detail?: CardDetail;
 }

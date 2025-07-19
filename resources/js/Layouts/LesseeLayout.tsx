@@ -248,7 +248,17 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
               <Bookings />
             </TabsContent>
             <TabsContent value="lessor" className="h-full">
-              <LesseeSignForm signUser={auth} />
+              {auth.user?.kyc?.kyc_verified === true ? (
+                <LesseeSignForm signUser={auth} />
+              ) : (
+                <div className="flex flex-col items-center justify-center text-center py-20">
+                  <h2 className="text-2xl font-semibold text-red-600">KYC Verification Required</h2>
+                  <p className="mt-2 text-gray-600 max-w-md">
+                    You must complete and get approved for identity verification before becoming a lessor. 
+                    Please visit your account settings to upload required documents.
+                  </p>
+                </div>
+              )}
             </TabsContent>
             <TabsContent value="reviews" className="h-full">
               <Review reviews={lessee.reviews} />
