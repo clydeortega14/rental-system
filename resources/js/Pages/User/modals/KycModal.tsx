@@ -239,7 +239,7 @@ export default function KycModal({
             )
           ) : (
             <div>
-              <label className="block text-sm font-medium mb-1">Capture Selfie</label>
+              <label className="block text-sm font-medium mb-1">Capture Selfie with ID</label>
               <SelfieCapture onCapture={handleCaptureSelfie} />
               {formData.selfie && (
                 <img

@@ -94,6 +94,7 @@ class ProfileController extends Controller
                 'document_path' => $documentPath,
                 'selfie_path' => $selfiePath,
                 'kyc_status' => 'Pending',
+                'kyc_verified' => false
             ]
         );
 
