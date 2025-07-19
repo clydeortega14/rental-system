@@ -90,6 +90,14 @@ Route::middleware([
 
     // Route::get('rental-listings', [RentalItemController::class, 'rentalListings'])->name('rentalListing');
 
+    Route::group(['prefix' => 'user'], function () {
+
+        Route::get('/profile', [ProfileController::class, 'profile'])->name('user.profile');
+        Route::get('/kyc', [ProfileController::class, 'showKYC'])->name('kyc.exist');
+        Route::post('/kyc', [ProfileController::class, 'userKYC'])->name('kyc.store');
+        
+    });
+
     Route::group(['prefix' => 'lessor'], function () {
 
         Route::get('/', [LessorController::class, 'dashboard'])->name('lessor.dashboard');

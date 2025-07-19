@@ -30,7 +30,7 @@ class Shop extends Model
 
     public function lessor()
     {
-        return $this->belongsTo(Lessor::class);
+        return $this->belongsTo(Lessor::class, 'lessor_id');
     }
 
     public function rentalItems()

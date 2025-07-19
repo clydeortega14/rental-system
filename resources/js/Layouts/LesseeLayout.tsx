@@ -38,7 +38,7 @@ const Bookings = lazy(() => import("@/Pages/Lessee/Bookings"));
 const Review = lazy(() => import("@/Pages/Lessee/Review"));
 const LesseeSignForm = lazy(() => import("@/Pages/Lessee/LessorSignupForm"));
 const LessorDashboard = lazy(() => import("@/Pages/Lessor/Dashboard"));
-const LessorProfile = lazy(() => import("@/Pages/Lessor/Profile"));
+const LessorProfile = lazy(() => import("@/Pages/User/Profile"));
 const LessorProperties = lazy(() => import("@/Pages/Lessor/PropertiesV1"));
 const LessorReservations = lazy(() => import("@/Pages/Lessor/Reservations"));
 const LessorInvoice = lazy(() => import("@/Pages/Lessor/Invoice"));

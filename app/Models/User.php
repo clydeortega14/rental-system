@@ -138,5 +138,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(LessorApplication::class, 'lessoruser_id');
     }
+
+    public function kyc()
+    {
+        return $this->hasOne(UserKYCVerification::class);
+    }
     
 }

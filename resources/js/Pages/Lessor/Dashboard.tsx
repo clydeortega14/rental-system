@@ -46,7 +46,7 @@ const Dashboard = ({ dashboardData }: DashboardProps) => {
     incomeSummary = { total: 0, monthly: 0 },
     upcomingReservations = [],
     reservationChartData = [],
-  } = dashboardData;
+  } = dashboardData || {};
 
   return (
     <div className="max-w-8xl mx-auto p-6">
