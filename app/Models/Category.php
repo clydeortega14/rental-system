@@ -13,12 +13,17 @@ class Category extends Model
 
     protected $table = 'categories';
 
-    protected $fillable = ['name'];
-
+    // Add new fields to fillable
+    protected $fillable = ['name', 'status', 'service_fee'];
 
     protected $hidden = ['pivot'];
 
     public $timestamps = false;
+
+    // Cast the service_fee to float
+    protected $casts = [
+        'service_fee' => 'float',
+    ];
 
     public function detail() : MorphOne
     {
@@ -37,6 +42,6 @@ class Category extends Model
 
     public function custom_fields()
     {
-        return $this->customFields();
+        return $this->customFields()->orderBy('position'); // Add ordering
     }
 }

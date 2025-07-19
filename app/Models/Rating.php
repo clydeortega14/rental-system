@@ -38,7 +38,7 @@ class Rating extends Model
     /**
      * Get the rateable entity (polymorphic).
      */
-    public function rateable(): MorphTo
+    public function getRateable(): MorphTo
     {
         return $this->morphTo();
     }

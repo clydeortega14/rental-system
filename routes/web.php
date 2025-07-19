@@ -215,31 +215,6 @@ Route::middleware([
     Route::get('/rentalListing', [RentalItemController::class, 'index'])->name('rentalListing');
     Route::get('/rentalListing/items/{id}', [RentalItemController::class, 'show'])->name('rentalListingView');
     Route::put('/rentalListing/items/update/{id}', [RentalItemController::class, 'update'])->name('rental.update');
-<<<<<<< HEAD
-    
-    /*-- Ratings --*/
-    Route::middleware(['auth', 'verified', 'check-user-info'])->group(function () {
-        // Rating creation form
-        Route::get('/bookings/{booking}/ratings/create', [RatingController::class, 'create'])
-            ->name('ratings.create')
-            ->middleware('can:rate,booking');
-        
-        // Handle form submission
-        Route::post('/bookings/{booking}/ratings', [RatingController::class, 'store'])
-            ->name('ratings.store');
-        
-        // Edit rating
-        Route::get('/ratings/{rating}/edit', [RatingController::class, 'edit'])
-            ->name('ratings.edit');
-        
-        // Update rating
-        Route::put('/ratings/{rating}', [RatingController::class, 'update'])
-            ->name('ratings.update');
-        
-        // Delete rating
-        Route::delete('/ratings/{rating}', [RatingController::class, 'destroy'])
-            ->name('ratings.destroy');
-=======
 
     /*-- Ratings --*/
     Route::middleware(['web', 'auth'])->group(function () {
@@ -250,7 +225,6 @@ Route::middleware([
     // Handle form submission
     Route::post('/bookings/{booking}/rate', [RatingController::class, 'store'])
         ->name('ratings.store');
->>>>>>> bc9e1cfb7b32927f9adc23e0cae7b41d7523f8a3
     });
 
     // Public confirmation

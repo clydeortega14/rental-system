@@ -11,19 +11,17 @@ class CategorySeeder extends Seeder
 {
     use DetailableTraits;
 
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $data = $this->data();
 
         foreach($data as $d){
-
             $name = $this->formatLabel($d['label']);
 
             $category = Category::create([
-                'name' => $name
+                'name' => $name,
+                'status' => $d['status'] ?? 'active', // Add default status
+                'service_fee' => $d['service_fee'] ?? 0.0 // Add default service fee
             ]);
 
             $this->addModelDetail($category, [
@@ -36,22 +34,29 @@ class CategorySeeder extends Seeder
     public function data()
     {
         return [
-
             [
                 'label' => 'vehicle',
-                'description' => 'For Vehicles Rentals'
+                'description' => 'For Vehicles Rentals',
+                'status' => 'active',
+                'service_fee' => 10.0
             ],
             [
                 'label' => 'residential',
-                'description' => 'For Residential Rentals'
+                'description' => 'For Residential Rentals',
+                'status' => 'active',
+                'service_fee' => 5.0
             ],
             [
                 'label' => 'event',
                 'description' => 'For Event and Party Rentals',
+                'status' => 'active',
+                'service_fee' => 7.5
             ],
             [
                 'label' => 'digital devices',
-                'description' => 'For Electronics and Technology Rentals'
+                'description' => 'For Electronics and Technology Rentals',
+                'status' => 'active',
+                'service_fee' => 3.0
             ]
         ];
     }
