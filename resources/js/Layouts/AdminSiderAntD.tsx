@@ -43,6 +43,7 @@ const AdminSiderAntD = ({ collapsible_status, active_keys, active_selected_keys 
             label: 'Users',
             children: [
                 { key: '/admin/users/index', label: renderMenuLabel('/admin/users', 'Lists') },
+                { key: '/admin/users/kyc/list', label: renderMenuLabel('/admin/users/kyc/list', 'Identity Verification') },
             ],
         },
         {

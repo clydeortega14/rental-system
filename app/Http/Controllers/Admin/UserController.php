@@ -4,16 +4,38 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+
+use App\Models\User;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return inertia('Admin/User/Index', [
-            'title' => 'Admin | Users'
+        $search = $request->get('search');
+
+        $users = User::with([
+                'contact',
+                'company',
+                'kyc',
+            ])
+            ->when($search, fn ($q) =>
+                $q->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%")
+            )
+            ->paginate(10);
+        
+        /** @var LengthAwarePaginator $users */
+        $users->withQueryString();
+
+        return Inertia::render('Admin/User/Index', [
+            'users' => $users,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 
