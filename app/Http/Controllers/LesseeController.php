@@ -12,17 +12,35 @@ use Illuminate\Http\Request;
 use App\Models\Lessor;
 use App\Models\BusinessDocument;
 use App\Models\LessorApplication;
+use App\Models\Category;
+use App\Services\Category\CategoryService;
+use App\Services\RentalItem\RentalItemService;
+use App\Models\RentalAddItem as RentalListing;
+use App\Models\Shop;
+use App\Models\RecentActivity;
+
+
+use Illuminate\Support\Facades\DB;
+use App\Http\Traits\DateHelpers;
+use App\Models\Booking;
+
 
 
 
 class LesseeController extends Controller
 {
-
     protected $booking_service;
+    protected $category_service;
+    protected $rental_items_service;
 
-    public function __construct(BookingService $booking_service)
-    {
+    public function __construct(
+        BookingService $booking_service,
+        CategoryService $category_service,
+        RentalItemService $rental_items_service
+    ) {
         $this->booking_service = $booking_service;
+        $this->category_service = $category_service;
+        $this->rental_items_service = $rental_items_service;
     }
     public function index()
     {
@@ -33,22 +51,72 @@ class LesseeController extends Controller
             ['name' => 'Booked By'],
             ['name' => 'Action']
         ];
+
         $user = Auth::user()?->loadMissing(['company', 'contact']);
         $isApprovedLessor = false;
         $lessorApplicationStatus = null;
+        $shops = [];
+        $rentals = collect(); // Default rentals
+
         if ($user) {
-            // Check if user is already an approved lessor
+            // Check approval
             $isApprovedLessor = Lessor::where('lessoruser_id', $user->id)
                 ->whereHas('status', fn($query) => $query->where('name', 'approved'))
                 ->exists();
-            // Check if user has an application and get its status
+
+            // Application status
             $application = \App\Models\LessorApplication::where('lessoruser_id', $user->id)->first();
             if ($application) {
-                // Get the status name via relationship or lookup
-                $lessorApplicationStatus = optional($application->status)->name; // ← assumes status() relationship
+                $lessorApplicationStatus = optional($application->status)->name;
+            }
+
+            // Get lessor
+            $lessor = Lessor::with('user')->where('lessoruser_id', $user->id)->first();
+
+            if ($lessor) {
+                $shops = $lessor->shops()
+                    ->select('id', 'lessor_id', 'name', 'description', 'location', 'created_at')
+                    ->latest()
+                    ->paginate(10)
+                    ->withQueryString();
+
+                // Rentals logic added here
+                $rawRentals = RentalListing::with(['toCategory', 'toShop'])
+                    ->where('user_id', $lessor->user->id)
+                    ->get();
+
+
+                    $rentals = $rawRentals->map(function ($rental) {
+                        return [
+                            'id' => $rental->id,
+                            'name' => $rental->itemName,
+                            'description' => $rental->description ?? '',
+                            'categoryId' => $rental->category_id,
+                            'categoryType' => optional($rental->toCategory)->name ?? '',
+                            'reservationAmt' => $rental->price,
+                            'imageUrl' => $rental->imageUrl ?? '',
+                            'customFieldAnswers' => $rental->customFieldAnswers ?? [],
+                            'address' => optional($rental->toShop)->location ?? '',
+                            'shopId' => optional($rental->toShop)->id ?? null, // Keep null for type clarity
+                        ];
+                    });
+
             }
         }
-        $bookings = $this->booking_service->formatBookings();
+
+        $categories = Category::with('customFields')->get()->map(function ($category) {
+            return [
+                'id' => $category->id,
+                'name' => $category->name,
+                'custom_fields' => $category->custom_fields, // Must exist
+            ];
+        });
+        $bookings = $this->booking_service->getBookingsByUser(auth()->id());
+
+        $lessorReservations = $this->getLessorReservations($user->id);
+        $lessorDashboard = $this->getLessorDashboardData($user->id);
+        $recentActivities = $this->getRecentActivities($user->id);
+       
         return Inertia::render('Lessee/Landing', [
             'auth' => [
                 'user' => $user,
@@ -56,7 +124,13 @@ class LesseeController extends Controller
             'bookings' => $bookings,
             'headerData' => $headersData,
             'isApprovedLessor' => $isApprovedLessor,
-            'lessorApplicationStatus' => $lessorApplicationStatus, // ✅ added
+            'lessorApplicationStatus' => $lessorApplicationStatus,
+            'lessorReservations' => $lessorReservations,
+            'lessorDashboard' => $lessorDashboard,
+            'shops' => $shops,
+            'categories' => $categories,
+            'rentals' => $rentals,
+            'recentActivities' => $recentActivities,
         ]);
     }
 
@@ -170,6 +244,127 @@ class LesseeController extends Controller
             ]
         );
 
+        RecentActivity::create([
+            'user_id' => $userId,
+            'message' => 'You applied to become a Lessor',
+            'status' => '1',
+        ]);
+
         return back()->with('success', 'Company information has been saved.');
+    }
+
+    private function getLessorReservations($userId)
+    {
+        $lessor = Lessor::with(['shops', 'user'])
+            ->where('lessoruser_id', $userId)
+            ->first();
+
+        if (!$lessor) {
+            return []; // Return empty array if not a lessor
+        }
+
+        $bookings = Booking::with(['bookedBy', 'rentalListing.toShop', 'bookingStatus'])
+            ->whereHas('rentalListing', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
+            ->get();
+
+        $grouped = $bookings->groupBy('rentalListing.id');
+
+        return $bookings->map(function ($booking) use ($grouped) {
+            $conflicts = $grouped[$booking->rentalListing->id]->filter(function ($other) use ($booking) {
+                return $other->id !== $booking->id &&
+                    $booking->start_date < $other->end_date &&
+                    $booking->end_date > $other->start_date;
+            });
+
+            return [
+                'id' => $booking->id,
+                'guestName' => $booking->bookedBy?->name ?? 'N/A',
+                'property' => $booking->rentalListing?->itemName ?? '',
+                'imageUrl' => $booking->rentalListing?->imageUrl ?? '',
+                'acquire' => $booking->start_date,
+                'return' => $booking->end_date,
+                'status' => strtoupper($booking->bookingStatus?->name ?? 'PENDING'),
+                'location' => $booking->rentalListing?->toShop?->location ?? '',
+                'pricePerNight' => $booking->total_cost,
+                'description' => $booking->rentalListing?->description ?? '',
+                'amenities' => $booking->rentalListing?->amenities ?? [],
+                'contactInfo' => $booking->bookedBy?->email ?? '',
+                'hasConflict' => $conflicts->isNotEmpty(),
+            ];
+        });
+    }
+
+    private function getLessorDashboardData($userId)
+    {
+        $lessor = Lessor::with(['shops', 'user'])
+            ->where('lessoruser_id', $userId)
+            ->first();
+
+        if (!$lessor) {
+            return null;
+        }
+
+        $lessorUserId = $lessor->user->id;
+
+        $totalIncome = Booking::whereHas('rentalListing', fn($q) =>
+            $q->where('user_id', $lessorUserId))
+            ->where('status', 2) // Assuming 2 = completed/reserved
+            ->sum('total_cost');
+
+        $monthlyIncome = Booking::whereHas('rentalListing', fn($q) =>
+            $q->where('user_id', $lessorUserId))
+            ->where('status', 2)
+            ->whereMonth('start_date', now()->month)
+            ->whereYear('start_date', now()->year)
+            ->sum('total_cost');
+
+        $upcoming = Booking::with(['bookedBy', 'rentalListing'])
+            ->whereHas('rentalListing', fn($q) =>
+                $q->where('user_id', $lessorUserId))
+            ->whereDate('start_date', '>=', now())
+            ->orderBy('start_date')
+            ->limit(5)
+            ->get()
+            ->map(fn($b) => [
+                'property' => $b->rentalListing?->itemName,
+                'date' => $b->start_date,
+                'lessee' => $b->bookedBy?->name,
+            ]);
+
+        $chartData = Booking::selectRaw('DATE_FORMAT(start_date, "%b") as month, COUNT(*) as reservations')
+            ->whereHas('rentalListing', fn($q) =>
+                $q->where('user_id', $lessorUserId))
+            ->whereBetween('start_date', [now()->subMonths(5)->startOfMonth(), now()])
+            ->groupByRaw('MONTH(start_date), DATE_FORMAT(start_date, "%b")')
+            ->orderByRaw('MIN(start_date)')
+            ->get();
+
+        return [
+            'lessorName' => $lessor->user->name,
+            'incomeSummary' => [
+                'total' => $totalIncome,
+                'monthly' => $monthlyIncome,
+            ],
+            'upcomingReservations' => $upcoming,
+            'reservationChartData' => $chartData,
+        ];
+    }
+
+    private function getRecentActivities($userId)
+    {
+        return RecentActivity::where('user_id', $userId)
+            ->latest()
+            ->take(10)
+            ->get()
+            ->map(function ($activity) {
+                return [
+                    'id' => $activity->id,
+                    'message' => $activity->message,
+                    'status' => $activity->status,
+                    'date' => $activity->created_at->format('Y-m-d'),
+                ];
+            });
     }
 }

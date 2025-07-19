@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useState, useEffect } from "react";
 import { usePage } from "@inertiajs/react";
 import { PageProps } from "@/types";
 import { BookingDetails } from "@/types/rental";
+import { Reservation } from "@/Pages/Lessor/types/ReservationProps";
 import {
   LayoutDashboard,
   StarIcon,
@@ -14,6 +15,7 @@ import Footer from "@/Components/Lessee/Footer";
 import Profile from "@/Components/Lessee/Profile";
 import LesseeSidebarContent from "@/Components/Lessee/LesseeSidebarContent";
 import LessorApplyModal from "../Components/Lessee/Modals/LessorApplyModal";
+
 import {
   Tabs,
   TabsList,
@@ -27,6 +29,7 @@ import {
   BiReceipt,
   BiMessageDetail,
   BiStar,
+  BiCog,
 } from "react-icons/bi";
 
 const Overview = lazy(() => import("@/Pages/Lessee/Overview"));
@@ -36,17 +39,64 @@ const Review = lazy(() => import("@/Pages/Lessee/Review"));
 const LesseeSignForm = lazy(() => import("@/Pages/Lessee/LessorSignupForm"));
 const LessorDashboard = lazy(() => import("@/Pages/Lessor/Dashboard"));
 const LessorProfile = lazy(() => import("@/Pages/User/Profile"));
-const LessorProperties = lazy(() => import("@/Pages/Lessor/Properties"));
+const LessorProperties = lazy(() => import("@/Pages/Lessor/PropertiesV1"));
 const LessorReservations = lazy(() => import("@/Pages/Lessor/Reservations"));
 const LessorInvoice = lazy(() => import("@/Pages/Lessor/Invoice"));
 const LessorInquiries = lazy(() => import("@/Pages/Lessor/Inquiries"));
 const LessorReviews = lazy(() => import("@/Pages/Lessor/Reviews"));
+const LessorShop = lazy(() => import("@/Pages/Lessor/Shop"));
+
+export interface Category {
+  id: number;
+  name: string;
+  custom_fields: any[]; // Or use correct field type
+}
+
+interface RentalItem {
+  id: number;
+  name: string;
+  description: string; // optional
+  categoryId?: number;
+  categoryType?: string;
+  reservationAmt?: number;
+  imageUrl?: string;
+  customFieldAnswers?: any;
+  address?: string;
+  shopId?: number;
+}
 
 interface Props extends PageProps {
   bookings: BookingDetails[];
   headerData: { name: string }[];
   isApprovedLessor: boolean;
   lessorApplicationStatus?: 'pending' | 'approved' | 'rejected' | null; 
+  shops: {
+    data: {
+      id: number;
+      name: string;
+      description?: string;
+      location?: string;
+      created_at?: string;
+    }[];
+    current_page: number;
+    last_page: number;
+    links: { url: string | null; label: string; active: boolean }[];
+  };
+  categories: Category[];
+  rentals: RentalItem[];
+  lessorReservations: BookingDetails[];
+    lessorDashboard: {
+    lessorName: string;
+    incomeSummary: { total: number; monthly: number };
+    upcomingReservations: { property: string; date: string; lessee: string }[];
+    reservationChartData: { month: string; reservations: number }[];
+  } | null;
+  recentActivities: {
+    id: number;
+    message: string;
+    status: string;
+    date: string;
+  }[];
 }
 
 interface LayoutProps {
@@ -54,41 +104,37 @@ interface LayoutProps {
   children?: React.ReactNode;
 }
 
+function transformBookingToReservation(booking: BookingDetails): Reservation {
+  return {
+    id: Number(booking.id) || 0,
+    guestName: booking.customerName ?? "Unknown Guest",
+    property: booking.rentalItem?.name ?? booking.itemName ?? "Unnamed",
+    imageUrl: booking.rentalItem?.imageUrl ?? "/placeholder.jpg",
+    acquire: `${booking.startDate ?? ""} ${booking.startTime ?? ""}`,
+    return: `${booking.endDate ?? ""} ${booking.endTime ?? ""}`,
+    status: booking.status,
+    location: booking.rentalItem?.location ?? "Unknown location",
+    pricePerNight: booking.totalPrice ?? 0,
+    description: booking.rentalItem?.description ?? "",
+    amenities: [], // optional
+    contactInfo: booking.customerName ?? "Unknown contact",
+    hasConflict: false // optional logic if needed
+  };
+}
+
+
 export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
- const { auth, bookings, headerData, isApprovedLessor, lessorApplicationStatus } = usePage().props as unknown as Props;
+  const { bookings, headerData, isApprovedLessor, lessorApplicationStatus, shops: rawShops, auth, categories, rentals,lessorReservations,lessorDashboard } = usePage().props as unknown as Props;
   const [activeTab, setActiveTab] = useState(defaultTab); 
-  // const [activeTab, setActiveTab] = useState("overview");
 
   const [showLessorModal, setShowLessorModal] = useState(false);
-  const recentActivities = [];
+  const { recentActivities } = usePage().props as unknown as Props;
 
-  if (lessorApplicationStatus === "pending") {
-    recentActivities.unshift({
-      message: "You applied to become a Lessor",
-      status: "Pending",
-      date: "2025-07-08",
-    });
-  } else if (lessorApplicationStatus === "approved") {
-    recentActivities.unshift({
-      message: "You are now an approved Lessor",
-      status: "Approved",
-      date: "2025-07-08",
-    });
-  }
+    // Provide fallback to ensure shape
+  const shops = rawShops && 'data' in rawShops
+  ? rawShops
+  : { data: [], current_page: 1, last_page: 1, links: [] };
 
-  recentActivities.push(
-    {
-      message: 'Booked "Mountain Cabin Retreat" for June 2025',
-      status: "Booking",
-      date: "2025-06-01",
-    },
-    {
-      message: 'Left a 5-star review for "Cozy City Apartment"',
-      status: "Review",
-      date: "2025-05-10",
-    }
-  );
-  
   const lessee = {
     name: auth.user.name,
     email: auth.user.email,
@@ -139,15 +185,19 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
       { key: "lessor", label: "Be a Lessor", icon: BiSolidUserCheck },
     ] : []),
     ...(isApprovedLessor ? [
-      { key: "lessorProfile", label: "Profile", icon: BiSolidUserCheck },
       { key: "lessorDashboard", label: "Dashboard", icon: BiSolidDashboard },
+      { key: "lessorShop", label: "Shop", icon: BiSolidUserCheck },
       { key: "lessorProperties", label: "Properties", icon: BiBuildingHouse },
       { key: "lessorReservations", label: "Reservations", icon: BiCalendarCheck },
+       //ongoing --- need backend and ui-----
       { key: "lessorInvoice", label: "Invoice", icon: BiReceipt },
       { key: "lessorInquiries", label: "Inquiries", icon: BiMessageDetail },
-      { key: "lessorReviews", label: "Reviews", icon: BiStar },
+      { key: "LessorReviews", label: "Reviews", icon: BiStar },
+      { key: "lessorProfile", label: "Account Settings", icon: BiCog },
     ] : []),
   ];
+
+  
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-800 font-sans">
       <Header />
@@ -192,7 +242,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
           {/* Tab Content */}
           <Suspense fallback={<div className="text-center text-orange-600 py-10">Loading...</div>}>
            <TabsContent value="overview" className="h-full">
-              <Overview recentActivities={lessee.recentActivities} />
+              <Overview recentActivities={recentActivities} />
             </TabsContent>
             <TabsContent value="bookings" className="h-full">
               <Bookings />
@@ -203,22 +253,30 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
             <TabsContent value="reviews" className="h-full">
               <Review reviews={lessee.reviews} />
             </TabsContent>
-            <TabsContent value="reservations" className="h-full">
-              {/* <Reservations bookings={lessee.bookings} /> */}
-              {/* <Review reviews={lessee.reviews} /> */}
-            </TabsContent>
             {/* Start Lessor Access */}
             <TabsContent value="lessorProfile" className="h-full">
               <LessorProfile />
             </TabsContent>
             <TabsContent value="lessorDashboard" className="h-full">
-              <LessorDashboard />
+              {lessorDashboard && <LessorDashboard dashboardData={lessorDashboard} />}
             </TabsContent>
             <TabsContent value="lessorProperties" className="h-full">
-              <LessorProperties />
+           <LessorProperties
+              shops={shops}
+              categories={categories}
+              rentals={rentals.map((rental) => ({
+                ...rental,
+                categoryId: rental.categoryId ?? null,
+                shopId: rental.shopId ?? null,
+                description: rental.description ?? "",
+                categoryType: rental.categoryType ?? "General",
+                reservationAmt: rental.reservationAmt ?? 0,
+                imageUrl: rental.imageUrl ?? "/placeholder.jpg",
+              }))}
+            />
             </TabsContent>
             <TabsContent value="lessorReservations" className="h-full">
-              <LessorReservations />
+              <LessorReservations bookings={lessorReservations.map(transformBookingToReservation)} />
             </TabsContent>
             <TabsContent value="lessorInvoice" className="h-full">
               <LessorInvoice />
@@ -226,8 +284,12 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
             <TabsContent value="lessorInquiries" className="h-full">
               <LessorInquiries />
             </TabsContent>
-            <TabsContent value="lessorReviews" className="h-full">
+            <TabsContent value="LessorReviews" className="h-full">
               <LessorReviews />
+            </TabsContent>
+            <TabsContent value="lessorShop" className="h-full">
+              {/* Pass shops to LessorShop */}
+              <LessorShop shops={shops} />
             </TabsContent>
               {/* End Lessor Access */}
         </Suspense>
@@ -241,7 +303,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
           onClose={() => setShowLessorModal(false)}
           onProceed={() => {
             setShowLessorModal(false);
-            setActiveTab("lessor"); // Open the lessor tab
+            setActiveTab("lessor");
           }}
           submitForm={auth.user.submitForm}
         />

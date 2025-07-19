@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "@/Components/Lessee/ui/card";
 import { Star } from "lucide-react";
+import { BiCalendarEvent  } from "react-icons/bi";
 
 interface Review {
   id: number;
@@ -16,9 +17,12 @@ interface ReviewsTabProps {
 
 export default function Review({ reviews }: { reviews: any[] }) {
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-gray-900">Your Reviews</h2>
 
+    <div className="max-w-8xl mx-auto p-6 space-y-6">
+      <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
+        <BiCalendarEvent  className="w-6 h-6 text-orange-500 mr-2" />
+        Your Reviews
+      </h1>
       <div className="grid gap-6">
         {reviews.map((review) => (
           <div

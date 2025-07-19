@@ -170,6 +170,31 @@ class BookingService {
             ];
         });
     }
+    public function getBookingsByUser($userId)
+    {
+        return Booking::with(['category', 'bookedBy', 'rentalListing', 'bookingStatus'])
+            ->where('booked_by', $userId)
+            ->get()
+            ->map(function($booking) {
+                return [
+                    'id' => $booking->id,
+                    'uuid' => $booking->uuid,
+                    'rentalItem' => [
+                        'id' => $booking->rental_listing_id,
+                        'imageUrl' => count($booking->rentalListing->attachment) > 0
+                            ? config('app.url') . '/storage/' . $booking->rentalListing->attachment[0]->file_path
+                            : 'https://images.pexels.com/photos/147411/italy-mountains-dawn-daybreak-147411.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                        'name' => $booking->rentalListing->itemName
+                    ],
+                    'itemId' => $booking->rental_listing_id,
+                    'userId' => $booking->bookedBy->id,
+                    'startDate' => $booking->start_date,
+                    'endDate' => $booking->end_date,
+                    'status' => $booking->bookingStatus->name,
+                    'totalPrice' => $booking->total_cost
+                ];
+            });
+    }
 
 
 }

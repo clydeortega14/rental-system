@@ -112,7 +112,8 @@ Route::middleware([
 
         Route::get('/property-reserve', [ProperReserveController::class, 'index'])->name('lessor.property-reserve');
         Route::put('/property-reserve/{booking}/status', [ProperReserveController::class, 'updateStatus'])->name('lessor.property-reserve.updateStatus');
-    
+        Route::post('/recent-activities/{id}/close', [LessorController::class, 'markActivityAsRead'])->name('recent-activities.close');
+
     });
 
     // Route::get('/lessee', function () {
