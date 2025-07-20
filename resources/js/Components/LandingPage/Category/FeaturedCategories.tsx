@@ -2,11 +2,7 @@ import { Category } from '@/Interface/CategoryInterface';
 import { ArrowRight } from 'lucide-react';
 
 const categoryImages = [
-  "img/banner/1.png", 
-  "img/banner/1.png", 
-  "img/banner/2.png", 
-  "img/banner/bags.png", 
-  "img/banner/hotels.png"
+  "img/banner/default.png",
 ];
 
 interface User {
@@ -28,7 +24,7 @@ const FeaturedCategories = ({ categories }: Props) => {
       <div className="container mx-auto px-4">
         {/* Heading */}
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold">Daily Discovery</h2>
+          <h2 className="text-3xl font-bold">Categories</h2>
           <p className="text-gray-500 mt-2">
             Know what you’re looking for? Pick our extensive selection of items rent now.
           </p>
@@ -38,6 +34,7 @@ const FeaturedCategories = ({ categories }: Props) => {
         <div className="flex flex-wrap justify-center gap-6">
           {categories.length > 0 ? (
             categories.map((category, index) => (
+           
               <a
                 key={category.id}
                 href={route('rental.browser.index', category.name)}

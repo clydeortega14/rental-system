@@ -21,6 +21,9 @@ interface SliderProps {
   categories: Category[];
 }
 
+  const categoryImages = [
+    "img/banner/bb.jpg",
+    ];
 
 const slides = [
   {
@@ -32,10 +35,10 @@ const slides = [
       </>
     ),
     description: 'Making equipment rental simple, reliable, and accessible for everyone.',
-    buttons: [
-      { label: 'Rent a Gadget', href: '/gadgets' },
-      { label: 'Add Your Gadget', href: '/add-gadget' }
-    ]
+    // buttons: [
+    //   { label: 'Rent a Gadget', href: '/gadgets' },
+    //   { label: 'Add Your Gadget', href: '/add-gadget' }
+    // ]
   },
   {
     image: cars,
@@ -84,7 +87,8 @@ const Slider = ({ categories }: SliderProps) => {
   const [textVisible, setTextVisible] = useState(true)
 
   return (
-    <section className="bg-black text-white py-10 sm:py-14 lg:py-16">
+
+    <section className="relative text-white py-10 sm:py-14 lg:py-16 flex-grow bg-cover bg-center bg-no-repeat"  style={{backgroundImage: `url(${categoryImages})`}}>
       <div className="container mx-auto px-4">
         <div className="flex flex-col-reverse lg:flex-row items-center gap-10">
           {/* Text Content */}
@@ -111,22 +115,22 @@ const Slider = ({ categories }: SliderProps) => {
 
                   if (!matchedCategory) return null
 
-                  return (
-                    <>
-                      <a
-                        href={route('rental.browser.index', matchedCategory.name)}
-                        className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-md transition text-center"
-                      >
-                        Rent {matchedCategory.detail && matchedCategory.detail.label}
-                      </a>
-                      <a
-                        href={`/add/${matchedCategory.category_id}`}
-                        className="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2 rounded-md transition text-center"
-                      >
-                        Add Your {matchedCategory.detail && matchedCategory.detail.label}
-                      </a>
-                    </>
-                  )
+                  // return (
+                  //   <>
+                  //     <a
+                  //       href={route('rental.browser.index', matchedCategory.name)}
+                  //       className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-md transition text-center"
+                  //     >
+                  //       Rent {matchedCategory.detail && matchedCategory.detail.label}
+                  //     </a>
+                  //     <a
+                  //       href={`/add/${matchedCategory.category_id}`}
+                  //       className="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2 rounded-md transition text-center"
+                  //     >
+                  //       Add Your {matchedCategory.detail && matchedCategory.detail.label}
+                  //     </a>
+                  //   </>
+                  // )
                 })()}
               </div>
             </div>

@@ -10,7 +10,7 @@ const RenterLayout = ({children}:PropsWithChildren) => {
         <CartProvider>
           <TopNavigation />
 
-          <main className="flex-grow pt-16">
+          <main className="flex-grow pt-20">
               {children}
           </main>
         </CartProvider>

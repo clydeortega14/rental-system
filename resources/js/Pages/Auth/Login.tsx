@@ -1,22 +1,28 @@
-    import { useEffect, FormEventHandler } from 'react';
+    import { useEffect, FormEventHandler,useState } from 'react';
     import Checkbox from '@/Components/Checkbox';
     import InputError from '@/Components/InputError';
     import InputLabel from '@/Components/InputLabel';
     import PrimaryButton from '@/Components/PrimaryButton';
     import GoogleButton from '@/Components/OAuth/GoogleLoginButton';
     import TextInput from '@/Components/TextInput';
-    import banner1 from '@/../../resources/img/logo-web.png';
     import banner2 from '@/../../resources/img/banner/login1.png';
     import { Head, Link, useForm } from '@inertiajs/react';
     import Footer from '@/Components/LandingPage/Utility/footer'
     import Header from '@/Components/Header'
+    import { Eye, EyeOff } from 'lucide-react';
+
+    
 
     export default function Login({ status, canResetPassword }: { status?: string; canResetPassword: boolean }) {
+        const [showPassword, setShowPassword] = useState(false);
         const { data, setData, post, processing, errors, reset } = useForm({
             email: '',
             password: '',
             remember: false,
         });
+        const categoryImages = [
+        "img/banner/bb.jpg",
+        ];
 
         useEffect(() => {
             return () => {
@@ -34,11 +40,11 @@
                 <Head title="Log in" />
                 <div className="flex flex-col min-h-screen ">
                 <Header />
-                <section className="bg-[#000000] text-white py-10 sm:py-14 lg:py-16 flex-grow">
+                <section className="relative text-white py-10 sm:py-14 lg:py-16 flex-grow bg-cover bg-center bg-no-repeat"  style={{backgroundImage: `url(${categoryImages})`}}>
                     <div className="container mx-auto px-4">
-                        <div className="flex flex-col-reverse lg:flex-row items-center justify-center rounded-xl shadow-lg overflow-hidden">
+                        <div className="flex flex-col-reverse lg:flex-row items-center justify-center rounded-xl  overflow-hidden">
                             {/* RIGHT LOGIN FORM */}
-                            <div className="w-full lg:w-1/2 p-10 text-black shadow-lg rounded-xl bg-white">
+                            <div className="w-full lg:w-1/3 p-10 text-black shadow-lg rounded-xl bg-white">
                                 <h2 className="text-xl font-bold mb-4  ">Login </h2>
                                 {/* LOGIN FORM */}
                                 <form onSubmit={submit} className="space-y-4">
@@ -56,18 +62,25 @@
                                         <InputError message={errors.email} className="mt-2" />
                                     </div>
 
-                                    <div>
-                                        <TextInput
-                                            id="password"
-                                            type="password"
-                                            name="password"
-                                            value={data.password}
-                                            className="block w-full border px-4 py-2 rounded"
-                                            autoComplete="current-password"
-                                            placeholder="Password"
-                                            onChange={(e) => setData('password', e.target.value)}
-                                        />
-                                        <InputError message={errors.password} className="mt-2" />
+                                    <div className="relative">
+                                    <TextInput
+                                        id="password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        name="password"
+                                        value={data.password}
+                                        className="block w-full border px-4 py-2 rounded pr-10"
+                                        autoComplete="current-password"
+                                        placeholder="Password"
+                                        onChange={(e) => setData('password', e.target.value)}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword((prev) => !prev)}
+                                        className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-600 hover:text-gray-800"
+                                        tabIndex={-1}
+                                    >
+                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                    </button>
                                     </div>
 
                                     {/* Remember Me */}
@@ -98,14 +111,14 @@
                                     )}
 
                                     {/* Divider */}
-                                    <div className="flex items-center my-4">
+                                    {/* <div className="flex items-center my-4">
                                         <hr className="flex-grow border-t" />
                                         <span className="mx-2 text-sm text-gray-500">OR</span>
                                         <hr className="flex-grow border-t" />
-                                    </div>
+                                    </div> */}
 
                                     {/* Google Button */}
-                                    <div className="mt-4">
+                                    {/* <div className="mt-4">
                                         <button
                                             type="button"
                                             onClick={() => window.location.href = 'http://localhost:8000/auth/google'}
@@ -119,11 +132,11 @@
                                             </svg>
                                             Continue with Google
                                         </button>
-                                    </div>
+                                    </div> */}
 
                                     {/* Sign Up */}
                                     <p className="text-sm text-center mt-6">
-                                        New to Rentify?{' '}
+                                        New to Rent Hive?{' '}
                                         <Link href="/register" className="text-[#f53d2d] hover:underline">
                                             Sign Up
                                         </Link>

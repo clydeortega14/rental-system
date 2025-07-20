@@ -145,7 +145,7 @@ const AdminConfigurationCategoryIndex: PageWithAdminLayout = () => {
                 title={<Title level={4} style={{ margin: 0 }}>Categories</Title>}
                 extra={
                     <Space>
-                        <Link href="/categories/create">
+                        <Link href="/admin/configurations/categories/create">
                             <Button type="primary" icon={<PlusOutlined />}
                                 style={{
                                     backgroundColor: '#1677ff',
@@ -153,7 +153,7 @@ const AdminConfigurationCategoryIndex: PageWithAdminLayout = () => {
                                     color: '#fff',
                                 }}
                             >
-                                New Category
+                                Add Category
                             </Button>
                         </Link>
                     </Space>
