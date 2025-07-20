@@ -13,7 +13,7 @@ class Category extends Model
 
     protected $table = 'categories';
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name','description','status','template_category_id'];
 
 
     protected $hidden = ['pivot'];

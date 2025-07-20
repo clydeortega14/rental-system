@@ -20,6 +20,8 @@ import { usePage } from '@inertiajs/react'
 const LandingPageLayout = ({ categories, children
 }: LandingPageLayoutuProps) => {
 
+  console.log(categories)
+
     const auth = usePage<PageProps>().props.auth;
 
     return (
@@ -30,7 +32,7 @@ const LandingPageLayout = ({ categories, children
           <Slider categories={categories} />
           <SupportSlider/>
           <FeaturedCategory auth={auth} categories={categories} />
-          <ClientsFeedBack />
+          {/* <ClientsFeedBack /> */}
         </main>
         <Footer />
       </div>
