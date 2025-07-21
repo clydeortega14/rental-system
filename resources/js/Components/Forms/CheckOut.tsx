@@ -17,6 +17,8 @@ interface CheckOutProps {
 
 export default function CheckOut({bookingData}: CheckOutProps) {
     const user = usePage<PageProps>().props.auth.user;
+    console.log(user);
+    const isVerified = user?.kyc?.kyc_verified === true;
     const [serviceFee, setServiceFee] = useState<number>(0);
     const [allTotal, setAllTotal] = useState<number>(0);
     const error_message = usePage<PageProps>().props.flash.error_message
@@ -308,28 +310,32 @@ export default function CheckOut({bookingData}: CheckOutProps) {
 
                             <div className="mt-6">
 
-                            { 
-                                user && (
+                            { user ? (
+                                isVerified ? (
                                     <Button
-                                        type="submit"
-                                        variant="primary"
-                                        fullWidth
-                                        disabled={processing}
+                                    type="submit"
+                                    variant="primary"
+                                    fullWidth
+                                    disabled={processing}
                                     >
-                                        {processing ? 'Processing...' : `Complete Booking • ${formatPrice(allTotal)}`}
+                                    {processing ? 'Processing...' : `Complete Booking • ${formatPrice(allTotal)}`}
                                     </Button>
+                                ) : (
+                                    <div className="text-sm text-red-600 text-center mt-4">
+                                        Please complete your identity verification to proceed.
+                                    </div>
                                 )
-                            }
-
-                            
+                            ) : (
+                                <LoginWithGoogle />
+                            )}
                             
                             </div>
                         </div>
                         </form>
 
-                        {
+                        {/* {
                             !user && <LoginWithGoogle />
-                        }
+                        } */}
                     </div>
                     </div>
 
