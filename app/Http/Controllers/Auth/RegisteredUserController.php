@@ -13,6 +13,7 @@ use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Str;
+use App\Jobs\SendEmailVerification;
 
 class RegisteredUserController extends Controller
 {
@@ -44,7 +45,9 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
+        // event(new Registered($user));
+
+        SendEmailVerification::dispatch($user);
 
         Auth::login($user);
 
