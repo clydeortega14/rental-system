@@ -18,11 +18,14 @@ const Card: React.FC<CardProps> = ({ item, compact = false, link }) => {
       compact ? 'h-full flex flex-col' : ''
     }`}>
       <Link href={link} className="block relative">
-        <img 
-          src={item.imageUrl || "/img/banner/default.png"} 
-          alt={item.name} 
-          className={`w-full object-cover ${compact ? 'h-48' : 'h-64'}`}
-        />
+        <div className={`w-full ${compact ? 'h-48' : 'h-64'} bg-gray-100`}>
+          <img 
+            src={item.imageUrl || "/img/banner/default.png"} 
+            alt={item.name}
+            className="w-full h-full object-contain" 
+          />
+        </div>
+
         {item.availability && !item.availability.available && (
           <div className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-3 py-1 m-2 rounded">
             Unavailable

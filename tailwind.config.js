@@ -31,10 +31,16 @@ export default {
 				'0%': { transform: 'translateX(0%)' },
 				'100%': { transform: 'translateX(-50%)' },
 				},
+				popBounce: {
+				'0%': { transform: 'scale(0.9)', opacity: 0 },
+				'50%': { transform: 'scale(1.1)', opacity: 0.7 },
+				'100%': { transform: 'scale(1)', opacity: 1 },
+				},
             },
             animation: {
                 float: 'float 3s ease-in-out infinite',
 				'slide-left': 'slideLeft 30s linear infinite',
+				popBounce: 'popBounce 0.6s ease-out',
             },
     		colors: {
 				brandYellow: '#f1bb00',

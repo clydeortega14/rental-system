@@ -31,7 +31,7 @@ class LandingPageController extends Controller
 
     public function index()
     {
-        $categories = $this->category_service->getCategories()->toArray();
+         $categories = $this->category_service->getCategories();
         // $price_ranges = [
         //     ['id' => '0-50', 'label' => '0 - 50'],
         //     ['id' => '50-100', 'label' => '50 - 100'],

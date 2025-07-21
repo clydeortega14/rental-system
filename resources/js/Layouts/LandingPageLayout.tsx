@@ -19,15 +19,13 @@ import { usePage } from '@inertiajs/react'
 
 const LandingPageLayout = ({ categories, children
 }: LandingPageLayoutuProps) => {
-
-  console.log(categories)
-
     const auth = usePage<PageProps>().props.auth;
 
     return (
       <div className="flex flex-col min-h-screen ">
-        <Header categories={categories} />
+        
         <main className="flex-grow">
+          <Header />
           {children}
           <Slider categories={categories} />
           <SupportSlider/>
@@ -35,6 +33,7 @@ const LandingPageLayout = ({ categories, children
           {/* <ClientsFeedBack /> */}
         </main>
         <Footer />
+        
       </div>
     )
   }

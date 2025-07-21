@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="bg-white shadow-inner text-gray-600 text-sm py-6 mt-auto border-t">
       <div className="max-w-7xl mx-auto px-6 text-center flex flex-col items-center">
-        <p className="mb-4">&copy; {new Date().getFullYear()} Rentify. All rights reserved.</p>
+        <p className="mb-4">&copy; {new Date().getFullYear()} Rent Hive Technology Inc. All rights reserved.</p>
         <nav className="flex flex-wrap justify-center gap-6 text-gray-500">
           <a href="/privacy" className="hover:underline hover:text-orange-400">
             Privacy Policy

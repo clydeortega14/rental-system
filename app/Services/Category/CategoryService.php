@@ -14,9 +14,17 @@ class CategoryService
         //                 ->get(['detailable_id as category_id', 'label'])
         //                 ->toArray();
 
-        return Category::select('id', 'name')->with(['detail' => function($query){
-            $query->select('id', 'label', 'active', 'detailable_id')->where('active', true);
-        }])->get();
+        // return Category::select('id', 'name')->with(['detail' => function($query){
+        //     $query->select('id', 'label', 'active', 'detailable_id')->where('active', true);
+        // }])->get();
+
+        return Category::select('id', 'name')
+        ->withCount('rentalItems') // Adds rental_items_count per category
+        ->with(['detail' => function($query) {
+            $query->select('id', 'label', 'active', 'detailable_id')
+                  ->where('active', true);
+        }])
+        ->get();
     }
 
     public function categoryByName($name)

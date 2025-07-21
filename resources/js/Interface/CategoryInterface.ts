@@ -9,6 +9,7 @@ export type Category = {
         detailable_id: number;
         active: boolean
     }
+    rental_items_count?: number; 
 }
 
 export interface ICategory {

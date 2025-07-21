@@ -196,7 +196,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
       { key: "lessorInvoice", label: "Invoice", icon: BiReceipt },
       { key: "lessorInquiries", label: "Inquiries", icon: BiMessageDetail },
       { key: "LessorReviews", label: "Reviews", icon: BiStar },
-      { key: "lessorProfile", label: "Account Settings", icon: BiCog },
+      { key: "lessorProfile", label: "My Account", icon: BiCog },
     ] : []),
   ];
 
@@ -230,19 +230,20 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
               <Profile lessee={lessee} layout="header" />
             </Suspense>
              {/* <LesseeSidebarContent activeTab={activeTab} setActiveTab={setActiveTab}  submitForm={auth.user.submitForm} /> */}
-            <TabsList className="flex mt-4 gap-2 border-b border-gray-200 overflow-x-auto flex-nowrap scrollbar-hide">
+            <TabsList className="flex mt-4 gap-3 overflow-x-auto scrollbar-hide px-2">
               {tabs.map((tab) => (
                 <TabsTrigger
                   key={tab.key}
                   value={tab.key}
                   className={`
-                    flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium
-                    text-gray-600 bg-gray-100
-                    data-[state=active]:bg-orange-600 data-[state=active]:text-white
-                    hover:bg-orange-100 transition-colors whitespace-nowrap
+                    flex flex-col items-center justify-center gap-1 px-4 py-3 min-w-[110px]
+                    rounded-xl text-sm font-medium shadow-sm border
+                    text-gray-600 bg-white border-gray-200
+                    data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:border-orange-600
+                    hover:bg-orange-50 transition-colors whitespace-nowrap
                   `}
                 >
-                  <tab.icon className="w-4 h-4" />
+                  <tab.icon className="w-5 h-5" />
                   {tab.label}
                 </TabsTrigger>
               ))}
