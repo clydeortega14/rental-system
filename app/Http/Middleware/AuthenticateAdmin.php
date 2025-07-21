@@ -16,7 +16,7 @@ class AuthenticateAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!Auth::guard('admin')->check() || !Auth::guard('admin')->user()->hasRole('admin')) {
+        if(!Auth::guard('admin')->check() || !Auth::guard('admin')->user()->hasPermissionTo('access.admin.module')) {
             return redirect()->route('admin.create');
         }
 
