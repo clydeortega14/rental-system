@@ -11,6 +11,7 @@ interface CardProps {
   link: string;
 }
 
+
 const Card: React.FC<CardProps> = ({ item, compact = false, link }) => {
   return (
     <div className={`bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden ${
@@ -18,7 +19,7 @@ const Card: React.FC<CardProps> = ({ item, compact = false, link }) => {
     }`}>
       <Link href={link} className="block relative">
         <img 
-          src={item.imageUrl} 
+          src={item.imageUrl || "/img/banner/default.png"} 
           alt={item.name} 
           className={`w-full object-cover ${compact ? 'h-48' : 'h-64'}`}
         />

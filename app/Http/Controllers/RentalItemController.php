@@ -90,9 +90,10 @@ class RentalItemController extends Controller
 
     public function rentalBrowserIndex($category_name)
     {
-        $category = Category::where('name', $category_name)->first();
-
-        $category_custom_fields = $category->getCustomFields('Category');
+        $category = Category::with('custom_fields')->where('name', $category_name)->first();
+        $modelType = $category->custom_fields->first()?->model_type;
+        
+        $category_custom_fields = $category->getCustomFields($modelType);
 
         if(is_null($category)) return redirect()->back()->with('error', 'Category not found!');
         

@@ -1,23 +1,28 @@
-    import { useEffect, FormEventHandler } from 'react';
-    import Checkbox from '@/Components/Checkbox';
-    import InputError from '@/Components/InputError';
-    import InputLabel from '@/Components/InputLabel';
-    import PrimaryButton from '@/Components/PrimaryButton';
-    import GoogleButton from '@/Components/OAuth/GoogleLoginButton';
-    import TextInput from '@/Components/TextInput';
-    import banner1 from '@/../../resources/img/logo-web.png';
-    import banner2 from '@/../../resources/img/banner/signup.png';
-    import { Head, Link, useForm } from '@inertiajs/react';
-    import Footer from '@/Components/LandingPage/Utility/footer'
-    import Header from '@/Components/Header'
+import { useEffect, FormEventHandler ,useState} from 'react';
+import Checkbox from '@/Components/Checkbox';
+import InputError from '@/Components/InputError';
+import InputLabel from '@/Components/InputLabel';
+import PrimaryButton from '@/Components/PrimaryButton';
+import GoogleButton from '@/Components/OAuth/GoogleLoginButton';
+import TextInput from '@/Components/TextInput';
+import banner2 from '@/../../resources/img/banner/signup.png';
+import { Head, Link, useForm } from '@inertiajs/react';
+import Footer from '@/Components/LandingPage/Utility/footer'
+import Header from '@/Components/Header'
+import { Eye, EyeOff } from 'lucide-react';
 
  export default function Register() {
+    const [showPassword, setShowPassword] = useState(false);
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
         password: '',
         password_confirmation: '',
     });
+
+    const categoryImages = [
+     "img/banner/bb.jpg",
+    ];
 
     useEffect(() => {
         return () => {
@@ -36,11 +41,11 @@
                 <Head title="Log in" />
                 <div className="flex flex-col min-h-screen ">
                 <Header />
-                <section className="bg-[#000000] text-white py-10 sm:py-14 lg:py-16 flex-grow">
+                <section className="relative text-white py-10 sm:py-14 lg:py-16 flex-grow bg-cover bg-center bg-no-repeat"  style={{backgroundImage: `url(${categoryImages})`}}>
                     <div className="container mx-auto px-4">
                         <div className="flex flex-col-reverse lg:flex-row items-center justify-center rounded-xl shadow-lg overflow-hidden">
                             {/* RIGHT LOGIN FORM */}
-                            <div className="w-full lg:w-1/2 p-10 text-black shadow-lg rounded-xl bg-white">
+                            <div className="w-full lg:w-1/3 p-10 text-black shadow-lg rounded-xl bg-white">
                                 <h2 className="text-xl font-bold mb-4  ">Sign up</h2>
                                 {/* LOGIN FORM */}
                                 <form onSubmit={submit}>
@@ -83,7 +88,7 @@
 
                                         <TextInput
                                             id="password"
-                                            type="password"
+                                            type={showPassword ? "text" : "password"}
                                             name="password"
                                             value={data.password}
                                             className="mt-1 block w-full"
@@ -100,7 +105,7 @@
 
                                         <TextInput
                                             id="password_confirmation"
-                                            type="password"
+                                            type={showPassword ? "text" : "password"}
                                             name="password_confirmation"
                                             value={data.password_confirmation}
                                             className="mt-1 block w-full"
@@ -110,6 +115,17 @@
                                         />
 
                                         <InputError message={errors.password_confirmation} className="mt-2" />
+                                    </div>
+                                    <div className="mt-4">
+                                        <label className="inline-flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                className="form-checkbox"
+                                                checked={showPassword}
+                                                onChange={() => setShowPassword(!showPassword)}
+                                            />
+                                            <span className="ml-2 text-sm text-gray-700">Show Password</span>
+                                        </label>
                                     </div>
 
                                     <div className="flex items-center justify-end mt-4">

@@ -19,10 +19,9 @@ const TopNavigation = () => {
   // const location = useLocation();
 
   
-  
   const [navs, setNavs] = useState([
     {title: 'Home', link: route('landing.page.index'), isActive: route().current('landing.page.index'), display: user || user === undefined || user === null ? true : false },
-    {title: 'My Bookings', link: route('reservations.index'), isActive: route().current('reservations.index'), display:  user === undefined  || user === null ?false : true},
+    {title: 'My Bookings', link: route('lessee.profile'), isActive: route().current('reservations.index'), onClick: () => {localStorage.setItem('lessee.activeTab', 'bookings')}, display:  user === undefined  || user === null ?false : true},
   ]);
 
   const [rightNavs, setRightNavs] = useState([
@@ -68,7 +67,7 @@ const TopNavigation = () => {
 
                 {navs.map((nav, index) => (
                   nav.display &&
-                  <Link key={index} href={nav.link} className={`hover:text-blue-600 transition-colors ${ nav.isActive ? 'text-blue-700' : 'text-gray-500'}`}>
+                  <Link key={index} href={nav.link}  onClick={nav.onClick}  className={`hover:text-blue-600 transition-colors ${ nav.isActive ? 'text-blue-700' : 'text-gray-500'}`}>
                       {nav.title}
                   </Link>
                 ))}
@@ -77,7 +76,7 @@ const TopNavigation = () => {
               <div className="hidden md:flex col-span-3 justify-end space-x-4">
                 { user ? (
                   <Link
-                    href={route('dashboard')}
+                    href={route('lessee.profile')}
                     className="text-blue-700 font-semibold"
                   >
                     Dashboard

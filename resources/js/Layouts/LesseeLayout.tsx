@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useState, useEffect } from "react";
-import { usePage } from "@inertiajs/react";
+import { usePage,useRemember  } from "@inertiajs/react";
 import { PageProps } from "@/types";
 import { BookingDetails } from "@/types/rental";
 import { Reservation } from "@/Pages/Lessor/types/ReservationProps";
@@ -126,6 +126,9 @@ function transformBookingToReservation(booking: BookingDetails): Reservation {
 export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
   const { bookings, headerData, isApprovedLessor, lessorApplicationStatus, shops: rawShops, auth, categories, rentals,lessorReservations,lessorDashboard } = usePage().props as unknown as Props;
   const [activeTab, setActiveTab] = useState(defaultTab); 
+  // const urlParams = new URLSearchParams(window.location.search);
+  // const initialTab = urlParams.get('tab') || defaultTab;
+  // const [activeTab, setActiveTab] = useState(initialTab);
 
   const [showLessorModal, setShowLessorModal] = useState(false);
   const { recentActivities } = usePage().props as unknown as Props;
@@ -197,6 +200,13 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
     ] : []),
   ];
 
+  useEffect(() => {
+    const tab = localStorage.getItem('lessee.activeTab');
+    if (tab) {
+      setActiveTab(tab); // your state logic
+      localStorage.removeItem('lessee.activeTab');
+    }
+  }, []);
   
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-800 font-sans">

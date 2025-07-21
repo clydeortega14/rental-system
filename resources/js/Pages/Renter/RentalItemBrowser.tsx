@@ -20,6 +20,8 @@ interface RentalBrowserProps {
     category_custom_fields: CategoryCustomField[];
 }
 
+
+
 const RentalItemBrowser = ({
     rentalItems, 
     categories, 
@@ -60,7 +62,8 @@ const RentalItemBrowser = ({
     <RenterLayout>
 
         <Head title={category.name} />
-        <div className="px-4 py-8">
+        {/* <div className="px-4 py-8"> */}
+        <div className="max-w-screen-xl mx-auto px-4 pt-6 pb-8">
             <div>
                 { error_message && <p className="text-2xl text-red-500 pt-4">{error_message }</p> }
             </div>
