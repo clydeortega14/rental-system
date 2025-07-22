@@ -1,8 +1,7 @@
 import { PageProps } from '@/types';
 import { Link } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
-import logoWeb from '@/../../resources/img/logo-web.png';
-import logoMobile from '@/../../resources/img/logo.png';
+import logoWeb from '@/../../public/img/mobilelogo.png';
 import { BiQuestionMark  } from 'react-icons/bi';
 
 const TopNavigation = () => {
@@ -22,7 +21,7 @@ const TopNavigation = () => {
         <div className="col-span-6 md:col-span-9">
           <Link href="/">
             <img
-              src={isMobile ? logoMobile : logoWeb}
+              src={logoWeb}
               alt="Logo"
               className="h-10 md:h-16 w-auto"
             />

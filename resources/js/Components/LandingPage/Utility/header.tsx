@@ -3,9 +3,11 @@ import { Link, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import logoWeb from '@/../../public/img/mobilelogo.png';
 import { BiUser, BiLock, BiHome, BiPhoneCall, BiChat, BiBell,BiX,BiMenu } from 'react-icons/bi';
+import { Info, BookOpen, HelpCircle, Menu, X } from "lucide-react";
 
 const TopNavigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const auth = usePage<PageProps>().props.auth;
 
@@ -35,6 +37,8 @@ const TopNavigation = () => {
           <nav className="hidden md:flex col-span-6 justify-center space-x-6 md:col-span-6">
             <Link href="/" className="text-gray-700 hover:text-brandYellow transition">Home</Link>
             <Link href="/about-us" className="text-gray-700 hover:text-orange-500 transition">About Us</Link>
+            <Link href="/how-it-works" className="text-gray-700 hover:text-orange-500 transition">How It Works</Link>
+            <Link href="/blogs" className="text-gray-700 hover:text-orange-500 transition">Blogs</Link>
             <Link href="/contact-us" className="text-gray-700 hover:text-orange-500 transition">Contact Us</Link>
           </nav>
 
@@ -93,41 +97,71 @@ const TopNavigation = () => {
           {isMobileMenuOpen ? <BiX /> : <BiMenu />}
         </button>
       </div> */}
-      <div className="md:hidden px-4 py-2 flex items-center justify-between bg-white shadow sticky top-0 z-50">
-        <div className="flex items-center gap-2 flex-1">
-          <div className="relative flex-1">
-            <Link href="/">
-              <img
-                src={logoWeb}
-                alt="Logo"
-                className="h-10 w-auto"
-              />
-            </Link>
-          </div>
+      <div className="md:hidden bg-white shadow sticky top-0 z-50">
+        <div className="px-4 py-2 flex items-center justify-between">
+          <Link href="/">
+            <img src={logoWeb} alt="Logo" className="h-10 w-auto" />
+          </Link>
 
-          <button className="text-xl text-gray-700">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 6h13L17 13M9 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"
-              />
-            </svg>
+          <button
+            onClick={() => setIsOpen(true)}
+            className="text-gray-700 focus:outline-none"
+          >
+            <Menu size={24} />
           </button>
         </div>
       </div>
 
+      {/* Overlay backdrop */}
+      <div
+        className={`fixed inset-0 bg-black bg-opacity-40 z-40 transition-opacity duration-300 ${
+          isOpen ? "opacity-100 visible" : "opacity-0 invisible"
+        }`}
+        onClick={() => setIsOpen(false)}
+      />
+
+      {/* Slide-in menu */}
+      <div
+        className={`fixed top-0 right-0 h-full w-64 bg-white z-50 transform transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex justify-between items-center px-4 py-3 border-b">
+          <span className="font-semibold text-lg">Menu</span>
+          <button onClick={() => setIsOpen(false)}>
+            <X size={24} className="text-gray-700" />
+          </button>
+        </div>
+
+        <div className="p-4 space-y-4">
+          <Link
+            href="/about-us"
+            className="flex items-center gap-2 text-sm text-gray-700 hover:text-blue-600"
+          >
+            <Info size={16} />
+            About
+          </Link>
+          <Link
+            href="/blogs"
+            className="flex items-center gap-2 text-sm text-gray-700 hover:text-blue-600"
+          >
+            <BookOpen size={16} />
+            Blog
+          </Link>
+          <Link
+            href="/how-it-works"
+            className="flex items-center gap-2 text-sm text-gray-700 hover:text-blue-600"
+          >
+            <HelpCircle size={16} />
+            How it Works
+          </Link>
+        </div>
+      </div>
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
         <div className="md:hidden px-4 pb-4 space-y-2 bg-white shadow">
           <Link href="/" className="block text-gray-800 hover:text-orange-500">Home</Link>
-          <Link href="/categories/Vehicles" className="block text-gray-800 hover:text-orange-500">Categories</Link>
+          {/* <Link href="/categories/Vehicles" className="block text-gray-800 hover:text-orange-500">Categories</Link> */}
           <Link href="/about-us" className="block text-gray-800 hover:text-orange-500">About</Link>
           <Link href="/contact-us" className="block text-gray-800 hover:text-orange-500">Contact</Link>
           <Link href="/blog-list" className="block text-gray-800 hover:text-orange-500">Blog</Link>

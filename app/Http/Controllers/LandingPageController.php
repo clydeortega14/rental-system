@@ -58,4 +58,17 @@ class LandingPageController extends Controller
             // 'rental_items' => $rental_items
         ]);
     }
+    public function aboutUs(){
+         return Inertia::render('AboutUsPage');
+    }
+    public function howitWorks(){
+         return Inertia::render('HotItWorksPage');
+    }
+    public function blogs(){
+         return Inertia::render('BlogsPage');
+    }
+    public function contactUs(){
+         return Inertia::render('ContactUsPage');
+    }
+
 }
