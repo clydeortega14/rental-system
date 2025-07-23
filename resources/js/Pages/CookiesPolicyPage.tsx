@@ -6,7 +6,10 @@ import logoAbout from '@/../../public/img/mobilelogo.png';
 export default function CookiesPolicyPage() {
     return (
         <LandingUtilityPage>
-            <Head title="Cookies Policy" />
+            <Head>
+                <title>Cookies Policy</title>
+                <meta name="description" content="Learn how Renthive uses cookies to enhance your experience and how you can manage your preferences." />
+            </Head>
             <div className="flex flex-col min-h-screen">
                 <main className="flex-grow">
                     <div className="bg-white text-gray-800">
@@ -89,15 +92,6 @@ export default function CookiesPolicyPage() {
                                         <a href="mailto:support@renthive.com" className="text-blue-600 underline">support@renthive.com</a>
                                     </p>
                                 </div>
-
-                                {/* Optional Image */}
-                                {/* <div className="mt-12 text-center">
-                                    <img
-                                        src={logoAbout}
-                                        alt="Cookies and Privacy"
-                                        className="mx-auto max-w-xs"
-                                    />
-                                </div> */}
                             </div>
                         </section>
                     </div>
