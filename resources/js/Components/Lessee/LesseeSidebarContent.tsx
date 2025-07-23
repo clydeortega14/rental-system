@@ -45,6 +45,7 @@ export default function LesseeSidebarContent({
         { key: "overview", label: "Overview", icon: <BiFile size={18} /> },
         { key: "bookings", label: "Bookings", icon: <BiCalendar size={18} /> },
         { key: "reviews", label: "Reviews", icon: <BiCalendarEvent size={18} /> },
+        { key: "lessorProfile", label: "Account Settings", icon: <BiCog size={18} /> },
       ],
     },
     ...(!isApprovedLessor
@@ -70,7 +71,6 @@ export default function LesseeSidebarContent({
                 { key: "lessorInvoice", label: "Invoice", icon: <BiReceipt size={18} /> },
                 { key: "lessorInquiries", label: "Inquiries", icon: <BiMessageDetail size={18} /> },
                 { key: "LessorReviews", label: "Reviews", icon: <BiStar size={18} /> },
-                { key: "lessorProfile", label: "Account Settings", icon: <BiCog size={18} /> },
             ],
           },
         ]

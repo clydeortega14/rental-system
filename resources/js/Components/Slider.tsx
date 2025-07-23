@@ -3,7 +3,9 @@ import { useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import type { Swiper as SwiperType } from 'swiper';
 //@ts-ignore
-import { Pagination, Autoplay, EffectFade } from 'swiper/modules'
+import { Pagination, Autoplay, EffectFade,Navigation } from 'swiper/modules'
+
+import 'swiper/css/navigation';
 
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -33,12 +35,7 @@ const slides = [
       <>
         Rent the latest gadgets <span className="text-brandYellow">phones, laptops, cameras </span> & more!
       </>
-    ),
-    description: 'Making equipment rental simple, reliable, and accessible for everyone.',
-    // buttons: [
-    //   { label: 'Rent a Gadget', href: '/gadgets' },
-    //   { label: 'Add Your Gadget', href: '/add-gadget' }
-    // ]
+    )
   },
   {
     image: cars,
@@ -47,8 +44,7 @@ const slides = [
       <>
         Reliable car rentals for city <span className="text-brandYellow"> trips & long drives!</span>
       </>
-    ),
-    description: 'Making equipment rental simple, reliable, and accessible for everyone.'
+    )
   },
   {
     image: motorcycle,
@@ -57,8 +53,7 @@ const slides = [
       <>
         Affordable motorcycle <span className="text-brandYellow"> rentals perfect for city </span> rides & island adventures!
       </>
-    ),
-    description: 'Making equipment rental simple, reliable, and accessible for everyone.'
+    )
   },
   {
     image: bags,
@@ -67,8 +62,7 @@ const slides = [
       <>
         Style meets function from <span className="text-brandYellow"> sleek totes to rugged backpacks, find the </span> perfect bag for every adventure!
       </>
-    ),
-    description: 'Making equipment rental simple, reliable, and accessible for everyone.'
+    )
   },
   {
     image: hotels,
@@ -77,8 +71,7 @@ const slides = [
       <>
         Find cozy stays, luxurious <span className="text-brandYellow"> getaways,  and everything in between  book your </span> perfect hotel now!!
       </>
-    ),
-    description: 'Making equipment rental simple, reliable, and accessible for everyone.'
+    )
   }
 ]
 
@@ -87,59 +80,30 @@ const Slider = ({ categories }: SliderProps) => {
   const [textVisible, setTextVisible] = useState(true)
 
   return (
-
-    <section className="relative text-white py-10 sm:py-14 lg:py-16 flex-grow bg-cover bg-center bg-no-repeat"  style={{backgroundImage: `url(${categoryImages})`}}>
+    <section
+      className="relative text-white py-8 sm:py-14 lg:py-16 flex-grow bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${categoryImages})` }}
+    >
       <div className="container mx-auto px-4">
-        <div className="flex flex-col-reverse lg:flex-row items-center gap-10">
+        <div className="flex flex-col-reverse lg:flex-row items-center gap-8 lg:gap-10">
+          
           {/* Text Content */}
-          <div className="w-full lg:w-5/12" data-aos="fade-down">
+          <div className="w-full lg:w-5/12 text-center lg:text-left" data-aos="fade-down">
             <div
               key={activeIndex}
               className={`transition-opacity duration-500 ease-in-out ${
                 textVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
               }`}
             >
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight">
+              <h1 className="text-2xl sm:text-3xl lg:text-5xl font-semibold leading-snug sm:leading-tight">
                 {slides[activeIndex].title}
               </h1>
-              <p className="mt-4 text-gray-400 text-base sm:text-lg">
-                {slides[activeIndex].description}
-              </p>
-
-              <div className="mt-6 flex flex-col sm:flex-row gap-4">
-                {(() => {
-                  const currentSlide = slides[activeIndex]
-                  const matchedCategory = categories.find(
-                    (cat) => cat.detail ? cat.detail.label.toLowerCase() : '' === currentSlide.label.toLowerCase()
-                  )
-
-                  if (!matchedCategory) return null
-
-                  // return (
-                  //   <>
-                  //     <a
-                  //       href={route('rental.browser.index', matchedCategory.name)}
-                  //       className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-md transition text-center"
-                  //     >
-                  //       Rent {matchedCategory.detail && matchedCategory.detail.label}
-                  //     </a>
-                  //     <a
-                  //       href={`/add/${matchedCategory.category_id}`}
-                  //       className="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2 rounded-md transition text-center"
-                  //     >
-                  //       Add Your {matchedCategory.detail && matchedCategory.detail.label}
-                  //     </a>
-                  //   </>
-                  // )
-                })()}
-              </div>
             </div>
           </div>
-
           {/* Image Carousel */}
-          <div className="w-full lg:w-7/12" data-aos="fade-down">
+          <div className="w-full lg:w-7/12" data-aos="fade-up">
             <Swiper
-              modules={[Pagination, Autoplay, EffectFade]}
+              modules={[ Autoplay, EffectFade]}
               pagination={{ clickable: true }}
               autoplay={{ delay: 5000 }}
               loop={true}
@@ -157,7 +121,7 @@ const Slider = ({ categories }: SliderProps) => {
                   <img
                     src={slide.image}
                     alt={`Slide ${index + 1}`}
-                    className="w-full h-auto max-h-[300px] sm:max-h-[400px] lg:max-h-[500px] object-cover rounded-xl animate-float"
+                    className="w-full h-auto max-h-[250px] sm:max-h-[400px] lg:max-h-[500px] object-cover rounded-xl"
                   />
                 </SwiperSlide>
               ))}

@@ -3,7 +3,7 @@ import { PageProps, User } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
 import { Menu, Search, ShoppingCart as CartIcon, X, LogIn, Signature } from 'lucide-react';
 import React, { PropsWithChildren, useEffect, useState } from 'react'
-import logoWeb from '../../../img/logo-web.png';
+import logoWeb from '../../../../public/img/mobilelogo.png';
 import { BiLock, BiUser } from 'react-icons/bi';
 
 const TopNavigation = () => {

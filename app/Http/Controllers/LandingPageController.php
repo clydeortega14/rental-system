@@ -31,7 +31,7 @@ class LandingPageController extends Controller
 
     public function index()
     {
-        $categories = $this->category_service->getCategories()->toArray();
+         $categories = $this->category_service->getCategories();
         // $price_ranges = [
         //     ['id' => '0-50', 'label' => '0 - 50'],
         //     ['id' => '50-100', 'label' => '50 - 100'],
@@ -58,4 +58,20 @@ class LandingPageController extends Controller
             // 'rental_items' => $rental_items
         ]);
     }
+    public function aboutUs(){
+         return Inertia::render('AboutUsPage');
+    }
+    public function howitWorks(){
+         return Inertia::render('HotItWorksPage');
+    }
+    public function blogs(){
+         return Inertia::render('BlogsPage');
+    }
+    public function contactUs(){
+         return Inertia::render('ContactUsPage');
+    }
+    public function cookiesPolicy(){
+        return Inertia::render('CookiesPolicyPage');
+    }
+
 }

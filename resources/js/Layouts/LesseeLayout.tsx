@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useState, useEffect } from "react";
-import { usePage,useRemember  } from "@inertiajs/react";
+import { usePage,useRemember,Link  } from "@inertiajs/react";
 import { PageProps } from "@/types";
 import { BookingDetails } from "@/types/rental";
 import { Reservation } from "@/Pages/Lessor/types/ReservationProps";
@@ -30,6 +30,7 @@ import {
   BiMessageDetail,
   BiStar,
   BiCog,
+  BiLockOpen,
 } from "react-icons/bi";
 
 const Overview = lazy(() => import("@/Pages/Lessee/Overview"));
@@ -179,25 +180,55 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
   };
 
 
-  const tabs = [
-    { key: "overview", label: "Overview", icon: LayoutDashboard },
-    { key: "bookings", label: "Bookings", icon: CalendarCheck },
-    { key: "reservations", label: "Reservations", icon: CalendarCheck },
-    { key: "reviews", label: "Reviews", icon: StarIcon },
-    ...(!isApprovedLessor ? [
-      { key: "lessor", label: "Be a Lessor", icon: BiSolidUserCheck },
-    ] : []),
-    ...(isApprovedLessor ? [
-      { key: "lessorDashboard", label: "Dashboard", icon: BiSolidDashboard },
-      { key: "lessorShop", label: "Shop", icon: BiSolidUserCheck },
-      { key: "lessorProperties", label: "Properties", icon: BiBuildingHouse },
-      { key: "lessorReservations", label: "Reservations", icon: BiCalendarCheck },
-       //ongoing --- need backend and ui-----
-      { key: "lessorInvoice", label: "Invoice", icon: BiReceipt },
-      { key: "lessorInquiries", label: "Inquiries", icon: BiMessageDetail },
-      { key: "LessorReviews", label: "Reviews", icon: BiStar },
-      { key: "lessorProfile", label: "Account Settings", icon: BiCog },
-    ] : []),
+  // const tabs = [
+  //   { key: "overview", label: "Overview", icon: LayoutDashboard },
+  //   { key: "bookings", label: "Bookings", icon: CalendarCheck },
+  //   // { key: "reservations", label: "Reservations", icon: CalendarCheck },
+  //   { key: "reviews", label: "Reviews", icon: StarIcon },
+    
+  //   ...(!isApprovedLessor ? [
+  //     { key: "lessor", label: "Be a Lessor", icon: BiSolidUserCheck },
+  //   ] : []),
+  //   ...(isApprovedLessor ? [
+  //     { key: "lessorDashboard", label: "Dashboard", icon: BiSolidDashboard },
+  //     { key: "lessorShop", label: "Shop", icon: BiSolidUserCheck },
+  //     { key: "lessorProperties", label: "Properties", icon: BiBuildingHouse },
+  //     { key: "lessorReservations", label: "Reservations", icon: BiCalendarCheck },
+  //      //ongoing --- need backend and ui-----
+  //     { key: "lessorInvoice", label: "Invoice", icon: BiReceipt },
+  //     { key: "lessorInquiries", label: "Inquiries", icon: BiMessageDetail },
+  //     { key: "LessorReviews", label: "Reviews", icon: BiStar },
+  //   ] : []),
+  //   { key: "lessorProfile", label: "My Account", icon: BiCog },
+    
+  // ];
+
+  const sidebarTabs = [
+    {
+      section: "Menu",
+      items: [
+        { key: "overview", label: "Overview", icon: <LayoutDashboard className="w-5 h-5" /> },
+        { key: "bookings", label: "Bookings", icon: <CalendarCheck className="w-5 h-5" /> },
+        { key: "reviews", label: "Reviews", icon: <StarIcon className="w-5 h-5" /> },
+        { key: "lessorProfile", label: "My Account", icon: <BiCog size={20} /> },
+      ],
+    },
+    {
+      section: "Lessor Access",
+      items: [
+        ...(isApprovedLessor
+          ? [
+              { key: "lessorDashboard", label: "Dashboard", icon: <BiSolidDashboard size={20} /> },
+              { key: "lessorShop", label: "Shop", icon: <BiSolidUserCheck size={20} /> },
+              { key: "lessorProperties", label: "Properties", icon: <BiBuildingHouse size={20} /> },
+              { key: "lessorReservations", label: "Reservations", icon: <BiCalendarCheck size={20} /> },
+              { key: "lessorInvoice", label: "Invoice", icon: <BiReceipt size={20} /> },
+              { key: "lessorInquiries", label: "Inquiries", icon: <BiMessageDetail size={20} /> },
+              { key: "LessorReviews", label: "Reviews", icon: <BiStar size={20} /> },
+            ]
+          : [{ key: "signup", label: "Be a Lessor", icon: <BiSolidUserCheck size={20} /> }]),
+      ],
+    },
   ];
 
   useEffect(() => {
@@ -230,89 +261,133 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
               <Profile lessee={lessee} layout="header" />
             </Suspense>
              {/* <LesseeSidebarContent activeTab={activeTab} setActiveTab={setActiveTab}  submitForm={auth.user.submitForm} /> */}
-            <TabsList className="flex mt-4 gap-2 border-b border-gray-200 overflow-x-auto flex-nowrap scrollbar-hide">
-              {tabs.map((tab) => (
-                <TabsTrigger
-                  key={tab.key}
-                  value={tab.key}
-                  className={`
-                    flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium
-                    text-gray-600 bg-gray-100
-                    data-[state=active]:bg-orange-600 data-[state=active]:text-white
-                    hover:bg-orange-100 transition-colors whitespace-nowrap
-                  `}
+            <div className="mt-4 px-2 flex gap-2">
+              {/* Be a Lessor button (only if not yet approved) */}
+              {!isApprovedLessor && (
+                <button
+                  type="button"
+                  onClick={() => setShowLessorModal(true)}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-orange-600 hover:bg-orange-700 rounded-lg shadow transition"
                 >
-                  <tab.icon className="w-4 h-4" />
-                  {tab.label}
-                </TabsTrigger>
-              ))}
+                  <BiSolidUserCheck size={18} />
+                  Be a Lessor
+                </button>
+              )}
+              <Link
+                href={route("logout")}
+                method="post"
+                as="button"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white rounded-lg shadow transition"
+                style={{ backgroundColor: "#081328" }}
+              >
+                <BiLockOpen size={18} />
+                Logout
+              </Link>
+            </div>
+            <TabsList className="flex flex-col gap-4 mt-4 px-2">
+              {sidebarTabs.map((section, index) => {
+                // Skip "Lessor Access" section if not approved
+                if (section.section === "Lessor Access" && !isApprovedLessor) {
+                  return null; // don't render this section
+                }
+
+                return (
+                  <div key={index} className="space-y-1">
+                    <p className="text-xs font-semibold text-gray-500 uppercase px-1">{section.section}</p>
+                    <div className="flex gap-3 overflow-x-auto scrollbar-hide">
+                      {section.items.map((item) => (
+                        <TabsTrigger
+                          key={item.key}
+                          value={item.key}
+                          onClick={() => {
+                            if (item.key === "signup") {
+                              setShowLessorModal(true);
+                            } else {
+                              setActiveTab(item.key);
+                              window.scrollTo({ top: 0, behavior: "smooth" });
+                            }
+                          }}
+                          className={`flex flex-col items-center justify-center gap-1 px-4 py-3 min-w-[110px]
+                            rounded-xl text-sm font-medium shadow-sm border
+                            text-gray-600 bg-white border-gray-200
+                            data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:border-orange-600
+                            hover:bg-orange-50 transition-colors whitespace-nowrap`}
+                        >
+                          {item.icon}
+                          {item.label}
+                        </TabsTrigger>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </TabsList>
           </div>
 
           {/* Tab Content */}
           <Suspense fallback={<div className="text-center text-orange-600 py-10">Loading...</div>}>
-           <TabsContent value="overview" className="h-full">
-              <Overview recentActivities={recentActivities} />
-            </TabsContent>
-            <TabsContent value="bookings" className="h-full">
-              <Bookings />
-            </TabsContent>
-            <TabsContent value="lessor" className="h-full">
-              {auth.user?.kyc?.kyc_verified === true ? (
-                <LesseeSignForm signUser={auth} />
-              ) : (
-                <div className="flex flex-col items-center justify-center text-center py-20">
-                  <h2 className="text-2xl font-semibold text-red-600">KYC Verification Required</h2>
-                  <p className="mt-2 text-gray-600 max-w-md">
-                    You must complete and get approved for identity verification before becoming a lessor. 
-                    Please visit your account settings to upload required documents.
-                  </p>
-                </div>
-              )}
-            </TabsContent>
-            <TabsContent value="reviews" className="h-full">
-              <Review reviews={lessee.reviews} />
-            </TabsContent>
-            {/* Start Lessor Access */}
-            <TabsContent value="lessorProfile" className="h-full">
-              <LessorProfile />
-            </TabsContent>
-            <TabsContent value="lessorDashboard" className="h-full">
-              {lessorDashboard && <LessorDashboard dashboardData={lessorDashboard} />}
-            </TabsContent>
-            <TabsContent value="lessorProperties" className="h-full">
-           <LessorProperties
-              shops={shops}
-              categories={categories}
-              rentals={rentals.map((rental) => ({
-                ...rental,
-                categoryId: rental.categoryId ?? null,
-                shopId: rental.shopId ?? null,
-                description: rental.description ?? "",
-                categoryType: rental.categoryType ?? "General",
-                reservationAmt: rental.reservationAmt ?? 0,
-                imageUrl: rental.imageUrl ?? "/placeholder.jpg",
-              }))}
-            />
-            </TabsContent>
-            <TabsContent value="lessorReservations" className="h-full">
-              <LessorReservations bookings={lessorReservations.map(transformBookingToReservation)} />
-            </TabsContent>
-            <TabsContent value="lessorInvoice" className="h-full">
-              <LessorInvoice />
-            </TabsContent>
-            <TabsContent value="lessorInquiries" className="h-full">
-              <LessorInquiries />
-            </TabsContent>
-            <TabsContent value="LessorReviews" className="h-full">
-              <LessorReviews />
-            </TabsContent>
-            <TabsContent value="lessorShop" className="h-full">
-              {/* Pass shops to LessorShop */}
-              <LessorShop shops={shops} />
-            </TabsContent>
-              {/* End Lessor Access */}
-        </Suspense>
+            <TabsContent value="overview" className="h-full">
+                <Overview recentActivities={recentActivities} />
+              </TabsContent>
+              <TabsContent value="bookings" className="h-full">
+                <Bookings />
+              </TabsContent>
+              <TabsContent value="lessor" className="h-full">
+                {auth.user?.kyc?.kyc_verified === true ? (
+                  <LesseeSignForm signUser={auth} />
+                ) : (
+                  <div className="flex flex-col items-center justify-center text-center py-20">
+                    <h2 className="text-2xl font-semibold text-red-600">KYC Verification Required</h2>
+                    <p className="mt-2 text-gray-600 max-w-md">
+                      You must complete and get approved for identity verification before becoming a lessor. 
+                      Please visit your account settings to upload required documents.
+                    </p>
+                  </div>
+                )}
+              </TabsContent>
+              <TabsContent value="reviews" className="h-full">
+                <Review reviews={lessee.reviews} />
+              </TabsContent>
+              {/* Start Lessor Access */}
+              <TabsContent value="lessorProfile" className="h-full">
+                <LessorProfile />
+              </TabsContent>
+              <TabsContent value="lessorDashboard" className="h-full">
+                {lessorDashboard && <LessorDashboard dashboardData={lessorDashboard} />}
+              </TabsContent>
+              <TabsContent value="lessorProperties" className="h-full">
+            <LessorProperties
+                shops={shops}
+                categories={categories}
+                rentals={rentals.map((rental) => ({
+                  ...rental,
+                  categoryId: rental.categoryId ?? null,
+                  shopId: rental.shopId ?? null,
+                  description: rental.description ?? "",
+                  categoryType: rental.categoryType ?? "General",
+                  reservationAmt: rental.reservationAmt ?? 0,
+                  imageUrl: rental.imageUrl ?? "/placeholder.jpg",
+                }))}
+              />
+              </TabsContent>
+              <TabsContent value="lessorReservations" className="h-full">
+                <LessorReservations bookings={lessorReservations.map(transformBookingToReservation)} />
+              </TabsContent>
+              <TabsContent value="lessorInvoice" className="h-full">
+                <LessorInvoice />
+              </TabsContent>
+              <TabsContent value="lessorInquiries" className="h-full">
+                <LessorInquiries />
+              </TabsContent>
+              <TabsContent value="LessorReviews" className="h-full">
+                <LessorReviews />
+              </TabsContent>
+              <TabsContent value="lessorShop" className="h-full">
+                {/* Pass shops to LessorShop */}
+                <LessorShop shops={shops} />
+              </TabsContent>
+                {/* End Lessor Access */}
+          </Suspense>
         </section>
       </Tabs>
 
@@ -328,7 +403,6 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
           submitForm={auth.user.submitForm}
         />
       )}
-
       <Footer />
     </div>
   );

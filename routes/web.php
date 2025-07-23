@@ -42,6 +42,11 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 
 //ladingpage
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
+Route::get('/about-us', [LandingPageController::class, 'aboutUs'])->name('landing.page.aboutUs');
+Route::get('/how-it-works', [LandingPageController::class, 'howitWorks'])->name('landing.page.howitWorks');
+Route::get('/blogs', [LandingPageController::class, 'blogs'])->name('landing.page.blogs');
+Route::get('/contact-us', [LandingPageController::class, 'contactUs'])->name('landing.page.contactUs');
+Route::get('/cookies-policy', [LandingPageController::class, 'cookiesPolicy'])->name('cookies.policy');
 
 Route::get('rental-browser/{category}', [RentalItemController::class, 'rentalBrowserIndex'])->name('rental.browser.index');
 Route::group(['prefix' => 'admin'], function () {
@@ -140,7 +145,7 @@ Route::middleware([
     Route::get('/account-settings', [ProfileController::class, 'accountSettings'])->name('account.settings');
 
     /* -- Dashboard -- */
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     /* -- Rental Provider Profile Show -- */
     Route::get('rental-provider/profile/{uuid}', [RentalProviderController::class, 'profile'])->name('rental.provider.profile');

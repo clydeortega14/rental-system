@@ -28,13 +28,16 @@ const Footer = () => {
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">About Us</a></li>
+                <li><a href="/about-us" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">About Us</a></li>
+                <li><a href="/how-it-works" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">How It Works</a></li>
+                <li><a href="/blogs" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">Blogs</a></li>
+               
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Support</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">Help Center</a></li>
+                 <li><a href="/contact-us" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">Contact Us</a></li>
                 <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">Safety</a></li>
                 {/* <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">Cancellation Options</a></li> */}
               </ul>
@@ -49,7 +52,7 @@ const Footer = () => {
             </div>
           </div>
           <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-500">
-            <p>© 2025 Rent Hive. All rights reserved.</p>
+            <p>© 2025 Rent Hive Technology Inc. All rights reserved.</p>
           </div>
         </div>
     </footer>

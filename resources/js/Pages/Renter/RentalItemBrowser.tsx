@@ -63,7 +63,7 @@ const RentalItemBrowser = ({
 
         <Head title={category.name} />
         {/* <div className="px-4 py-8"> */}
-        <div className="max-w-screen-xl mx-auto px-4 pt-6 pb-8">
+        <div className="max-w-screen-xl mx-auto px-4 pb-8">
             <div>
                 { error_message && <p className="text-2xl text-red-500 pt-4">{error_message }</p> }
             </div>
@@ -129,7 +129,7 @@ const RentalItemBrowser = ({
                         </div>
                     </div> */}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {filteredItems.map(item => (
                             <Card 
                                 key={item.id} 
