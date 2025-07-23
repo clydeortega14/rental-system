@@ -70,5 +70,8 @@ class LandingPageController extends Controller
     public function contactUs(){
          return Inertia::render('ContactUsPage');
     }
+    public function cookiesPolicy(){
+        return Inertia::render('CookiesPolicyPage');
+    }
 
 }

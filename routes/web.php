@@ -46,6 +46,7 @@ Route::get('/about-us', [LandingPageController::class, 'aboutUs'])->name('landin
 Route::get('/how-it-works', [LandingPageController::class, 'howitWorks'])->name('landing.page.howitWorks');
 Route::get('/blogs', [LandingPageController::class, 'blogs'])->name('landing.page.blogs');
 Route::get('/contact-us', [LandingPageController::class, 'contactUs'])->name('landing.page.contactUs');
+Route::get('/cookies-policy', [LandingPageController::class, 'cookiesPolicy'])->name('cookies.policy');
 
 Route::get('rental-browser/{category}', [RentalItemController::class, 'rentalBrowserIndex'])->name('rental.browser.index');
 Route::group(['prefix' => 'admin'], function () {
