@@ -1,216 +1,136 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Table, Space, Button, Card, Typography, Tag, Badge, Input, Dropdown, Menu, Select, DatePicker, Breadcrumb } from 'antd';
-import {
-    EditOutlined,
-    DeleteOutlined,
-    PlusOutlined,
-    SearchOutlined,
-    FilterOutlined,
-    MoreOutlined,
-    SyncOutlined
-} from '@ant-design/icons';
-import AdminLayoutAntD from '../../../../../js/Layouts/AdminLayoutAntD';
 import { useState } from 'react';
+import AdminLayout from '../../../../../js/Layouts/AdminLayout';
 import { PageWithAdminLayout } from '@/types';
-import type { MenuProps, TableColumnsType } from 'antd';
-
-const { Title, Text } = Typography;
-const { Search } = Input;
-const { Option } = Select;
-const { RangePicker } = DatePicker;
 
 interface Category {
+  id: number;
+  name: string;
+  description?: string;
+  tags: {
     id: number;
     name: string;
-    description?: string;
-    tags: {
-        id: number;
-        name: string;
-    }[];
+  }[];
 }
 
 type PageProps = {
-    categories: Category[];
+  categories: Category[];
 };
 
-interface DataType {
-    key: React.Key;
-    name: string;
-    age: number;
-    address: string;
-}
-
 const AdminConfigurationCategoryIndex: PageWithAdminLayout = () => {
-    const [searchText, setSearchText] = useState('');
-    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    const { categories } = usePage<PageProps>().props;
-    const [statusFilter, setStatusFilter] = useState<string | null>(null);
-    const [tagFilter, setTagFilter] = useState<number[]>([]);
-    const [dateRange, setDateRange] = useState<any>(null);
+  const { categories } = usePage<PageProps>().props;
+  const [searchText, setSearchText] = useState('');
+  const [tagFilter, setTagFilter] = useState<number[]>([]);
 
+  // Filter categories based on search text and tags
+  const filteredCategories = categories.filter((category) => {
+    const matchesSearch =
+      category.name.toLowerCase().includes(searchText.toLowerCase()) ||
+      category.description?.toLowerCase().includes(searchText.toLowerCase());
 
+    const matchesTags =
+      tagFilter.length > 0
+        ? category.tags.some((tag) => tagFilter.includes(tag.id))
+        : true;
 
-    const data = {
-        categories: categories || [],
-        total: categories.length,
-        current_page: 1,
-        per_page: 10,
-    }
-    // Extract all unique tags for filter dropdown
-    const allTags = [{ id: 1, name: 'Tag1' }, { id: 2, name: 'Tag2' }, { id: 3, name: 'Tag3' }];
+      
+    return matchesSearch && matchesTags;
+  });
 
-    const filteredData = data.categories.filter((category: Category) => {
-        const matchesSearch = category.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            category.description?.toLowerCase().includes(searchText.toLowerCase());
-        const matchesTags = tagFilter.length > 0 ?
-            category.tags.some(tag => tagFilter.includes(tag.id)) : true;
+  return (
+    <div className="space-y-6 p-4 max-w-8xl mx-auto">
+      <Head title="Categories" />
+      <nav className="mb-6 text-sm text-gray-600">
+        <ol className="list-reset flex space-x-2">
+          <li>Configurations</li>
+          <li>/</li>
+          <li className="font-semibold">Categories</li>
+        </ol>
+      </nav>
 
-        return matchesSearch && matchesTags;
-    });
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-semibold">Categories</h2>
+        <Link
+          href="/admin/configurations/categories/create"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
+        >
+          Add Category
+        </Link>
+      </div>
 
-    const getActionMenu = (record: Category): MenuProps['items'] => [
-        {
-            key: 'edit',
-            label: (
-                <Link href={`/categories/${record.id}/edit`}>Edit</Link>
-            ),
-            icon: <EditOutlined />,
-        },
-        /* {
-            key: 'delete',
-            label: (
-                <Link
-                    href={`/categories/${record.id}`}
-                >
-                    Delete
-                </Link>
-            ),
-            icon: <DeleteOutlined />,
-            danger: true,
-        }, */
-    ];
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search categories..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          className="border border-gray-300 rounded px-3 py-2 w-full md:w-1/3"
+        />
+      </div>
 
-    const columns = [
-        {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-            sorter: (a: Category, b: Category) => a.name.localeCompare(b.name),
-            render: (text: string, record: Category) => (
-                <Space>
-                    <Text strong>{text}</Text>
-                </Space>
-            ),
-        },
-        {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description',
-            ellipsis: true,
-        },
-        {
-            title: 'Tags',
-            dataIndex: 'tags',
-            key: 'tags',
-            /* render: (tags: { id: number; name: string }[]) => (
-                <Space size={[0, 8]} wrap>
-                    {tags.map(tag => (
-                        <Tag key={tag.id}>{tag.name}</Tag>
-                    ))}
-                </Space>
-            ), */
-        },
-        {
-            title: 'Actions',
-            key: 'actions',
-            width: 100,
-            render: (_: any, record: Category) => (
-                <Dropdown menu={{ items: getActionMenu(record) }} trigger={['click']}>
-                    <Button type="text" icon={<MoreOutlined />} />
-                </Dropdown>
-            ),
-        },
-    ];
-
-
-    return (
-        <div>
-            <Breadcrumb
-                style={{ margin: '16px 0' }}
-                items={[
-                    { title: 'Configurations' },
-                    { title: 'Categories' }
-                ]} />
-            <Card
-                title={<Title level={4} style={{ margin: 0 }}>Categories</Title>}
-                extra={
-                    <Space>
-                        <Link href="/admin/configurations/categories/create">
-                            <Button type="primary" icon={<PlusOutlined />}
-                                style={{
-                                    backgroundColor: '#1677ff',
-                                    background: '#1677ff',
-                                    color: '#fff',
-                                }}
-                            >
-                                Add Category
-                            </Button>
-                        </Link>
-                    </Space>
-                }
-            >
-                <div className="mb-6">
-                    <Space size="large" wrap>
-                        <Search
-                            placeholder="Search categories..."
-                            allowClear
-                            enterButton={<SearchOutlined />}
-                            onSearch={setSearchText}
-                            onChange={e => setSearchText(e.target.value)}
-                        />
-
-                        {/* <Button
-                            icon={<SyncOutlined />}
-                            onClick={() => {
-                                setSearchText('');
-                                setStatusFilter(null);
-                                setTagFilter([]);
-                                setDateRange(null);
-                            }}
+      <table className="min-w-full bg-white rounded shadow overflow-hidden">
+        <thead className="bg-indigo-600 text-white">
+          <tr>
+            <th className="text-left py-3 px-6">Name</th>
+            <th className="text-left py-3 px-6">Description</th>
+            <th className="text-left py-3 px-6">Tags</th>
+            <th className="text-center py-3 px-6">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredCategories.length === 0 && (
+            <tr>
+              <td colSpan={4} className="text-center py-4 text-gray-500">
+                No categories found.
+              </td>
+            </tr>
+          )}
+          {filteredCategories.map((category) => (
+            <tr key={category.id} className="border-b last:border-b-0 hover:bg-gray-50">
+              <td className="py-3 px-6 font-semibold">{category.name}</td>
+              <td className="py-3 px-6">{category.description || '-'}</td>
+                <td className="py-3 px-6">
+                {!Array.isArray(category.tags) || category.tags.length === 0
+                    ? '-'
+                    : category.tags.map((tag) => (
+                        <span
+                        key={tag.id}
+                        className="inline-block bg-indigo-200 text-indigo-800 text-xs px-2 py-1 rounded mr-1"
                         >
-                            Reset
-                        </Button> */}
-                    </Space>
-                </div>
-
-                <Table
-                    columns={columns}
-                    dataSource={filteredData}
-                    rowKey="id"
-                    pagination={{
-                        current: data.current_page,
-                        total: data.total,
-                        pageSize: data.per_page,
-                        showSizeChanger: true,
-                        pageSizeOptions: ['10', '20', '50', '100'],
-                        showTotal: (total, range) =>
-                            `${range[0]}-${range[1]} of ${total}`,
-                    }}
-                    scroll={{ x: true }}
-                    bordered
-                />
-            </Card>
-        </div>
-    );
-}
+                        {tag.name}
+                        </span>
+                    ))}
+                </td>
+              <td className="py-3 px-6 text-center space-x-2">
+                <Link
+                  href={`/admin/configurations/categories/${category.id}/edit`}
+                  className="text-indigo-600 hover:text-indigo-800"
+                >
+                  Edit
+                </Link>
+                {/* Uncomment if you want delete functionality */}
+                {/* <button
+                  onClick={() => handleDelete(category.id)}
+                  className="text-red-600 hover:text-red-800"
+                >
+                  Delete
+                </button> */}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
 AdminConfigurationCategoryIndex.layout = (page) => (
-    <AdminLayoutAntD
-        active_keys={['/admin/configurations/categories', '/admin/configurations/categories/index']}
-        active_selected_keys={['/admin/configurations']}
-    >
-        <Head title="Categories" />
-        {page}
-    </AdminLayoutAntD>
+  <AdminLayout
+    active_keys={['/admin/configurations/categories', '/admin/configurations/categories/index']}
+    active_selected_keys={['/admin/configurations']}
+  >
+    {page}
+  </AdminLayout>
 );
+
 export default AdminConfigurationCategoryIndex;

@@ -68,12 +68,14 @@ export type NavItem = {
   path?: string;
   active?: boolean;
   subItems?: NavItem[];
+  
 };
 
 export type NavItemProps = {
   item: NavItem;
   sidebarOpen: boolean;
   level?: number;
+  onClick?: () => void;
 };
 export type AdminLayoutProps = {
     children: React.ReactNode;
