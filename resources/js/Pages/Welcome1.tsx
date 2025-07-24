@@ -21,8 +21,6 @@ import { IRentalItems } from "@/Interface/RentalItems";
 
 import NavHeader from "@/Components/Header";
 import CarRentalForm from "@/Components/Forms/CarRental";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import { ICategory } from "@/Interface/CategoryInterface";
 
 const navigation = {

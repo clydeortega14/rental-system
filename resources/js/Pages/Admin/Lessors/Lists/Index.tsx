@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Table, Input, Button, Card } from 'antd';
 import { usePage, router } from '@inertiajs/react';
-import type { ColumnsType } from 'antd/es/table';
+import AdminLayout from '../../../../../js/Layouts/AdminLayout';
 import { PageWithAdminLayout, PageProps } from '@/types';
-import AdminLayoutAntD from '../../../../../js/Layouts/AdminLayoutAntD';
+
+
+
 
 interface Lessor {
   id: number;
@@ -30,6 +31,7 @@ type Props = PageProps & {
       total: number;
       current_page: number;
       per_page: number;
+      last_page: number;
     };
     links: any;
   };
@@ -38,108 +40,153 @@ type Props = PageProps & {
   };
 };
 
+
+
 const LessorList: PageWithAdminLayout = () => {
   const { lessors, filters } = usePage<Props>().props;
   const [search, setSearch] = useState(filters?.search ?? '');
 
-  const handleSearch = (value: string) => {
-    router.get(route('admin.lessors.index'), { search: value }, { preserveState: true });
+  const currentPage = lessors?.meta?.current_page ?? 1;
+  const lastPage = lessors?.meta?.last_page ?? 1;
+  const total = lessors?.meta?.total ?? 0;
+
+  const handleSearch = () => {
+    router.get(route('admin.lessors.index'), { search, page: 1 }, { preserveState: true, replace: true });
   };
 
-  const handleTableChange = (pagination: any) => {
-    router.get(route('admin.lessors.index'), {
-      page: pagination.current,
-      search: search,
-    }, { preserveState: true });
+  const handlePageChange = (page: number) => {
+    router.get(route('admin.lessors.index'), { page, search }, { preserveState: true, replace: true });
   };
-
-  const columns: ColumnsType<Lessor> = [
-    {
-      title: 'Image',
-      key: 'image',
-      render: (_, record) => (
-        <img
-          src={record.user?.photo ? `/storage/${record.user.photo}` : 'img/defaultImage.png'}
-          alt="user"
-          className="w-12 h-12 rounded-full object-cover"
-        />
-      ),
-    },
-    {
-      title: 'Lessor Name',
-      dataIndex: ['user', 'name'],
-      key: 'name',
-    },
-    {
-      title: 'Company Name',
-      key: 'company_name',
-      render: (_, record) => (
-        <span>{record.user.company?.name ?? 'N/A'}</span>
-      ),
-    },
-    {
-      title: 'Contact',
-      key: 'contact',
-      render: (_, record) => {
-        const contact = record.user.contact;
-        return (
-          <div>
-            <p><strong>Mobile:</strong> {contact?.mobile ?? 'N/A'}</p>
-            <p><strong>Telephone:</strong> {contact?.telephone ?? 'N/A'}</p>
-          </div>
-        );
-      },
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <Button type="link" >
-          View
-        </Button>
-      ),
-    },
-  ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 p-4 max-w-8xl mx-auto">
       <h1 className="text-2xl font-bold">Lessor List</h1>
 
-      <Card>
-        <Input.Search
-          placeholder="Search by name or company"
-          allowClear
-          value={search}
-          onSearch={handleSearch}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ maxWidth: 400 }}
-        />
-      </Card>
+      {/* Search Card */}
+      <div className="p-4 rounded  max-w-md">
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            placeholder="Search by name or company"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') handleSearch(); }}
+            className="flex-grow border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          />
+          <button
+            onClick={handleSearch}
+            className="bg-amber-400 hover:bg-amber-500 text-white px-4 rounded"
+            aria-label="Search"
+          >
+            Search
+          </button>
+        </div>
+      </div>
 
-      <Card>
-        <Table
-          columns={columns}
-          dataSource={lessors.data}
-          rowKey="id"
-          pagination={{
-            total: lessors.meta?.total || 0,
-            current: lessors.meta?.current_page || 1,
-            pageSize: lessors.meta?.per_page || 10,
-          }}
-          onChange={handleTableChange}
-        />
-      </Card>
+      {/* Table Card */}
+      <div className="bg-white rounded shadow overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-indigo-600 text-white">
+            <tr>
+              <th className="px-6 py-3 text-left text-sm font-semibold">Image</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold">Lessor Name</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold">Company Name</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold">Contact</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {lessors.data.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="py-4 text-center text-gray-500">
+                  No lessors found.
+                </td>
+              </tr>
+            ) : (
+              lessors.data.map(lessor => (
+                <tr key={lessor.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-3">
+                    <img
+                      src={lessor.user.photo ? `/storage/${lessor.user.photo}` : '/img/defaultImage.png'}
+                      alt={lessor.user.name}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                  </td>
+                  <td className="px-6 py-3">{lessor.user.name}</td>
+                  <td className="px-6 py-3">{lessor.user.company?.name ?? 'N/A'}</td>
+                  <td className="px-6 py-3">
+                    <div>
+                      <p><strong>Mobile:</strong> {lessor.user.contact?.mobile ?? 'N/A'}</p>
+                      <p><strong>Telephone:</strong> {lessor.user.contact?.telephone ?? 'N/A'}</p>
+                    </div>
+                  </td>
+                  <td className="px-6 py-3">
+                    <button
+                      onClick={() => alert(`View lessor ${lessor.user.name}`)} // Replace with real action
+                      className="text-indigo-600 hover:text-indigo-900 font-semibold"
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination */}
+      <div className="flex justify-end space-x-2">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage <= 1}
+          className={`px-3 py-1 rounded border ${
+            currentPage <= 1
+              ? 'text-gray-400 border-gray-300 cursor-not-allowed'
+              : 'text-gray-700 border-gray-400 hover:bg-gray-100'
+          }`}
+        >
+          Previous
+        </button>
+
+        {/* Show simple page numbers */}
+        {[...Array(lastPage).keys()].map(i => {
+          const pageNum = i + 1;
+          return (
+            <button
+              key={pageNum}
+              onClick={() => handlePageChange(pageNum)}
+              className={`px-3 py-1 rounded border ${
+                pageNum === currentPage
+                  ? 'bg-amber-400 text-white border-amber-400'
+                  : 'text-gray-700 border-gray-400 hover:bg-gray-100'
+              }`}
+            >
+              {pageNum}
+            </button>
+          );
+        })}
+
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage >= lastPage}
+          className={`px-3 py-1 rounded border ${
+            currentPage >= lastPage
+              ? 'text-gray-400 border-gray-300 cursor-not-allowed'
+              : 'text-gray-700 border-gray-400 hover:bg-gray-100'
+          }`}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
 
 LessorList.layout = (page: React.ReactNode) => (
-  <AdminLayoutAntD
-    active_keys={['/admin/lessors/index']}
-    active_selected_keys={['/admin/lessors']}
-  >
+  <AdminLayout active_keys={['/admin/lessors/index']} active_selected_keys={['/admin/lessors']}>
     {page}
-  </AdminLayoutAntD>
+  </AdminLayout>
 );
 
 export default LessorList;

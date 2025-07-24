@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminLayoutAntD from '../../../../../js/Layouts/AdminLayoutAntD';
+import AdminLayout from '../../../../../js/Layouts/AdminLayout';
 import { PageWithAdminLayout } from '@/types';
 
 
@@ -13,11 +13,11 @@ const Roles: PageWithAdminLayout = () => {
 }
 
 Roles.layout = (page) => (
-    <AdminLayoutAntD
+    <AdminLayout
         active_keys={['/admin/access-controls/roles']}
         active_selected_keys={['/admin/access-controls']}
     >
         {page}
-    </AdminLayoutAntD>
+    </AdminLayout>
 );
 export default Roles;

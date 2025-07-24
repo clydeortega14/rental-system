@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -13,9 +14,14 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return inertia('Admin/DashboardAntD', [
+       $admin = Auth::guard('admin')->user(); 
+
+        return inertia('Admin/Dashboard', [
             'title' => 'Admin Dashboard',
             'description' => 'Welcome to the admin dashboard. Here you can manage all aspects of the application.',
+            'auth' => [
+                'user' => $admin,
+            ],
         ]);
     }
 }

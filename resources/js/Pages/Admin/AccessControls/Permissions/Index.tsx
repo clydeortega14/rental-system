@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminLayoutAntD from '../../../../../js/Layouts/AdminLayoutAntD';
+import AdminLayout from '../../../../../js/Layouts/AdminLayout';
 import { PageWithAdminLayout } from '@/types';
 
 
@@ -13,12 +13,12 @@ const Permissions: PageWithAdminLayout = () => {
 }
 
 Permissions.layout = (page) => (
-    <AdminLayoutAntD
+    <AdminLayout
         active_keys={['/admin/access-controls/permissions']}
         active_selected_keys={['/admin/access-controls']}
     >
         {page}
-    </AdminLayoutAntD>
+    </AdminLayout>
 );
 
 export default Permissions;

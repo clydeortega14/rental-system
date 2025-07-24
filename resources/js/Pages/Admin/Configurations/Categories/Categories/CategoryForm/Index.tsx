@@ -1,127 +1,101 @@
 import { useForm } from '@inertiajs/react';
-import { Form, Input, Button, Space, Card, Typography, Select, Tag, message } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
 import { PageWithAdminLayout } from '@/types';
-
-import AdminLayoutAntD from '../../../../../../../js/Layouts/AdminLayoutAntD';
-
-const { TextArea } = Input;
-const { Option } = Select;
-const { Title } = Typography;
-
-interface CategoryFormProps {
-    category?: {
-        id: number;
-        name: string;
-        description?: string;
-        tags?: number[];
-    };
-    tags: Array<{ value: number; label: string }>;
-}
+import AdminLayout from '@/Layouts/AdminLayout'; // You can replace this if you have a Tailwind-based layout
 
 const CategoryForm: PageWithAdminLayout = () => {
-    const { data, setData, post, put, processing, errors } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         name: '',
         description: '',
         tags: [],
     });
 
-    const onFinish = () => {
-       /*  if (category) {
-            put(`/categories/${category.id}`, {
-                onSuccess: () => message.success('Category updated successfully!'),
-                onError: () => message.error('Failed to update category'),
-            });
-        } else {
-            post('/categories', {
-                onSuccess: () => message.success('Category created successfully!'),
-                onError: () => message.error('Failed to create category'),
-            });
-        } */
-    };
+    const onSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
 
-    const tagRender = (props: any) => {
-        const { label, closable, onClose } = props;
-        return (
-            <Tag closable={closable} onClose={onClose} style={{ marginRight: 3 }}>
-                {label}
-            </Tag>
-        );
+        post('/categories', {
+            onSuccess: () => alert('Category created successfully!'),
+            onError: () => alert('Failed to create category'),
+        });
     };
 
     return (
-        <Card>
-            <Title level={4} className="mb-6">
-                Create New Category
-            </Title>
-            <Form
-                layout="vertical"
-                initialValues={data}
-                onFinish={onFinish}
-                onValuesChange={(changedValues) => setData({ ...data, ...changedValues })}
-            >
-                <Form.Item
-                    label="Name"
-                    name="name"
-                    validateStatus={errors.name ? 'error' : ''}
-                    help={errors.name}
-                    rules={[{ required: true, message: 'Please input the category name!' }]}
-                >
-                    <Input placeholder="Enter category name" />
-                </Form.Item>
+        <div className="max-w-3xl mx-auto px-4 py-8 bg-white shadow-md rounded-md">
+            <h1 className="text-2xl font-bold mb-6">Create New Category</h1>
 
-                <Form.Item
-                    label="Description"
-                    name="description"
-                    validateStatus={errors.description ? 'error' : ''}
-                    help={errors.description}
-                >
-                    <TextArea rows={4} placeholder="Enter category description (optional)" />
-                </Form.Item>
-
-                {/* <Form.Item
-                    label="Tags"
-                    name="tags"
-                    validateStatus={errors.tags ? 'error' : ''}
-                    help={errors.tags}
-                >
-                    <Select
-                        mode="multiple"
-                        showArrow
-                        tagRender={tagRender}
-                        style={{ width: '100%' }}
-                        options={tags}
-                        placeholder="Select tags"
-                        onChange={(value) => setData('tags', value)}
+            <form onSubmit={onSubmit} className="space-y-6">
+                {/* Name */}
+                <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                        Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={data.name}
+                        onChange={(e) => setData('name', e.target.value)}
+                        className={`mt-1 block w-full rounded-md border ${
+                            errors.name ? 'border-red-500' : 'border-gray-300'
+                        } shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+                        placeholder="Enter category name"
+                        required
                     />
-                </Form.Item> */}
+                    {errors.name && (
+                        <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                    )}
+                </div>
 
-                <Form.Item>
-                    <Space>
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            disabled={processing}
-                            icon={processing ? <LoadingOutlined /> : null}
-                        >
-                            Create
-                        </Button>
-                        <Button href="/categories" type="default">
-                            Cancel
-                        </Button>
-                    </Space>
-                </Form.Item>
-            </Form>
-        </Card>
+                {/* Description */}
+                <div>
+                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                        Description
+                    </label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows={4}
+                        value={data.description}
+                        onChange={(e) => setData('description', e.target.value)}
+                        className={`mt-1 block w-full rounded-md border ${
+                            errors.description ? 'border-red-500' : 'border-gray-300'
+                        } shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+                        placeholder="Enter description (optional)"
+                    ></textarea>
+                    {errors.description && (
+                        <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+                    )}
+                </div>
+
+                {/* Buttons */}
+                <div className="flex space-x-3">
+                    <button
+                        type="submit"
+                        disabled={processing}
+                        className={`px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition ${
+                            processing ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
+                    >
+                        {processing ? 'Creating...' : 'Create'}
+                    </button>
+                    <a
+                        href="/categories"
+                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition"
+                    >
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
     );
-}
+};
 
 CategoryForm.layout = (page) => (
-    <AdminLayoutAntD
+    <AdminLayout
         active_keys={['/admin/configurations/categories']}
         active_selected_keys={['/admin/configurations']}
     >
         {page}
-    </AdminLayoutAntD>
+    </AdminLayout>
 );
+
 export default CategoryForm;
