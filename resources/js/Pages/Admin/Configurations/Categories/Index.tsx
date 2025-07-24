@@ -40,13 +40,6 @@ const AdminConfigurationCategoryIndex: PageWithAdminLayout = () => {
   return (
     <div className="space-y-6 p-4 max-w-8xl mx-auto">
       <Head title="Categories" />
-      <nav className="mb-6 text-sm text-gray-600">
-        <ol className="list-reset flex space-x-2">
-          <li>Configurations</li>
-          <li>/</li>
-          <li className="font-semibold">Categories</li>
-        </ol>
-      </nav>
 
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold">Categories</h2>
