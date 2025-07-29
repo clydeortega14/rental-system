@@ -9,7 +9,6 @@ export interface Reservation {
   location: string;
   pricePerNight: number;
   description: string;
-  amenities: string[];
   contactInfo: string;
   hasConflict?: boolean;
 }

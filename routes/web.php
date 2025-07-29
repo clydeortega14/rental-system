@@ -98,6 +98,7 @@ Route::middleware([
     Route::group(['prefix' => 'user'], function () {
 
         Route::get('/profile', [ProfileController::class, 'profile'])->name('user.profile');
+        Route::post('/profile', [ProfileController::class, 'updateProfile'])->name('user.profile.update');
         Route::get('/kyc', [ProfileController::class, 'showKYC'])->name('kyc.exist');
         Route::post('/kyc', [ProfileController::class, 'userKYC'])->name('kyc.store');
         
@@ -109,7 +110,7 @@ Route::middleware([
         
         Route::get('/properties', [RentalController::class, 'index'])->name('lessor.properties');
         Route::post('/properties', [RentalController::class, 'store'])->name('lessor.properties.store');
-        Route::put('/properties/{rental}', [RentalController::class, 'update'])->name('lessor.properties.update');
+        Route::put('/properties/{uuid}', [RentalController::class, 'update'])->name('lessor.properties.update');
 
         Route::get('/shop', [ShopController::class, 'index'])->name('lessor.shop');
         Route::post('/shop', [ShopController::class, 'store'])->name('lessor.shop.store');

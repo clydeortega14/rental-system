@@ -52,7 +52,7 @@ class LesseeController extends Controller
             ['name' => 'Action']
         ];
 
-        $user = Auth::user()?->loadMissing(['company', 'contact']);
+        $user = Auth::user()?->loadMissing(['company', 'contact', 'kyc', 'billingAddress']);
         $isApprovedLessor = false;
         $lessorApplicationStatus = null;
         $shops = [];
@@ -89,6 +89,7 @@ class LesseeController extends Controller
                     $rentals = $rawRentals->map(function ($rental) {
                         return [
                             'id' => $rental->id,
+                            'uuid' => $rental->uuid,
                             'name' => $rental->itemName,
                             'description' => $rental->description ?? '',
                             'categoryId' => $rental->category_id,
@@ -116,7 +117,7 @@ class LesseeController extends Controller
         $lessorReservations = $this->getLessorReservations($user->id);
         $lessorDashboard = $this->getLessorDashboardData($user->id);
         $recentActivities = $this->getRecentActivities($user->id);
-       
+
         return Inertia::render('Lessee/Landing', [
             'auth' => [
                 'user' => $user,
@@ -131,6 +132,7 @@ class LesseeController extends Controller
             'categories' => $categories,
             'rentals' => $rentals,
             'recentActivities' => $recentActivities,
+            'user' => $user,
         ]);
     }
 
@@ -280,18 +282,22 @@ class LesseeController extends Controller
 
             return [
                 'id' => $booking->id,
-                'guestName' => $booking->bookedBy?->name ?? 'N/A',
-                'property' => $booking->rentalListing?->itemName ?? '',
-                'imageUrl' => $booking->rentalListing?->imageUrl ?? '',
-                'acquire' => $booking->start_date,
-                'return' => $booking->end_date,
+                'customerName' => $booking->bookedBy?->name ?? 'N/A',
+                'itemName' => $booking->rentalListing?->itemName ?? '',
                 'status' => strtoupper($booking->bookingStatus?->name ?? 'PENDING'),
-                'location' => $booking->rentalListing?->toShop?->location ?? '',
-                'pricePerNight' => $booking->total_cost,
-                'description' => $booking->rentalListing?->description ?? '',
-                'amenities' => $booking->rentalListing?->amenities ?? [],
-                'contactInfo' => $booking->bookedBy?->email ?? '',
+                'startDate' => $booking->start_date,
+                'startTime' => $booking->start_time,
+                'endDate' => $booking->end_date,
+                'endTime' => $booking->end_time,
+                'totalPrice' => $booking->total_cost,
                 'hasConflict' => $conflicts->isNotEmpty(),
+                'rentalItem' => [
+                    'name' => $booking->rentalListing?->itemName ?? '',
+                    'imageUrl' => $booking->rentalListing?->imageUrl ?? '',
+                    'location' => $booking->rentalListing?->toShop?->location ?? '',
+                    'description' => $booking->rentalListing?->description ?? '',
+                ],
+                'contactInfo' => $booking->bookedBy?->email ?? '',
             ];
         });
     }

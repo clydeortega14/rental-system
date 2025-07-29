@@ -42,15 +42,9 @@ const Profile = () => {
     }
   };
 
-  const handleSave = (updatedUser: User) => {
-    const payload = {
-      name: updatedUser.name,
-      email: updatedUser.email,
-      contact: updatedUser.contact,
-      company: updatedUser.company,
-    };
-
-    router.put("/lessor/profile", payload, {
+  const handleSave = (formData: FormData) => {
+    router.post(route("user.profile.update"), formData, {
+      forceFormData: true,
       onSuccess: () => {
         toast({
           title: "Profile updated",

@@ -1,5 +1,6 @@
 export interface Property {
   id: number;
+  uuid: string;
   name: string;
   description: string;
   categoryId: number | null;
@@ -9,4 +10,5 @@ export interface Property {
   shopId: number | null;
   address?: string;
   customFieldAnswers?: Record<string, any>;
+  media_paths?: string[];
 }

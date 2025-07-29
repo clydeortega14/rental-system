@@ -43,6 +43,7 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
 
   const [form, setForm] = useState<RentalItem>({
     id: 0,
+    uuid: "",
     name: "",
     description: "",
     categoryId: null,
@@ -55,6 +56,8 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
   });
 
     const handleEdit = (rental: RentalItem) => {
+      console.log("Rental clicked: ", rental);
+
       setForm({
         ...rental,
         categoryId: rental.categoryId ?? null,
@@ -63,83 +66,58 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
       setShowModal(true);
     };
 
-  const handleSave = () => {
-    const payload = {
-      itemName: form.name,
-      description: form.description,
-      category_id: form.categoryId,
-      price: form.reservationAmt,
-      quantity: 1,
-      shop_id: form.shopId,
-      custom_fields: form.customFieldAnswers || {},
-    };
+  const handleSave = (mediaFiles: File[]) => {
+    const formData = new FormData();
 
-    if (form.id) {
-      router.put(`/lessor/properties/${form.id}`, payload, {
+    // Add fields
+    formData.append("itemName", form.name);
+    formData.append("description", form.description);
+    formData.append("category_id", form.categoryId ? form.categoryId.toString() : "");
+    formData.append("price", form.reservationAmt.toString());
+    formData.append("quantity", "1");
+    if (form.shopId) formData.append("shop_id", form.shopId.toString());
+
+    // Custom fields as array
+    Object.entries(form.customFieldAnswers || {}).forEach(([field, values]) => {
+      values.forEach((value: string) => {
+        formData.append(`custom_fields[${field}][]`, value);
+      });
+    });
+
+    // Media files
+    mediaFiles.forEach((file) => formData.append("media[]", file));
+
+    // Existing media paths
+    if (form.media_paths) {
+      form.media_paths.forEach((path) => formData.append("media_paths[]", path));
+    }
+
+    // UPDATE
+    if (form.uuid) {
+      formData.append("_method", "PUT");
+
+      router.post(`/lessor/properties/${form.uuid}`, formData, {
         preserveScroll: true,
+        forceFormData: true,
         onSuccess: () => {
-          setRentalList((prev) =>
-            prev.map((rental) =>
-              rental.id === form.id ? { ...rental, ...form } : rental
-            )
-          );
+          router.reload({ only: ["rentals"] });
           setShowModal(false);
-
-          Swal.fire({
-            toast: true,
-            position: "top-end",
-            icon: "success",
-            title: "Rental updated successfully!",
-            showConfirmButton: false,
-            timer: 2000,
-            timerProgressBar: true,
-          });
         },
-        onError: () => {
-          Swal.fire({
-            toast: true,
-            position: "top-end",
-            icon: "error",
-            title: "Failed to update rental.",
-            showConfirmButton: false,
-            timer: 2500,
-            timerProgressBar: true,
-          });
+        onError: (errors) => {
+          console.error("Update error: ", errors);
         },
       });
     } else {
-      router.post("/lessor/properties", payload, {
+      // CREATE
+      router.post(`/lessor/properties`, formData, {
         preserveScroll: true,
+        forceFormData: true,
         onSuccess: () => {
-          router.reload({
-            only: ['rentals'],
-            onSuccess: (page) => {
-              const updatedRentals = (page.props as any).rentals as RentalItem[];
-              setRentalList(updatedRentals);
-              setShowModal(false);
-
-              Swal.fire({
-                toast: true,
-                position: "top-end",
-                icon: "success",
-                title: "Rental added successfully!",
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
-              });
-            },
-          });
+          router.reload({ only: ["rentals"] });
+          setShowModal(false);
         },
-        onError: () => {
-          Swal.fire({
-            toast: true,
-            position: "top-end",
-            icon: "error",
-            title: "Failed to add rental.",
-            showConfirmButton: false,
-            timer: 2500,
-            timerProgressBar: true,
-          });
+        onError: (errors) => {
+          console.error("Create error: ", errors);
         },
       });
     }
@@ -177,6 +155,7 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
             onClick={() => {
               setForm({
                 id: 0,
+                uuid: "",
                 name: "",
                 description: "",
                 categoryId: null,

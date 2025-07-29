@@ -30,7 +30,12 @@ class RentalAddItem extends Model
         'price',
         'shop_id',
         'quantity',
-        'category_id'
+        'category_id',
+        'media_paths'
+    ];
+
+    protected $casts = [
+        'media_paths' => 'array'
     ];
 
     public static function boot()
