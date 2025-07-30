@@ -197,10 +197,10 @@ const Profile = () => {
         {/* Optional Modals */}
         {/* {modals.twoFactor && (
           <TwoFactorModal isOpen onClose={() => closeModal("twoFactor")} />
-        )}
+        )} */}
         {modals.password && (
           <ChangePasswordModal isOpen onClose={() => closeModal("password")} />
-        )} */}
+        )}
       </Suspense>
     </div>
   );

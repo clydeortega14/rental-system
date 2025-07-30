@@ -99,8 +99,11 @@ Route::middleware([
 
         Route::get('/profile', [ProfileController::class, 'profile'])->name('user.profile');
         Route::post('/profile', [ProfileController::class, 'updateProfile'])->name('user.profile.update');
+
         Route::get('/kyc', [ProfileController::class, 'showKYC'])->name('kyc.exist');
         Route::post('/kyc', [ProfileController::class, 'userKYC'])->name('kyc.store');
+
+        Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('user.change.password');
         
     });
 
