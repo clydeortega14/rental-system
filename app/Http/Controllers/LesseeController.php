@@ -95,7 +95,7 @@ class LesseeController extends Controller
                             'categoryId' => $rental->category_id,
                             'categoryType' => optional($rental->toCategory)->name ?? '',
                             'reservationAmt' => $rental->price,
-                            'imageUrl' => $rental->imageUrl ?? '',
+                            'media_paths' => $rental->media_paths ?? '',
                             'customFieldAnswers' => $rental->customFieldAnswers ?? [],
                             'address' => optional($rental->toShop)->location ?? '',
                             'shopId' => optional($rental->toShop)->id ?? null, // Keep null for type clarity
