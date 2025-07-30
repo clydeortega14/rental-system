@@ -37,13 +37,10 @@ const LandingPageLayout = ({ categories, children }: LandingPageLayoutuProps) =>
       <main className="flex-grow">
         <Header />
         {children}
-
-        {/* Cookie Consent Banner */}
-        <CookieConsent onVisibleChange={setCookieVisible} />
-
         <Slider categories={categories} />
         <SupportSlider />
         <FeaturedCategory auth={auth} categories={categories} />
+        <CookieConsent onVisibleChange={setCookieVisible} />
       </main>
       <Footer />
 
