@@ -279,7 +279,7 @@ class LesseeController extends Controller
                     $booking->start_date < $other->end_date &&
                     $booking->end_date > $other->start_date;
             });
-
+            
             return [
                 'id' => $booking->id,
                 'customerName' => $booking->bookedBy?->name ?? 'N/A',
@@ -293,7 +293,7 @@ class LesseeController extends Controller
                 'hasConflict' => $conflicts->isNotEmpty(),
                 'rentalItem' => [
                     'name' => $booking->rentalListing?->itemName ?? '',
-                    'imageUrl' => $booking->rentalListing?->imageUrl ?? '',
+                    'media_paths' => $booking->rentalListing?->media_paths ?? '',
                     'location' => $booking->rentalListing?->toShop?->location ?? '',
                     'description' => $booking->rentalListing?->description ?? '',
                 ],

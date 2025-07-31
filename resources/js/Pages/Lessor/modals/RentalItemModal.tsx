@@ -103,7 +103,9 @@ export default function RentalItemModal({
   const removeExistingMedia = (path: string) => {
     setForm((prev) => ({
       ...prev,
-      media_paths: prev.media_paths?.filter((p) => p !== path) || [],
+      media_paths: prev.media_paths
+        ? prev.media_paths.filter((p) => p !== path)
+        : [],
     }));
   };
 
@@ -260,17 +262,18 @@ export default function RentalItemModal({
             {/* Previews */}
             <div className="grid grid-cols-3 gap-3 mt-3">
               {/* Existing */}
-              {form.media_paths?.map((path, i) => (
-                <div key={i} className="relative group">
-                  <img src={`/storage/${path}`} className="w-full h-24 object-cover rounded-md" />
-                  <button
-                    type="button"
-                    onClick={() => removeExistingMedia(path)}
-                    className="absolute top-1 right-1 bg-black/60 text-white px-2 rounded opacity-0 group-hover:opacity-100"
-                  >
-                    ✕
-                  </button>
-                </div>
+              {Array.isArray(form.media_paths) && form.media_paths.length > 0 &&
+                form.media_paths.map((path, i) => (
+                  <div key={i} className="relative group">
+                    <img src={`/storage/${path}`} className="w-full h-24 object-cover rounded-md" />
+                    <button
+                      type="button"
+                      onClick={() => removeExistingMedia(path)}
+                      className="absolute top-1 right-1 bg-black/60 text-white px-2 rounded opacity-0 group-hover:opacity-100"
+                    >
+                      ✕
+                    </button>
+                  </div>
               ))}
 
               {/* New files */}

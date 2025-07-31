@@ -108,11 +108,21 @@ interface LayoutProps {
 }
 
 function transformBookingToReservation(booking: BookingDetails): Reservation {
+
+  const mediaPaths = booking.rentalItem?.media_paths;
+
+  let imagePath: string;
+  if (Array.isArray(mediaPaths)) {
+    imagePath = mediaPaths.length > 0 ? mediaPaths[0] : "/placeholder.jpg";
+  } else {
+    imagePath = mediaPaths ?? "/placeholder.jpg";
+  }
+
   return {
     id: Number(booking.id) || 0,
     guestName: booking.customerName ?? "Unknown Guest",
     property: booking.rentalItem?.name ?? booking.itemName ?? "Unnamed",
-    imageUrl: booking.rentalItem?.imageUrl ?? "/placeholder.jpg",
+    media_paths: imagePath,
     acquire: `${booking.startDate ?? ""} ${booking.startTime ?? ""}`,
     return: `${booking.endDate ?? ""} ${booking.endTime ?? ""}`,
     status: booking.status,

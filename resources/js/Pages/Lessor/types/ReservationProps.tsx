@@ -2,7 +2,7 @@ export interface Reservation {
   id: number;
   guestName: string;
   property: string;
-  imageUrl: string;
+  media_paths: string;
   acquire: string;
   return: string;
   status: string;
