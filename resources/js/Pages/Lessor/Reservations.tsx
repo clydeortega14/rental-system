@@ -88,11 +88,10 @@ function Reservations({ lessorReservations }: ReservationsProps) {
   };
 
   // Confirm/Reject action
-  const handleAction = () => {
-    if (!selectedRes || !actionType) return;
+  const handleAction = (res: Reservation, actionType: "confirm" | "reject") => {
     const status = actionType === "confirm" ? "RESERVED" : "CANCELLED";
     router.put(
-      `/lessor/property-reserve/${selectedRes.id}/status`,
+      `/lessor/property-reserve/${res.id}/status`,
       { status },
       {
         onSuccess: () => {
@@ -100,9 +99,8 @@ function Reservations({ lessorReservations }: ReservationsProps) {
             title: `Reservation ${
               status === "RESERVED" ? "confirmed" : "rejected"
             }`,
-            description: `Booking for ${selectedRes.guestName} is now ${status}.`,
+            description: `Booking for ${res.guestName} is now ${status}.`,
           });
-          closeDialog();
         },
         onError: () => {
           toast({
@@ -212,17 +210,23 @@ function Reservations({ lessorReservations }: ReservationsProps) {
                     {res.status === "PENDING" && (
                       <>
                         <DropdownMenuItem
-                          onClick={() => {
-                            setSelectedRes(res);
-                            setActionType("reject");
-                          }}
+                          onClick={() => handleAction(res, "reject")}
                         >
                           Reject
                         </DropdownMenuItem>
+
                         <DropdownMenuItem
+                          disabled={res.hasConflict} // disable if there's a double booking
                           onClick={() => {
-                            setSelectedRes(res);
-                            setActionType("confirm");
+                            if (res.hasConflict) {
+                              toast({
+                                title: "Conflict Detected",
+                                description: "This reservation overlaps with another booking.",
+                                variant: "destructive",
+                              });
+                              return;
+                            }
+                            handleAction(res, "confirm");
                           }}
                         >
                           Confirm

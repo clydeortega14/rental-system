@@ -75,6 +75,28 @@ class ReservationController extends Controller
             'status' => ['required', 'in:RESERVED,CANCELLED'],
         ]);
 
+        // only check for conflicts if confirming the booking
+        if ($validated['status'] === 'RESERVED') {
+            $conflict = Booking::whereHas('bookingStatus', function ($query) {
+                    $query->where('name', 'RESERVED');
+                })
+                ->where('rental_listing_id', $booking->rental_listing_id) 
+                ->where('id', '!=', $booking->id)
+                ->where(function ($q) use ($booking) {
+                    $q->whereBetween('start_date', [$booking->start_date, $booking->end_date])
+                    ->orWhereBetween('end_date', [$booking->start_date, $booking->end_date])
+                    ->orWhere(function ($q2) use ($booking) {
+                        $q2->where('start_date', '<=', $booking->start_date)
+                            ->where('end_date', '>=', $booking->end_date);
+                    });
+                })
+                ->exists();
+
+            if ($conflict) {
+                return redirect()->back()->with('error', 'Cannot confirm booking: This reservation overlaps with another confirmed booking.');
+            }
+        }
+
         $actionMap = [
             'RESERVED' => 'accept',
             'CANCELLED' => 'cancelled',
@@ -89,6 +111,5 @@ class ReservationController extends Controller
         }
 
         return redirect()->back()->with('success', "Booking status updated to {$validated['status']}");
-
     }
 }
