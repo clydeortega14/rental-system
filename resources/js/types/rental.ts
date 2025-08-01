@@ -45,15 +45,21 @@ export interface BookingDetails {
   itemName?: string,
   userId?: string;
   customerId?: string;
-  customerName?: string;
+  guestName?: string;
   startDate?: string | null;
+  acquire?: string;
+  return?: string;
   startTime?: string | null;
   endDate?:string | null;
   endTime?:string | null;
   status: 'pending' | 'confirmed' | 'canceled' | 'completed';
-  totalPrice?: number;
+  pricePerNight?: number;
   duration?: 'hourly' | 'daily' | 'weekly';
   quantity?: number;
+  description?: string;
+  contactInfo?: string;
+  property?: string;
+  location?: string;
   rentalItem?: RentalItem; 
 }
 

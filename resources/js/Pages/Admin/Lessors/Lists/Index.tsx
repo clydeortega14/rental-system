@@ -86,7 +86,7 @@ const LessorList: PageWithAdminLayout = () => {
       {/* Table Card */}
       <div className="bg-white rounded shadow overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-indigo-600 text-white">
+          <thead className="bg-brandYellow text-white">
             <tr>
               <th className="px-6 py-3 text-left text-sm font-semibold">Image</th>
               <th className="px-6 py-3 text-left text-sm font-semibold">Lessor Name</th>

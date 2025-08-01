@@ -1,6 +1,9 @@
 import Footer from '@/Components/LandingPage/Utility/footer'
 import Header from '@/Components/LandingPage/Utility/header'
 import Slider from '@/Components/Slider'
+// import HeroSearch from '@/Components/HeroSearch'; 
+import HowItWorks from '@/Components/HowItWorks';
+import WhyChooseUs from '@/Components/WhyChooseUs';
 import FeaturedCategory from '@/Components/LandingPage/Category/FeaturedCategories'
 import ClientsFeedBack from '@/Components/ClientsFeedBack'
 import SupportSlider from '@/Components/SupportSlider'
@@ -36,10 +39,16 @@ const LandingPageLayout = ({ categories, children }: LandingPageLayoutuProps) =>
     <div className="flex flex-col min-h-screen relative">
       <main className="flex-grow">
         <Header />
+
         {children}
         <Slider categories={categories} />
+        {/* <div className="relative">
+          <HeroSearch />
+        </div> */}
         <SupportSlider />
+         <HowItWorks />
         <FeaturedCategory auth={auth} categories={categories} />
+         <WhyChooseUs />
         <CookieConsent onVisibleChange={setCookieVisible} />
       </main>
       <Footer />

@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'https://d659wjnr-5173.usw2.devtunnels.ms/'),
 
     /*
     |--------------------------------------------------------------------------

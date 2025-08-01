@@ -108,17 +108,17 @@ interface LayoutProps {
 function transformBookingToReservation(booking: BookingDetails): Reservation {
   return {
     id: Number(booking.id) || 0,
-    guestName: booking.customerName ?? "Unknown Guest",
-    property: booking.rentalItem?.name ?? booking.itemName ?? "Unnamed",
-    imageUrl: booking.rentalItem?.imageUrl ?? "/placeholder.jpg",
-    acquire: `${booking.startDate ?? ""} ${booking.startTime ?? ""}`,
-    return: `${booking.endDate ?? ""} ${booking.endTime ?? ""}`,
+    guestName: booking.guestName ?? "Unknown Guest",
+    property: booking.property ?? "Unnamed",
+    imageUrl: booking.rentalItem?.imageUrl ?? "/img/banner/default.png",
+    acquire: booking.acquire ?? "",
+    return: booking.return ?? "",
     status: booking.status,
-    location: booking.rentalItem?.location ?? "Unknown location",
-    pricePerNight: booking.totalPrice ?? 0,
-    description: booking.rentalItem?.description ?? "",
+    location: booking.location ?? "Unknown location",
+    pricePerNight: booking.pricePerNight ?? 0,
+    description: booking.description ?? "",
     amenities: [], // optional
-    contactInfo: booking.customerName ?? "Unknown contact",
+    contactInfo: booking.contactInfo ?? "Unknown contact",
     hasConflict: false // optional logic if needed
   };
 }
