@@ -115,10 +115,23 @@ function Reservations({ lessorReservations }: ReservationsProps) {
     );
   };
 
+  const reservationsWithConflicts = reservations.map((res) => {
+    const overlap = reservations.some(
+      (other) =>
+        other.id !== res.id &&
+        other.property === res.property &&
+        // check if date ranges overlap
+        new Date(res.acquire) < new Date(other.return) &&
+        new Date(res.return) > new Date(other.acquire)
+    );
+
+    return { ...res, hasConflict: overlap };
+  });
+
   // Filter reservations
   const filteredReservations = filterStatus
-    ? reservations.filter((res) => res.status === filterStatus)
-    : reservations;
+    ? reservationsWithConflicts.filter((res) => res.status === filterStatus)
+    : reservationsWithConflicts;
 
   return (
     <div className="max-w-8xl mx-auto p-6 space-y-6">
