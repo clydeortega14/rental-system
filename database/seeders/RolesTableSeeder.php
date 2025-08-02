@@ -34,5 +34,10 @@ class RolesTableSeeder extends Seeder
         foreach ($roles as $role) {
             \App\Models\AdminRole::firstOrCreate($role);
         }
+
+        $role = \App\Models\AdminRole::where('name', 'admin')->first();
+        if ($role) {
+            $role->givePermissionTo('access.admin.module');
+        }
     }
 }
