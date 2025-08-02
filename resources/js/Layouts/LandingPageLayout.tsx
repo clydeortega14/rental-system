@@ -36,6 +36,8 @@ const LandingPageLayout = ({ categories, children }: LandingPageLayoutuProps) =>
     'img/promo/4.png',
     'img/promo/5.png',
     'img/promo/6.png',
+    'img/promo/7.png',
+    'img/promo/8.png',
   ];
 
 // disable background scroll when promo is visible

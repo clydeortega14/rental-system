@@ -81,7 +81,7 @@ const PromoModal: React.FC<PromoModalProps> = ({
         <button
           onClick={onClose}
           aria-label="Close promo"
-          className="absolute top-3 right-3 p-2 rounded-full hover:bg-gray-200 transition"
+          className="absolute top-3 right-3 p-2 rounded-full bg-jaba-yellow hover:bg-gray-200 transition"
         >
           <X size={20} />
         </button>
