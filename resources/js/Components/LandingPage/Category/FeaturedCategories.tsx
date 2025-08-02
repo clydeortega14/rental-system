@@ -55,7 +55,7 @@ const FeaturedCategories = ({ categories }: Props) => {
                   {/* Full image, not cropped */}
                     <div className="absolute top-0 left-0 z-10">
                     <div className="bg-gray-800 text-white text-xs font-semibold px-3 py-1 origin-top-left absolute top-4 left-[-0px] w-[100px] text-center">
-                      HOT! Featured
+                      HOT! Deals
                     </div>
                   </div>
                   <div className="w-full bg-gray-100 flex items-center justify-center p-4">
