@@ -1,44 +1,58 @@
 export interface User {
-  id: number;
-  name: string;
+    submitForm: any;
+    id: number;
+    name: string;
+    email: string;
+    email_verified_at: string;
+    avatar: string;
+    contact: Contact;
+    company: Company;
+    kyc?: KYC;
+    billing_address?: BillingAddress;
+    card_detail?: CardDetail;
+    created_at: string;
+}
+
+export type Company = {
+  id: number,
+  uuid: string,
+  name: string,
+  tin: string,
   email: string;
-  avatar: string | null;
+  street: string;
+  barangay: string;
+  city: string;
+  postal_code: string;
+}
 
-  // Contact Info
-  contact?: {
-    mobile?: string;
-    telephone?: string;
-  };
+export type BillingAddress = {
+  street: string;
+  region: string;
+  province: string;
+  city: string;
+  barangay: string;
+  country: string;
+  postal_code: number;
 
-  // Company Info
-  company?: {
-    name?: string;
-  };
+}
 
-  // Billing Address
-  billingAddress?: {
-    street?: string;
-    postal_code?: string;
-    region?: string;
-    province?: string;
-    city?: string;
-    barangay?: string;
-    country?: string;
-  };
+export type CardDetail = {
+    card_number: number;
+    card_expiry: string;
+    cvv: number;
+}
 
-  // Security
-  twoFactorEnabled?: boolean;
+export type Contact = {
+  id: number;
+  mobile: string;
+}
 
-  // KYC Verification Info
-  kyc?: {
-    kyc_verified?: boolean;
-    kyc_status?: "Pending" | "Verified" | "Rejected" | "Incomplete" | string;
-    kyc_verified_at?: string | null;
-    full_name?: string | null;
-    document_number?: string | null;
-    document_type?: string | null;
-    document_path?: string | null;
-    selfie_path?: string | null;
-  }
-  
+export type KYC = {
+  full_name: string;
+  document_type: string;
+  document_number: string;
+  selfie_path: string | null;
+  document_path: string | null;
+  kyc_status: "Pending" | "Approved" | "Rejected" | null;
+  kyc_verified: boolean;
 }

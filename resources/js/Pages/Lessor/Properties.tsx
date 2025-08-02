@@ -23,6 +23,7 @@ function Properties() {
 
   const [form, setForm] = useState<RentalItem>({
     id: 0,
+    uuid: "",
     name: "",
     description: "",
     categoryId: null,
@@ -32,58 +33,79 @@ function Properties() {
     shopId: null,
     address: "",
     customFieldAnswers: {},
+    media_paths: [],
   });
 
+  /** Handle Edit */
   const handleEdit = (rental: RentalItem) => {
     setForm({
       ...rental,
       categoryId: rental.categoryId ?? null,
       shopId: rental.shopId ?? null,
+      media_paths: rental.media_paths ?? [],
     });
     setShowModal(true);
   };
 
-  const handleSave = () => {
-    const payload = {
-      itemName: form.name,
-      description: form.description,
-      category_id: form.categoryId,
-      price: form.reservationAmt,
-      quantity: 1,
-      shop_id: form.shopId,
-      custom_fields: form.customFieldAnswers || {},
-    };
+  /** Handle Save (Create or Update) */
+  const handleSave = (mediaFiles: File[]) => {
+    const formData = new FormData();
 
-    if (form.id) {
-      router.put(`/lessor/properties/${form.id}`, payload, {
+    // Add fields
+    formData.append("itemName", form.name);
+    formData.append("description", form.description);
+    formData.append("category_id", form.categoryId ? form.categoryId.toString() : "");
+    formData.append("price", form.reservationAmt.toString());
+    formData.append("quantity", "1");
+    if (form.shopId) formData.append("shop_id", form.shopId.toString());
+
+    // Custom fields as array
+    Object.entries(form.customFieldAnswers || {}).forEach(([field, values]) => {
+      values.forEach((value: string) => {
+        formData.append(`custom_fields[${field}][]`, value);
+      });
+    });
+
+    // Media files
+    mediaFiles.forEach((file) => formData.append("media[]", file));
+
+    // Existing media paths
+    if (form.media_paths) {
+      form.media_paths.forEach((path) => formData.append("media_paths[]", path));
+    }
+
+    // UPDATE
+    if (form.uuid) {
+      formData.append("_method", "PUT");
+
+      router.post(`/lessor/properties/${form.uuid}`, formData, {
         preserveScroll: true,
+        forceFormData: true,
         onSuccess: () => {
-          setRentals((prev) =>
-            prev.map((rental) =>
-              rental.id === form.id ? { ...rental, ...form } : rental
-            )
-          );
+          router.reload({ only: ["rentals"] });
           setShowModal(false);
+        },
+        onError: (errors) => {
+          console.error("Update error: ", errors);
         },
       });
     } else {
-      router.post("/lessor/properties", payload, {
+      // CREATE
+      router.post(`/lessor/properties`, formData, {
         preserveScroll: true,
+        forceFormData: true,
         onSuccess: () => {
-          // After success, refetch data manually
-          router.reload({
-            only: ['rentals'],
-            onSuccess: (page) => {
-              const updatedRentals = (page.props as any).rentals as RentalItem[];
-              setRentals(updatedRentals);
-              setShowModal(false);
-            }
-          });
+          router.reload({ only: ["rentals"] });
+          setShowModal(false);
+        },
+        onError: (errors) => {
+          console.error("Create error: ", errors);
         },
       });
     }
   };
 
+  /** Filter Rentals by Shop */
   const filteredRentals =
     filteredShopId === "all"
       ? rentals
@@ -116,6 +138,7 @@ function Properties() {
             onClick={() => {
               setForm({
                 id: 0,
+                uuid: "",
                 name: "",
                 description: "",
                 categoryId: null,
@@ -125,6 +148,7 @@ function Properties() {
                 shopId: null,
                 address: "",
                 customFieldAnswers: {},
+                media_paths: [],
               });
               setShowModal(true);
             }}

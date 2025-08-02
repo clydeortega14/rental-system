@@ -32,6 +32,7 @@ import {
   BiCog,
   BiLockOpen,
 } from "react-icons/bi";
+import { join } from "path";
 
 const Overview = lazy(() => import("@/Pages/Lessee/Overview"));
 const Bookings = lazy(() => import("@/Pages/Lessee/Bookings"));
@@ -55,6 +56,7 @@ export interface Category {
 
 interface RentalItem {
   id: number;
+  uuid: string;
   name: string;
   description: string; // optional
   categoryId?: number;
@@ -106,18 +108,27 @@ interface LayoutProps {
 }
 
 function transformBookingToReservation(booking: BookingDetails): Reservation {
+
+  const mediaPaths = booking.rentalItem?.media_paths;
+
+  let imagePath: string;
+  if (Array.isArray(mediaPaths)) {
+    imagePath = mediaPaths.length > 0 ? mediaPaths[0] : "/placeholder.jpg";
+  } else {
+    imagePath = mediaPaths ?? "/placeholder.jpg";
+  }
+
   return {
     id: Number(booking.id) || 0,
     guestName: booking.customerName ?? "Unknown Guest",
     property: booking.rentalItem?.name ?? booking.itemName ?? "Unnamed",
-    imageUrl: booking.rentalItem?.imageUrl ?? "/placeholder.jpg",
+    media_paths: imagePath,
     acquire: `${booking.startDate ?? ""} ${booking.startTime ?? ""}`,
     return: `${booking.endDate ?? ""} ${booking.endTime ?? ""}`,
     status: booking.status,
     location: booking.rentalItem?.location ?? "Unknown location",
     pricePerNight: booking.totalPrice ?? 0,
     description: booking.rentalItem?.description ?? "",
-    amenities: [], // optional
     contactInfo: booking.customerName ?? "Unknown contact",
     hasConflict: false // optional logic if needed
   };
@@ -139,13 +150,18 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
   ? rawShops
   : { data: [], current_page: 1, last_page: 1, links: [] };
 
+  const joinedDate = new Date(auth.user.created_at).toLocaleString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
   const lessee = {
     name: auth.user.name,
     email: auth.user.email,
-    phone: "+63 912 345 6789",
-    image: "/images/avatar.jpg",
+    phone: auth.user.contact.mobile,
+    image: auth.user.avatar ?? "/images/avatar.jpg",
     rating: 4.7,
-    joined: "March 2023",
+    joined: joinedDate,
     reviews: [
       {
         id: 1,
@@ -371,7 +387,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
               />
               </TabsContent>
               <TabsContent value="lessorReservations" className="h-full">
-                <LessorReservations bookings={lessorReservations.map(transformBookingToReservation)} />
+                <LessorReservations lessorReservations={lessorReservations.map(transformBookingToReservation)} />
               </TabsContent>
               <TabsContent value="lessorInvoice" className="h-full">
                 <LessorInvoice />
