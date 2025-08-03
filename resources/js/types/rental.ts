@@ -21,6 +21,7 @@ export interface RentalItem {
   quantity?: number | null
   imageUrl?: string;
   priceUnit?: string;
+  media_paths?: string[];
 
 }
 
@@ -45,21 +46,15 @@ export interface BookingDetails {
   itemName?: string,
   userId?: string;
   customerId?: string;
-  guestName?: string;
+  customerName?: string;
   startDate?: string | null;
-  acquire?: string;
-  return?: string;
   startTime?: string | null;
   endDate?:string | null;
   endTime?:string | null;
   status: 'pending' | 'confirmed' | 'canceled' | 'completed';
-  pricePerNight?: number;
+  totalPrice?: number;
   duration?: 'hourly' | 'daily' | 'weekly';
   quantity?: number;
-  description?: string;
-  contactInfo?: string;
-  property?: string;
-  location?: string;
   rentalItem?: RentalItem; 
 }
 

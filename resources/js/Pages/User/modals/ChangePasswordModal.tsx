@@ -10,26 +10,16 @@ import {
 } from "@/Components/Lessor/ui/dialog";
 import { Button } from "@/Components/Lessor/ui/button";
 import { Eye, EyeOff } from "lucide-react";
+import { router } from "@inertiajs/react";
+import { toast } from "@/hooks/use-toast";
 
 interface ChangePasswordModalProps {
+  isOpen: boolean;
   onClose: () => void;
-}
-
-// Simulate your API call here or replace with actual API request
-async function changePasswordAPI(data: { currentPassword: string; newPassword: string }) {
-  // Example: fake API delay
-  await new Promise((r) => setTimeout(r, 1500));
-
-  // Here you can throw an error to simulate failure, or resolve for success
-  if (data.currentPassword !== "correct-password") {
-    throw new Error("Current password is incorrect");
-  }
-  return true;
 }
 
 type Strength = "Weak" | "Medium" | "Strong";
 
-// Reusable Password Input Component (unchanged)
 function PasswordInput({
   id,
   label,
@@ -38,6 +28,7 @@ function PasswordInput({
   visible,
   toggleVisibility,
   autoComplete,
+  error,
 }: {
   id: string;
   label: string;
@@ -46,6 +37,7 @@ function PasswordInput({
   visible: boolean;
   toggleVisibility: () => void;
   autoComplete: string;
+  error?: string;
 }) {
   return (
     <div>
@@ -61,28 +53,31 @@ function PasswordInput({
           placeholder={label}
           autoComplete={autoComplete}
           required
-          className="w-full rounded-md border border-gray-300 px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 appearance-none"
-          style={{ WebkitTextSecurity: visible ? "none" : "disc" } as any}
+          className={`w-full rounded-md border px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 appearance-none ${
+            error ? "border-red-500" : "border-gray-300"
+          }`}
         />
         <button
           type="button"
           onClick={toggleVisibility}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-orange-500 hover:text-orange-700 focus:outline-none"
           tabIndex={-1}
-          aria-label={visible ? `Hide ${label}` : `Show ${label}`}
         >
           {visible ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
       </div>
+      {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
     </div>
   );
 }
 
 export default function ChangePasswordModal({ onClose }: ChangePasswordModalProps) {
-  const [current, setCurrent] = useState("");
-  const [newPwd, setNewPwd] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [form, setForm] = useState({
+    current: "",
+    newPwd: "",
+    confirm: "",
+  });
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
   const [strength, setStrength] = useState<Strength>("Weak");
 
@@ -91,8 +86,8 @@ export default function ChangePasswordModal({ onClose }: ChangePasswordModalProp
   const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
-    setStrength(evaluateStrength(newPwd));
-  }, [newPwd]);
+    setStrength(evaluateStrength(form.newPwd));
+  }, [form.newPwd]);
 
   const evaluateStrength = (password: string): Strength => {
     const strong = /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}/;
@@ -103,43 +98,51 @@ export default function ChangePasswordModal({ onClose }: ChangePasswordModalProp
   };
 
   const getStrengthColor = (level: Strength) => {
-    switch (level) {
-      case "Strong":
-        return "bg-green-500";
-      case "Medium":
-        return "bg-orange-400";
-      default:
-        return "bg-red-500";
-    }
+    return {
+      Strong: "bg-green-500",
+      Medium: "bg-orange-400",
+      Weak: "bg-red-500",
+    }[level];
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleChange = (field: string, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: "" })); // clear error on typing
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
 
-    if (!current || !newPwd || !confirm) {
-      setError("All fields are required.");
-      return;
-    }
-    if (newPwd !== confirm) {
-      setError("Passwords do not match.");
+    if (form.newPwd !== form.confirm) {
+      setErrors({ confirm: "Passwords do not match." });
       return;
     }
 
-    setError(null);
     setLoading(true);
 
-    try {
-      // Call internal API method here
-      await changePasswordAPI({ currentPassword: current, newPassword: newPwd });
-      setCurrent("");
-      setNewPwd("");
-      setConfirm("");
-      onClose();
-    } catch (err: any) {
-      setError(err.message || "Failed to change password. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    router.post(
+      "/user/change-password",
+      {
+        current_password: form.current,
+        password: form.newPwd,
+        password_confirmation: form.confirm,
+      },
+      {
+        preserveScroll: true,
+        onSuccess: () => {
+          toast({ title: "Password updated successfully!", variant: "default" });
+          setForm({ current: "", newPwd: "", confirm: "" });
+          onClose();
+        },
+        onError: (err) => {
+          setErrors(err);
+        },
+        onFinish: () => {
+          setLoading(false);
+        },
+      }
+    );
   };
 
   return (
@@ -156,24 +159,26 @@ export default function ChangePasswordModal({ onClose }: ChangePasswordModalProp
           <PasswordInput
             id="current-password"
             label="Current Password"
-            value={current}
-            onChange={(e) => setCurrent(e.target.value)}
+            value={form.current}
+            onChange={(e) => handleChange("current", e.target.value)}
             visible={showCurrent}
             toggleVisibility={() => setShowCurrent((v) => !v)}
             autoComplete="current-password"
+            error={errors.current_password}
           />
 
           <PasswordInput
             id="new-password"
             label="New Password"
-            value={newPwd}
-            onChange={(e) => setNewPwd(e.target.value)}
+            value={form.newPwd}
+            onChange={(e) => handleChange("newPwd", e.target.value)}
             visible={showNew}
             toggleVisibility={() => setShowNew((v) => !v)}
             autoComplete="new-password"
+            error={errors.password}
           />
 
-          {newPwd && (
+          {form.newPwd && (
             <div>
               <div className="flex justify-between text-xs font-medium text-gray-600 mb-1">
                 <span>Password strength</span>
@@ -185,8 +190,7 @@ export default function ChangePasswordModal({ onClose }: ChangePasswordModalProp
                 <div
                   className={`h-2 rounded transition-all duration-300 ${getStrengthColor(strength)}`}
                   style={{
-                    width:
-                      strength === "Weak" ? "33%" : strength === "Medium" ? "66%" : "100%",
+                    width: strength === "Weak" ? "33%" : strength === "Medium" ? "66%" : "100%",
                   }}
                 ></div>
               </div>
@@ -196,14 +200,13 @@ export default function ChangePasswordModal({ onClose }: ChangePasswordModalProp
           <PasswordInput
             id="confirm-password"
             label="Confirm New Password"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
+            value={form.confirm}
+            onChange={(e) => handleChange("confirm", e.target.value)}
             visible={showConfirm}
             toggleVisibility={() => setShowConfirm((v) => !v)}
             autoComplete="new-password"
+            error={errors.password_confirmation}
           />
-
-          {error && <p className="text-sm text-red-600">{error}</p>}
 
           <DialogFooter className="flex justify-end gap-3 mt-6">
             <Button
