@@ -1,10 +1,13 @@
 import { Category } from '@/Interface/CategoryInterface';
 import { ArrowRight } from 'lucide-react';
 
-const categoryImages = [
-  "img/banner/default.png",
-];
-
+const categoryImageMap: Record<string, string> = {
+  'vehicle': '/img/banner/2.png',
+  'residential': '/img/banner/3.png',
+  'events': '/img/banner/events.png',
+  'digital devices': '/img/banner/1.png',
+  'Others': '/img/banner/default.png',
+};
 interface User {
   id: number
   name: string
@@ -18,7 +21,9 @@ interface Props {
   }
 }
 
+
 const FeaturedCategories = ({ categories }: Props) => {
+  const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
   return (
     <section className="bg-gray-50 py-12">
       <div className="container mx-auto px-4">
@@ -31,35 +36,39 @@ const FeaturedCategories = ({ categories }: Props) => {
         </div>
 
         {/* Categories Grid */}
-        <div className="flex flex-wrap justify-center gap-6">
-          {categories.length > 0 ? (
-            categories.map((category, index) => (
-           
-              <a
-                key={category.id}
-                href={route('rental.browser.index', category.name)}
-                className="w-[150px] sm:w-[180px] md:w-[200px] lg:w-[220px] bg-white border rounded-2xl shadow hover:shadow-lg transition-transform transform hover:scale-105 p-4 flex flex-col justify-between"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h6 className="text-md font-semibold text-gray-800">
-                      {category.detail?.label ?? 'No Label'}
-                    </h6>
-                    <p className="text-sm text-gray-400">14 Cars</p>
+        <div className="flex flex-wrap justify-center gap-2">
+          {categories.filter(category => (category.rental_items_count ?? 0) > 0).length > 0 ? (
+            categories
+              .filter(category => (category.rental_items_count ?? 0) > 0)
+              .map((category) => (
+                <a
+                  key={category.id}
+                  href={route('rental.browser.index', category.name)}
+                  className="w-[180px] sm:w-[180px] md:w-[200px] lg:w-[220px] bg-white border rounded-2xl shadow hover:shadow-lg transition-transform transform hover:scale-105 p-4 flex flex-col justify-between"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h6 className="text-md font-semibold text-gray-800">
+                        {category.detail?.label ? capitalize(category.detail.label) : 'No Label'}
+                      </h6>
+                      <p className="text-sm text-gray-500">{category.rental_items_count ?? 0} items available</p>
+                    </div>
+                    <ArrowRight className="w-5 h-5 text-orange-500 mt-1" />
                   </div>
-                  <ArrowRight className="w-5 h-5 text-orange-500 mt-1" />
-                </div>
-                <div className="h-24 flex items-center justify-center">
-                  <img
-                    src={categoryImages[index % categoryImages.length]}
-                    alt={category.detail?.label ?? 'Category'}
-                    className="object-contain w-full h-full"
-                  />
-                </div>
-              </a>
-            ))
+                  <div className="h-24 flex items-center justify-center">
+                    <img
+                      src={
+                        categoryImageMap[category.detail?.label?.toLowerCase() ?? ''] 
+                        ?? categoryImageMap['Others']
+                      }
+                      alt={category.detail?.label ?? 'Category'}
+                      className="object-contain w-full h-full"
+                    />
+                  </div>
+                </a>
+              ))
           ) : (
-            <p className="text-gray-400 w-full text-center">No categories found</p>
+            <p className="text-gray-400 w-full text-center">No categories with items found</p>
           )}
         </div>
 

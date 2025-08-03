@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { Table, Tag, Button, Modal, Tabs } from 'antd';
 import { usePage, router } from '@inertiajs/react';
-import type { ColumnsType } from 'antd/es/table';
-import { CheckCircle, XCircle, Eye } from 'lucide-react';
-import AdminLayoutAntD from '@/Layouts/AdminLayoutAntD';
+import AdminLayout from '@/Layouts/AdminLayout';
 import Swal from 'sweetalert2';
 import { PageProps, PageWithAdminLayout } from '@/types';
+import { Eye, CheckCircle, XCircle } from 'lucide-react';
 
 interface User {
   id: number;
@@ -34,10 +32,10 @@ type Props = PageProps & {
 
 const getKycColor = (status?: string) => {
   switch (status?.toLowerCase()) {
-    case 'approved': return 'green';
-    case 'pending': return 'orange';
-    case 'rejected': return 'red';
-    default: return 'gray';
+    case 'approved': return 'bg-green-100 text-green-800';
+    case 'pending': return 'bg-yellow-100 text-yellow-800';
+    case 'rejected': return 'bg-red-100 text-red-800';
+    default: return 'bg-gray-100 text-gray-800';
   }
 };
 
@@ -45,6 +43,7 @@ const KycUserList: PageWithAdminLayout = () => {
   const { users } = usePage<Props>().props;
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'rejected'>('pending');
 
   const handleStatusChange = (userId: number, status: 'approved' | 'rejected') => {
     router.post(route('admin.user.kyc.update', userId), { status }, {
@@ -71,180 +70,171 @@ const KycUserList: PageWithAdminLayout = () => {
     });
   };
 
-  const columns: ColumnsType<User> = [
-    {
-      title: 'Image',
-      key: 'image',
-      render: (_, record) => (
-        <img
-          src={record.avatar ? `/storage/${record.avatar}` : '/img/defaultImage.png'}
-          alt="user"
-          className="w-10 h-10 rounded-full object-cover"
-        />
-      )
-    },
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name'
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email'
-    },
-    {
-      title: 'KYC Status',
-      key: 'kyc_status',
-      render: (_, record) => (
-        <Tag color={getKycColor(record.kyc?.kyc_status)}>
-          {record.kyc?.kyc_status?.toUpperCase() || 'N/A'}
-        </Tag>
-      )
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <div className="flex gap-2">
-          <Button
-            type="primary"
-            icon={<Eye size={16} />}
-            className="text-black flex items-center gap-1"
-            onClick={() => {
-              setSelectedUser(record);
-              setModalVisible(true);
-            }}
-          >
-            View
-          </Button>
-          {record.kyc?.kyc_status?.toLowerCase() === 'pending' && (
-            <>
-              <Button
-                type='primary'
-                icon={<CheckCircle size={16} />}
-                className="text-black flex items-center gap-1"
-                onClick={() => handleStatusChange(record.id, 'approved')}
-              >
-                Approve
-              </Button>
-              <Button
-                type='primary'
-                danger
-                icon={<XCircle size={16} />}
-                className="flex items-center gap-1"
-                onClick={() => handleStatusChange(record.id, 'rejected')}
-              >
-                Reject
-              </Button>
-            </>
-          )}
-        </div>
-      )
-    }
-  ];
-
-  // Filter users by status
+  // Group users by KYC status
   const groupedUsers = {
-    pending: users.data.filter(user => user.kyc?.kyc_status?.toLowerCase() === 'pending'),
-    approved: users.data.filter(user => user.kyc?.kyc_status?.toLowerCase() === 'approved'),
-    rejected: users.data.filter(user => user.kyc?.kyc_status?.toLowerCase() === 'rejected'),
+    pending: users.data.filter(u => u.kyc?.kyc_status?.toLowerCase() === 'pending'),
+    approved: users.data.filter(u => u.kyc?.kyc_status?.toLowerCase() === 'approved'),
+    rejected: users.data.filter(u => u.kyc?.kyc_status?.toLowerCase() === 'rejected'),
   };
 
+  const renderTable = (usersList: User[]) => (
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-indigo-600 text-white">
+          <tr>
+            <th className="px-4 py-2 text-left text-sm font-semibold">Image</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold">Name</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold">Email</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold">KYC Status</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold">Actions</th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {usersList.length === 0 ? (
+            <tr>
+              <td colSpan={5} className="py-6 text-center text-gray-500">
+                No users found.
+              </td>
+            </tr>
+          ) : (
+            usersList.map(user => (
+              <tr key={user.id} className="hover:bg-gray-50">
+                <td className="px-4 py-3">
+                  <img
+                    src={user.avatar ? `/storage/${user.avatar}` : '/img/defaultImage.png'}
+                    alt={user.name}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                </td>
+                <td className="px-4 py-3">{user.name}</td>
+                <td className="px-4 py-3">{user.email}</td>
+                <td className="px-4 py-3">
+                  <span
+                    className={`inline-block px-2 py-1 text-xs font-semibold rounded ${getKycColor(user.kyc?.kyc_status)}`}
+                  >
+                    {(user.kyc?.kyc_status || 'N/A').toUpperCase()}
+                  </span>
+                </td>
+                <td className="px-4 py-3 space-x-2">
+                  <button
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setModalVisible(true);
+                    }}
+                    className="inline-flex items-center gap-1 px-3 py-1 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-600 hover:text-white transition"
+                    aria-label={`View details of ${user.name}`}
+                  >
+                    <Eye size={16} />
+                    View
+                  </button>
+
+                  {user.kyc?.kyc_status?.toLowerCase() === 'pending' && (
+                    <>
+                      <button
+                        onClick={() => handleStatusChange(user.id, 'approved')}
+                        className="inline-flex items-center gap-1 px-3 py-1 border border-green-600 text-green-600 rounded hover:bg-green-600 hover:text-white transition"
+                        aria-label={`Approve KYC for ${user.name}`}
+                      >
+                        <CheckCircle size={16} />
+                        Approve
+                      </button>
+
+                      <button
+                        onClick={() => handleStatusChange(user.id, 'rejected')}
+                        className="inline-flex items-center gap-1 px-3 py-1 border border-red-600 text-red-600 rounded hover:bg-red-600 hover:text-white transition"
+                        aria-label={`Reject KYC for ${user.name}`}
+                      >
+                        <XCircle size={16} />
+                        Reject
+                      </button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">KYC Users</h1>
+    <div className="space-y-6 p-4 max-w-8xl mx-auto">
+      <h1 className="text-3xl font-bold mb-4">KYC Users</h1>
 
-      <Tabs
-        defaultActiveKey="pending"
-        items={[
-          {
-            key: 'pending',
-            label: 'Pending',
-            children: (
-              <Table
-                columns={columns}
-                dataSource={groupedUsers.pending}
-                rowKey="id"
-                pagination={{ pageSize: 10 }}
-              />
-            ),
-          },
-          {
-            key: 'approved',
-            label: 'Approved',
-            children: (
-              <Table
-                columns={columns}
-                dataSource={groupedUsers.approved}
-                rowKey="id"
-                pagination={{ pageSize: 10 }}
-              />
-            ),
-          },
-          {
-            key: 'rejected',
-            label: 'Rejected',
-            children: (
-              <Table
-                columns={columns}
-                dataSource={groupedUsers.rejected}
-                rowKey="id"
-                pagination={{ pageSize: 10 }}
-              />
-            ),
-          },
-        ]}
-      />
+      {/* Tabs */}
+      <div className="flex space-x-4 mb-6 border-b border-gray-300">
+        {(['pending', 'approved', 'rejected'] as const).map(status => (
+          <button
+            key={status}
+            onClick={() => setActiveTab(status)}
+            className={`py-2 px-4 font-semibold border-b-2 ${
+              activeTab === status
+                ? 'border-indigo-600 text-indigo-600'
+                : 'border-transparent text-gray-600 hover:text-indigo-600'
+            } transition`}
+            aria-current={activeTab === status ? 'page' : undefined}
+          >
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </button>
+        ))}
+      </div>
 
-      <Modal
-        open={modalVisible}
-        onCancel={() => setModalVisible(false)}
-        footer={null}
-        title="KYC Verification Details"
-        width={700}
-      >
-        {selectedUser && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-            {/* Left: User Info */}
-            <div className="space-y-2">
+      {/* Table for active tab */}
+      {activeTab === 'pending' && renderTable(groupedUsers.pending)}
+      {activeTab === 'approved' && renderTable(groupedUsers.approved)}
+      {activeTab === 'rejected' && renderTable(groupedUsers.rejected)}
+
+      {/* Modal */}
+      {modalVisible && selectedUser && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+          onClick={() => setModalVisible(false)}
+        >
+          <div
+            className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Left: User info */}
+            <div className="space-y-4">
               <div>
                 <p className="text-gray-500 font-medium">Full Name</p>
-                <p className="text-base">{selectedUser.name}</p>
+                <p className="text-lg font-semibold">{selectedUser.name}</p>
               </div>
-
               <div>
                 <p className="text-gray-500 font-medium">Email</p>
-                <p className="text-base">{selectedUser.email}</p>
+                <p>{selectedUser.email}</p>
               </div>
-
               <div>
                 <p className="text-gray-500 font-medium">ID Type</p>
-                <p className="text-base">{selectedUser.kyc?.document_type}</p>
+                <p>{selectedUser.kyc?.document_type || 'N/A'}</p>
               </div>
-
               <div>
                 <p className="text-gray-500 font-medium">ID Number</p>
-                <p className="text-base">{selectedUser.kyc?.document_number}</p>
+                <p>{selectedUser.kyc?.document_number || 'N/A'}</p>
               </div>
-
               <div>
                 <p className="text-gray-500 font-medium">KYC Status</p>
-                <Tag color={getKycColor(selectedUser.kyc?.kyc_status)}>
+                <span
+                  className={`inline-block px-2 py-1 text-sm font-semibold rounded ${getKycColor(selectedUser.kyc?.kyc_status)}`}
+                >
                   {selectedUser.kyc?.kyc_status || 'N/A'}
-                </Tag>
+                </span>
               </div>
             </div>
 
             {/* Right: Images */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-6">
               {selectedUser.kyc?.selfie_path && (
                 <div>
                   <p className="text-gray-500 font-medium mb-1">Selfie with ID</p>
                   <img
                     src={`/storage/${selectedUser.kyc.selfie_path}`}
-                    alt="Selfie"
-                    className="w-full h-48 object-cover rounded shadow border"
+                    alt="Selfie with ID"
+                    className="w-full h-48 object-cover rounded border shadow"
                   />
                 </div>
               )}
@@ -254,26 +244,32 @@ const KycUserList: PageWithAdminLayout = () => {
                   <p className="text-gray-500 font-medium mb-1">Identification Card</p>
                   <img
                     src={`/storage/${selectedUser.kyc.document_path}`}
-                    alt="Document"
-                    className="w-full h-48 object-contain rounded shadow border"
+                    alt="Identification Card"
+                    className="w-full h-48 object-contain rounded border shadow"
                   />
                 </div>
               )}
             </div>
+
+            {/* Close button */}
+            <button
+              onClick={() => setModalVisible(false)}
+              aria-label="Close modal"
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-900 transition"
+            >
+              ✕
+            </button>
           </div>
-        )}
-      </Modal>
+        </div>
+      )}
     </div>
   );
 };
 
 KycUserList.layout = (page: React.ReactNode) => (
-  <AdminLayoutAntD
-    active_keys={['/admin/users/kyc/list']}
-    active_selected_keys={['/admin/users']}
-  >
+  <AdminLayout active_keys={['/admin/users/kyc/list']} active_selected_keys={['/admin/users']}>
     {page}
-  </AdminLayoutAntD>
+  </AdminLayout>
 );
 
 export default KycUserList;

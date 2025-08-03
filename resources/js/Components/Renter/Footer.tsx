@@ -49,7 +49,7 @@ const Footer = () => {
             </div>
           </div>
           <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-500">
-            <p>© 2025 Rent Hive. All rights reserved.</p>
+            <p>© 2025 Rent Hive Technology Inc. All rights reserved.</p>
           </div>
         </div>
     </footer>

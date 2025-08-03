@@ -3,55 +3,103 @@ import { NavItemProps } from '../types';
 import { Link } from '@inertiajs/react';
 import { ChevronDownIcon, ChevronRightIcon } from '../../js/Components/Icons';
 
-const NavItem: React.FC<NavItemProps> = ({ item, sidebarOpen, level = 0 }) => {
-    const [expanded, setExpanded] = useState(false);
-    const hasSubItems = item.subItems && item.subItems.length > 0;
+interface NavItemExtendedProps extends NavItemProps {
+  onClick?: () => void;
+}
 
-    if (hasSubItems) {
-        return (
-            <div className={`${level > 0 ? 'pl-2' : ''}`}>
-                <div
-                    className={`flex items-center justify-between px-6 py-3 ${item.active ? 'bg-indigo-700' : 'hover:bg-indigo-700'
-                        } transition-colors duration-200 cursor-pointer`}
-                    onClick={() => {
-                        if (hasSubItems) setExpanded(!expanded);
-                    }}
-                >
-                    <div className="flex items-center">
-                        <span className="flex-shrink-0">{item.icon}</span>
-                        {sidebarOpen && (
-                            <span className="ml-4 font-medium">{item.text}</span>
-                        )}
-                    </div>
+const NavItem: React.FC<NavItemExtendedProps> = ({ item, sidebarOpen, level = 0, onClick }) => {
+  const [expanded, setExpanded] = useState(false);
+  const hasSubItems = item.subItems && item.subItems.length > 0;
 
-                    {sidebarOpen && hasSubItems && (
-                        <span>
-                            {expanded ? (
-                                <ChevronDownIcon className="w-4 h-4" />
-                            ) : (
-                                <ChevronRightIcon className="w-4 h-4" />
-                            )}
-                        </span>
-                    )}
-                </div>
+  const toggleExpanded = () => {
+    if (hasSubItems) setExpanded(!expanded);
+  };
 
-                {sidebarOpen && expanded && hasSubItems && (
-                    <div className="bg-indigo-900">
-                        {item.subItems?.map((subItem) => (
-                            <NavItem
-                                key={subItem.text}
-                                item={subItem}
-                                sidebarOpen={sidebarOpen}
-                                level={level + 1}
-                            />
-                        ))}
-                    </div>
-                )}
-            </div>
-        );
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (onClick) {
+        onClick();
+      } else {
+        toggleExpanded();
+      }
     }
+  };
 
+  if (hasSubItems) {
     return (
+      <div className={`${level > 0 ? 'pl-2' : ''}`}>
+        <div
+          role="button"
+          tabIndex={0}
+          aria-expanded={expanded}
+          aria-haspopup="true"
+          className={`flex items-center justify-between px-6 py-3 ${
+            item.active ? 'bg-indigo-700' : 'hover:bg-indigo-700'
+          } transition-colors duration-200 cursor-pointer select-none`}
+          onClick={onClick ? () => onClick() : toggleExpanded}
+          onKeyDown={handleKeyDown}
+        >
+          <div className="flex items-center">
+            <span className="flex-shrink-0">{item.icon}</span>
+            {sidebarOpen && <span className="ml-4 font-medium">{item.text}</span>}
+          </div>
+
+          {sidebarOpen && (
+            <span>
+              {expanded ? (
+                <ChevronDownIcon className="w-4 h-4" />
+              ) : (
+                <ChevronRightIcon className="w-4 h-4" />
+              )}
+            </span>
+          )}
+        </div>
+
+        {sidebarOpen && expanded && (
+          <div className="bg-indigo-900">
+            {item.subItems!.map((subItem) => (
+              <NavItem
+                key={subItem.path || subItem.text}
+                item={subItem}
+                sidebarOpen={sidebarOpen}
+                level={level + 1}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Render clickable div if onClick is passed (for Logout)
+  if (onClick) {
+    return (
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={(e) => {
+          e.preventDefault();
+          onClick();
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onClick();
+          }
+        }}
+        className={`flex items-center px-6 py-3 cursor-pointer ${
+          item.active ? 'bg-indigo-700' : 'hover:bg-indigo-700'
+        } transition-colors duration-200 ${level > 0 ? 'pl-8' : ''}`}
+      >
+        <span className="flex-shrink-0">{item.icon}</span>
+        {sidebarOpen && <span className="ml-4 font-medium">{item.text}</span>}
+      </div>
+    );
+  }
+
+  // Default render Link for normal navigation items
+  return (
     <Link
       href={item.path || '#'}
       className={`flex items-center px-6 py-3 ${

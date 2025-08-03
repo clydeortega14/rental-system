@@ -24,7 +24,10 @@ class DatabaseSeeder extends Seeder
             FieldTypesSeeder::class,
             CategoryCustomFieldsSeeder::class,
             CategoryCustomFieldValuesSeeder::class,
-            StatusSeeder::class
+            StatusSeeder::class,
+            RolesTableSeeder::class,
+            AdminsTableSeeder::class,
+            PermissionsTableSeeder::class,
         ]);
     }
 }

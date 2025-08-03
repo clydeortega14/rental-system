@@ -1,5 +1,3 @@
-
-
 const messages = [
   'Reliable Service',
   '24/7 Customer Support',

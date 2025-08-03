@@ -6,6 +6,7 @@ export interface User {
     name: string;
     email: string;
     email_verified_at: string;
+    avatar: string;
     contact: Contact;
     company: {
         id: number,
@@ -24,11 +25,16 @@ export interface User {
     }
     billing_address?: BillingAddress;
     card_detail?: CardDetail;
+    created_at: string;
 }
 
 export type BillingAddress = {
   street: string;
+  region: string;
+  province: string;
   city: string;
+  barangay: string;
+  country: string;
   postal_code: number;
 
 }
@@ -68,12 +74,14 @@ export type NavItem = {
   path?: string;
   active?: boolean;
   subItems?: NavItem[];
+  
 };
 
 export type NavItemProps = {
   item: NavItem;
   sidebarOpen: boolean;
   level?: number;
+  onClick?: () => void;
 };
 export type AdminLayoutProps = {
     children: React.ReactNode;
