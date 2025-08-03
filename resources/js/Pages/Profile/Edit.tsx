@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import ProfileInformationForm from './Partials/ProfileInformation';
+// import ProfileInformationForm from './Partials/ProfileInformation';
 import { Head } from '@inertiajs/react';
 import { PageProps } from '@/types';
 export default function Edit({ auth }: PageProps) {
@@ -14,7 +14,7 @@ export default function Edit({ auth }: PageProps) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                     <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                        <ProfileInformationForm  className="max-w-xl"/>
+                        {/* <ProfileInformationForm  className="max-w-xl"/> */}
                     </div>
                 </div>
             </div>

@@ -171,7 +171,7 @@ function Reservations({ lessorReservations }: ReservationsProps) {
                 src={
                   getImageArray(res.media_paths).length > 0
                     ? `/storage/${getImageArray(res.media_paths)[0]}`
-                    : "/images/placeholder.jpg"
+                    : ""
                 }
                 alt={res.property}
                 className="w-full sm:w-32 h-40 sm:h-24 rounded-md object-cover cursor-pointer hover:opacity-90"
@@ -257,7 +257,7 @@ function Reservations({ lessorReservations }: ReservationsProps) {
                 src={
                   getImageArray(viewingRes.media_paths).length > 0
                     ? `/storage/${getImageArray(viewingRes.media_paths)[0]}`
-                    : "/images/placeholder.jpg"
+                    : ""
                 }
                 className="w-full h-full object-contain"
               />

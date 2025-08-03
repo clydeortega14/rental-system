@@ -94,7 +94,7 @@ export default function Bookings() {
                   <td className="px-4 py-3">Booking ID: {booking.id}</td>
                   <td className="px-4 py-3">
                     <img
-                      src={booking.rentalItem?.imageUrl || "/placeholder.jpg"}
+                      src={booking.rentalItem?.imageUrl || ""}
                       alt={booking.itemName}
                       className="w-16 h-16 object-cover rounded"
                     />
@@ -136,7 +136,7 @@ export default function Bookings() {
           <div className="p-6 space-y-4">
             <h2 className="text-xl font-semibold text-gray-800">Booking Details</h2>
             <img
-              src={selectedBooking.rentalItem?.imageUrl || "/placeholder.jpg"}
+              src={selectedBooking.rentalItem?.imageUrl || ""}
               className="w-full h-52 object-cover rounded-lg"
               alt={selectedBooking.rentalItem?.name}
             />

@@ -113,9 +113,9 @@ function transformBookingToReservation(booking: BookingDetails): Reservation {
 
   let imagePath: string;
   if (Array.isArray(mediaPaths)) {
-    imagePath = mediaPaths.length > 0 ? mediaPaths[0] : "/placeholder.jpg";
+    imagePath = mediaPaths.length > 0 ? mediaPaths[0] : "";
   } else {
-    imagePath = mediaPaths ?? "/placeholder.jpg";
+    imagePath = mediaPaths ?? "";
   }
 
   return {
@@ -382,7 +382,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
                   description: rental.description ?? "",
                   categoryType: rental.categoryType ?? "General",
                   reservationAmt: rental.reservationAmt ?? 0,
-                  imageUrl: rental.imageUrl ?? "/placeholder.jpg",
+                  imageUrl: rental.imageUrl ?? "",
                 }))}
               />
               </TabsContent>

@@ -136,7 +136,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, setSidebarOpen
 
     return (
         <div
-            className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-indigo-800 text-white transition-all duration-300 fixed md:relative z-20 h-full ${
+            className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-brandYellow text-white transition-all duration-300 fixed md:relative z-20 h-full ${
                 mobileSidebarOpen ? 'block' : 'hidden md:block'
             }`}
         >
