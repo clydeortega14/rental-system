@@ -7,15 +7,15 @@ import {
 } from "react-icons/bi";
 
 
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  ResponsiveContainer,
-} from "recharts";
+// import {
+//   LineChart,
+//   Line,
+//   XAxis,
+//   YAxis,
+//   Tooltip,
+//   CartesianGrid,
+//   ResponsiveContainer,
+// } from "recharts";
 
 type Reservation = {
   property: string;
@@ -109,7 +109,7 @@ const Dashboard = ({ dashboardData }: DashboardProps) => {
       </section>
 
       {/* Reservation Chart */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      {/* <section className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div className="bg-white p-6 rounded shadow">
           <h2 className="flex items-center text-xl font-semibold mb-4">
             <BarChart3 className="w-5 h-5 text-orange-500 mr-2" />
@@ -134,7 +134,7 @@ const Dashboard = ({ dashboardData }: DashboardProps) => {
             <p className="text-gray-500">No data available</p>
           )}
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };
