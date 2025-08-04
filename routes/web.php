@@ -149,7 +149,7 @@ Route::middleware([
     Route::get('/account-settings', [ProfileController::class, 'accountSettings'])->name('account.settings');
 
     /* -- Dashboard -- */
-    // Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     /* -- Rental Provider Profile Show -- */
     Route::get('rental-provider/profile/{uuid}', [RentalProviderController::class, 'profile'])->name('rental.provider.profile');
