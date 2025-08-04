@@ -166,7 +166,7 @@ const ApplicationsIndex: PageWithAdminLayout = () => {
       {/* Table */}
       <div className="overflow-x-auto bg-white rounded shadow">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-indigo-600 text-white">
+          <thead className="bg-brandYellow text-white">
             <tr>
               <th className="px-6 py-3 text-left text-sm font-semibold">Name of Applicant</th>
               <th className="px-6 py-3 text-left text-sm font-semibold">Contact Number</th>

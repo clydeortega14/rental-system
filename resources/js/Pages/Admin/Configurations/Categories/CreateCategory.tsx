@@ -178,7 +178,7 @@ const CreateCategory = () => {
 
                 <button
                   type="button"
-                  className="bg-red-600 text-white rounded px-3 py-2"
+                  className="bg-brandYellow text-white rounded px-3 py-2"
                   onClick={() => {
                     const updated = [...data.custom_fields];
                     updated.splice(index, 1);

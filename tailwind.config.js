@@ -43,7 +43,7 @@ export default {
 				popBounce: 'popBounce 0.6s ease-out',
             },
     		colors: {
-				brandYellow: '#f1bb00',
+				brandYellow: '#f1bc01',
 				'jaba-yellow': '#feb008',
     			'light-green': '#64A664',
     			'light-white': 'rgba(255,255,255,0.18)',

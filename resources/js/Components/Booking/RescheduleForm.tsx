@@ -4,7 +4,6 @@ import InputError from "../InputError";
 import PrimaryButton from "../PrimaryButton";
 import SecondaryButton from "../SecondaryButton";
 import { useForm } from "@inertiajs/react";
-import { Input } from "@mui/material";
 import { BookingDetails } from "@/types/rental";
 import React from "react";
 

@@ -6,15 +6,11 @@ import {
 } from '../../js/Components/Icons';
 import { AdminLayoutProps } from '../types';
 import AdminSidebar from './AdminSidebar';
-import { usePage } from '@inertiajs/react';
-import type { PageProps } from '@/types';
-
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
-    const { props } = usePage<PageProps>();
-    const admin = props.auth?.user;
+
 
     return (
         <div className="flex h-screen bg-gray-100">
@@ -50,7 +46,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                                 <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
                                     <ProfileIcon className="w-5 h-5 text-indigo-600" />
                                 </div>
-                                <span className="text-sm font-medium"> {admin?.name ? admin.name : 'Administrator'}</span>
+                                <span className="text-sm font-medium"> Administrator</span>
                             </div>
                         </div>
                     </div>
