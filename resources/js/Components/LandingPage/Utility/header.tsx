@@ -26,7 +26,7 @@ const TopNavigation = () => {
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1">
               <BiPhoneCall className="text-base" />
-              +63 (995) 931-30881
+              +63 (995) 931-3081
             </span>
             <span className="flex items-center gap-1">
               <BiEnvelope className="text-base" />

@@ -1,245 +1,360 @@
-import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, useForm, usePage } from "@inertiajs/react";
+import { FormEventHandler, useEffect, useState } from "react";
+import { Head, useForm, usePage, Link, router } from "@inertiajs/react";
+import Header from "@/Components/Header";
+import Footer from "@/Components/LandingPage/Utility/footer";
 import TextInput from "@/Components/TextInput";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
-import { Transition } from "@headlessui/react";
-import { FormEventHandler } from "react";
 import InputError from "@/Components/InputError";
+import banner2 from "@/../../resources/img/banner/login1.png";
 import { PageProps } from "@/types";
 
-function CompleteUserDetails() {
+const categoryImages = ["img/banner/bb.jpg"];
 
-    const user = usePage<PageProps>().props.auth.user;
+type UserType = "company" | "individual" | null;
 
-    const { data, setData, post, processing, errors } = useForm({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        company_name: "",
-        tin: "",
-        years_experience: "",
-        valid_id: "",
-        telephone: "",
-        mobile: "",
-    });
+export default function CompleteUserDetails() {
+  const user = usePage<PageProps>().props.auth.user;
 
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+  const { data, setData, post, processing, errors, reset } = useForm({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    company_name: "",
+    tin: "",
+    years_experience: "",
+    valid_id: null as File | null,
+    telephone: "",
+    mobile: "",
+  });
 
-        post(route("store.completing.user"));
-    };
+  const [step, setStep] = useState<1 | 2>(1);
+  const [userType, setUserType] = useState<UserType>(null);
 
-    return (
-        <GuestLayout>
-            <Head title="Complete User Details" />
+  // redirect immediately if individual
+  useEffect(() => {
+    if (userType === "individual") {
+      router.get(route("lessee.layout"));
+    }
+  }, [userType]);
 
-            <section>
-                <header>
-                    <h2 className="text-lg font-medium text-gray-900">
-                        Personal Information
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setData("valid_id", e.target.files[0]);
+    }
+  };
+
+  const goNext: FormEventHandler = (e) => {
+    e.preventDefault();
+    if (step === 1) {
+      setStep(2);
+    }
+  };
+
+  const goBack: FormEventHandler = (e) => {
+    e.preventDefault();
+    if (step === 2) setStep(1);
+  };
+
+  const submit: FormEventHandler = (e) => {
+    e.preventDefault();
+    post(route("store.completing.user"));
+  };
+
+  return (
+    <>
+      <Head title="Complete Your Details" />
+      <div className="flex flex-col min-h-screen">
+        <Header />
+
+        <section
+          className="relative text-white py-10 sm:py-14 lg:py-16 flex-grow bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${categoryImages})` }}
+        >
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col-reverse lg:flex-row items-center justify-center rounded-xl overflow-hidden">
+              <div className="w-full lg:w-1/2 p-10 text-black shadow-lg rounded-xl bg-white">
+                {/* Initial choice */}
+                {userType === null && (
+                  <div className="space-y-6">
+                    <h2 className="text-2xl font-bold mb-1">
+                      Are you registering as?
                     </h2>
-
-                    <p className="mt-1 text-sm text-gray-600">
-                        Please complete your personal information
+                    <p className="text-sm text-gray-600 mb-4">
+                      Choose whether you're completing details for a company or
+                      as an individual.
                     </p>
-                </header>
-
-                <form
-                    onSubmit={submit}
-                    className="mt-6 space-y-6"
-                    encType="multipart/form-data"
-                >
-                    <div>
-                        <TextInput
-                            type="hidden"
-                            className="mt-1 block w-full"
-                            value={data.id}
-                            autoComplete="user_id"
-                        />
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setUserType("company");
+                        }}
+                        className="flex-1 px-6 py-3 bg-[#f53d2d] hover:bg-[#e03728] text-white font-semibold rounded shadow transition"
+                      >
+                        Company
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setUserType("individual");
+                        }}
+                        className="flex-1 px-6 py-3 border border-gray-300 rounded font-semibold hover:bg-gray-50 transition"
+                      >
+                        Individual
+                      </button>
                     </div>
+                    <p className="text-xs text-gray-500">
+                      If you choose Individual, you'll be redirected to your
+                      lessee dashboard.
+                    </p>
+                  </div>
+                )}
 
-                    <div>
-                        <InputLabel htmlFor="name" value="Name" />
-
-                        <TextInput
-                            id="name"
-                            className="mt-1 block w-full"
-                            value={data.name}
-                            onChange={(e) => setData("name", e.target.value)}
-                            required
-                            disabled
-                            isFocused
-                            autoComplete="name"
-                        />
-                    </div>
-
-                    <div>
-                        <InputLabel htmlFor="email" value="Email" />
-
-                        <TextInput
-                            id="email"
-                            className="mt-1 block w-full"
-                            value={data.email}
-                            onChange={(e) => setData("email", e.target.value)}
-                            required
-                            disabled
-                            isFocused
-                            autoComplete="email"
-                        />
-                    </div>
-
-                    <header>
-                        <h2 className="text-lg font-medium text-gray-900">
-                            Company
+                {/* Company flow */}
+                {userType === "company" && (
+                  <>
+                    <div className="flex justify-between mb-4">
+                      <div>
+                        <h2 className="text-2xl font-bold">
+                          {step === 1
+                            ? "Step 1: Company Info"
+                            : "Step 2: Contact Info"}
                         </h2>
-
-                        <p className="mt-1 text-sm text-gray-600">
-                            Complete your company information
+                        <p className="text-sm text-gray-600">
+                          {step === 1
+                            ? "Provide your company details."
+                            : "Provide your contact information."}
                         </p>
-                    </header>
+                      </div>
+                      <div className="text-sm">
+                        <span className="font-semibold">{step}</span>/2
+                      </div>
+                    </div>
 
-                    <div>
-                        <InputLabel
-                            htmlFor="company-name"
-                            value="Name of your company"
-                        />
+                    <div className="mb-6 border rounded p-3 bg-gray-50">
+                      <div className="text-xs uppercase text-gray-500 mb-1">
+                        Account
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <div>
+                          <strong>Name:</strong> {data.name}
+                        </div>
+                        <div>
+                          <strong>Email:</strong> {data.email}
+                        </div>
+                      </div>
+                    </div>
 
-                        <TextInput
-                            id="company-name"
-                            className="mt-1 block w-full"
-                            value={data.company_name}
-                            onChange={(e) =>
+                    <form
+                      onSubmit={step === 1 ? goNext : submit}
+                      className="space-y-6"
+                      encType="multipart/form-data"
+                      noValidate
+                    >
+                      <input type="hidden" value={data.id} name="id" />
+
+                      {step === 1 && (
+                        <>
+                          {/* Company Name */}
+                          <div>
+                            <InputLabel
+                              htmlFor="company-name"
+                              value="Name of your company"
+                            />
+                            <TextInput
+                              id="company-name"
+                              className="mt-1 block w-full border px-4 py-2 rounded"
+                              value={data.company_name}
+                              onChange={(e) =>
                                 setData("company_name", e.target.value)
-                            }
-                            isFocused
-                            autoComplete="company-name"
-                        />
+                              }
+                              autoComplete="company-name"
+                            />
+                            <InputError
+                              message={errors.company_name}
+                              className="mt-2"
+                            />
+                          </div>
 
-                        <InputError
-                            className="mt-2"
-                            message={errors.company_name}
-                        />
-                    </div>
+                          {/* TIN */}
+                          <div>
+                            <InputLabel
+                              htmlFor="tin"
+                              value="TIN (Tax Identification Number)"
+                            />
+                            <TextInput
+                              id="tin"
+                              className="mt-1 block w-full border px-4 py-2 rounded"
+                              value={data.tin}
+                              onChange={(e) => setData("tin", e.target.value)}
+                              autoComplete="tin"
+                            />
+                            <InputError
+                              message={errors.tin}
+                              className="mt-2"
+                            />
+                          </div>
 
-                    <div>
-                        <InputLabel
-                            htmlFor="tin"
-                            value="TIN (Tax Identification Number)"
-                        />
-
-                        <TextInput
-                            id="tin"
-                            className="mt-1 block w-full"
-                            value={data.tin}
-                            onChange={(e) => setData("tin", e.target.value)}
-                            isFocused
-                            autoComplete="tin"
-                        />
-
-                        <InputError className="mt-2" message={errors.tin} />
-                    </div>
-
-                    <div>
-                        <InputLabel
-                            htmlFor="industry-years"
-                            value="Years in the industry"
-                        />
-
-                        <TextInput
-                            id="industry-years"
-                            className="mt-1 block w-full"
-                            value={data.years_experience}
-                            onChange={(e) =>
+                          {/* Years Experience */}
+                          <div>
+                            <InputLabel
+                              htmlFor="industry-years"
+                              value="Years in the industry"
+                            />
+                            <TextInput
+                              id="industry-years"
+                              className="mt-1 block w-full border px-4 py-2 rounded"
+                              value={data.years_experience}
+                              onChange={(e) =>
                                 setData("years_experience", e.target.value)
-                            }
-                            isFocused
-                            autoComplete="industry-years"
-                        />
-                        <InputError
-                            className="mt-2"
-                            message={errors.years_experience}
-                        />
-                    </div>
+                              }
+                              autoComplete="industry-years"
+                            />
+                            <InputError
+                              message={errors.years_experience}
+                              className="mt-2"
+                            />
+                          </div>
 
-                    <div>
-                        <InputLabel
-                            htmlFor="valid-id"
-                            value="Valid ID (atleast 1 valid id)"
-                        />
+                          {/* Valid ID */}
+                          <div>
+                            <InputLabel
+                              htmlFor="valid-id"
+                              value="Valid ID (at least 1 valid ID)"
+                            />
+                            <input
+                              id="valid-id"
+                              type="file"
+                              onChange={handleFileChange}
+                              className="mt-1 block w-full"
+                              accept="image/*,application/pdf"
+                            />
+                            <InputError
+                              message={errors.valid_id}
+                              className="mt-2"
+                            />
+                          </div>
+                        </>
+                      )}
 
-                        <TextInput
-                            type="file"
-                            id="valid-id"
-                            className="mt-1 block w-full"
-                            value={data.valid_id}
-                            onChange={(e) =>
-                                setData("valid_id", e.target.value)
-                            }
-                            isFocused
-                            autoComplete="valid-id"
-                        />
-
-                        <InputError
-                            className="mt-2"
-                            message={errors.valid_id}
-                        />
-                    </div>
-
-                    <header>
-                        <h2 className="text-lg font-medium text-gray-900">
-                            Contact Details
-                        </h2>
-
-                        <p className="mt-1 text-sm text-gray-600">
-                            Please provide your updated contact details
-                        </p>
-                    </header>
-
-                    <div>
-                        <InputLabel
-                            htmlFor="tel-contact"
-                            value="Telephone (Optional)"
-                        />
-
-                        <TextInput
-                            id="tel-contact"
-                            className="mt-1 block w-full"
-                            value={data.telephone}
-                            onChange={(e) =>
+                      {step === 2 && (
+                        <>
+                          {/* Telephone */}
+                          <div>
+                            <InputLabel
+                              htmlFor="tel-contact"
+                              value="Telephone (Optional)"
+                            />
+                            <TextInput
+                              id="tel-contact"
+                              className="mt-1 block w-full border px-4 py-2 rounded"
+                              value={data.telephone}
+                              onChange={(e) =>
                                 setData("telephone", e.target.value)
-                            }
-                            isFocused
-                            autoComplete="tel-contact"
-                        />
+                              }
+                              autoComplete="tel-contact"
+                            />
+                            <InputError
+                              message={errors.telephone}
+                              className="mt-2"
+                            />
+                          </div>
 
-                        <InputError
-                            className="mt-2"
-                            message={errors.telephone}
-                        />
-                    </div>
+                          {/* Mobile */}
+                          <div>
+                            <InputLabel htmlFor="mobile" value="Mobile" />
+                            <TextInput
+                              id="mobile"
+                              className="mt-1 block w-full border px-4 py-2 rounded"
+                              value={data.mobile}
+                              onChange={(e) =>
+                                setData("mobile", e.target.value)
+                              }
+                              autoComplete="mobile"
+                            />
+                            <InputError
+                              message={errors.mobile}
+                              className="mt-2"
+                            />
+                          </div>
+                        </>
+                      )}
 
-                    <div>
-                        <InputLabel htmlFor="mobile" value="Mobile" />
+                      <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
+                        <div className="flex flex-wrap gap-2">
+                          {step === 2 && (
+                            <button
+                              onClick={goBack}
+                              type="button"
+                              className="px-4 py-2 border rounded text-sm hover:bg-gray-100 transition"
+                            >
+                              Back
+                            </button>
+                          )}
+                          {step === 1 && (
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setUserType(null);
+                                setStep(1);
+                              }}
+                              type="button"
+                              className="px-4 py-2 border rounded text-sm hover:bg-gray-100 transition"
+                            >
+                              Cancel
+                            </button>
+                          )}
+                        </div>
 
-                        <TextInput
-                            id="mobile"
-                            className="mt-1 block w-full"
-                            value={data.mobile}
-                            onChange={(e) => setData("mobile", e.target.value)}
-                            isFocused
-                            autoComplete="mobile"
-                        />
-                        <InputError className="mt-2" message={errors.mobile} />
-                    </div>
+                        <div className="flex-1 flex justify-end gap-2 flex-wrap">
+                          {step === 1 && (
+                            <PrimaryButton
+                              className="px-6 py-2 bg-[#f53d2d] hover:bg-[#e03728] text-white rounded w-full sm:w-auto"
+                              disabled={processing}
+                            >
+                              Next
+                            </PrimaryButton>
+                          )}
+                          {step === 2 && (
+                            <PrimaryButton
+                              className="px-6 py-2 bg-[#f53d2d] hover:bg-[#e03728] text-white rounded w-full sm:w-auto"
+                              disabled={processing}
+                            >
+                              Submit
+                            </PrimaryButton>
+                          )}
+                        </div>
+                      </div>
 
-                    <div className="flex items-center gap-4">
-                        <PrimaryButton>Submit</PrimaryButton>
-                    </div>
-                </form>
-            </section>
-        </GuestLayout>
-    );
+                      <p className="text-sm text-center mt-4">
+                        Need to go back?{" "}
+                        <Link
+                          href={route("login")}
+                          className="text-[#f53d2d] hover:underline"
+                        >
+                          Login
+                        </Link>
+                      </p>
+                    </form>
+                  </>
+                )}
+              </div>
+
+              {/* LEFT BANNER/DECOR */}
+              <div className="hidden lg:block w-full lg:w-1/2 lg:ml-20 h-72 sm:h-96 md:h-[500px] lg:h-[680px] animate-float">
+                <img
+                  src={banner2}
+                  alt="Banner"
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <Footer />
+      </div>
+    </>
+  );
 }
-
-export default CompleteUserDetails;
