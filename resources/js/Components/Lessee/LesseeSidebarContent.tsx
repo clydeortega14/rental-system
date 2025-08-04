@@ -135,24 +135,41 @@ export default function LesseeSidebarContent({
                   key={item.key}
                   value={item.key}
                   onClick={() => {
-                    if (isSignup) {
+                    if (item.key === "signup") {
                       setIsModalOpen(true);
                     } else {
                       setActiveTab(item.key);
-                      window.scrollTo({ top: 0, behavior: 'smooth' }); // 👈 this line ensures top scroll
+                      window.scrollTo({ top: 0, behavior: "smooth" });
                     }
                   }}
                   className={`
-                    w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors
+                    relative w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors overflow-hidden
                     ${
                       isSignup
-                        ? "bg-brandYellow text-orange-600 hover:bg-jaba-hover data-[state=active]:bg-brandYellow data-[state=active]:text-white"
+                        ? "bg-brandYellow text-white hover:bg-jaba-hover data-[state=active]:bg-brandYellow data-[state=active]:text-white"
                         : "bg-gray-100 text-gray-600 hover:bg-jaba-hover data-[state=active]:bg-brandYellow data-[state=active]:text-white"
                     }
                   `}
+                  title={item.label}
                 >
-                  {item.icon}
-                  {item.label}
+                  {isSignup && (
+                    <>
+                      {/* Shine effect only for signup */}
+                      {/* <span className="absolute inset-0 pointer-events-none bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.6)_30%,rgba(255,255,255,0.8)_50%,rgba(255,255,255,0.6)_70%,transparent)] blur-[4px] animate-shine" /> */}
+
+                      {/* Shrink-wrapper synced with shine */}
+                      <span className="relative z-10 inline-flex items-center gap-2 animate-shrink-during-shine">
+                        {item.icon}
+                        <span className="truncate">{item.label}</span>
+                      </span>
+                    </>
+                  )}
+                  {!isSignup && (
+                    <>
+                      {item.icon}
+                      <span className="truncate">{item.label}</span>
+                    </>
+                  )}
                 </TabsTrigger>
               );
             })}

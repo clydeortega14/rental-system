@@ -275,7 +275,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
                   <button
                     type="button"
                     onClick={() => setShowLessorModal(true)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-brandYellow hover:bg-orange-700 rounded-lg shadow transition"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-brandYellow hover:bg-jaba-hover rounded-lg shadow transition"
                   >
                     <BiSolidUserCheck size={18} />
                     <span className="hidden md:inline">Be a Lessor</span>
@@ -324,7 +324,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
                             rounded-xl text-sm md:text-base lg:text-lg font-medium shadow-sm border
                             text-gray-600 bg-white border-gray-200
                             data-[state=active]:bg-brandYellow data-[state=active]:text-white data-[state=active]:border-brandYellow
-                            hover:bg-orange-50 transition-colors whitespace-nowrap
+                            hover:bg-brandYellow transition-colors whitespace-nowrap
                           `}
                         >
                           {item.icon}
@@ -351,7 +351,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
                   <LesseeSignForm signUser={auth} />
                 ) : (
                   <div className="flex flex-col items-center justify-center text-center py-20">
-                    <h2 className="text-2xl font-semibold text-red-600">KYC Verification Required</h2>
+                    <h2 className="text-2xl font-semibold text-brandYellow">KYC Verification Required</h2>
                     <p className="mt-2 text-gray-600 max-w-md">
                       You must complete and get approved for identity verification before becoming a lessor. 
                       Please visit your account settings to upload required documents.

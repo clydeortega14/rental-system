@@ -7,9 +7,8 @@ import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import InputError from "@/Components/InputError";
 import banner2 from "@/../../public/img/banner/info.png";
+import categoryImages from "@/../../public/img/banner/bb.jpg";
 import { PageProps } from "@/types";
-
-const categoryImages = ["img/banner/bb.jpg"];
 
 export default function CompleteUserDetails() {
   const user = usePage<PageProps>().props.auth.user;
@@ -65,16 +64,30 @@ export default function CompleteUserDetails() {
             <div className="flex flex-col-reverse lg:flex-row items-center justify-center rounded-xl overflow-hidden">
               {/* FORM CARD */}
               <div className="w-full lg:w-1/2 p-10 text-black shadow-lg rounded-xl bg-white">
-                <div className="flex justify-between mb-4">
-                  <div>
-                    <h2 className="text-2xl font-bold">
-                      {step === 1 ? "Step 1: Company Info" : "Step 2: Contact Info"}
-                    </h2>
-                    <p className="text-sm text-gray-600">
-                      {step === 1
-                        ? "Provide your company details."
-                        : "Provide your contact information."}
-                    </p>
+                {/* Header with conditional Back */}
+                <div className="flex flex-col sm:flex-row justify-between mb-4 items-start sm:items-center gap-3">
+                  <div className="flex items-center gap-3">
+                    {step === 2 && (
+                      <button
+                        onClick={goBack}
+                        type="button"
+                        className="px-3 py-1 border rounded text-sm hover:bg-gray-100 transition"
+                      >
+                        Back
+                      </button>
+                    )}
+                    <div>
+                      <h2 className="text-2xl font-bold">
+                        {step === 1
+                          ? "Step 1: Company Info"
+                          : "Step 2: Contact Info"}
+                      </h2>
+                      <p className="text-sm text-gray-600">
+                        {step === 1
+                          ? "Provide your company details."
+                          : "Provide your contact information."}
+                      </p>
+                    </div>
                   </div>
                   <div className="text-sm">
                     <span className="font-semibold">{step}</span>/2
@@ -224,15 +237,18 @@ export default function CompleteUserDetails() {
                   )}
 
                   <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
-                    {step === 2 && (
-                      <button
-                        onClick={goBack}
-                        type="button"
-                        className="w-full sm:w-auto px-4 py-2 border rounded text-sm hover:bg-gray-100 transition"
+                    {/* Cancel / Logout */}
+                    <div className="flex gap-2 flex-wrap">
+                      <Link
+                        href={route("logout")}
+                        method="post"
+                        as="button"
+                        className="px-4 py-2 border rounded text-sm hover:bg-gray-100 transition"
                       >
-                        Back
-                      </button>
-                    )}
+                        Cancel
+                      </Link>
+                    </div>
+
                     <div className="flex flex-col sm:flex-row gap-2 flex-1 justify-end w-full">
                       {step === 1 && (
                         <PrimaryButton
