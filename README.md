@@ -5,6 +5,7 @@ Requirements:
 
   - [PHP v8.3](https://www.php.net/releases/8.3/en.php)
   - [node v20.0.0](https://nodejs.org/docs/latest-v20.x/api/index.html)
+  - [npm v9.6.4](https://docs.npmjs.com/)
   - [MySQL v8](https://dev.mysql.com/doc/)
 
     
@@ -16,11 +17,9 @@ Requirements:
    - [vite](https://vitejs.dev/guide/)
    - [tailwind css](https://tailwindcss.com/docs/installation)
    - [composer v2.7.0](https://getcomposer.org/)
-   - [npm v9.6.4](https://docs.npmjs.com/)
-   - [ant design v5.15.4](https://ant.design/index-cn)
    - [typescript v5](https://www.typescriptlang.org/)
 
-clone the project repository
+Clone the project repository
 ``` bash
 git clone https://github.com/clydeortega14/rental-system.git
 ```
@@ -30,7 +29,7 @@ install composer
 composer install
 ```
 
-copy .env.example to .env
+Copy .env.example to .env
 ``` bash
 cp .env.example .env
 ```
@@ -45,7 +44,7 @@ edit database connection in .env file, then run:
 php artisan migrate
 ```
 
-install npm packages
+Install npm packages
 ``` bash
 npm install
 ```
