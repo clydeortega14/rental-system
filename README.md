@@ -54,3 +54,8 @@ compiling the changes in the front end, just run:
 npm run dev
 ```
 
+compiling build for production
+``` bash
+npm run build
+```
+
