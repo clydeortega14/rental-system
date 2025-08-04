@@ -13,7 +13,7 @@ const TabsList = React.forwardRef<
     ref={ref}
     className={cn(
       // Mobile: horizontal scroll, hide scrollbar
-      "flex overflow-x-auto scrollbar-hide space-x-2 px-2 py-1 bg-white",
+      "flex overflow-x-auto scrollbar-hide space-x-2 px-2 py-1",
       
       // md+: vertical sidebar layout
       "md:flex-col md:space-x-0 md:space-y-2 md:p-0 md:bg-transparent",

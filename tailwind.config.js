@@ -36,15 +36,26 @@ export default {
 				'50%': { transform: 'scale(1.1)', opacity: 0.7 },
 				'100%': { transform: 'scale(1)', opacity: 1 },
 				},
+				shine: {
+				"0%": { transform: "translateX(-100%)" },
+				"100%": { transform: "translateX(100%)" },
+				},
+				shrinkDuringShine: {
+				"0%, 100%": { transform: "scale(1)" },
+				"45%, 55%": { transform: "scale(0.95)" }, // shrink at middle of shine
+				},
             },
             animation: {
                 float: 'float 3s ease-in-out infinite',
 				'slide-left': 'slideLeft 30s linear infinite',
 				popBounce: 'popBounce 0.6s ease-out',
+				shine: "shine 1.5s ease-in-out infinite",
+				"shrink-during-shine": "shrinkDuringShine 1.5s ease-in-out infinite",
             },
     		colors: {
-				brandYellow: '#f1bc01',
+				brandYellow: '#feb008',
 				'jaba-yellow': '#feb008',
+				'jaba-hover': '#edc32c',
     			'light-green': '#64A664',
     			'light-white': 'rgba(255,255,255,0.18)',
     			background: 'hsl(var(--background))',

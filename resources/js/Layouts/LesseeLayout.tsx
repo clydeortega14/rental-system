@@ -8,7 +8,7 @@ import {
   StarIcon,
   CalendarCheck,
 } from "lucide-react";
-import { BiSolidUserCheck } from "react-icons/bi";
+import { BiSolidUserCheck,BiSolidStore} from "react-icons/bi";
 
 import Header from "@/Components/Lessee/Header";
 import Footer from "@/Components/Lessee/Footer";
@@ -195,30 +195,6 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
     recentActivities,
   };
 
-
-  // const tabs = [
-  //   { key: "overview", label: "Overview", icon: LayoutDashboard },
-  //   { key: "bookings", label: "Bookings", icon: CalendarCheck },
-  //   // { key: "reservations", label: "Reservations", icon: CalendarCheck },
-  //   { key: "reviews", label: "Reviews", icon: StarIcon },
-    
-  //   ...(!isApprovedLessor ? [
-  //     { key: "lessor", label: "Be a Lessor", icon: BiSolidUserCheck },
-  //   ] : []),
-  //   ...(isApprovedLessor ? [
-  //     { key: "lessorDashboard", label: "Dashboard", icon: BiSolidDashboard },
-  //     { key: "lessorShop", label: "Shop", icon: BiSolidUserCheck },
-  //     { key: "lessorProperties", label: "Properties", icon: BiBuildingHouse },
-  //     { key: "lessorReservations", label: "Reservations", icon: BiCalendarCheck },
-  //      //ongoing --- need backend and ui-----
-  //     { key: "lessorInvoice", label: "Invoice", icon: BiReceipt },
-  //     { key: "lessorInquiries", label: "Inquiries", icon: BiMessageDetail },
-  //     { key: "LessorReviews", label: "Reviews", icon: BiStar },
-  //   ] : []),
-  //   { key: "lessorProfile", label: "My Account", icon: BiCog },
-    
-  // ];
-
   const sidebarTabs = [
     {
       section: "Menu",
@@ -226,7 +202,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
         { key: "overview", label: "Overview", icon: <LayoutDashboard className="w-5 h-5" /> },
         { key: "bookings", label: "Bookings", icon: <CalendarCheck className="w-5 h-5" /> },
         { key: "reviews", label: "Reviews", icon: <StarIcon className="w-5 h-5" /> },
-        { key: "lessorProfile", label: "My Account", icon: <BiCog size={20} /> },
+        { key: "lessorProfile", label: "Settings", icon: <BiCog size={20} /> },
       ],
     },
     {
@@ -277,28 +253,47 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
               <Profile lessee={lessee} layout="header" />
             </Suspense>
              {/* <LesseeSidebarContent activeTab={activeTab} setActiveTab={setActiveTab}  submitForm={auth.user.submitForm} /> */}
-            <div className="mt-4 px-2 flex gap-2">
-              {/* Be a Lessor button (only if not yet approved) */}
-              {!isApprovedLessor && (
-                <button
-                  type="button"
-                  onClick={() => setShowLessorModal(true)}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-orange-600 hover:bg-orange-700 rounded-lg shadow transition"
+            <div className="mt-4 px-2 flex flex-col gap-2">
+              <div className="flex gap-2">
+                {/* Rent Now */}
+                <Link
+                  href="/"
+                  className="relative flex-1 flex items-center justify-center bg-brandYellow gap-2 px-4 py-2 text-sm text-white rounded-lg shadow transition overflow-hidden"
                 >
-                  <BiSolidUserCheck size={18} />
-                  Be a Lessor
-                </button>
-              )}
-              <Link
-                href={route("logout")}
-                method="post"
-                as="button"
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white rounded-lg shadow transition"
-                style={{ backgroundColor: "#081328" }}
-              >
-                <BiLockOpen size={18} />
-                Logout
-              </Link>
+                  {/* Shine effect */}
+                  {/* <span className="absolute inset-0 bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.6)_30%,rgba(255,255,255,0.8)_50%,rgba(255,255,255,0.6)_70%,transparent)] blur-[4px] animate-shine pointer-events-none" /> */}
+
+                  {/* Icon + label with shrink-on-shine */}
+                  <span className="relative z-10 inline-flex items-center gap-2 animate-shrink-during-shine">
+                    <BiSolidStore size={18} />
+                    <span className="hidden md:inline">Rent Now!</span>
+                  </span>
+                </Link>
+
+                {/* Be a Lessor (only if not yet approved) */}
+                {!isApprovedLessor && (
+                  <button
+                    type="button"
+                    onClick={() => setShowLessorModal(true)}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-brandYellow hover:bg-orange-700 rounded-lg shadow transition"
+                  >
+                    <BiSolidUserCheck size={18} />
+                    <span className="hidden md:inline">Be a Lessor</span>
+                  </button>
+                )}
+
+                {/* Logout */}
+                <Link
+                  href={route("logout")}
+                  method="post"
+                  as="button"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white rounded-lg shadow transition"
+                  style={{ backgroundColor: "#081328" }}
+                >
+                  <BiLockOpen size={18} />
+                  <span className="hidden md:inline">Logout</span>
+                </Link>
+              </div>
             </div>
             <TabsList className="flex flex-col gap-4 mt-4 px-2">
               {sidebarTabs.map((section, index) => {
@@ -308,13 +303,14 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
                 }
 
                 return (
-                  <div key={index} className="space-y-1">
-                    <p className="text-xs font-semibold text-gray-500 uppercase px-1">{section.section}</p>
-                    <div className="flex gap-3 overflow-x-auto scrollbar-hide">
+                  <div key={index} className="space-y-3">
+                    <p className="text-xs font-semibold text-gray-500 uppercase ">{section.section}</p>
+                    <div className="flex gap-2 overflow-x-auto scrollbar-hide">
                       {section.items.map((item) => (
                         <TabsTrigger
                           key={item.key}
                           value={item.key}
+                          title={item.label}
                           onClick={() => {
                             if (item.key === "signup") {
                               setShowLessorModal(true);
@@ -323,14 +319,16 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
                               window.scrollTo({ top: 0, behavior: "smooth" });
                             }
                           }}
-                          className={`flex flex-col items-center justify-center gap-1 px-4 py-3 min-w-[110px]
-                            rounded-xl text-sm font-medium shadow-sm border
+                          className={`
+                            flex flex-col items-center justify-center gap-1 mt-1 px-3 py-2= min-w-[80px]
+                            rounded-xl text-sm md:text-base lg:text-lg font-medium shadow-sm border
                             text-gray-600 bg-white border-gray-200
-                            data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:border-orange-600
-                            hover:bg-orange-50 transition-colors whitespace-nowrap`}
+                            data-[state=active]:bg-brandYellow data-[state=active]:text-white data-[state=active]:border-brandYellow
+                            hover:bg-orange-50 transition-colors whitespace-nowrap
+                          `}
                         >
                           {item.icon}
-                          {item.label}
+                          <span className="hidden min-[360px]:inline">{item.label}</span>
                         </TabsTrigger>
                       ))}
                     </div>
@@ -372,7 +370,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
                 {lessorDashboard && <LessorDashboard dashboardData={lessorDashboard} />}
               </TabsContent>
               <TabsContent value="lessorProperties" className="h-full">
-            <LessorProperties
+              <LessorProperties
                 shops={shops}
                 categories={categories}
                 rentals={rentals.map((rental) => ({
