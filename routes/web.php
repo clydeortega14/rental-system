@@ -62,13 +62,25 @@ Route::group(['prefix' => 'admin'], function () {
 
 Route::get('/itemDetails/{uuid}', [RentalItemController::class, 'itemDetails'])->name('itemDetails');
 
-/* -- Submit for reservation -- */
-Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('booking.store');
+
 
 // If the user is not authenticated but the user wants to rent an item, then the user must be redirect to a page where the user will be force to login/signup
 Route::get('/signupsignin/withsocial', [GuestController::class, 'viewSingupSigninWithSocial'])->name('signupsigninwithsocial');
 
-Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('checkout.item');
+
+// This routes must be wrap in KYC verified middleware, 
+// this middleware will force to user to submit the requirements before they can rent an item
+Route::middleware(['kyc-verified'])->group(function(){
+    
+    // Check out item page
+    Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('checkout.item');
+
+    // Checkout item POST request
+    Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->middleware('kyc-verified')->name('checkout.item');
+
+    /* -- Submit for reservation -- */
+    Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('booking.store');
+});
 
 Route::get('shopping-cart', [CartController::class, 'index'])->name('cart.index');
 
