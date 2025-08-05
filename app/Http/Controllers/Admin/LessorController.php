@@ -46,7 +46,7 @@ class LessorController extends Controller
 
     public function applications()
     {
-        $applications = SignUpForm::with(['user.contact', 'user.company.documents', 'status'])
+        $applications = SignupForm::with(['user.contact', 'user.company.documents', 'status'])
             ->whereHas('user', function ($query) {
                 $query->where('submitForm', 1);
             })
