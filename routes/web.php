@@ -26,6 +26,7 @@ use App\Http\Controllers\Lessor\RentalController;
 use App\Http\Controllers\Lessor\LessorController;
 use App\Http\Controllers\Lessor\ShopController;
 use App\Http\Controllers\Lessor\ReservationController as ProperReserveController;
+use App\Http\Controllers\GuestController;
 
 use App\Http\Controllers\LesseeController;
 
@@ -64,6 +65,9 @@ Route::get('/itemDetails/{uuid}', [RentalItemController::class, 'itemDetails'])-
 /* -- Submit for reservation -- */
 Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('booking.store');
 
+// If the user is not authenticated but the user wants to rent an item, then the user must be redirect to a page where the user will be force to login/signup
+Route::get('/signupsignin/withsocial', [GuestController::class, 'viewSingupSigninWithSocial'])->name('signupsigninwithsocial');
+
 Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('checkout.item');
 
 Route::get('shopping-cart', [CartController::class, 'index'])->name('cart.index');
@@ -88,12 +92,6 @@ Route::middleware([
 
     /* -- Reservations -- */
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
-
-    // Route::get('/rentalListing', function () {
-    //     return Inertia::render('User/Partials/Rental');
-    // })->middleware(['auth'])->name('rentalListing');
-
-    // Route::get('rental-listings', [RentalItemController::class, 'rentalListings'])->name('rentalListing');
 
     Route::group(['prefix' => 'user'], function () {
 
@@ -139,7 +137,7 @@ Route::middleware([
 ])->group(function () {
 
     Route::get('/lessee', [LesseeController::class, 'index'])->name('lessee.profile');
-    
+
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
