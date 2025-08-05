@@ -85,18 +85,23 @@ export default function LesseeSidebarContent({
 
   return (
     <div className="mt-6 space-y-6 text-sm text-gray-700">
-      {/* Search */}
-      <div className="relative">
-        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-          <BiSearch size={18} />
-        </span>
-        <input
-          type="text"
-          placeholder="Search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
+      {/* Rent Now button replacing search */}
+      <div className="mb-4 flex justify-center">
+        <div className="w-full max-w-xs">
+          <Link
+            href="/"
+            className="relative w-full inline-flex justify-center items-center gap-2 px-4 py-2 bg-[#081328] hover:bg-[#0d1f4a] text-white rounded-lg font-semibold transition shadow overflow-hidden"
+          >
+            {/* Shine effect */}
+            <span className="absolute inset-0 bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.6)_30%,rgba(255,255,255,0.8)_50%,rgba(255,255,255,0.6)_70%,transparent)] blur-[4px] animate-shine pointer-events-none" />
+
+            {/* Content with shrink effect */}
+            <span className="relative z-10 inline-flex items-center gap-2 animate-shrink-during-shine">
+              <BiSolidStore size={18} />
+              <span>Hot Rentals — Book Now!</span>
+            </span>
+          </Link>
+        </div>
       </div>
 
       {/* Sidebar Tabs */}
@@ -117,7 +122,7 @@ export default function LesseeSidebarContent({
                     href={route('logout')}
                     method="post"
                     as="button"
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors bg-red-100 text-red-600 hover:bg-red-200"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors bg-jaba-yellow text-black hover:bg-jaba-hover"
                   >
                     <BiLockOpen size={18} />
                     Logout
@@ -130,24 +135,41 @@ export default function LesseeSidebarContent({
                   key={item.key}
                   value={item.key}
                   onClick={() => {
-                    if (isSignup) {
+                    if (item.key === "signup") {
                       setIsModalOpen(true);
                     } else {
                       setActiveTab(item.key);
-                      window.scrollTo({ top: 0, behavior: 'smooth' }); // 👈 this line ensures top scroll
+                      window.scrollTo({ top: 0, behavior: "smooth" });
                     }
                   }}
                   className={`
-                    w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors
+                    relative w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors overflow-hidden
                     ${
                       isSignup
-                        ? "bg-orange-100 text-orange-600 hover:bg-orange-200 data-[state=active]:bg-orange-600 data-[state=active]:text-white"
-                        : "bg-gray-100 text-gray-600 hover:bg-orange-200 data-[state=active]:bg-orange-600 data-[state=active]:text-white"
+                        ? "bg-brandYellow text-white hover:bg-jaba-hover data-[state=active]:bg-brandYellow data-[state=active]:text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-jaba-hover data-[state=active]:bg-brandYellow data-[state=active]:text-white"
                     }
                   `}
+                  title={item.label}
                 >
-                  {item.icon}
-                  {item.label}
+                  {isSignup && (
+                    <>
+                      {/* Shine effect only for signup */}
+                      {/* <span className="absolute inset-0 pointer-events-none bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.6)_30%,rgba(255,255,255,0.8)_50%,rgba(255,255,255,0.6)_70%,transparent)] blur-[4px] animate-shine" /> */}
+
+                      {/* Shrink-wrapper synced with shine */}
+                      <span className="relative z-10 inline-flex items-center gap-2 animate-shrink-during-shine">
+                        {item.icon}
+                        <span className="truncate">{item.label}</span>
+                      </span>
+                    </>
+                  )}
+                  {!isSignup && (
+                    <>
+                      {item.icon}
+                      <span className="truncate">{item.label}</span>
+                    </>
+                  )}
                 </TabsTrigger>
               );
             })}

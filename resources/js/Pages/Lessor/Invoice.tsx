@@ -70,8 +70,8 @@ const invoiceHistory = [
 export default function Invoice() {
   return (
     <div className="max-w-8xl mx-auto p-6 space-y-6">
-      <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
-        <BiReceipt className="w-6 h-6 text-orange-500 mr-2" />
+      <h1 className="flex items-center text-3xl font-bold mb-6 text-brandYellow">
+        <BiReceipt className="w-6 h-6 text-brandYellow mr-2" />
           Billing Statement
       </h1>
 
@@ -94,7 +94,7 @@ export default function Invoice() {
             </div>
           </div>
 
-          <Button className="bg-orange-600 hover:bg-orange-500 text-white whitespace-nowrap">
+          <Button className="bg-brandYellow hover:bg-jaba-yellow text-white whitespace-nowrap">
             Top Up Wallet
           </Button>
         </CardContent>

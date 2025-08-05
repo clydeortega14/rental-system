@@ -19,8 +19,8 @@ export default function Review({ reviews }: { reviews: any[] }) {
   return (
 
     <div className="max-w-8xl mx-auto p-6 space-y-6">
-      <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
-        <BiCalendarEvent  className="w-6 h-6 text-orange-500 mr-2" />
+      <h1 className="flex items-center text-3xl font-bold mb-6 text-brandYellow">
+        <BiCalendarEvent  className="w-6 h-6 text-brandYellow mr-2" />
         Your Reviews
       </h1>
       <div className="grid gap-6">

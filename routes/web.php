@@ -128,7 +128,7 @@ Route::middleware([
     // Route::get('/lessee', function () {
     //     return Inertia::render('Lessee/Landing');
     // })->name('lessee.profile');
-    Route::get('/lessee', [LesseeController::class, 'index'])->name('lessee.profile');
+    
     Route::post('/lessor/signUserup', [LesseeController::class, 'store'])->name('lessor.signup.store');
 });
 
@@ -138,7 +138,8 @@ Route::middleware([
     'check-user-info' // completed information details
 ])->group(function () {
 
-
+    Route::get('/lessee', [LesseeController::class, 'index'])->name('lessee.profile');
+    
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

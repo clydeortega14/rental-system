@@ -267,8 +267,8 @@ function Shop({
 
   return (
     <div className="max-w-8xl mx-auto p-6">
-      <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
-        <BiSolidStore className="w-6 h-6 text-orange-500 mr-2" />
+      <h1 className="flex items-center text-3xl font-bold mb-6 text-brandYellow">
+        <BiSolidStore className="w-6 h-6 text-brandYellow mr-2" />
         Shops
       </h1>
 
@@ -287,7 +287,7 @@ function Shop({
             setEditingShopId(null);
             setShowModal(true);
           }}
-          className="cursor-pointer border-2 border-dashed border-orange-400 hover:border-orange-600 flex items-center justify-center rounded-lg h-40 text-orange-600 hover:text-orange-800 transition-all"
+          className="cursor-pointer border-2 border-dashed border-brandYellow hover:border-orange-600 flex items-center justify-center rounded-lg h-40 text-orange-600 hover:text-orange-800 transition-all"
         >
           <div className="flex flex-col items-center">
             <span className="text-4xl">＋</span>

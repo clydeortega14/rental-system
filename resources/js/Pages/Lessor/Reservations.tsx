@@ -135,8 +135,8 @@ function Reservations({ lessorReservations }: ReservationsProps) {
     <div className="max-w-8xl mx-auto p-6 space-y-6">
       {/* Header & Filter */}
       <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
-          <BiCalendarCheck className="w-6 h-6 text-orange-500 mr-2" /> Reservation
+        <h1 className="flex items-center text-3xl font-bold mb-6 text-brandYellow">
+          <BiCalendarCheck className="w-6 h-6 text-brandYellow mr-2" /> Reservation
           Bookings
         </h1>
         <select
