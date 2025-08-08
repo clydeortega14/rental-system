@@ -124,7 +124,7 @@ const Profile = () => {
           </div>
           {kycStatus === "Approved" || kycStatus === "Pending" ? (
             <button
-              disabled
+              hidden
               className="bg-gray-300 text-gray-700 px-5 py-2 rounded-xl cursor-not-allowed"
             >
               Submitted
