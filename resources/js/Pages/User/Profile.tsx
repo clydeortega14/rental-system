@@ -122,14 +122,14 @@ const Profile = () => {
             <p className="text-gray-700">Status:</p>
             <Badge variant={kycInfo.variant}>{kycInfo.label}</Badge>
           </div>
-          {kycStatus === "Approved" || kycStatus === "Pending" ? (
+          {kycStatus === "Pending" ? (
             <button
               disabled
               className="bg-gray-300 text-gray-700 px-5 py-2 rounded-xl cursor-not-allowed"
             >
               Submitted
             </button>
-          ) : (
+          ) : kycStatus !== "Approved" && (
             <button
               onClick={() => openModal("kyc")}
               className="bg-orange-500 text-white px-5 py-2 rounded-xl hover:bg-orange-600 transition"
