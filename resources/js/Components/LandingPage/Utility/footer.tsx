@@ -1,11 +1,13 @@
 import React from 'react'
 import logoWeb from '@/../../resources/img/logo-web.png'
 import secLogo from '@/../../public/img/banner/sec.svg'
+import categoryImages from '@/../../public/img/background/footer.png'
 import { Send, Facebook, Twitter, Mail } from 'lucide-react'
+
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-50 border-t border-gray-200 py-10">
+    <footer className="bg-gray-50 border-t border-gray-200 py-10 bg-cover bg-center bg-no-repeat"  style={{ backgroundImage: `url(${categoryImages})` }}>
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>

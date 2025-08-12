@@ -62,6 +62,7 @@ const TopNavigation = () => {
             <Link href="/" className="text-gray-700 hover:text-brandYellow transition">Home</Link>
             <Link href="/about-us" className="text-gray-700 hover:text-orange-500 transition">About Us</Link>
             <Link href="/how-it-works" className="text-gray-700 hover:text-orange-500 transition">How It Works</Link>
+            <Link href="/why-choose-us" className="text-gray-700 hover:text-orange-500 transition">Why Choose Us</Link>
             <Link href="/blogs" className="text-gray-700 hover:text-orange-500 transition">Blogs</Link>
             <Link href="/contact-us" className="text-gray-700 hover:text-orange-500 transition">Contact Us</Link>
           </nav>

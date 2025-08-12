@@ -66,10 +66,10 @@ const WhyChooseUs: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative py-16 overflow-hidden bg-cover bg-center bg-no-repeat"  style={{ backgroundImage: `url(${categoryImages})` }}>
+    <section className="relative py-16 overflow-hidden ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
-        <div
+        {/* <div
           className={`text-center mb-12 transition-all duration-700 ease-out transform ${
             visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
           }`}
@@ -79,10 +79,10 @@ const WhyChooseUs: React.FC = () => {
             RentHive provides the easiest and most flexible way to rent cars,
             homes, bags, electronics, and more – all in one place.
           </p>
-        </div>
+        </div> */}
 
         {/* Features grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
           {features.map((feature, idx) => (
             <div
               key={feature.id}

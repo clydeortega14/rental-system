@@ -5,10 +5,10 @@ import { PageProps } from '@/types'
 import bb from '@/../../public/img/banner/bb.jpg';
 import ourlogo from '@/../../public/img/mobilelogo.png';
 import logoAbout from '@/../../public/img/logoAbout.jpg';
-import HowItWorks from '@/Components/HowItWorks';
+import WhyChooseUsTemp from '@/Components/WhyChooseUs';
 
 
-export default function HotItWorksPage() {
+export default function WhyChooseUs() {
 
     return (
         <LandingUtilityPage >
@@ -25,17 +25,17 @@ export default function HotItWorksPage() {
                             >
                             
                             <div className="relative max-w-7xl mx-auto px-4 text-center">
-                                <h1 className="text-4xl md:text-5xl font-bold mb-4">How It Works</h1>
+                                <h1 className="text-4xl md:text-5xl font-bold mb-4">WhyChooseUs</h1>
                                 <p className="text-lg md:text-xl text-gray-200">
-                                 RentHive – Rent All You Can! Cars, residentials, travel bags, electronics, and more.
-                                <br />Follow these simple steps to rent everything you need.
+                                  RentHive provides the easiest and most flexible way to rent cars,
+                                <br />homes, bags, electronics, and more – all in one place.
                                 </p>
                             </div>
                             </section>
 
                             <section className="py-20 bg-white">
                             <div className="container mx-auto px-4">
-                              <HowItWorks />
+                              <WhyChooseUsTemp />
                             </div>
                             </section>
                             {/* Mission Section */}

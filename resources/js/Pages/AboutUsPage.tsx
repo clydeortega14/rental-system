@@ -5,6 +5,7 @@ import { PageProps } from '@/types'
 import bb from '@/../../public/img/banner/bb.jpg';
 import ourlogo from '@/../../public/img/mobilelogo.png';
 import logoAbout from '@/../../public/img/logoAbout.jpg';
+import WhyChooseUs from '@/Components/WhyChooseUs';
 
 
 export default function AboutUsPage() {
