@@ -45,6 +45,7 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
 Route::get('/about-us', [LandingPageController::class, 'aboutUs'])->name('landing.page.aboutUs');
 Route::get('/how-it-works', [LandingPageController::class, 'howitWorks'])->name('landing.page.howitWorks');
+Route::get('/why-choose-us', [LandingPageController::class, 'whyChooseUs'])->name('landing.page.howitWorks');
 Route::get('/blogs', [LandingPageController::class, 'blogs'])->name('landing.page.blogs');
 Route::get('/contact-us', [LandingPageController::class, 'contactUs'])->name('landing.page.contactUs');
 Route::get('/cookies-policy', [LandingPageController::class, 'cookiesPolicy'])->name('cookies.policy');

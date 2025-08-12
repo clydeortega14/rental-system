@@ -2,8 +2,8 @@ import Footer from '@/Components/LandingPage/Utility/footer'
 import Header from '@/Components/LandingPage/Utility/header'
 import Slider from '@/Components/Slider'
 // import HeroSearch from '@/Components/HeroSearch'; 
-import HowItWorks from '@/Components/HowItWorks';
-import WhyChooseUs from '@/Components/WhyChooseUs';
+// import HowItWorks from '@/Components/HowItWorks';
+// import WhyChooseUs from '@/Components/WhyChooseUs';
 import FeaturedCategory from '@/Components/LandingPage/Category/FeaturedCategories'
 import ClientsFeedBack from '@/Components/ClientsFeedBack'
 import PromoModal from '@/Components/PromoModal'; // new
@@ -61,9 +61,7 @@ const LandingPageLayout = ({ categories, children }: LandingPageLayoutuProps) =>
         {children}
         <Slider categories={categories} />
         <SupportSlider />
-        <HowItWorks />
         <FeaturedCategory auth={auth} categories={categories} />
-        <WhyChooseUs />
         <CookieConsent onVisibleChange={setCookieVisible} />
       </main>
       <Footer />

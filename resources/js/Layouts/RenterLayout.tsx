@@ -1,4 +1,4 @@
-import Footer from '@/Components/Renter/Footer'
+import Footer from '@/Components/LandingPage/Utility/footer'
 import Header from '@/Components/LandingPage/Utility/header'
 import TopNavigation from '@/Components/Renter/TopNavigation'
 import { CartProvider } from '@/context/CartContext'
@@ -10,12 +10,10 @@ const RenterLayout = ({children}:PropsWithChildren) => {
     <div className="flex flex-col min-h-screen bg-gray-50">
         <CartProvider>
           <Header />
-
-           <main className="flex-grow pt-20 mb-20">
+           <main className="flex-grow mb-20">
               {children}
           </main>
         </CartProvider>
-
         <Footer />
     </div>
   )
