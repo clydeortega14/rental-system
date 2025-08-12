@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\SignupForm;
+use App\Models\SignUpForm;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
