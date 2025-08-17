@@ -31,23 +31,8 @@ class LandingPageController extends Controller
 
     public function index()
     {
-         $categories = $this->category_service->getCategories();
-        // $price_ranges = [
-        //     ['id' => '0-50', 'label' => '0 - 50'],
-        //     ['id' => '50-100', 'label' => '50 - 100'],
-        //     ['id' => '100-200', 'label' => '100 - 200'],
-        //     ['id' => '200-500', 'label' => '20 - 500'],
-        //     ['id' => '500+', 'label' => '500+']
-        // ];
-
-        // $rental_items = RentalAddItem::with(['attachment', 'user'])->get();
-        
-        // $rental_items = $this->rental_items_service->formattedRentalItems();
-
-        // return inertia('Renter/RentalItemBrowser', [
-        //     'categories' => $categories,
-        //     'priceRanges' => $price_ranges
-        // ]);
+        $categories = $this->category_service->getCategories();
+         
 
         return Inertia::render('LandingPage', [
             'canLogin' => Route::has('login'),
@@ -55,7 +40,6 @@ class LandingPageController extends Controller
             'laravelVersion' => Application::VERSION,
             'phpVersion' => PHP_VERSION,
             'categories' => $categories,
-            // 'rental_items' => $rental_items
         ]);
     }
     public function aboutUs(){
@@ -63,6 +47,9 @@ class LandingPageController extends Controller
     }
     public function howitWorks(){
          return Inertia::render('HotItWorksPage');
+    }
+    public function whyChooseUs(){
+         return Inertia::render('WhyChooseUs');
     }
     public function blogs(){
          return Inertia::render('BlogsPage');

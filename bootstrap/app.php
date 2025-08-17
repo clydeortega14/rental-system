@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        $middleware->appendToGroup('kyc-verified', [\App\Http\Middleware\KYCVerify::class]);
+
         $middleware->appendToGroup('check-user-info', [
 
             \App\Http\Middleware\CheckUserInfo::class

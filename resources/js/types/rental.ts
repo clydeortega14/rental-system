@@ -21,6 +21,7 @@ export interface RentalItem {
   quantity?: number | null
   imageUrl?: string;
   priceUnit?: string;
+  media_paths?: string[];
 
 }
 

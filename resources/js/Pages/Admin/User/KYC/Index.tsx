@@ -80,7 +80,7 @@ const KycUserList: PageWithAdminLayout = () => {
   const renderTable = (usersList: User[]) => (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-indigo-600 text-white">
+        <thead className="bg-brandYellow text-white">
           <tr>
             <th className="px-4 py-2 text-left text-sm font-semibold">Image</th>
             <th className="px-4 py-2 text-left text-sm font-semibold">Name</th>
@@ -170,8 +170,8 @@ const KycUserList: PageWithAdminLayout = () => {
             onClick={() => setActiveTab(status)}
             className={`py-2 px-4 font-semibold border-b-2 ${
               activeTab === status
-                ? 'border-indigo-600 text-indigo-600'
-                : 'border-transparent text-gray-600 hover:text-indigo-600'
+                ? 'border-brandYellow text-yellow-500'
+                : 'border-transparent text-gray-600 hover:text-yellow-500'
             } transition`}
             aria-current={activeTab === status ? 'page' : undefined}
           >

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\SignupForm;
+use App\Models\SignUpForm;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -46,7 +46,7 @@ class LessorController extends Controller
 
     public function applications()
     {
-        $applications = SignUpForm::with(['user.contact', 'user.company.documents', 'status'])
+        $applications = SignupForm::with(['user.contact', 'user.company.documents', 'status'])
             ->whereHas('user', function ($query) {
                 $query->where('submitForm', 1);
             })

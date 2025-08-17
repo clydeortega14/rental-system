@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { Dialog } from "@/Components/Lessor/ui/dialog";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/Components/Lessor/ui/button";
 import { Input } from "@/Components/Lessor/ui/input";
 import { Property as RentalItem } from "@/Pages/Lessor/types/Property";
@@ -26,7 +25,7 @@ interface RentalItemModalProps {
   form: RentalItem;
   setForm: React.Dispatch<React.SetStateAction<RentalItem>>;
   onClose: () => void;
-  onSave: () => void;
+  onSave: (mediaFiles: File[]) => void;
   categories: Category[];
   shops: Shop[];
   onCategoryChange: (categoryId: number) => void;
@@ -41,13 +40,11 @@ export default function RentalItemModal({
   shops,
   onCategoryChange,
 }: RentalItemModalProps) {
+  const [mediaFiles, setMediaFiles] = useState<File[]>([]);
 
- 
   const selectedCategory = categories.find((cat) => cat.id === form.categoryId);
   const customFields = selectedCategory?.custom_fields ?? [];
-
-   console.log(111111111,customFields);
-
+  // Initialize custom field answers
   const initializeCustomFieldAnswers = (categoryId: number): { [slug: string]: string[] } => {
     const cat = categories.find((c) => c.id === categoryId);
     const answers: { [slug: string]: string[] } = {};
@@ -72,7 +69,6 @@ export default function RentalItemModal({
 
   const handleCheckboxChange = (fieldSlug: string, value: string) => {
     const selected: string[] = form.customFieldAnswers?.[fieldSlug] ?? [];
-
     const updated: string[] = selected.includes(value)
       ? selected.filter((v: string) => v !== value)
       : [...selected, value];
@@ -99,6 +95,24 @@ export default function RentalItemModal({
     return [];
   };
 
+  const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    setMediaFiles([...mediaFiles, ...Array.from(e.target.files)]);
+  };
+
+  const removeExistingMedia = (path: string) => {
+    setForm((prev) => ({
+      ...prev,
+      media_paths: prev.media_paths
+        ? prev.media_paths.filter((p) => p !== path)
+        : [],
+    }));
+  };
+
+  const removeNewMedia = (index: number) => {
+    setMediaFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const renderCustomFields = () =>
     customFields.map((field) => {
       const options = parseOptions(field.options);
@@ -109,10 +123,7 @@ export default function RentalItemModal({
           <label className="block font-semibold mb-2 text-orange-600">{field.label}</label>
           <div className="flex flex-wrap gap-3">
             {options.map((option) => (
-              <label
-                key={option}
-                className="flex items-center gap-2 text-sm cursor-pointer select-none"
-              >
+              <label key={option} className="flex items-center gap-2 text-sm cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={selectedValues.includes(option)}
@@ -140,10 +151,11 @@ export default function RentalItemModal({
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            onSave();
+            onSave(mediaFiles);
           }}
           className="space-y-5"
         >
+          {/* Name */}
           <div>
             <label className="block font-medium mb-1" htmlFor="name">Name</label>
             <Input
@@ -155,6 +167,7 @@ export default function RentalItemModal({
             />
           </div>
 
+          {/* Description */}
           <div>
             <label className="block font-medium mb-1" htmlFor="description">Description</label>
             <textarea
@@ -166,6 +179,7 @@ export default function RentalItemModal({
             />
           </div>
 
+          {/* Category */}
           <div>
             <label className="block font-medium mb-1" htmlFor="category">Category</label>
             <select
@@ -192,8 +206,10 @@ export default function RentalItemModal({
             </select>
           </div>
 
+          {/* Custom Fields */}
           {renderCustomFields()}
 
+          {/* Shop */}
           <div>
             <label className="block font-medium mb-1" htmlFor="shop">Shop</label>
             <select
@@ -211,6 +227,7 @@ export default function RentalItemModal({
             </select>
           </div>
 
+          {/* Reservation Fee */}
           <div>
             <label className="block font-medium mb-1" htmlFor="reservationAmt">Reservation Fee</label>
             <Input
@@ -224,6 +241,62 @@ export default function RentalItemModal({
             />
           </div>
 
+          {/* Media Uploads */}
+          <div>
+            <label className="block font-medium mb-2">Images / Videos</label>
+            <input
+              type="file"
+              accept="image/*,video/*"
+              multiple
+              id="media"
+              className="hidden"
+              onChange={handleMediaChange}
+            />
+            <label
+              htmlFor="media"
+              className="px-4 py-2 bg-orange-600 text-white rounded-md cursor-pointer hover:bg-orange-500"
+            >
+              Upload Media
+            </label>
+
+            {/* Previews */}
+            <div className="grid grid-cols-3 gap-3 mt-3">
+              {/* Existing */}
+              {Array.isArray(form.media_paths) && form.media_paths.length > 0 &&
+                form.media_paths.map((path, i) => (
+                  <div key={i} className="relative group">
+                    <img src={`/storage/${path}`} className="w-full h-24 object-cover rounded-md" />
+                    <button
+                      type="button"
+                      onClick={() => removeExistingMedia(path)}
+                      className="absolute top-1 right-1 bg-black/60 text-white px-2 rounded opacity-0 group-hover:opacity-100"
+                    >
+                      ✕
+                    </button>
+                  </div>
+              ))}
+
+              {/* New files */}
+              {mediaFiles.map((file, i) => (
+                <div key={i} className="relative group">
+                  {file.type.startsWith("video") ? (
+                    <video src={URL.createObjectURL(file)} className="w-full h-24 object-cover rounded-md" controls />
+                  ) : (
+                    <img src={URL.createObjectURL(file)} className="w-full h-24 object-cover rounded-md" />
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => removeNewMedia(i)}
+                    className="absolute top-1 right-1 bg-black/60 text-white px-2 rounded opacity-0 group-hover:opacity-100"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Buttons */}
           <div className="flex justify-end gap-3 mt-6">
             <Button variant="outline" onClick={onClose} type="button">Cancel</Button>
             <Button type="submit" className="bg-orange-600 text-white hover:bg-orange-500">Save</Button>

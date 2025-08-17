@@ -2,7 +2,7 @@ import { PageProps } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import logoWeb from '@/../../public/img/mobilelogo.png';
-import { BiUser, BiLock, BiHome, BiPhoneCall, BiChat, BiBell,BiX,BiMenu } from 'react-icons/bi';
+import { BiUser, BiLock, BiHome, BiPhoneCall, BiChat, BiBell,BiX,BiMenu,BiEnvelope,BiCheckShield } from 'react-icons/bi';
 import { Info, BookOpen, HelpCircle, Menu, X } from "lucide-react";
 
 const TopNavigation = () => {
@@ -20,6 +20,30 @@ const TopNavigation = () => {
 
   return (
     <>
+      <div className="bg-gray-100 text-sm text-gray-700 py-2 px-4 hidden md:block">
+        <div className="container mx-auto flex justify-between items-center">
+          {/* Left Side: Contact Info */}
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1">
+              <BiPhoneCall className="text-base" />
+              +63 (995) 931-3081
+            </span>
+            <span className="flex items-center gap-1">
+              <BiEnvelope className="text-base" />
+              info@rent-hive.co
+            </span>
+          </div>
+
+          {/* Right Side: Auth Links */}
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1">
+              <BiCheckShield className="text-base" />
+              100% Secured delivery and trusted  courier!
+            </span>
+          </div>
+          
+        </div>
+      </div>
       <header className="sticky top-0 z-50 bg-white shadow-md md:block hidden">
         <div className="container mx-auto px-4 py-4 grid grid-cols-12 items-center gap-4">
           {/* Logo */}
@@ -38,6 +62,7 @@ const TopNavigation = () => {
             <Link href="/" className="text-gray-700 hover:text-brandYellow transition">Home</Link>
             <Link href="/about-us" className="text-gray-700 hover:text-orange-500 transition">About Us</Link>
             <Link href="/how-it-works" className="text-gray-700 hover:text-orange-500 transition">How It Works</Link>
+            <Link href="/why-choose-us" className="text-gray-700 hover:text-orange-500 transition">Why Choose Us</Link>
             <Link href="/blogs" className="text-gray-700 hover:text-orange-500 transition">Blogs</Link>
             <Link href="/contact-us" className="text-gray-700 hover:text-orange-500 transition">Contact Us</Link>
           </nav>

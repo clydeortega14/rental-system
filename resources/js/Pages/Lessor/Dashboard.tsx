@@ -7,15 +7,15 @@ import {
 } from "react-icons/bi";
 
 
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  ResponsiveContainer,
-} from "recharts";
+// import {
+//   LineChart,
+//   Line,
+//   XAxis,
+//   YAxis,
+//   Tooltip,
+//   CartesianGrid,
+//   ResponsiveContainer,
+// } from "recharts";
 
 type Reservation = {
   property: string;
@@ -51,8 +51,8 @@ const Dashboard = ({ dashboardData }: DashboardProps) => {
   return (
     <div className="max-w-8xl mx-auto p-6">
       {/* <h1 className="text-3xl font-bold mb-6 text-orange-600">Dashboard</h1> */}
-      <h1 className="flex items-center text-3xl font-bold mb-6 text-orange-600">
-        <BiSolidDashboard className="w-6 h-6 text-orange-500 mr-2" />
+      <h1 className="flex items-center text-3xl font-bold mb-6 text-brandYellow">
+        <BiSolidDashboard className="w-6 h-6 text-brandYellow mr-2" />
         Dashboard
       </h1>
       
@@ -109,7 +109,7 @@ const Dashboard = ({ dashboardData }: DashboardProps) => {
       </section>
 
       {/* Reservation Chart */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      {/* <section className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div className="bg-white p-6 rounded shadow">
           <h2 className="flex items-center text-xl font-semibold mb-4">
             <BarChart3 className="w-5 h-5 text-orange-500 mr-2" />
@@ -134,7 +134,7 @@ const Dashboard = ({ dashboardData }: DashboardProps) => {
             <p className="text-gray-500">No data available</p>
           )}
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };

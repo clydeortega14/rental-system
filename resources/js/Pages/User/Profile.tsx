@@ -42,15 +42,9 @@ const Profile = () => {
     }
   };
 
-  const handleSave = (updatedUser: User) => {
-    const payload = {
-      name: updatedUser.name,
-      email: updatedUser.email,
-      contact: updatedUser.contact,
-      company: updatedUser.company,
-    };
-
-    router.put("/lessor/profile", payload, {
+  const handleSave = (formData: FormData) => {
+    router.post(route("user.profile.update"), formData, {
+      forceFormData: true,
       onSuccess: () => {
         toast({
           title: "Profile updated",
@@ -130,7 +124,7 @@ const Profile = () => {
           </div>
           {kycStatus === "Approved" || kycStatus === "Pending" ? (
             <button
-              disabled
+              hidden
               className="bg-gray-300 text-gray-700 px-5 py-2 rounded-xl cursor-not-allowed"
             >
               Submitted
@@ -203,10 +197,10 @@ const Profile = () => {
         {/* Optional Modals */}
         {/* {modals.twoFactor && (
           <TwoFactorModal isOpen onClose={() => closeModal("twoFactor")} />
-        )}
+        )} */}
         {modals.password && (
           <ChangePasswordModal isOpen onClose={() => closeModal("password")} />
-        )} */}
+        )}
       </Suspense>
     </div>
   );

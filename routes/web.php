@@ -26,6 +26,7 @@ use App\Http\Controllers\Lessor\RentalController;
 use App\Http\Controllers\Lessor\LessorController;
 use App\Http\Controllers\Lessor\ShopController;
 use App\Http\Controllers\Lessor\ReservationController as ProperReserveController;
+use App\Http\Controllers\GuestController;
 
 use App\Http\Controllers\LesseeController;
 
@@ -44,6 +45,7 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
 Route::get('/about-us', [LandingPageController::class, 'aboutUs'])->name('landing.page.aboutUs');
 Route::get('/how-it-works', [LandingPageController::class, 'howitWorks'])->name('landing.page.howitWorks');
+Route::get('/why-choose-us', [LandingPageController::class, 'whyChooseUs'])->name('landing.page.howitWorks');
 Route::get('/blogs', [LandingPageController::class, 'blogs'])->name('landing.page.blogs');
 Route::get('/contact-us', [LandingPageController::class, 'contactUs'])->name('landing.page.contactUs');
 Route::get('/cookies-policy', [LandingPageController::class, 'cookiesPolicy'])->name('cookies.policy');
@@ -61,10 +63,25 @@ Route::group(['prefix' => 'admin'], function () {
 
 Route::get('/itemDetails/{uuid}', [RentalItemController::class, 'itemDetails'])->name('itemDetails');
 
-/* -- Submit for reservation -- */
-Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('booking.store');
 
-Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('checkout.item');
+
+// If the user is not authenticated but the user wants to rent an item, then the user must be redirect to a page where the user will be force to login/signup
+Route::get('/signupsignin/withsocial', [GuestController::class, 'viewSingupSigninWithSocial'])->name('signupsigninwithsocial');
+
+
+// This routes must be wrap in KYC verified middleware, 
+// this middleware will force to user to submit the requirements before they can rent an item
+Route::middleware(['kyc-verified'])->group(function(){
+    
+    // Check out item page
+    Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('checkout.item');
+
+    // Checkout item POST request
+    Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->middleware('kyc-verified')->name('checkout.item');
+
+    /* -- Submit for reservation -- */
+    Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('booking.store');
+});
 
 Route::get('shopping-cart', [CartController::class, 'index'])->name('cart.index');
 
@@ -89,17 +106,15 @@ Route::middleware([
     /* -- Reservations -- */
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
 
-    // Route::get('/rentalListing', function () {
-    //     return Inertia::render('User/Partials/Rental');
-    // })->middleware(['auth'])->name('rentalListing');
-
-    // Route::get('rental-listings', [RentalItemController::class, 'rentalListings'])->name('rentalListing');
-
     Route::group(['prefix' => 'user'], function () {
 
         Route::get('/profile', [ProfileController::class, 'profile'])->name('user.profile');
+        Route::post('/profile', [ProfileController::class, 'updateProfile'])->name('user.profile.update');
+
         Route::get('/kyc', [ProfileController::class, 'showKYC'])->name('kyc.exist');
         Route::post('/kyc', [ProfileController::class, 'userKYC'])->name('kyc.store');
+
+        Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('user.change.password');
         
     });
 
@@ -109,7 +124,7 @@ Route::middleware([
         
         Route::get('/properties', [RentalController::class, 'index'])->name('lessor.properties');
         Route::post('/properties', [RentalController::class, 'store'])->name('lessor.properties.store');
-        Route::put('/properties/{rental}', [RentalController::class, 'update'])->name('lessor.properties.update');
+        Route::put('/properties/{uuid}', [RentalController::class, 'update'])->name('lessor.properties.update');
 
         Route::get('/shop', [ShopController::class, 'index'])->name('lessor.shop');
         Route::post('/shop', [ShopController::class, 'store'])->name('lessor.shop.store');
@@ -124,7 +139,7 @@ Route::middleware([
     // Route::get('/lessee', function () {
     //     return Inertia::render('Lessee/Landing');
     // })->name('lessee.profile');
-    Route::get('/lessee', [LesseeController::class, 'index'])->name('lessee.profile');
+    
     Route::post('/lessor/signUserup', [LesseeController::class, 'store'])->name('lessor.signup.store');
 });
 
@@ -134,6 +149,7 @@ Route::middleware([
     'check-user-info' // completed information details
 ])->group(function () {
 
+    Route::get('/lessee', [LesseeController::class, 'index'])->name('lessee.profile');
 
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
@@ -145,7 +161,7 @@ Route::middleware([
     Route::get('/account-settings', [ProfileController::class, 'accountSettings'])->name('account.settings');
 
     /* -- Dashboard -- */
-    // Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     /* -- Rental Provider Profile Show -- */
     Route::get('rental-provider/profile/{uuid}', [RentalProviderController::class, 'profile'])->name('rental.provider.profile');

@@ -35,7 +35,7 @@ const NavItem: React.FC<NavItemExtendedProps> = ({ item, sidebarOpen, level = 0,
           aria-expanded={expanded}
           aria-haspopup="true"
           className={`flex items-center justify-between px-6 py-3 ${
-            item.active ? 'bg-indigo-700' : 'hover:bg-indigo-700'
+            item.active ? 'bg-brandYellow' : 'hover:bg-yellow-500'
           } transition-colors duration-200 cursor-pointer select-none`}
           onClick={onClick ? () => onClick() : toggleExpanded}
           onKeyDown={handleKeyDown}
@@ -57,7 +57,7 @@ const NavItem: React.FC<NavItemExtendedProps> = ({ item, sidebarOpen, level = 0,
         </div>
 
         {sidebarOpen && expanded && (
-          <div className="bg-indigo-900">
+          <div className="bg-brandYellow">
             {item.subItems!.map((subItem) => (
               <NavItem
                 key={subItem.path || subItem.text}
@@ -89,7 +89,7 @@ const NavItem: React.FC<NavItemExtendedProps> = ({ item, sidebarOpen, level = 0,
           }
         }}
         className={`flex items-center px-6 py-3 cursor-pointer ${
-          item.active ? 'bg-indigo-700' : 'hover:bg-indigo-700'
+          item.active ? 'bg-brandYellow' : 'hover:bg-yellow-500'
         } transition-colors duration-200 ${level > 0 ? 'pl-8' : ''}`}
       >
         <span className="flex-shrink-0">{item.icon}</span>
@@ -103,7 +103,7 @@ const NavItem: React.FC<NavItemExtendedProps> = ({ item, sidebarOpen, level = 0,
     <Link
       href={item.path || '#'}
       className={`flex items-center px-6 py-3 ${
-        item.active ? 'bg-indigo-700' : 'hover:bg-indigo-700'
+        item.active ? 'bg-brandYellow' : 'hover:bg-yellow-500'
       } transition-colors duration-200 ${level > 0 ? 'pl-8' : ''}`}
     >
       <span className="flex-shrink-0">{item.icon}</span>

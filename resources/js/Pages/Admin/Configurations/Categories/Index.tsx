@@ -45,7 +45,7 @@ const AdminConfigurationCategoryIndex: PageWithAdminLayout = () => {
         <h2 className="text-2xl font-semibold">Categories</h2>
         <Link
           href="/admin/configurations/categories/create"
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
+          className="bg-brandYellow hover:bg-yellow-500 text-white px-4 py-2 rounded"
         >
           Add Category
         </Link>
@@ -62,7 +62,7 @@ const AdminConfigurationCategoryIndex: PageWithAdminLayout = () => {
       </div>
 
       <table className="min-w-full bg-white rounded shadow overflow-hidden">
-        <thead className="bg-indigo-600 text-white">
+        <thead className="bg-brandYellow text-white">
           <tr>
             <th className="text-left py-3 px-6">Name</th>
             <th className="text-left py-3 px-6">Description</th>

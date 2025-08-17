@@ -83,7 +83,7 @@ export default function LessorApplyModal({
         )}
 
         <div>
-         <h2 className="text-2xl font-bold mb-2 text-center text-orange-600">Why List on Rentify?</h2>
+         <h2 className="text-2xl font-bold mb-2 text-center text-brandYellow">Why List on Rentify?</h2>
           <p className="text-sm text-gray-600 text-center mb-6 max-w-2xl mx-auto">
             Rentify gives you the tools, exposure, and support to succeed as a lessor. Whether you own a single unit or manage multiple properties, we help you grow your rental business with ease.
           </p>
@@ -93,13 +93,13 @@ export default function LessorApplyModal({
             {benefits.map((item, index) => (
               <div
                 key={index}
-                className="flex flex-col items-center text-center bg-orange-50 p-4 rounded-lg shadow-sm hover:shadow-md transition"
+                className="flex flex-col items-center text-center bg-gray-100 p-4 rounded-lg shadow-sm hover:shadow-md transition"
               >
                <img
                   src={logoMobile}
                   className="w-20 h-25 object-contain"
                 />
-                <h4 className="text-base font-semibold text-orange-700 mb-1">{item.title}</h4>
+                <h4 className="text-base font-semibold text-brandYellow mb-1">{item.title}</h4>
                 <p className="text-sm text-gray-600">{item.desc}</p>
               </div>
             ))}
@@ -108,7 +108,7 @@ export default function LessorApplyModal({
             {submitForm !== 1 && (
             <button
               onClick={onProceed}
-              className="w-full bg-orange-600 text-white font-semibold py-2 rounded-md hover:bg-orange-700 transition-colors duration-200"
+              className="w-full bg-brandYellow text-white font-semibold py-2 rounded-md hover:bg-jaba-hover transition-colors duration-200"
             >
               Proceed to Signup Form
             </button>
