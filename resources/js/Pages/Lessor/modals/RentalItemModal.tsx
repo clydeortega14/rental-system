@@ -8,6 +8,7 @@ export interface CustomField {
   label: string;
   slug: string;
   options: string;
+  type: string;
 }
 
 export interface Category {
@@ -44,12 +45,13 @@ export default function RentalItemModal({
 
   const selectedCategory = categories.find((cat) => cat.id === form.categoryId);
   const customFields = selectedCategory?.custom_fields ?? [];
+
   // Initialize custom field answers
-  const initializeCustomFieldAnswers = (categoryId: number): { [slug: string]: string[] } => {
+  const initializeCustomFieldAnswers = (categoryId: number): { [slug: string]: any } => {
     const cat = categories.find((c) => c.id === categoryId);
-    const answers: { [slug: string]: string[] } = {};
+    const answers: { [slug: string]: any } = {};
     cat?.custom_fields?.forEach((field) => {
-      answers[field.slug] = form.customFieldAnswers?.[field.slug] ?? [];
+      answers[field.slug] = form.customFieldAnswers?.[field.slug] ?? (field.type === "checkbox" ? [] : "");
     });
     return answers;
   };
@@ -67,19 +69,41 @@ export default function RentalItemModal({
     setForm({ ...form, [field]: value });
   };
 
-  const handleCheckboxChange = (fieldSlug: string, value: string) => {
-    const selected: string[] = form.customFieldAnswers?.[fieldSlug] ?? [];
-    const updated: string[] = selected.includes(value)
-      ? selected.filter((v: string) => v !== value)
-      : [...selected, value];
+  // Unified handler
+  const handleCustomFieldChange = (fieldSlug: string, value: string, type: string) => {
+    const prevValue = form.customFieldAnswers?.[fieldSlug];
 
-    setForm({
-      ...form,
+    const normalized = type.toLowerCase();
+
+    let updated: string | string[];
+
+    switch (normalized) {
+      case "checkbox":
+      case "multiselect": {
+        const selected: string[] = Array.isArray(prevValue) ? prevValue : [];
+        updated = selected.includes(value)
+          ? selected.filter((v) => v !== value)
+          : [...selected, value];
+        break;
+      }
+      case "radio":
+      case "select": {
+        updated = value;
+        break;
+      }
+      default: {
+        updated = value; // text, number, textarea, date, etc.
+        break;
+      }
+    }
+
+    setForm((prev) => ({
+      ...prev,
       customFieldAnswers: {
-        ...form.customFieldAnswers,
+        ...prev.customFieldAnswers,
         [fieldSlug]: updated,
       },
-    });
+    }));
   };
 
   const parseOptions = (raw: unknown): string[] => {
@@ -113,27 +137,72 @@ export default function RentalItemModal({
     setMediaFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
+  // Renders fields based on type
   const renderCustomFields = () =>
     customFields.map((field) => {
+      const type = field.type.toLowerCase();
       const options = parseOptions(field.options);
-      const selectedValues = form.customFieldAnswers?.[field.slug] || [];
+      const value = form.customFieldAnswers?.[field.slug] ?? "";
 
       return (
         <div key={field.id} className="mb-4">
           <label className="block font-semibold mb-2 text-orange-600">{field.label}</label>
-          <div className="flex flex-wrap gap-3">
-            {options.map((option) => (
-              <label key={option} className="flex items-center gap-2 text-sm cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={selectedValues.includes(option)}
-                  onChange={() => handleCheckboxChange(field.slug, option)}
-                  className="accent-orange-600 w-4 h-4"
-                />
-                <span>{option}</span>
-              </label>
-            ))}
-          </div>
+
+          {type === "checkbox" || type === "multiselect" ? (
+            <div className="flex flex-wrap gap-3">
+              {options.map((option) => (
+                <label key={option} className="flex items-center gap-2 text-sm cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={Array.isArray(value) && value.includes(option)}
+                    onChange={() => handleCustomFieldChange(field.slug, option, field.type)}
+                    className="accent-orange-600 w-4 h-4"
+                  />
+                  <span>{option}</span>
+                </label>
+              ))}
+            </div>
+          ) : type === "radio" ? (
+            <div className="flex flex-wrap gap-3">
+              {options.map((option) => (
+                <label key={option} className="flex items-center gap-2 text-sm cursor-pointer select-none">
+                  <input
+                    type="radio"
+                    name={field.slug}
+                    checked={value === option}
+                    onChange={() => handleCustomFieldChange(field.slug, option, field.type)}
+                    className="accent-orange-600 w-4 h-4"
+                  />
+                  <span>{option}</span>
+                </label>
+              ))}
+            </div>
+          ) : type === "select" ? (
+            <select
+              value={value || ""}
+              onChange={(e) => handleCustomFieldChange(field.slug, e.target.value, field.type)}
+              className="w-full border border-gray-300 rounded-md p-2"
+            >
+              <option value="">Select...</option>
+              {options.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+          ) : type === "textarea" ? (
+            <textarea
+              value={value || ""}
+              onChange={(e) => handleCustomFieldChange(field.slug, e.target.value, field.type)}
+              className="w-full border border-gray-300 rounded-md p-2 min-h-[80px]"
+            />
+          ) : (
+            <Input
+              type={type}
+              value={value || ""}
+              onChange={(e) => handleCustomFieldChange(field.slug, e.target.value, field.type)}
+            />
+          )}
         </div>
       );
     });
