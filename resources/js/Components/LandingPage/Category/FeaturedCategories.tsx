@@ -49,13 +49,17 @@ const FeaturedCategories = ({ categories }: Props) => {
               return (
                 <div
                   key={category.id}
-                  className="relative bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col"
+                  className="relative bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col transform transition-transform duration-300 hover:scale-105"
                   aria-label={`Category ${label}`}
                 >
                   {/* Full image, not cropped */}
-                    <div className="absolute top-0 left-0 z-10">
-                    <div className="bg-gray-800 text-white text-xs font-semibold px-3 py-1 origin-top-left absolute top-4 left-[-0px] w-[100px] text-center">
-                      HOT! Deals
+                  <div className="absolute top-0 left-0 z-10">
+                    <div className="relative bg-gray-800 text-white text-xs font-semibold px-3 py-1 origin-top-left absolute top-4 left-0 w-[100px] text-center rounded-md overflow-hidden shadow">
+                      {/* Shine effect */}
+                      <span className="absolute inset-0 bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.6)_30%,rgba(255,255,255,0.8)_50%,rgba(255,255,255,0.6)_70%,transparent)] blur-[2px] animate-shine pointer-events-none" />
+                      
+                      {/* Text content */}
+                      <span className="relative z-10">HOT! Deals</span>
                     </div>
                   </div>
                   <div className="w-full bg-gray-100 flex items-center justify-center p-4">

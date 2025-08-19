@@ -48,6 +48,9 @@ class LandingPageController extends Controller
     public function howitWorks(){
          return Inertia::render('HotItWorksPage');
     }
+    public function whyChooseUs(){
+         return Inertia::render('WhyChooseUs');
+    }
     public function blogs(){
          return Inertia::render('BlogsPage');
     }
