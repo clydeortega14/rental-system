@@ -1,23 +1,40 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
+import { Inertia } from "@inertiajs/inertia";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/Components/Lessor/ui/dialog";
 import { Button } from "@/Components/Lessor/ui/button";
 import { Input } from "@/Components/Lessor/ui/input";
 import { Badge } from "@/Components/Lessor/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import SelfieCapture from "@/Pages/User/SelfieCapture";
-import { KycModalProps } from "@/Pages/User/types/KycProps";
+
+export interface UserKyc {
+  full_name: string;
+  document_number: string;
+  document_type: string;
+  selfie_path?: string;
+  document_path?: string;
+  kyc_status?: "Pending" | "Approved" | "Rejected";
+}
+
+interface KycModalProps {
+  user_id: number;
+  userKyc?: UserKyc;
+  isReadOnly?: boolean;
+  onClose: () => void;
+  onUpdate?: () => void;
+}
 
 export default function KycModal({
   user_id,
   userKyc,
-  isReadOnly,
+  isReadOnly = false,
   onClose,
   onUpdate,
 }: KycModalProps) {
@@ -28,32 +45,23 @@ export default function KycModal({
   const isFormEditable = !isReadOnly || isNewKyc || canResubmit;
 
   const [formData, setFormData] = useState({
-    full_name: "",
-    document_type: "",
-    document_number: "",
+    full_name: userKyc?.full_name || "",
+    document_type: userKyc?.document_type || "",
+    document_number: userKyc?.document_number || "",
     document_image: null as File | null,
-    selfie: "",
+    selfie: userKyc?.selfie_path ? `/storage/${userKyc.selfie_path}` : "",
   });
 
+  const [documentPreview, setDocumentPreview] = useState<string | null>(
+    userKyc?.document_path ? `/storage/${userKyc.document_path}` : null
+  );
   const [errors, setErrors] = useState<Record<string, string[]>>({});
-  const [documentPreview, setDocumentPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (userKyc) {
-      setFormData({
-        full_name: userKyc.full_name || "",
-        document_type: userKyc.document_type || "",
-        document_number: userKyc.document_number || "",
-        document_image: null,
-        selfie: canResubmit ? "" : userKyc.selfie_path ? `/storage/${userKyc.selfie_path}` : "",
-      });
-
-      setDocumentPreview(canResubmit ? null : userKyc.document_path ? `/storage/${userKyc.document_path}` : null);
-    }
-  }, [userKyc, canResubmit]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  // Handle input change
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value, files } = e.target as any;
     if (name === "document_image" && files?.length) {
       const file = files[0];
@@ -68,7 +76,7 @@ export default function KycModal({
     setFormData((prev) => ({ ...prev, selfie: base64 }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     setIsSubmitting(true);
     setErrors({});
 
@@ -77,40 +85,30 @@ export default function KycModal({
     data.append("full_name", formData.full_name);
     data.append("document_type", formData.document_type);
     data.append("document_number", formData.document_number);
-    if (formData.document_image) {
-      data.append("document_image", formData.document_image);
-    }
+    if (formData.document_image) data.append("document_image", formData.document_image);
     data.append("selfie", formData.selfie);
+    if (canResubmit) data.append("kyc_status", "Pending");
 
-    if (canResubmit) {
-      data.append("kyc_status", "Pending");
-    }
-
-    try {
-      await axios.post(`/user/kyc`, data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      toast({
-        title: "KYC Submitted",
-        description: "Your verification request has been submitted.",
-      });
-
-      onClose();
-      if (onUpdate) onUpdate();
-    } catch (error: any) {
-      if (error.response?.data?.errors) {
-        setErrors(error.response.data.errors);
-      } else {
+    Inertia.post("/user/kyc", data, {
+      forceFormData: true,
+      onSuccess: () => {
+        toast({
+          title: "KYC Submitted",
+          description: "Your verification request has been submitted.",
+        });
+        onClose();
+        if (onUpdate) onUpdate();
+      },
+      onError: (errs: any) => {
+        setErrors(errs);
         toast({
           title: "Submission Failed",
-          description: "An unexpected error occurred.",
+          description: "Please check the form and try again.",
           variant: "destructive",
         });
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+      },
+      onFinish: () => setIsSubmitting(false),
+    });
   };
 
   return (
@@ -142,9 +140,7 @@ export default function KycModal({
           </div>
         )}
 
-        {/* --- Form Fields --- */}
         <div className="space-y-4">
-          {/* Full Name */}
           <div>
             <label className="block text-sm font-medium mb-1">Full Name</label>
             <Input
@@ -153,10 +149,11 @@ export default function KycModal({
               onChange={handleChange}
               readOnly={!isFormEditable}
             />
-            {errors.full_name && <p className="text-sm text-red-500">{errors.full_name[0]}</p>}
+            {errors.full_name && (
+              <p className="text-sm text-red-500">{errors.full_name[0]}</p>
+            )}
           </div>
 
-          {/* Document Type */}
           <div>
             <label className="block text-sm font-medium mb-1">Document Type</label>
             <select
@@ -176,7 +173,6 @@ export default function KycModal({
             )}
           </div>
 
-          {/* Document Number */}
           <div>
             <label className="block text-sm font-medium mb-1">Document Number</label>
             <Input
@@ -190,19 +186,9 @@ export default function KycModal({
             )}
           </div>
 
-          {/* Document Upload */}
-          {!isFormEditable ? (
-            documentPreview ? (
-              <div>
-                <label className="block text-sm font-medium mb-1">Uploaded Document</label>
-                <img src={documentPreview} alt="Document" className="mt-2 max-h-48 border rounded" />
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500">No document uploaded.</p>
-            )
-          ) : (
-            <div>
-              <label className="block text-sm font-medium mb-1">Upload ID Document</label>
+          <div>
+            <label className="block text-sm font-medium mb-1">Upload ID Document</label>
+            {isFormEditable ? (
               <input
                 type="file"
                 name="document_image"
@@ -210,67 +196,44 @@ export default function KycModal({
                 onChange={handleChange}
                 className="w-full border px-3 py-2 rounded"
               />
-              {documentPreview && (
-                <img
-                  src={documentPreview}
-                  alt="Document Preview"
-                  className="mt-2 max-h-48 border rounded"
-                />
-              )}
-              {errors.document_image && (
-                <p className="text-sm text-red-500">{errors.document_image[0]}</p>
-              )}
-            </div>
-          )}
+            ) : documentPreview ? (
+              <img
+                src={documentPreview}
+                className="mt-2 max-h-48 border rounded"
+                alt="Document"
+              />
+            ) : (
+              <p className="text-sm text-gray-500">No document uploaded.</p>
+            )}
+          </div>
 
-          {/* Selfie Capture */}
-          {!isFormEditable ? (
-            formData.selfie ? (
-              <div>
-                <label className="block text-sm font-medium mb-1">Submitted Selfie</label>
-                <img
-                  src={formData.selfie}
-                  alt="Selfie"
-                  className="mt-2 w-32 h-32 object-cover rounded-full border"
-                />
-              </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Capture Selfie</label>
+            {isFormEditable ? (
+              <SelfieCapture onCapture={handleCaptureSelfie} />
+            ) : formData.selfie ? (
+              <img
+                src={formData.selfie}
+                className="mt-2 w-32 h-32 rounded-full border"
+                alt="Selfie"
+              />
             ) : (
               <p className="text-sm text-gray-500">No selfie submitted.</p>
-            )
-          ) : (
-            <div>
-              <label className="block text-sm font-medium mb-1">Capture Selfie with ID</label>
-              <SelfieCapture onCapture={handleCaptureSelfie} />
-              {formData.selfie && (
-                <img
-                  src={formData.selfie}
-                  alt="Selfie Preview"
-                  className="mt-2 w-32 h-32 object-cover square-full border"
-                />
-              )}
-              {errors.selfie && (
-                <p className="text-sm text-red-500">{errors.selfie[0]}</p>
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
-        {/* Submit Button */}
-        <div className="flex justify-end mt-6">
+        <DialogFooter className="flex justify-end mt-6">
           {isFormEditable ? (
             <Button onClick={handleSubmit} disabled={isSubmitting}>
-              {isSubmitting
-                ? "Submitting..."
-                : canResubmit
-                ? "Resubmit"
-                : "Submit"}
+              {isSubmitting ? "Submitting..." : canResubmit ? "Resubmit" : "Submit"}
             </Button>
           ) : (
             <Button disabled variant="outline" className="cursor-default text-gray-700">
               Submitted
             </Button>
           )}
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
