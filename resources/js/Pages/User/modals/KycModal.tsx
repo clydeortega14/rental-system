@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Inertia } from "@inertiajs/inertia";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +12,7 @@ import { Input } from "@/Components/Lessor/ui/input";
 import { Badge } from "@/Components/Lessor/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import SelfieCapture from "@/Pages/User/SelfieCapture";
+import { useForm } from "@inertiajs/react";
 
 export interface UserKyc {
   full_name: string;
@@ -44,7 +44,8 @@ export default function KycModal({
   const isNewKyc = !userKyc;
   const isFormEditable = !isReadOnly || isNewKyc || canResubmit;
 
-  const [formData, setFormData] = useState({
+  // Initialize form with useForm
+  const form = useForm({
     full_name: userKyc?.full_name || "",
     document_type: userKyc?.document_type || "",
     document_number: userKyc?.document_number || "",
@@ -55,41 +56,38 @@ export default function KycModal({
   const [documentPreview, setDocumentPreview] = useState<string | null>(
     userKyc?.document_path ? `/storage/${userKyc.document_path}` : null
   );
-  const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Handle input change
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, files } = e.target as any;
     if (name === "document_image" && files?.length) {
       const file = files[0];
-      setFormData((prev) => ({ ...prev, document_image: file }));
+      form.setData("document_image", file);
       setDocumentPreview(URL.createObjectURL(file));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      form.setData(name, value);
     }
   };
 
+  // Capture selfie from component
   const handleCaptureSelfie = (base64: string) => {
-    setFormData((prev) => ({ ...prev, selfie: base64 }));
+    form.setData("selfie", base64);
   };
 
   const handleSubmit = () => {
     setIsSubmitting(true);
-    setErrors({});
 
     const data = new FormData();
     data.append("user_id", String(user_id));
-    data.append("full_name", formData.full_name);
-    data.append("document_type", formData.document_type);
-    data.append("document_number", formData.document_number);
-    if (formData.document_image) data.append("document_image", formData.document_image);
-    data.append("selfie", formData.selfie);
+    data.append("full_name", form.data.full_name);
+    data.append("document_type", form.data.document_type);
+    data.append("document_number", form.data.document_number);
+    if (form.data.document_image) data.append("document_image", form.data.document_image);
+      data.append("selfie", form.data.selfie);
     if (canResubmit) data.append("kyc_status", "Pending");
 
-    Inertia.post("/user/kyc", data, {
+    form.post("/user/kyc", {
       forceFormData: true,
       onSuccess: () => {
         toast({
@@ -97,10 +95,18 @@ export default function KycModal({
           description: "Your verification request has been submitted.",
         });
         onClose();
-        if (onUpdate) onUpdate();
+        onUpdate?.();
       },
-      onError: (errs: any) => {
-        setErrors(errs);
+      onError: (event) => {
+        // Type assertion to tell TS that errors are a record of field -> string[]
+        const errs = (event as any).detail?.errors as Record<string, string[]> | undefined;
+
+        if (errs) {
+          Object.entries(errs).forEach(([key, messages]) => {
+            form.setError(key as keyof typeof form.data, messages.join(" "));
+          });
+        }
+
         toast({
           title: "Submission Failed",
           description: "Please check the form and try again.",
@@ -145,12 +151,12 @@ export default function KycModal({
             <label className="block text-sm font-medium mb-1">Full Name</label>
             <Input
               name="full_name"
-              value={formData.full_name}
+              value={form.data.full_name}
               onChange={handleChange}
               readOnly={!isFormEditable}
             />
-            {errors.full_name && (
-              <p className="text-sm text-red-500">{errors.full_name[0]}</p>
+            {form.errors.full_name && (
+              <p className="text-sm text-red-500">{form.errors.full_name[0]}</p>
             )}
           </div>
 
@@ -158,7 +164,7 @@ export default function KycModal({
             <label className="block text-sm font-medium mb-1">Document Type</label>
             <select
               name="document_type"
-              value={formData.document_type}
+              value={form.data.document_type}
               onChange={handleChange}
               disabled={!isFormEditable}
               className="w-full border px-3 py-2 rounded"
@@ -168,8 +174,8 @@ export default function KycModal({
               <option value="driver_license">Driver's License</option>
               <option value="national_id">National ID</option>
             </select>
-            {errors.document_type && (
-              <p className="text-sm text-red-500">{errors.document_type[0]}</p>
+            {form.errors.document_type && (
+              <p className="text-sm text-red-500">{form.errors.document_type[0]}</p>
             )}
           </div>
 
@@ -177,12 +183,12 @@ export default function KycModal({
             <label className="block text-sm font-medium mb-1">Document Number</label>
             <Input
               name="document_number"
-              value={formData.document_number}
+              value={form.data.document_number}
               onChange={handleChange}
               readOnly={!isFormEditable}
             />
-            {errors.document_number && (
-              <p className="text-sm text-red-500">{errors.document_number[0]}</p>
+            {form.errors.document_number && (
+              <p className="text-sm text-red-500">{form.errors.document_number[0]}</p>
             )}
           </div>
 
@@ -211,9 +217,9 @@ export default function KycModal({
             <label className="block text-sm font-medium mb-1">Capture Selfie</label>
             {isFormEditable ? (
               <SelfieCapture onCapture={handleCaptureSelfie} />
-            ) : formData.selfie ? (
+            ) : form.data.selfie ? (
               <img
-                src={formData.selfie}
+                src={form.data.selfie}
                 className="mt-2 w-32 h-32 rounded-full border"
                 alt="Selfie"
               />
