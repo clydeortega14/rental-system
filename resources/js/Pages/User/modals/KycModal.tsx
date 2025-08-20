@@ -1,23 +1,40 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/Components/Lessor/ui/dialog";
 import { Button } from "@/Components/Lessor/ui/button";
 import { Input } from "@/Components/Lessor/ui/input";
 import { Badge } from "@/Components/Lessor/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import SelfieCapture from "@/Pages/User/SelfieCapture";
-import { KycModalProps } from "@/Pages/User/types/KycProps";
+import { useForm } from "@inertiajs/react";
+
+export interface UserKyc {
+  full_name: string;
+  document_number: string;
+  document_type: string;
+  selfie_path?: string;
+  document_path?: string;
+  kyc_status?: "Pending" | "Approved" | "Rejected";
+}
+
+interface KycModalProps {
+  user_id: number;
+  userKyc?: UserKyc;
+  isReadOnly?: boolean;
+  onClose: () => void;
+  onUpdate?: () => void;
+}
 
 export default function KycModal({
   user_id,
   userKyc,
-  isReadOnly,
+  isReadOnly = false,
   onClose,
   onUpdate,
 }: KycModalProps) {
@@ -27,90 +44,77 @@ export default function KycModal({
   const isNewKyc = !userKyc;
   const isFormEditable = !isReadOnly || isNewKyc || canResubmit;
 
-  const [formData, setFormData] = useState({
-    full_name: "",
-    document_type: "",
-    document_number: "",
+  // Initialize form with useForm
+  const form = useForm({
+    full_name: userKyc?.full_name || "",
+    document_type: userKyc?.document_type || "",
+    document_number: userKyc?.document_number || "",
     document_image: null as File | null,
-    selfie: "",
+    selfie: userKyc?.selfie_path ? `/storage/${userKyc.selfie_path}` : "",
   });
 
-  const [errors, setErrors] = useState<Record<string, string[]>>({});
-  const [documentPreview, setDocumentPreview] = useState<string | null>(null);
+  const [documentPreview, setDocumentPreview] = useState<string | null>(
+    userKyc?.document_path ? `/storage/${userKyc.document_path}` : null
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (userKyc) {
-      setFormData({
-        full_name: userKyc.full_name || "",
-        document_type: userKyc.document_type || "",
-        document_number: userKyc.document_number || "",
-        document_image: null,
-        selfie: canResubmit ? "" : userKyc.selfie_path ? `/storage/${userKyc.selfie_path}` : "",
-      });
-
-      setDocumentPreview(canResubmit ? null : userKyc.document_path ? `/storage/${userKyc.document_path}` : null);
-    }
-  }, [userKyc, canResubmit]);
-
+  // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, files } = e.target as any;
     if (name === "document_image" && files?.length) {
       const file = files[0];
-      setFormData((prev) => ({ ...prev, document_image: file }));
+      form.setData("document_image", file);
       setDocumentPreview(URL.createObjectURL(file));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      form.setData(name, value);
     }
   };
 
+  // Capture selfie from component
   const handleCaptureSelfie = (base64: string) => {
-    setFormData((prev) => ({ ...prev, selfie: base64 }));
+    form.setData("selfie", base64);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     setIsSubmitting(true);
-    setErrors({});
 
     const data = new FormData();
     data.append("user_id", String(user_id));
-    data.append("full_name", formData.full_name);
-    data.append("document_type", formData.document_type);
-    data.append("document_number", formData.document_number);
-    if (formData.document_image) {
-      data.append("document_image", formData.document_image);
-    }
-    data.append("selfie", formData.selfie);
+    data.append("full_name", form.data.full_name);
+    data.append("document_type", form.data.document_type);
+    data.append("document_number", form.data.document_number);
+    if (form.data.document_image) data.append("document_image", form.data.document_image);
+      data.append("selfie", form.data.selfie);
+    if (canResubmit) data.append("kyc_status", "Pending");
 
-    if (canResubmit) {
-      data.append("kyc_status", "Pending");
-    }
+    form.post("/user/kyc", {
+      forceFormData: true,
+      onSuccess: () => {
+        toast({
+          title: "KYC Submitted",
+          description: "Your verification request has been submitted.",
+        });
+        onClose();
+        onUpdate?.();
+      },
+      onError: (event) => {
+        // Type assertion to tell TS that errors are a record of field -> string[]
+        const errs = (event as any).detail?.errors as Record<string, string[]> | undefined;
 
-    try {
-      await axios.post(`/user/kyc`, data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+        if (errs) {
+          Object.entries(errs).forEach(([key, messages]) => {
+            form.setError(key as keyof typeof form.data, messages.join(" "));
+          });
+        }
 
-      toast({
-        title: "KYC Submitted",
-        description: "Your verification request has been submitted.",
-      });
-
-      onClose();
-      if (onUpdate) onUpdate();
-    } catch (error: any) {
-      if (error.response?.data?.errors) {
-        setErrors(error.response.data.errors);
-      } else {
         toast({
           title: "Submission Failed",
-          description: "An unexpected error occurred.",
+          description: "Please check the form and try again.",
           variant: "destructive",
         });
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+      },
+      onFinish: () => setIsSubmitting(false),
+    });
   };
 
   return (
@@ -142,26 +146,25 @@ export default function KycModal({
           </div>
         )}
 
-        {/* --- Form Fields --- */}
         <div className="space-y-4">
-          {/* Full Name */}
           <div>
             <label className="block text-sm font-medium mb-1">Full Name</label>
             <Input
               name="full_name"
-              value={formData.full_name}
+              value={form.data.full_name}
               onChange={handleChange}
               readOnly={!isFormEditable}
             />
-            {errors.full_name && <p className="text-sm text-red-500">{errors.full_name[0]}</p>}
+            {form.errors.full_name && (
+              <p className="text-sm text-red-500">{form.errors.full_name[0]}</p>
+            )}
           </div>
 
-          {/* Document Type */}
           <div>
             <label className="block text-sm font-medium mb-1">Document Type</label>
             <select
               name="document_type"
-              value={formData.document_type}
+              value={form.data.document_type}
               onChange={handleChange}
               disabled={!isFormEditable}
               className="w-full border px-3 py-2 rounded"
@@ -171,38 +174,27 @@ export default function KycModal({
               <option value="driver_license">Driver's License</option>
               <option value="national_id">National ID</option>
             </select>
-            {errors.document_type && (
-              <p className="text-sm text-red-500">{errors.document_type[0]}</p>
+            {form.errors.document_type && (
+              <p className="text-sm text-red-500">{form.errors.document_type[0]}</p>
             )}
           </div>
 
-          {/* Document Number */}
           <div>
             <label className="block text-sm font-medium mb-1">Document Number</label>
             <Input
               name="document_number"
-              value={formData.document_number}
+              value={form.data.document_number}
               onChange={handleChange}
               readOnly={!isFormEditable}
             />
-            {errors.document_number && (
-              <p className="text-sm text-red-500">{errors.document_number[0]}</p>
+            {form.errors.document_number && (
+              <p className="text-sm text-red-500">{form.errors.document_number[0]}</p>
             )}
           </div>
 
-          {/* Document Upload */}
-          {!isFormEditable ? (
-            documentPreview ? (
-              <div>
-                <label className="block text-sm font-medium mb-1">Uploaded Document</label>
-                <img src={documentPreview} alt="Document" className="mt-2 max-h-48 border rounded" />
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500">No document uploaded.</p>
-            )
-          ) : (
-            <div>
-              <label className="block text-sm font-medium mb-1">Upload ID Document</label>
+          <div>
+            <label className="block text-sm font-medium mb-1">Upload ID Document</label>
+            {isFormEditable ? (
               <input
                 type="file"
                 name="document_image"
@@ -210,67 +202,44 @@ export default function KycModal({
                 onChange={handleChange}
                 className="w-full border px-3 py-2 rounded"
               />
-              {documentPreview && (
-                <img
-                  src={documentPreview}
-                  alt="Document Preview"
-                  className="mt-2 max-h-48 border rounded"
-                />
-              )}
-              {errors.document_image && (
-                <p className="text-sm text-red-500">{errors.document_image[0]}</p>
-              )}
-            </div>
-          )}
+            ) : documentPreview ? (
+              <img
+                src={documentPreview}
+                className="mt-2 max-h-48 border rounded"
+                alt="Document"
+              />
+            ) : (
+              <p className="text-sm text-gray-500">No document uploaded.</p>
+            )}
+          </div>
 
-          {/* Selfie Capture */}
-          {!isFormEditable ? (
-            formData.selfie ? (
-              <div>
-                <label className="block text-sm font-medium mb-1">Submitted Selfie</label>
-                <img
-                  src={formData.selfie}
-                  alt="Selfie"
-                  className="mt-2 w-32 h-32 object-cover rounded-full border"
-                />
-              </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Capture Selfie</label>
+            {isFormEditable ? (
+              <SelfieCapture onCapture={handleCaptureSelfie} />
+            ) : form.data.selfie ? (
+              <img
+                src={form.data.selfie}
+                className="mt-2 w-32 h-32 rounded-full border"
+                alt="Selfie"
+              />
             ) : (
               <p className="text-sm text-gray-500">No selfie submitted.</p>
-            )
-          ) : (
-            <div>
-              <label className="block text-sm font-medium mb-1">Capture Selfie with ID</label>
-              <SelfieCapture onCapture={handleCaptureSelfie} />
-              {formData.selfie && (
-                <img
-                  src={formData.selfie}
-                  alt="Selfie Preview"
-                  className="mt-2 w-32 h-32 object-cover square-full border"
-                />
-              )}
-              {errors.selfie && (
-                <p className="text-sm text-red-500">{errors.selfie[0]}</p>
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
-        {/* Submit Button */}
-        <div className="flex justify-end mt-6">
+        <DialogFooter className="flex justify-end mt-6">
           {isFormEditable ? (
             <Button onClick={handleSubmit} disabled={isSubmitting}>
-              {isSubmitting
-                ? "Submitting..."
-                : canResubmit
-                ? "Resubmit"
-                : "Submit"}
+              {isSubmitting ? "Submitting..." : canResubmit ? "Resubmit" : "Submit"}
             </Button>
           ) : (
             <Button disabled variant="outline" className="cursor-default text-gray-700">
               Submitted
             </Button>
           )}
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
