@@ -28,7 +28,9 @@ use App\Http\Controllers\Lessor\ShopController;
 use App\Http\Controllers\Lessor\ReservationController as ProperReserveController;
 use App\Http\Controllers\GuestController;
 
+
 use App\Http\Controllers\LesseeController;
+use App\Http\Controllers\ConversationController;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Client\Request;
@@ -149,8 +151,11 @@ Route::middleware([
     'check-user-info' // completed information details
 ])->group(function () {
 
+    Route::post('/conversations', [ConversationController::class, 'store'])->name('conversations.store');
+    Route::post('/conversations/store/lessee/message', [ConversationController::class, 'storeLesseeMessage'])->name('conversations.store.lessee');
+    Route::get('/conversations', [ConversationController::class, 'getUserConversations'])->name('conversations.index');
+    Route::post('/conversations/{conversation}/mark-read/{user}', [ConversationController::class, 'markRead'])->name('conversations.markRead');
     Route::get('/lessee', [LesseeController::class, 'index'])->name('lessee.profile');
-
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

@@ -22,6 +22,9 @@ export interface RentalItem {
   imageUrl?: string;
   priceUnit?: string;
   media_paths?: string[];
+  shopId?: number
+  shopName?: string;
+  shopLocation?: string;
 
 }
 
@@ -49,13 +52,13 @@ export interface BookingDetails {
   customerName?: string;
   startDate?: string | null;
   startTime?: string | null;
-  endDate?:string | null;
-  endTime?:string | null;
+  endDate?: string | null;
+  endTime?: string | null;
   status: 'pending' | 'confirmed' | 'canceled' | 'completed';
   totalPrice?: number;
   duration?: 'hourly' | 'daily' | 'weekly';
   quantity?: number;
-  rentalItem?: RentalItem; 
+  rentalItem?: RentalItem;
 }
 
 

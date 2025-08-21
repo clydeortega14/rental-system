@@ -13,7 +13,6 @@ class LessorApplication extends Model
         'encodedbyadmin_id',
         'lessoruser_id',
         'status_id',
-        
         'approved_by',
         'approved_at'
     ];
