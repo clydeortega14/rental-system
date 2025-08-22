@@ -64,7 +64,3 @@ Route::middleware('auth')->group(function () {
         Route::get('/{provider}/redirect', [SocialAuthenticateSessionController::class, 'redirect'])->name('auth.social');
         Route::get('/{provider}/callback', [SocialAuthenticateSessionController::class, 'callback'])->name('auth.social.callback');
     })->middleware('guest');
-
-// Google OAuth routes
-// Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
-// Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
