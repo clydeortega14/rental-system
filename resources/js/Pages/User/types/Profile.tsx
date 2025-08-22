@@ -55,4 +55,5 @@ export type KYC = {
   document_path: string | null;
   kyc_status: "Pending" | "Approved" | "Rejected" | null;
   kyc_verified: boolean;
+  created_at: string;
 }
