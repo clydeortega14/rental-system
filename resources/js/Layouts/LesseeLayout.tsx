@@ -145,6 +145,12 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
   const [showLessorModal, setShowLessorModal] = useState(false);
   const { recentActivities } = usePage().props as unknown as Props;
 
+  const [selectedShop, setSelectedShop] = useState<{
+    ownerId?: number;
+    shopName?: string;
+    shopOwner?: string;
+  } | null>(null);
+
     // Provide fallback to ensure shape
   const shops = rawShops && 'data' in rawShops
   ? rawShops
@@ -203,6 +209,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
         { key: "bookings", label: "Bookings", icon: <CalendarCheck className="w-5 h-5" /> },
         { key: "reviews", label: "Reviews", icon: <StarIcon className="w-5 h-5" /> },
         { key: "lessorProfile", label: "Settings", icon: <BiCog size={20} /> },
+        { key: "lessorInquiries", label: "Inquiries", icon: <BiMessageDetail size={20} /> },
       ],
     },
     {
@@ -215,13 +222,14 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
               { key: "lessorProperties", label: "Properties", icon: <BiBuildingHouse size={20} /> },
               { key: "lessorReservations", label: "Reservations", icon: <BiCalendarCheck size={20} /> },
               { key: "lessorInvoice", label: "Invoice", icon: <BiReceipt size={20} /> },
-              { key: "lessorInquiries", label: "Inquiries", icon: <BiMessageDetail size={20} /> },
+             
               { key: "LessorReviews", label: "Reviews", icon: <BiStar size={20} /> },
             ]
           : [{ key: "signup", label: "Be a Lessor", icon: <BiSolidUserCheck size={20} /> }]),
       ],
     },
   ];
+  
 
   useEffect(() => {
     const tab = localStorage.getItem('lessee.activeTab');
@@ -343,8 +351,14 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
             <TabsContent value="overview" className="h-full">
                 <Overview recentActivities={recentActivities} />
               </TabsContent>
-              <TabsContent value="bookings" className="h-full">
-                <Bookings />
+             <TabsContent value="bookings" className="h-full">
+                <Bookings
+                  openLessorInquiries={(shopData) => {
+                    // Store selected shop data in state if needed
+                    setSelectedShop(shopData); 
+                    setActiveTab("lessorInquiries");
+                  }}
+                />
               </TabsContent>
               <TabsContent value="lessor" className="h-full">
                 {auth.user?.kyc?.kyc_verified === true ? (
@@ -391,7 +405,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
                 <LessorInvoice />
               </TabsContent>
               <TabsContent value="lessorInquiries" className="h-full">
-                <LessorInquiries />
+                <LessorInquiries shopData={selectedShop} authUserId={auth.user.id}  />
               </TabsContent>
               <TabsContent value="LessorReviews" className="h-full">
                 <LessorReviews />

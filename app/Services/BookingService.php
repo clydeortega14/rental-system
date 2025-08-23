@@ -3,6 +3,7 @@
 namespace App\Services;
 use App\Models\Booking;
 use App\Models\BookingStatus;
+use App\Models\Shop;
 use Carbon\Carbon;
 use App\Traits\CalendarTheme;
 use Illuminate\Support\Facades\DB;
@@ -176,6 +177,8 @@ class BookingService {
             ->where('booked_by', $userId)
             ->get()
             ->map(function($booking) {
+                $rental = $booking->rentalListing;
+                $shop = Shop::find($rental->shop_id);
                 return [
                     'id' => $booking->id,
                     'uuid' => $booking->uuid,
@@ -184,10 +187,15 @@ class BookingService {
                         'imageUrl' => count($booking->rentalListing->attachment) > 0
                             ? config('app.url') . '/storage/' . $booking->rentalListing->attachment[0]->file_path
                             : 'https://images.pexels.com/photos/147411/italy-mountains-dawn-daybreak-147411.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                        'name' => $booking->rentalListing->itemName
+                        'name' => $booking->rentalListing->itemName,
+                        'ownerId' => $booking->rentalListing->user->id,
+                        'shopOwner' => $booking->rentalListing->user->name,
+                        'shopName' => $shop?->name,
+                        
                     ],
                     'itemId' => $booking->rental_listing_id,
                     'userId' => $booking->bookedBy->id,
+
                     'startDate' => $booking->start_date,
                     'endDate' => $booking->end_date,
                     'status' => $booking->bookingStatus->name,

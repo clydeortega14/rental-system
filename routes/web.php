@@ -27,6 +27,11 @@ use App\Http\Controllers\Lessor\LessorController;
 use App\Http\Controllers\Lessor\ShopController;
 use App\Http\Controllers\Lessor\ReservationController as ProperReserveController;
 use App\Http\Controllers\GuestController;
+use App\Http\Controllers\InquiriesController;
+
+
+
+use App\Http\Controllers\MessagesController;
 
 use App\Http\Controllers\LesseeController;
 
@@ -148,6 +153,10 @@ Route::middleware([
     'verified', // email verification middleware
     'check-user-info' // completed information details
 ])->group(function () {
+    Route::get('/messages/{sender}/{receiver}', [MessagesController::class, 'getConversation'])->name('getConversation');
+    Route::post('/messages', [MessagesController::class, 'sendMessage']);
+
+    Route::get('/inquiries/lessors', [InquiriesController::class, 'getLessors'])->name('inquiries.getLessors');
 
     Route::get('/lessee', [LesseeController::class, 'index'])->name('lessee.profile');
 

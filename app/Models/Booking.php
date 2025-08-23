@@ -47,7 +47,6 @@ class Booking extends Model
     {
         return $this->belongsTo(RentalAddItem::class, 'rental_listing_id');
     }
-
     public function bookingStatus()
     {
         return $this->belongsTo(BookingStatus::class, 'status');

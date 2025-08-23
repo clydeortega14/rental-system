@@ -113,7 +113,7 @@ class LesseeController extends Controller
             ];
         });
         $bookings = $this->booking_service->getBookingsByUser(auth()->id());
-
+       
         $lessorReservations = $this->getLessorReservations($user->id);
         $lessorDashboard = $this->getLessorDashboardData($user->id);
         $recentActivities = $this->getRecentActivities($user->id);

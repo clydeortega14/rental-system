@@ -6,7 +6,7 @@ import Button from "@/Components/Renter/ui/Button";
 import SecondaryButton from "@/Components/SecondaryButton";
 import { BookingDetails } from "@/types/rental";
 import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
-import { BiCalendar } from "react-icons/bi";
+import { BiCalendar,BiShow, BiMessage } from "react-icons/bi";
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
     case "confirmed":
@@ -22,14 +22,19 @@ const getStatusColor = (status: string) => {
   }
 };
 
-export default function Bookings() {
-  const { bookings = [] } = usePage<{ bookings: BookingDetails[] }>().props;
+interface BookingsProps {
+  openLessorInquiries: (data: {
+    ownerId?: number;
+    shopName?: string;
+    shopOwner?: string;
+  }) => void;
+}
 
-  const [activeTab, setActiveTab] = useState<"Upcoming" | "Past" | "All">("Upcoming");
+export default function Bookings({ openLessorInquiries }: BookingsProps) {
+  const { bookings = [] } = usePage<{ bookings: BookingDetails[] }>().props;
+  const [activeTab, setActiveTab] = useState<string>("Upcoming");
   const [showModal, setShowModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<BookingDetails | null>(null);
-
-
 
   const openModal = (booking: BookingDetails) => {
     setSelectedBooking(booking);
@@ -116,10 +121,28 @@ export default function Bookings() {
                       {booking.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
-                    <Button variant="outline" size="sm" onClick={() => openModal(booking)}>
-                      View
-                    </Button>
+                  <td className="px-4 py-3 flex gap-2">
+                    <button
+                      onClick={() => openModal(booking)}
+                      className="flex items-center gap-1 px-3 py-1.5 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition"
+                    >
+                      <BiShow className="w-4 h-4" />
+                      <span>View</span>
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        openLessorInquiries({
+                          ownerId: booking.rentalItem?.ownerId,
+                          shopName: booking.rentalItem?.shopName,
+                          shopOwner: booking.rentalItem?.shopOwner,
+                        })
+                      }
+                      className="flex items-center gap-1 px-3 py-1.5 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition"
+                    >
+                      <BiMessage className="w-4 h-4" />
+                      <span>Inquire</span>
+                    </button>
                   </td>
                 </tr>
               ))}
