@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Inertia\Inertia;
+use App\Events\MessageSent;
 
 
 class ConversationController extends Controller
@@ -50,60 +51,6 @@ class ConversationController extends Controller
         ]);
 
     }
-
-    // public function store(Request $request)
-    // {
-
-    //      // Validate nested JSON fields
-    //     $validated = $request->validate([
-    //         'userId'                => 'required|integer|exists:users,id',
-    //         'rentalItem.shopId'     => 'required|integer|exists:shops,id',
-    //         'rentalItem.name'       => 'required|string',
-    //         'rentalItem.description'=> 'required|string',
-    //     ]);
-
-    //     $lesseeId   = $request->input('userId');
-    //     $shopId     = $request->input('rentalItem.shopId');
-    //     $itemName   = $request->input('rentalItem.name');
-    //     $itemDesc   = $request->input('rentalItem.description');
-
-    //     // Check if conversation already exists
-    //     $conversation = Conversation::where('shop_id', $shopId)
-    //         ->where('lessee_id', $lesseeId)
-    //         ->first();
-
-    //       if (!$conversation) {
-    //         $conversation = Conversation::create([
-    //             'uuid'            => Str::uuid(),
-    //             'shop_id'         => $shopId,
-    //             'lessee_id'       => $lesseeId,
-    //             'last_message_at' => Carbon::now(),
-    //         ]);
-    //     } else {
-    //         $conversation->update([
-    //             'last_message_at' => Carbon::now(),
-    //         ]);
-    //     }
-
-        
-    //     // If no messages yet, create the first one
-    //     if ($conversation->messages()->count() === 0) {
-    //         Message::create([
-    //             'conversation_id' => $conversation->id,
-    //             'sender_id'       => $lesseeId,
-    //             'sender_role'     => 'lessee',
-    //             'message'         => $itemName . ' - ' . $itemDesc,
-    //             'is_read'         => Carbon::now()  ,
-    //         ]);
-    //     }
-
-    //     // return response()->json([
-    //     //     'success'      => true,
-    //     //     'conversation' => $conversation->load('messages'),
-    //     //     'message'      => 'Conversation created/updated successfully with first message.',
-    //     // ]);
-    //     // return Inertia::location(route('lessee.profile', ['tab' => 'lessorInquiries']));
-    // }
     public function getUserConversations(Request $request)
     {
         $userId = $request->user()->id; // logged-in user ID
@@ -333,7 +280,7 @@ class ConversationController extends Controller
                 'last_message_at' => now(),
             ]);
         }
-        
+
     }
     // public function markRead($conversationId, $userId)
     // {

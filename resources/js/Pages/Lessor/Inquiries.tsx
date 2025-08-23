@@ -1,9 +1,9 @@
-
 import { router } from "@inertiajs/react";
 import React, { useState, useRef, useEffect } from "react";
 import { BookingDetails } from "@/types/rental";
 import { BiSmile, BiPaperclip, BiDownload } from "react-icons/bi";
 import Picker from "emoji-picker-react";
+
 
 interface Attachment {
   id: number;
@@ -87,6 +87,7 @@ export default function LessorInquiries({
 
   const activeConversations = conversations.find((c) => c.id === activeConversationId);
   const [messages, setMessages] = useState<Message[]>(activeConversations?.messages || []);
+
 
 
   useEffect(() => {
@@ -262,6 +263,8 @@ export default function LessorInquiries({
       setPreviewUrl(null);
     }
   }, [attachment]);
+
+
 
   return (
     <div className="h-[80vh] flex bg-gray-100 rounded-2xl overflow-hidden shadow-lg">
