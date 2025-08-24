@@ -33,9 +33,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if($request->has('checkout'))
+        if($request->has('booking_data.checkout'))
         {
-            return redirect()->back();
+            return redirect()->route('checkout.item');
         }
 
         return redirect()->intended(route('landing.page.index', absolute: false));

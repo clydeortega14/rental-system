@@ -10,6 +10,8 @@ import LoginWithGoogle from "../LoginWithGoogle";
 import { BookingSession } from "@/types/rental";
 import CardExpiryInput from "../CardExpiryInput";
 import InputError from "../InputError";
+import KycModal from "@/Pages/User/modals/KycModal";
+import { useKyc } from "@/context/KycContext";
 
 interface CheckOutProps {
     bookingData: BookingSession
@@ -17,12 +19,12 @@ interface CheckOutProps {
 
 export default function CheckOut({bookingData}: CheckOutProps) {
     const user = usePage<PageProps>().props.auth.user;
-    console.log(user);
     const isVerified = user?.kyc?.kyc_verified === true;
     const [serviceFee, setServiceFee] = useState<number>(0);
     const [allTotal, setAllTotal] = useState<number>(0);
     const error_message = usePage<PageProps>().props.flash.error_message
-    // console.log(bookingData)
+
+    const {showKycModal, setShowKycModal } = useKyc();
 
     useEffect( () => {
 
@@ -31,6 +33,11 @@ export default function CheckOut({bookingData}: CheckOutProps) {
         setData
     }, [bookingData.partial_total]);
 
+    useEffect( () => {
+
+        if(user && user.kyc === null) setShowKycModal(true);
+
+    }, [user]);
 
     useEffect( () => {
 
@@ -122,6 +129,10 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                     <ChevronLeft className="h-4 w-4 mr-1" />
                         Back to Cart
                     </Link>
+                </div>
+
+                <div className="text-center py-4 border border-yellow-500 rounded-lg bg-yellow-100 my-3">
+                    <p className="text-red-600 text-lg">Please complete your identity verification to proceed.</p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -226,7 +237,33 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                             </div>
                         </div>
 
-                        <div className="p-6">
+                        <div className="mt-6">
+
+                            { user ? (
+                                isVerified ? (
+                                    <Button
+                                    type="submit"
+                                    variant="primary"
+                                    fullWidth
+                                    disabled={processing}
+                                    >
+                                    {processing ? 'Processing...' : `Complete Booking • ${formatPrice(allTotal)}`}
+                                    </Button>
+                                ) : (
+                                    <>
+                                    <div className="text-center py-4">
+                                        {/* <p className="text-red-600 text-sm">Please complete your identity verification to proceed.</p> */}
+                                    </div>
+                                    
+                                    </>
+                                )
+                            ) : (
+                                <LoginWithGoogle />
+                            )}
+                            
+                        </div>
+
+                        {/* <div className="p-6">
                             <h2 className="text-lg font-semibold text-gray-800 mb-4">Payment Method</h2>
                             <div className="mb-4">
                             <div className="flex space-x-4 mb-6">
@@ -308,29 +345,8 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                             </div>
                             )}
 
-                            <div className="mt-6">
-
-                            { user ? (
-                                isVerified ? (
-                                    <Button
-                                    type="submit"
-                                    variant="primary"
-                                    fullWidth
-                                    disabled={processing}
-                                    >
-                                    {processing ? 'Processing...' : `Complete Booking • ${formatPrice(allTotal)}`}
-                                    </Button>
-                                ) : (
-                                    <div className="text-sm text-red-600 text-center mt-4">
-                                        Please complete your identity verification to proceed.
-                                    </div>
-                                )
-                            ) : (
-                                <LoginWithGoogle />
-                            )}
                             
-                            </div>
-                        </div>
+                        </div> */}
                         </form>
 
                         {/* {
@@ -399,7 +415,28 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                 </div>
 
 
-
+            { showKycModal && (
+                <KycModal 
+                    user_id={user.id}
+                    userKyc={
+                        user.kyc
+                        ? {
+                            full_name: user.kyc.full_name,
+                            document_type: user.kyc.document_type,
+                            document_number: user.kyc.document_number,
+                            selfie_path: user.kyc.selfie_path ?? undefined,
+                            document_path: user.kyc.document_path ?? undefined,
+                            kyc_status:
+                                user.kyc.kyc_status && ["Pending", "Approved", "Rejected"].includes(user.kyc.kyc_status)
+                                ? (user.kyc.kyc_status as "Pending" | "Approved" | "Rejected")
+                                : undefined,
+                            }
+                        : undefined
+                    }
+                    isReadOnly={false}
+                    onClose={() => setShowKycModal(false)}
+                />
+            )}
             <div className="bg-gray-100"></div>
         </>
     );

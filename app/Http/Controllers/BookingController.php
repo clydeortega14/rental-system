@@ -56,6 +56,7 @@ class BookingController extends Controller
             'status' => $status->id,
             'partial_total' => $request->partial_total,
             'duration_quantity' => $duration,
+            'checkout' => true,
         ]);
 
         return redirect(route('checkout.item'));
