@@ -74,7 +74,7 @@ Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('
 // this middleware will force to user to submit the requirements before they can rent an item
 Route::middleware(['kyc-verified'])->group(function(){
     
-    Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('checkout.item');
+    
 
     // proceed to checkout
     Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
@@ -82,18 +82,21 @@ Route::middleware(['kyc-verified'])->group(function(){
 
 // Route::get('shopping-cart', [CartController::class, 'index'])->name('cart.index');
 
-// Route Group for lessee
+// Route Groups and Authenticated User middleware
 Route::middleware(['auth'])->group(function(){
+
+    // booking details
     Route::get('booking/details/{uuid}', [BookingController::class, 'bookingView'])->name('booking.view');
+
+    // Checkout Items Route
+    Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('checkout.item');
 });
 
 Route::middleware([
     'auth',
     'verified'
 ])->group(function () {
-
     
-
     Route::get('/completing/user/{uuid}', [UserController::class, 'getUserInfoPage'])->name('completing.user');
 
     // user must redirect to this route if first time using the platform.
