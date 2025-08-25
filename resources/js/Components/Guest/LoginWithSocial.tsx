@@ -61,6 +61,10 @@ export default function LoginWithSocial()
         if(data.email !== '' && data.password !== '') login();
     }
 
+    const handleSocialLogin = (social: string) => {
+        window.location.href = `/auth/${social}/redirect`;
+    }
+
     // const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     //     e.preventDefault();
 
@@ -68,10 +72,9 @@ export default function LoginWithSocial()
     // }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-            <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
+        <div className="p-4 flex items-center justify-center">
+            <div className="w-full max-w-md bg-white p-8 rounded-2xl">
                 <h2 className="text-2xl font-bold text-center mb-6">
-                    {isSignup ? 'Create an Account' : 'Login'}
 
                 
                 </h2>
@@ -79,11 +82,13 @@ export default function LoginWithSocial()
                 <form className="space-y-4" onSubmit={handleNext}>
 
                     <div className="flex flex-col gap-3">
-                        <button className="flex items-center justify-center gap-3 w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
+                        <button 
+                            onClick={ () => handleSocialLogin('google')}
+                        className="flex items-center justify-center gap-3 w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
                             <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
                             Continue with Google
                         </button>
-                        <button className="flex items-center justify-center gap-3 w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
+                        <button onClick={() => handleSocialLogin('facebook')} className="flex items-center justify-center gap-3 w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
                             <img src="https://www.svgrepo.com/show/475654/facebook-color.svg" alt="Facebook" className="w-5 h-5" />
                             Continue with Facebook
                         </button>

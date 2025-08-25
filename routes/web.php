@@ -36,11 +36,6 @@ use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-// Google OAuth routes
-///
-Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle']);
-Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
-
 //ladingpage
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
 Route::get('/about-us', [LandingPageController::class, 'aboutUs'])->name('landing.page.aboutUs');
@@ -72,9 +67,12 @@ Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('
 Route::get('item/review', [CartController::class, 'index'])->name('item.review');
 
 
-// This routes must be wrap in KYC verified middleware, 
+// This routes must be wrap in KYC verified middleware,
 // this middleware will force to user to submit the requirements before they can rent an item
 Route::middleware(['kyc-verified'])->group(function(){
+
+    // Check out item page
+    Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('checkout.item');
 
     // proceed to checkout
     Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
@@ -112,13 +110,13 @@ Route::middleware([
         Route::post('/kyc', [ProfileController::class, 'userKYC'])->name('kyc.store');
 
         Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('user.change.password');
-        
+
     });
 
     Route::group(['prefix' => 'lessor'], function () {
 
         Route::get('/', [LessorController::class, 'dashboard'])->name('lessor.dashboard');
-        
+
         Route::get('/properties', [RentalController::class, 'index'])->name('lessor.properties');
         Route::post('/properties', [RentalController::class, 'store'])->name('lessor.properties.store');
         Route::put('/properties/{uuid}', [RentalController::class, 'update'])->name('lessor.properties.update');
@@ -136,7 +134,7 @@ Route::middleware([
     // Route::get('/lessee', function () {
     //     return Inertia::render('Lessee/Landing');
     // })->name('lessee.profile');
-    
+
     Route::post('/lessor/signUserup', [LesseeController::class, 'store'])->name('lessor.signup.store');
 });
 

@@ -28,6 +28,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'google_id',
         'avatar',
         'submitForm',
+        'provider',
+        'provider_id',
     ];
 
     /**
@@ -74,7 +76,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(UserCardDetail::class, 'user_id');
     }
-    
+
     public function signUpForm() : HasOne
     {
         return $this->hasOne(SignUpForm::class, 'user_uuid', 'uuid');
@@ -143,5 +145,5 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(UserKYCVerification::class);
     }
-    
+
 }

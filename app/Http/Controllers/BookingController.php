@@ -47,18 +47,23 @@ class BookingController extends Controller
         // compute date duration
         $duration = $this->getDurationByDay($request->startDate, $request->endDate);
 
-        dd($item);
-
         // store requests to session
         $request->session()->put('booking_data', $request->only(
             'startDate', 'endDate', 'startTime', 'duration'
         ) + [
-            'category_id' => $item->category_id,
+            'category' => [
+                'id' => $item->toCategory->id,
+                'name' => $item->toCategory->name
+            ],
             'rental_listing' => [
                 'name' => $item->itemName,
-                'description' => $item->description
+                'description' => $item->description,
+                'price' => $item->price,
             ],
-            'status' => $status->id,
+            'status' => [
+                'id' => $status->id,
+                'name' => $status->name
+            ],
             'partial_total' => $request->partial_total,
             'duration_quantity' => $duration,
             'checkout' => true,

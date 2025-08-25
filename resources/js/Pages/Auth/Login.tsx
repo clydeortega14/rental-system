@@ -1,46 +1,51 @@
-    import { useEffect, FormEventHandler,useState } from 'react';
-    import Checkbox from '@/Components/Checkbox';
-    import InputError from '@/Components/InputError';
-    import InputLabel from '@/Components/InputLabel';
-    import PrimaryButton from '@/Components/PrimaryButton';
-    import GoogleButton from '@/Components/OAuth/GoogleLoginButton';
-    import TextInput from '@/Components/TextInput';
-    import banner2 from '@/../../resources/img/banner/login1.png';
-    import { Head, Link, useForm } from '@inertiajs/react';
-    import Footer from '@/Components/LandingPage/Utility/footer'
-    import Header from '@/Components/Header'
-    import { Eye, EyeOff } from 'lucide-react';
+import { useEffect, FormEventHandler, useState } from 'react';
+import Checkbox from '@/Components/Checkbox';
+import InputError from '@/Components/InputError';
+import InputLabel from '@/Components/InputLabel';
+import PrimaryButton from '@/Components/PrimaryButton';
+import GoogleButton from '@/Components/OAuth/GoogleLoginButton';
+import TextInput from '@/Components/TextInput';
+import banner2 from '@/../../resources/img/banner/login1.png';
+import { Head, Link, useForm } from '@inertiajs/react';
+import Footer from '@/Components/LandingPage/Utility/footer'
+import Header from '@/Components/Header'
+import { Eye, EyeOff } from 'lucide-react';
 
-    
 
-    export default function Login({ status, canResetPassword }: { status?: string; canResetPassword: boolean }) {
-        const [showPassword, setShowPassword] = useState(false);
-        const { data, setData, post, processing, errors, reset } = useForm({
-            email: '',
-            password: '',
-            remember: false,
-        });
-        const categoryImages = [
+
+export default function Login({ status, canResetPassword }: { status?: string; canResetPassword: boolean }) {
+    const [showPassword, setShowPassword] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const { data, setData, post, processing, errors, reset } = useForm({
+        email: '',
+        password: '',
+        remember: false,
+    });
+    const categoryImages = [
         "img/banner/bb.jpg",
-        ];
+    ];
 
-        useEffect(() => {
-            return () => {
-                reset('password');
-            };
-        }, []);
-
-        const submit: FormEventHandler = (e) => {
-            e.preventDefault();
-            post(route('login'));
+    useEffect(() => {
+        return () => {
+            reset('password');
         };
+    }, []);
 
-        return (
-            <>
-                <Head title="Log in" />
-                <div className="flex flex-col min-h-screen ">
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
+        post(route('login'));
+    };
+
+    const handleSocialLogin = (provider: string) => {
+        window.location.href = `/auth/${provider}/redirect`;
+    };
+
+    return (
+        <>
+            <Head title="Log in" />
+            <div className="flex flex-col min-h-screen ">
                 <Header />
-                <section className="relative text-white py-10 sm:py-14 lg:py-16 flex-grow bg-cover bg-center bg-no-repeat"  style={{backgroundImage: `url(${categoryImages})`}}>
+                <section className="relative text-white py-10 sm:py-14 lg:py-16 flex-grow bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${categoryImages})` }}>
                     <div className="container mx-auto px-4">
                         <div className="flex flex-col-reverse lg:flex-row items-center justify-center rounded-xl  overflow-hidden">
                             {/* RIGHT LOGIN FORM */}
@@ -63,24 +68,24 @@
                                     </div>
 
                                     <div className="relative">
-                                    <TextInput
-                                        id="password"
-                                        type={showPassword ? 'text' : 'password'}
-                                        name="password"
-                                        value={data.password}
-                                        className="block w-full border px-4 py-2 rounded pr-10"
-                                        autoComplete="current-password"
-                                        placeholder="Password"
-                                        onChange={(e) => setData('password', e.target.value)}
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword((prev) => !prev)}
-                                        className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-600 hover:text-gray-800"
-                                        tabIndex={-1}
-                                    >
-                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                    </button>
+                                        <TextInput
+                                            id="password"
+                                            type={showPassword ? 'text' : 'password'}
+                                            name="password"
+                                            value={data.password}
+                                            className="block w-full border px-4 py-2 rounded pr-10"
+                                            autoComplete="current-password"
+                                            placeholder="Password"
+                                            onChange={(e) => setData('password', e.target.value)}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword((prev) => !prev)}
+                                            className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-600 hover:text-gray-800"
+                                            tabIndex={-1}
+                                        >
+                                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                        </button>
                                     </div>
 
                                     {/* Remember Me */}
@@ -97,7 +102,59 @@
                                     <PrimaryButton className="w-full bg-[#f53d2d] hover:bg-[#e03728] text-white py-2 rounded" disabled={processing}>
                                         LOG IN
                                     </PrimaryButton>
+                                    <button
+                                        type='button'
+                                        onClick={() => setIsOpen(true)}
+                                        className="bg-red-500 text-white px-4 py-2 rounded mb-2"
 
+                                    >
+                                        Social Login
+                                    </button>
+                                    {isOpen && (
+                                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                                            <div className="bg-white p-6 rounded-2xl shadow-xl w-80 relative">
+                                                {/* Close Button */}
+                                                <button
+                                                    onClick={() => setIsOpen(false)}
+                                                    className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+                                                >
+                                                    ✕
+                                                </button>
+
+                                                <h2 className="text-xl font-semibold text-center mb-4">
+                                                    Continue with
+                                                </h2>
+
+                                                <div className="space-y-3">
+                                                    <button
+                                                        type='button'
+                                                        onClick={() => handleSocialLogin("google")}
+                                                        className="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                                                    >
+                                                        Google
+                                                    </button>
+
+                                                    <button
+                                                        type='button'
+                                                        disabled
+                                                        onClick={() => handleSocialLogin("facebook")}
+                                                        className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                                                    >
+                                                        Facebook
+                                                    </button>
+
+                                                    <button
+                                                        type='button'
+                                                        disabled
+                                                        onClick={() => handleSocialLogin("github")}
+                                                        className="w-full bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900"
+                                                    >
+                                                        GitHub
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                     {/* Forgot Password */}
                                     {canResetPassword && (
                                         <div className="text-sm text-right mt-2">
@@ -143,22 +200,22 @@
                                     </p>
                                 </form>
                             </div>
-                           
-                             {/* LEFT BANNER */}
-                             <div className="hidden lg:block w-full lg:w-1/2 lg:ml-20 h-72 sm:h-96 md:h-[500px] lg:h-[680px] animate-float">
+
+                            {/* LEFT BANNER */}
+                            <div className="hidden lg:block w-full lg:w-1/2 lg:ml-20 h-72 sm:h-96 md:h-[500px] lg:h-[680px] animate-float">
                                 <img
                                     src={banner2}
                                     alt="Promo Banner"
                                     className="w-full h-full object-cover"
                                 />
                             </div>
-                          
+
                         </div>
                     </div>
                 </section>
 
                 <Footer />
-                </div>
-            </>
-        );
-    }
+            </div>
+        </>
+    );
+}
