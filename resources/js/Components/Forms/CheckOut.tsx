@@ -1,6 +1,6 @@
 import { Link, useForm } from "@inertiajs/react";
 import { PageProps } from "@/types";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { usePage } from "@inertiajs/react";
 import { useCart } from "@/context/CartContext";
 import { Calendar, ChevronLeft, CreditCard, X } from "lucide-react";
@@ -120,9 +120,12 @@ export default function CheckOut({bookingData}: CheckOutProps) {
             preserveState: false
         })
     }
+
+
     return (
         <>
             <div className="bg-gray-100 container mx-auto px-4 py-8">
+
                 <h1 className="font-semibold text-red-700">{error_message}</h1>
                 <div className="mb-6">
                     <Link href={route('cart.index')} className="inline-flex items-center text-blue-600 hover:text-blue-800">
@@ -131,13 +134,28 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                     </Link>
                 </div>
 
-                <div className="text-center py-4 border border-yellow-500 rounded-lg bg-yellow-100 my-3">
-                    <p className="text-red-600 text-lg">Please complete your identity verification to proceed.</p>
-                </div>
+                
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2">
-                    <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+                    <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6 px-2">
+                        
+                        {
+                            user.kyc === null && (
+                                <div className="text-center py-4 border border-yellow-500 rounded-lg bg-yellow-100 my-3">
+                                    <p className="text-red-600 text-lg">Please complete your identity verification to proceed.</p>
+                                </div>
+                            )
+                        }
+
+                        {
+                            user.kyc.kyc_status === 'Pending' && !user.kyc.kyc_verified && (
+                                <div className="text-center py-4 border border-blue-500 rounded-lg bg-blue-100 my-3">
+                                    <p className="text-blue-600 text-lg">Your KYC is now subjected for Verification. We will let you know once verified!</p>
+                                </div>
+                            )
+                        }
+
                         <div className="p-6 border-b border-gray-200">
                         <h1 className="text-2xl font-bold text-gray-800">Checkout</h1>
                         </div>

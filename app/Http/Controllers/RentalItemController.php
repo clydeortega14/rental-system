@@ -118,13 +118,8 @@ class RentalItemController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-
- 
-
     public function create(Request $request) : RedirectResponse
     {
-
-       
         // Validate the request data
         $validatedData = $request->validate([
             'itemName' => 'required|string',

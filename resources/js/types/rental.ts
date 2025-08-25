@@ -66,7 +66,10 @@ export interface BookingSession {
   endTime: Date;
   duration: number;
   category_id: number;
-  rental_listing_id: number;
+  rental_listing: {
+    itemName: string;
+    description: string; 
+  };
   status: number;
   partial_total: number;
   duration_quantity: number;

@@ -18,6 +18,7 @@ import { computeDateBetweenTwoDates, formatPrice } from "@/utils/dateUtils";
 import RentalCalendar from "../../Components/Renter/RentalCalendar";
 
 
+
 interface IUnavailableDates  {
     dates: string[]
 }
@@ -168,6 +169,7 @@ export default function View({
     }, [selectedDate, selectedEndDate])
 
     const handleBookNow = () => {
+
         post(route('booking.store', {
             item_uuid: item.uuid,
             startDate: selectedDate,
@@ -182,11 +184,7 @@ export default function View({
             preserveState: true
         });
     };
-
-
-
     
-
     return (
         <RenterLayout>
             

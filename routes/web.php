@@ -69,18 +69,16 @@ Route::get('/signupsignin/withsocial', [GuestController::class, 'viewSingupSigni
 /* -- Submit for reservation -- */
 Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('booking.store');
 
+Route::get('item/review', [CartController::class, 'index'])->name('item.review');
+
 
 // This routes must be wrap in KYC verified middleware, 
 // this middleware will force to user to submit the requirements before they can rent an item
 Route::middleware(['kyc-verified'])->group(function(){
-    
-    
 
     // proceed to checkout
     Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 });
-
-// Route::get('shopping-cart', [CartController::class, 'index'])->name('cart.index');
 
 // Route Groups and Authenticated User middleware
 Route::middleware(['auth'])->group(function(){
@@ -96,7 +94,7 @@ Route::middleware([
     'auth',
     'verified'
 ])->group(function () {
-    
+
     Route::get('/completing/user/{uuid}', [UserController::class, 'getUserInfoPage'])->name('completing.user');
 
     // user must redirect to this route if first time using the platform.

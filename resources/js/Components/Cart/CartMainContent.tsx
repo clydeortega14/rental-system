@@ -4,8 +4,12 @@ import { Link } from '@inertiajs/react'
 import { ChevronLeft, ShoppingCart as CartIcon, Calendar, Trash2 } from 'lucide-react'
 import Button from '../Renter/ui/Button'
 import { formatDateDisplay } from '@/utils/dateUtils'
+import { BookingSession } from '@/types/rental'
 
-const CartMainContent = () => {
+interface ICartMainContent {
+    bookingData: BookingSession;
+}
+const CartMainContent = ({bookingData}: ICartMainContent) => {
   const { cart, removeFromCart, clearCart, totalPrice } = useCart();
 
 //    if (cart.length === 0) {
@@ -39,33 +43,27 @@ const CartMainContent = () => {
                 <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
                     <div className="p-6 border-b border-gray-200">
                         <div className="flex justify-between items-center">
-                            <h1 className="text-2xl font-bold text-gray-800">Shopping Cart</h1>
-                            <span className="text-gray-600">{cart.length} item(s)</span>
+                            <h1 className="text-2xl font-bold text-gray-800">Review rental items</h1>
+                            {/* <span className="text-gray-600">{cart.length} item(s)</span> */}
                         </div>
                     </div>
 
                     <div className="divide-y divide-gray-200">
-                        {cart.map((cartItem) => {
-                        const start = new Date(cartItem.startDate);
-                        const end = new Date(cartItem.endDate);
-                        const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-                        const itemTotal = cartItem.item.price['daily'] * days * cartItem.quantity;
-                        
-                        return (
-                            <div key={cartItem.item.id} className="p-6">
+
+                        <div className="p-6">
                             <div className="flex flex-col md:flex-row">
                                 <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
                                 <img
-                                    src={cartItem.item.imageUrl}
-                                    alt={cartItem.item.name}
+                                    src={`https://images.pexels.com/photos/243757/pexels-photo-243757.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2`}
+                                    alt={``}
                                     className="w-24 h-24 object-cover rounded-lg"
                                 />
                                 </div>
                                 <div className="flex-grow">
                                 <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-2">
-                                    <Link href={`/items/${cartItem.item.id}`}>
+                                    <Link href={``}>
                                     <h3 className="text-lg font-semibold text-gray-800 hover:text-blue-600">
-                                        {cartItem.item.name}
+                                        {bookingData.rental_listing.itemName}
                                     </h3>
                                     </Link>
                                     <div className="mt-2 md:mt-0">
@@ -119,9 +117,9 @@ const CartMainContent = () => {
                                 </div>
                                 </div>
                             </div>
-                            </div>
-                        );
-                        })}
+                        </div>
+
+                        
                     </div>
 
                     <div className="p-6 border-t border-gray-200 flex justify-between">
@@ -129,11 +127,11 @@ const CartMainContent = () => {
                             onClick={clearCart}
                             className="text-red-600 hover:text-red-800"
                         >
-                            Clear Cart
+                            Clear
                         </button>
                         <Link href={route('landing.page.index')}>
                             <Button variant="outline">
-                                Continue Shopping
+                                Continue Browsing rentals
                             </Button>
                         </Link>
                     </div>
