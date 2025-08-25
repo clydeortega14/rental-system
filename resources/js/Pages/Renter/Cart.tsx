@@ -14,8 +14,6 @@ interface ICart {
 }
 const Cart = ({booking_data}: ICart) => {
 
-  console.log(booking_data)
-
   return (
     <>
         <RenterLayout>

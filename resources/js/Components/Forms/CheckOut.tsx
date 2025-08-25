@@ -19,6 +19,7 @@ interface CheckOutProps {
 
 export default function CheckOut({bookingData}: CheckOutProps) {
     const user = usePage<PageProps>().props.auth.user;
+    console.log(user)
     const isVerified = user?.kyc?.kyc_verified === true;
     const [serviceFee, setServiceFee] = useState<number>(0);
     const [allTotal, setAllTotal] = useState<number>(0);
@@ -50,7 +51,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
             name: user ? user.name : '',
             email: user ? user.email : '',
             phone: user ? user.contact?.mobile : '',
-            address: user && user.company && user.company?.street+', '+user.company?.barangay,
+            address: user && user.company && user.company?.street,
             city: user ? user.company?.city : '',
             zipCode: user ? user.company?.postal_code : '',
             cardNumber: '',
@@ -149,7 +150,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                         }
 
                         {
-                            user.kyc.kyc_status === 'Pending' && !user.kyc.kyc_verified && (
+                            user.kyc && user.kyc.kyc_status === 'Pending' && !user.kyc.kyc_verified && (
                                 <div className="text-center py-4 border border-blue-500 rounded-lg bg-blue-100 my-3">
                                     <p className="text-blue-600 text-lg">Your KYC is now subjected for Verification. We will let you know once verified!</p>
                                 </div>

@@ -70,10 +70,7 @@ Route::get('item/review', [CartController::class, 'index'])->name('item.review')
 // This routes must be wrap in KYC verified middleware,
 // this middleware will force to user to submit the requirements before they can rent an item
 Route::middleware(['kyc-verified'])->group(function(){
-
-    // Check out item page
-    Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('checkout.item');
-
+    
     // proceed to checkout
     Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 });

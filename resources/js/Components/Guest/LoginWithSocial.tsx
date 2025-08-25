@@ -74,31 +74,30 @@ export default function LoginWithSocial()
     return (
         <div className="p-4 flex items-center justify-center">
             <div className="w-full max-w-md bg-white p-8 rounded-2xl">
-                <h2 className="text-2xl font-bold text-center mb-6">
+                <h2 className="text-2xl font-bold text-center mb-6"></h2>
 
-                
-                </h2>
+                <div className="flex flex-col gap-3">
+                    <button 
+                        onClick={ () => handleSocialLogin('google')}
+                    className="flex items-center justify-center gap-3 w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
+                        Continue with Google
+                    </button>
+                    <button onClick={() => handleSocialLogin('facebook')} className="flex items-center justify-center gap-3 w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
+                        <img src="https://www.svgrepo.com/show/138943/facebook.svg" alt="Facebook" className="w-5 h-5" />
+                        Continue with Facebook
+                    </button>
+                </div>
+
+                <div className="my-6 flex items-center gap-2">
+                    <hr className="flex-1" />
+                        <span className="text-sm text-gray-400">or continue with</span>
+                    <hr className="flex-1" />
+                </div>
 
                 <form className="space-y-4" onSubmit={handleNext}>
 
-                    <div className="flex flex-col gap-3">
-                        <button 
-                            onClick={ () => handleSocialLogin('google')}
-                        className="flex items-center justify-center gap-3 w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
-                            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
-                            Continue with Google
-                        </button>
-                        <button onClick={() => handleSocialLogin('facebook')} className="flex items-center justify-center gap-3 w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
-                            <img src="https://www.svgrepo.com/show/475654/facebook-color.svg" alt="Facebook" className="w-5 h-5" />
-                            Continue with Facebook
-                        </button>
-                    </div>
-
-                    <div className="my-6 flex items-center gap-2">
-                        <hr className="flex-1" />
-                            <span className="text-sm text-gray-400">or continue with</span>
-                        <hr className="flex-1" />
-                    </div>
+                    
 
                 {isSignup && (
 

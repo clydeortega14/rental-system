@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if($request->has('booking_data.checkout'))
+        if($request->session()->has('booking_data') && $request->session()->get('booking_data.checkout'))
         {
             return redirect()->route('checkout.item');
         }
