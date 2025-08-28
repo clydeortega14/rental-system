@@ -122,14 +122,14 @@ const Profile = () => {
             <p className="text-gray-700">Status:</p>
             <Badge variant={kycInfo.variant}>{kycInfo.label}</Badge>
           </div>
-          {kycStatus === "Approved" || kycStatus === "Pending" ? (
+          {kycStatus === "Pending" ? (
             <button
               hidden
               className="bg-gray-300 text-gray-700 px-5 py-2 rounded-xl cursor-not-allowed"
             >
               Submitted
             </button>
-          ) : (
+          ) : kycStatus !== "Approved" && (
             <button
               onClick={() => openModal("kyc")}
               className="bg-orange-500 text-white px-5 py-2 rounded-xl hover:bg-orange-600 transition"
@@ -178,16 +178,14 @@ const Profile = () => {
                     full_name: user.kyc.full_name ?? "",
                     document_number: user.kyc.document_number ?? "",
                     document_type: user.kyc.document_type ?? "",
-                    selfie_path: user.kyc.selfie_path ?? null,
-                    document_path: user.kyc.document_path ?? null,
+                    selfie_path: user.kyc.selfie_path ?? undefined,
+                    document_path: user.kyc.document_path ?? undefined,
                     kyc_status:
-                      ["Pending", "Approved", "Rejected"].includes(
-                        user.kyc.kyc_status ?? ""
-                      )
+                      ["Pending", "Approved", "Rejected"].includes(user.kyc.kyc_status ?? "")
                         ? (user.kyc.kyc_status as "Pending" | "Approved" | "Rejected")
-                        : null,
+                        : undefined,
                   }
-                : null
+                : undefined
             }
             isReadOnly={isReadOnly}
             onClose={() => closeModal("kyc")}

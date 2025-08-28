@@ -16,6 +16,9 @@ import React, { useEffect, useState } from 'react';
 import { MessageCircle } from 'lucide-react';
 import { usePage } from '@inertiajs/react'
 
+import KycPromptModal from "@/Pages/User/modals/KycPromptModal";
+import KycModal from "@/Pages/User/modals/KycModal";
+
   interface LandingPageLayoutuProps {
     categories: Category[];
     children?: React.ReactNode
@@ -28,6 +31,8 @@ const LandingPageLayout = ({ categories, children }: LandingPageLayoutuProps) =>
   const [showFeedback, setShowFeedback] = useState(false); // <- start hidden
   const [cookieVisible, setCookieVisible] = useState(false);
   const [showPromo, setShowPromo] = useState(true);
+
+  const [showKycModal, setShowKycModal] = useState(false);
 
   const promoImages = [
     'img/promo/1.png',
@@ -72,6 +77,38 @@ const LandingPageLayout = ({ categories, children }: LandingPageLayoutuProps) =>
         show={showPromo}
         onClose={() => setShowPromo(false)}
       />
+
+      {/* KYC Prompt Modal: only show if user exists */}
+      {auth.user && !showPromo && (
+        <>
+          <KycPromptModal
+            user={auth.user}
+            onOpenKycModal={() => setShowKycModal(true)}
+          />
+          {showKycModal && (
+            <KycModal
+              user_id={auth.user.id}
+              userKyc={
+                auth.user.kyc
+                  ? {
+                      full_name: auth.user.kyc.full_name,
+                      document_type: auth.user.kyc.document_type,
+                      document_number: auth.user.kyc.document_number,
+                      selfie_path: auth.user.kyc.selfie_path ?? undefined,
+                      document_path: auth.user.kyc.document_path ?? undefined,
+                      kyc_status:
+                        auth.user.kyc.kyc_status && ["Pending", "Approved", "Rejected"].includes(auth.user.kyc.kyc_status)
+                          ? (auth.user.kyc.kyc_status as "Pending" | "Approved" | "Rejected")
+                          : undefined,
+                    }
+                  : undefined
+              }
+              isReadOnly={false}
+              onClose={() => setShowKycModal(false)}
+            />
+          )}
+        </>
+      )}
 
       {/* Feedback Modal */}
       <FeedbackModal show={showFeedback} onClose={() => setShowFeedback(false)} />

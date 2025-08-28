@@ -15,6 +15,8 @@ import Footer from "@/Components/Lessee/Footer";
 import Profile from "@/Components/Lessee/Profile";
 import LesseeSidebarContent from "@/Components/Lessee/LesseeSidebarContent";
 import LessorApplyModal from "../Components/Lessee/Modals/LessorApplyModal";
+import KycPromptModal from "@/Pages/User/modals/KycPromptModal";
+import KycModal from "@/Pages/User/modals/KycModal";
 
 import {
   Tabs,
@@ -278,6 +280,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
     }
   }, []);
 
+<<<<<<< HEAD
 
   const mappedConversations: Conversation[] = conversations.map(c => ({
     ...c,
@@ -288,6 +291,10 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
   }));
 
 
+=======
+  const [showKycModal, setShowKycModal] = useState(false);
+  
+>>>>>>> 404efb24ae8b645e4fa8e9b8c713a42767f7aa13
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-800 font-sans">
       <Header />
@@ -398,6 +405,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
           {/* Tab Content */}
           <Suspense fallback={<div className="text-center text-orange-600 py-10">Loading...</div>}>
             <TabsContent value="overview" className="h-full">
+<<<<<<< HEAD
               <Overview recentActivities={recentActivities} />
             </TabsContent>
             <TabsContent value="bookings" className="h-full">
@@ -427,6 +435,50 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
               {lessorDashboard && <LessorDashboard dashboardData={lessorDashboard} />}
             </TabsContent>
             <TabsContent value="lessorProperties" className="h-full">
+=======
+                <Overview recentActivities={recentActivities} />
+                <KycPromptModal
+                    user={auth.user}
+                    onOpenKycModal={() => setShowKycModal(true)}
+                />
+              </TabsContent>
+              <TabsContent value="bookings" className="h-full">
+                <Bookings />
+                <KycPromptModal
+                    user={auth.user}
+                    onOpenKycModal={() => setShowKycModal(true)}
+                />
+              </TabsContent>
+              <TabsContent value="lessor" className="h-full">
+                {auth.user?.kyc?.kyc_verified ? (
+                  <LesseeSignForm signUser={auth} />
+                ) : (
+                  <KycPromptModal
+                    user={auth.user}
+                    onOpenKycModal={() => setShowKycModal(true)}
+                  />
+                )}
+              </TabsContent>
+              <TabsContent value="reviews" className="h-full">
+                <Review reviews={lessee.reviews} />
+                <KycPromptModal
+                    user={auth.user}
+                    onOpenKycModal={() => setShowKycModal(true)}
+                />
+              </TabsContent>
+              {/* Start Lessor Access */}
+              <TabsContent value="lessorProfile" className="h-full">
+                <LessorProfile />
+                <KycPromptModal
+                  user={auth.user}
+                  onOpenKycModal={() => setShowKycModal(true)}
+                />
+              </TabsContent>
+              <TabsContent value="lessorDashboard" className="h-full">
+                {lessorDashboard && <LessorDashboard dashboardData={lessorDashboard} />}
+              </TabsContent>
+              <TabsContent value="lessorProperties" className="h-full">
+>>>>>>> 404efb24ae8b645e4fa8e9b8c713a42767f7aa13
               <LessorProperties
                 shops={shops}
                 categories={categories}
@@ -472,6 +524,30 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
             setActiveTab("lessor");
           }}
           submitForm={auth.user.submitForm}
+        />
+      )}
+
+      {/* The full KYC form modal */}
+      {showKycModal && (
+        <KycModal
+          user_id={auth.user.id}
+          userKyc={
+            auth.user.kyc
+              ? {
+                  full_name: auth.user.kyc.full_name,
+                  document_type: auth.user.kyc.document_type,
+                  document_number: auth.user.kyc.document_number,
+                  selfie_path: auth.user.kyc.selfie_path ?? undefined,
+                  document_path: auth.user.kyc.document_path ?? undefined,
+                  kyc_status:
+                    auth.user.kyc.kyc_status && ["Pending", "Approved", "Rejected"].includes(auth.user.kyc.kyc_status)
+                      ? (auth.user.kyc.kyc_status as "Pending" | "Approved" | "Rejected")
+                      : undefined,
+                }
+              : undefined
+          }
+          isReadOnly={false}
+          onClose={() => setShowKycModal(false)}
         />
       )}
       <Footer />
