@@ -56,6 +56,7 @@ class BookingController extends Controller
                 'name' => $item->toCategory->name
             ],
             'rental_listing' => [
+                'id' => $item->id,
                 'name' => $item->itemName,
                 'description' => $item->description,
                 'price' => $item->price,
@@ -76,10 +77,6 @@ class BookingController extends Controller
     {
 
         if(!$request->session()->has('booking_data')) return;
-        // validate checkout inputs
-        // $request->validate([
-        //     'phone' => 'required'
-        // ]);
 
         $data = $request->session()->get('booking_data');
 
@@ -87,10 +84,10 @@ class BookingController extends Controller
 
             // store booking details to database
             $this->booking_service->storeBooking([
-                'category_id' => $data['category_id'],
-                'rental_listing_id' => $data['rental_listing_id'],
+                'category_id' => $data['category']['id'],
+                'rental_listing_id' => $data['rental_listing']['id'],
                 'booked_by' => $request->user()->id,
-                'status' => $data['status'],
+                'status' => $data['status']['id'],
                 'startDate' => $data['startDate'],
                 'startTime' => $data['startTime'],
                 'endDate' => $data['endDate'],
@@ -107,6 +104,8 @@ class BookingController extends Controller
                 ['mobile' => $request->phone]
             );
 
+            dd($request->all());
+
             // manage user billing address;
             $biiling_address = $request->user()->billingAddress()->firstOrCreate(
                 ['street' => $request->address],
@@ -120,39 +119,6 @@ class BookingController extends Controller
             // online payment processing
         
             // online payment gateway processing
-
-            // if success, then store the data to database
-            // check user card details
-            if($request->payment_method === 'card')
-            {
-                // check card expiry date
-                if(!$this->isDateFormatValid($request->cardExpiry)) return back()->with('error_message', 'invalid card format');
-
-                if($this->isDateExpired($request->cardExpiry)) return back()->with('error_message', 'card is expired!');
-                // then check card details
-                // $card_detail = $request->user()->cardDetail()->firstOrCreate(
-                //     ['card_number' => $request->cardNumber],
-                //     ['card_expiry' => $request->cardExpiry],
-                //     ['card_cvv' => $request->cardCvv]
-                // );
-
-                $card_detail = $request->user()->cardDetail()->firstOrCreate([
-                    'card_number' => $request->cardNumber,
-                    'card_expiry' => $request->cardExpiry,
-                    'card_cvv' => $request->cardCvv
-                ]);
-
-                $payment = $card_detail->payments()->firstOrCreate(
-                    // ['rental_listing_id' => $request->rental_listing_id],
-                    // ['amount' => $request->total_cost],
-                    // ['status' => $request->status]
-                    [
-                        'rental_listing_id' => $request->rental_listing_id,
-                        'amount' => $request->total_cost,
-                        'status' => $request->status
-                    ]
-                );
-            } 
         });
 
         RecentActivity::create([

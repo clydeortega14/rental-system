@@ -67,6 +67,7 @@ export interface BookingSession {
   duration: number;
   category: Category;
   rental_listing: {
+    id: number;
     itemName: string;
     description: string; 
     price: number;

@@ -46,8 +46,9 @@ export default function CheckOut({bookingData}: CheckOutProps) {
         setAllTotal(calculated_total);
 
     }, [bookingData.partial_total, serviceFee]);
+    
     const [formData, setFormData] = useState({
-            rental_listing_id: bookingData.rental_listing_id,
+            rental_listing_id: bookingData.rental_listing.id,
             name: user ? user.name : '',
             email: user ? user.email : '',
             phone: user ? user.contact?.mobile : '',
