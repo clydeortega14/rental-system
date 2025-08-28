@@ -32,7 +32,7 @@ class Shop extends Model
     {
         return $this->belongsTo(Lessor::class, 'lessor_id');
     }
-
+        
     public function rentalItems()
     {
         return $this->hasMany(RentalAddItem::class, 'shop_id');

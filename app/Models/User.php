@@ -145,5 +145,22 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(UserKYCVerification::class);
     }
+    public function lessor()
+    {
+        return $this->hasOne(Lessor::class, 'lessoruser_id'); 
+    }
 
+
+    public function shops()
+    {
+        return $this->hasManyThrough(
+            Shop::class,   // Final model
+            Lessor::class, // Intermediate model
+            'lessoruser_id', // Foreign key on lessors table
+            'lessor_id',     // Foreign key on shops table
+            'id',            // Local key on users table
+            'id'             // Local key on lessors table
+        );
+    }
+        
 }

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { usePage } from "@inertiajs/react";
+import { usePage, router } from "@inertiajs/react"; // 👈 add router
 import { format } from "date-fns";
 import Modal from "@/Components/Modal";
 import Button from "@/Components/Renter/ui/Button";
 import SecondaryButton from "@/Components/SecondaryButton";
 import { BookingDetails } from "@/types/rental";
 import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
-import { BiCalendar } from "react-icons/bi";
+import { BiCalendar, BiMessageDetail } from "react-icons/bi"; // 👈 icon for inquiries
+
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
     case "confirmed":
@@ -22,14 +23,16 @@ const getStatusColor = (status: string) => {
   }
 };
 
-export default function Bookings() {
+interface BookingsProps {
+  onSwitchTab?: (tab: string) => void;
+}
+
+export default function Bookings({ onSwitchTab }: BookingsProps) {
   const { bookings = [] } = usePage<{ bookings: BookingDetails[] }>().props;
 
   const [activeTab, setActiveTab] = useState<"Upcoming" | "Past" | "All">("Upcoming");
   const [showModal, setShowModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<BookingDetails | null>(null);
-
-
 
   const openModal = (booking: BookingDetails) => {
     setSelectedBooking(booking);
@@ -39,6 +42,37 @@ export default function Bookings() {
   const closeModal = () => {
     setSelectedBooking(null);
     setShowModal(false);
+  };
+
+  const handleInquiries = (booking: BookingDetails) => {
+    router.post(
+      "/conversations",
+      {
+        id: booking.id,
+        uuid: booking.uuid,
+        rentalItem: {
+          id: booking.rentalItem?.id,
+          imageUrl: booking.rentalItem?.imageUrl,
+          name: booking.rentalItem?.name,
+          description: booking.rentalItem?.description,
+          shopId: booking.rentalItem?.shopId,
+          shopName: booking.rentalItem?.shopName,
+          shopLocation: booking.rentalItem?.shopLocation,
+        },
+        itemId: booking.itemId,
+        userId: booking.userId,
+        startDate: booking.startDate,
+        endDate: booking.endDate,
+        status: booking.status,
+        totalPrice: booking.totalPrice,
+      },
+      {
+        onSuccess: () => {
+          // call parent to switch tab
+          onSwitchTab?.("lessorInquiries");
+        },
+      }
+    );
   };
 
   const today = new Date();
@@ -55,17 +89,17 @@ export default function Bookings() {
         <BiCalendar className="w-6 h-6 text-brandYellow mr-2" />
         Reservations
       </h1>
+
       {/* Tabs */}
       <div className="flex gap-4 border-b pb-2">
         {["Upcoming", "Past", "All"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab as "Upcoming" | "Past" | "All")}
-            className={`py-2 px-4 font-medium ${
-              activeTab === tab
-                ? "border-b-2 border-orange-600 text-orange-600"
-                : "text-gray-500 hover:text-orange-600"
-            }`}
+            className={`py-2 px-4 font-medium ${activeTab === tab
+              ? "border-b-2 border-orange-600 text-orange-600"
+              : "text-gray-500 hover:text-orange-600"
+              }`}
           >
             {tab}
           </button>
@@ -99,14 +133,15 @@ export default function Bookings() {
                       className="w-16 h-16 object-cover rounded"
                     />
                   </td>
-                  
-                  <td className="px-4 py-3">{booking.rentalItem && booking.rentalItem.name}</td>
+                  <td className="px-4 py-3">{booking.rentalItem?.name}</td>
                   <td className="px-4 py-3">{booking.rentalItem?.category?.name || "N/A"}</td>
                   <td className="px-4 py-3">
                     {format(new Date(booking.startDate ?? ""), "PPP")} -{" "}
                     {format(new Date(booking.endDate ?? ""), "PPP")}
                   </td>
-                  <td className="px-4 py-3">{booking.totalPrice && formatPrice( booking.totalPrice)}</td>
+                  <td className="px-4 py-3">
+                    {booking.totalPrice && formatPrice(booking.totalPrice)}
+                  </td>
                   <td className="px-4 py-3">
                     <span
                       className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusColor(
@@ -116,9 +151,18 @@ export default function Bookings() {
                       {booking.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => openModal(booking)}>
                       View
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-1 text-blue-600 border-blue-600"
+                      onClick={() => handleInquiries(booking)}
+                    >
+                      <BiMessageDetail className="w-4 h-4" />
+                      Inquiries
                     </Button>
                   </td>
                 </tr>
@@ -126,7 +170,9 @@ export default function Bookings() {
             </tbody>
           </table>
         ) : (
-          <div className="text-center text-gray-500 py-12">No {activeTab.toLowerCase()} bookings</div>
+          <div className="text-center text-gray-500 py-12">
+            No {activeTab.toLowerCase()} bookings
+          </div>
         )}
       </div>
 

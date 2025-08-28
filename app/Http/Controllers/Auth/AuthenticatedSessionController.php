@@ -23,11 +23,32 @@ class AuthenticatedSessionController extends Controller
             'status' => session('status'),
         ]);
     }
+    public function create1(): Response
+    {
+        return Inertia::render('Auth/Login1', [
+            'canResetPassword' => Route::has('password.request'),
+            'status' => session('status'),
+        ]);
+    }
+    
 
     /**
      * Handle an incoming authentication request.
      */
     public function store(LoginRequest $request): RedirectResponse
+    {
+        $request->authenticate();
+
+        $request->session()->regenerate();
+
+        if($request->has('checkout'))
+        {
+            return redirect()->back();
+        }
+
+        return redirect()->intended(route('landing.page.index', absolute: false));
+    }
+    public function store1(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
 
