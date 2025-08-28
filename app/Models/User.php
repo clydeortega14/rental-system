@@ -148,6 +148,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Lessor::class, 'lessoruser_id'); 
     }
 
+
     public function shops()
     {
         return $this->hasManyThrough(

@@ -53,126 +53,74 @@ class ConversationController extends Controller
     }
     public function getUserConversations(Request $request)
     {
-        $userId = $request->user()->id; // logged-in user ID
+        $userId = $request->user()->id;
         $lessor = Lessor::where('lessoruser_id', $userId)->first();
 
-        if (!$lessor) {
-            $conversations = Conversation::with([
-                'messages' => fn($q) => $q->latest()->with('attachments'), // latest messages first
+        // Determine the base query depending on user type
+        if ($lessor) {
+            $shopIds = Shop::whereHas('lessor', fn($q) => $q->where('lessoruser_id', $userId))->pluck('id');
+            $query = Conversation::with([
+                'messages' => fn($q) => $q->latest()->with('attachments'),
+                'lessee',
+                'shop'
+            ])->whereIn('shop_id', $shopIds);
+        } else {
+            $query = Conversation::with([
+                'messages' => fn($q) => $q->latest()->with('attachments'),
                 'shop',
                 'lessee'
-            ])
-            ->where('lessee_id', $userId)
-            ->latest('last_message_at')
-            ->get()
-            ->map(function ($conversation) {
-                // get latest message model safely
-                $latestMessageModel = $conversation->messages->first();
-
-                return [
-                    'id'              => $conversation->id,
-                    'uuid'            => $conversation->uuid,
-                    'shop'            => $conversation->shop->name,
-                    'shopId'          => $conversation->shop->id,
-                    'last_message_at' => $conversation->last_message_at,
-
-                    // return messages collection transformed into array
-                    'messages' => $conversation->messages->map(function ($msg) {
-                        return [
-                            'id'          => $msg->id,
-                            'sender_id'   => $msg->sender_id,
-                            'sender_role' => $msg->sender_role,
-                            'message'     => $msg->message,
-                            'is_read'     => $msg->is_read,
-                            'created_at'  => $msg->created_at,
-                            'attachments' => $msg->attachments->map(function ($att) {
-                                    return [
-                                        'id'       => $att->id,
-                                        'display_name'=> $att->display_name,
-                                        'storage_disk'=> $att->storage_disk,
-                                        'path'      => $att->path,   // assuming you store file path
-                                        'type'     => $att->type,  // e.g., image/pdf/video
-                                        'filename' => $att->filename,
-                                    ];
-                            }),
-                        ];
-                    }),
-                    // just take the latest message text
-                    'latest_message' => $latestMessageModel ? $latestMessageModel->message : null,
-                ];
-            });
-           
-            return response()->json([
-                'success' => true,
-                'conversations' => $conversations,
-            ]);
+            ])->where('lessee_id', $userId);
         }
-        else{
 
-            $shopIds = \App\Models\Shop::whereHas('lessor', function ($query) use ($userId) {
-                        $query->where('lessoruser_id', $userId);
-                    })->pluck('id');
+        $conversations = $query->latest('last_message_at')->get()->map(function ($conversation) use ($userId) {
+            $latestMessage = $conversation->messages->first();
+             $lessorOwnsShop = optional($conversation->shop->lessor)->lessoruser_id === $userId;
 
-           
-            $conversations = \App\Models\Conversation::with([
-                    'messages' => fn($q) => $q->latest()->with('attachments'), // latest first
-                    'lessee', // fetch user info of sender
-                    'shop'
-                ])
-                ->whereIn('shop_id', $shopIds)
-                ->latest('last_message_at')
-                ->get()
-                ->map(function ($conversation) {
-                    $latestMessage = $conversation->messages->first();
+            
+            return [
+                'id'              => $conversation->id,
+                'uuid'            => $conversation->uuid,
+                'shop'            => $conversation->shop->name ?? null,
+                'shopId'          => $conversation->shop->id ?? null,
+                'shopLocation'    => $conversation->shop->location ?? null,
+                'is_owned_by_user'    => $lessorOwnsShop,
+                'lessee'          => $conversation->lessee ? [
+                    'id'    => $conversation->lessee->id,
+                    'name'  => $conversation->lessee->name,
+                    'email' => $conversation->lessee->email,
+                ] : null,
+                'last_message_at' => $conversation->last_message_at,
+                'messages'        => $conversation->messages->map(fn($msg) => [
+                    'id'          => $msg->id,
+                    'sender_id'   => $msg->sender_id,
+                    'sender_role' => $msg->sender_role,
+                    'message'     => $msg->message,
+                    'is_read'     => $msg->is_read,
+                    'created_at'  => $msg->created_at,
+                    'attachments' => $msg->attachments->map(fn($att) => [
+                        'id'          => $att->id,
+                        'display_name'=> $att->display_name,
+                        'storage_disk'=> $att->storage_disk,
+                        'path'        => $att->path,
+                        'type'        => $att->type,
+                        'filename'    => $att->filename,
+                    ]),
+                ]),
+                'latest_message' => $latestMessage ? $latestMessage->message : null,
+                'latest_sender'  => $latestMessage ? $latestMessage->sender_role : null,
+                'lessor_id'      => $latestMessage ? $latestMessage->sender_id : null,
+            ];
+        });
 
-                    return [
-                        'id'              => $conversation->id,
-                        'uuid'            => $conversation->uuid,
-                        'shop'            => $conversation->shop->name,
-                        'shopId'          => $conversation->shop->id,
-                        'lessee'          => $conversation->lessee ? [
-                            'id'    => $conversation->lessee->id,
-                            'name'  => $conversation->lessee->name,
-                            'email' => $conversation->lessee->email,
-                        ] : null,
-                        'last_message_at' => $conversation->last_message_at,
-
-                        // map all messages
-                        'messages' => $conversation->messages->map(function ($msg) {
-                            return [
-                                'id'          => $msg->id,
-                                'sender_id'   => $msg->sender_id,
-                                'sender_role' => $msg->sender_role,
-                                'message'     => $msg->message,
-                                'is_read'     => $msg->is_read,
-                                'created_at'  => $msg->created_at,
-                                'attachments' => $msg->attachments->map(function ($att) {
-                                    return [
-                                        'id'       => $att->id,
-                                        'display_name'=> $att->display_name,
-                                        'storage_disk'=> $att->storage_disk,
-                                        'path'      => $att->path,   // assuming you store file path
-                                        'type'     => $att->type,  // e.g., image/pdf/video
-                                        'filename' => $att->filename,
-                                    ];
-                                }),
-                            ];
-                        }),
-                        'latest_message' => $latestMessage ? $latestMessage->message : null,
-                        'latest_sender'  => $latestMessage ? $latestMessage->sender_role : null,
-                    ];
-                });
-           
-            return response()->json([
-                'success' => true,
-                'conversations' => $conversations,
-            ]);
-        }
-        
+        return response()->json([
+            'success'       => true,
+            'conversations' => $conversations,
+        ]);
     }
-    public function storeLesseeMessage(Request $request)
+
+    public function storeMessageSent(Request $request)
     {
-       
+  
         $validated = $request->validate([
             'conversation_id' => 'required|exists:conversations,id',
             'sender_id'       => 'required|exists:users,id',
@@ -182,132 +130,54 @@ class ConversationController extends Controller
             'file'            => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-        $userId = $request->user()->id; // logged-in user ID
+        $userId = $request->user()->id;
+
+        // Determine sender role
         $lessor = Lessor::where('lessoruser_id', $userId)->first();
-       
-        if (!$lessor) {
-            // Allow NULL or empty string when only sending an attachment
-            $messageText = $validated['message'] ?? null;
-            if ($request->hasFile('file') && empty($messageText)) {
-                $messageText = null; // ensure it's stored as NULL in DB
-            }
+        $senderRole = $lessor ? 'lessor' : $validated['sender_role'];
 
-            $message = Message::create([
-                'conversation_id' => $validated['conversation_id'],
-                'sender_id'       => $validated['sender_id'],
-                'sender_role'     => $validated['sender_role'],
-                'message'         => $messageText, // this can be null
-                'type'            => $validated['type'],
-                'has_attachment'  => false,
-                'is_read'         => null,
+        // Use message text or null for attachments-only
+        $messageText = $validated['message'] ?? null;
+
+        // Create the message
+        $message = Message::create([
+            'conversation_id' => $validated['conversation_id'],
+            'sender_id'       => $validated['sender_id'],
+            'sender_role'     => $senderRole,
+            'message'         => $messageText,
+            'type'            => $validated['type'],
+            'has_attachment'  => false,
+            'is_read'         => null,
+        ]);
+
+        // Handle file attachment
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filePath = $file->store('messages', 'public');
+
+            Attachment::create([
+                'attachable_type' => Message::class,
+                'attachable_id'   => $message->id,
+                'display_name'    => $file->getClientOriginalName(),
+                'filename'        => pathinfo($file->hashName(), PATHINFO_FILENAME),
+                'path'            => $filePath,
+                'storage_disk'    => 'public',
+                'type'            => $file->extension(),
+                'size'            => $file->getSize(),
+                'size_type'       => 'bytes',
             ]);
 
-            if ($request->hasFile('file')) {
-                $file = $request->file('file');
-                $filePath = $file->store('messages', 'public');
-
-                Attachment::create([
-                    'attachable_type' => Message::class,
-                    'attachable_id'   => $message->id,
-                    'display_name'    => $file->getClientOriginalName(),
-                    'filename'        => pathinfo($file->hashName(), PATHINFO_FILENAME),
-                    'path'            => $filePath,
-                    'storage_disk'    => 'public',
-                    'type'            => $file->extension(),
-                    'size'            => $file->getSize(),
-                    'size_type'       => 'bytes',
-                ]);
-
-                // update message record
-                $message->update([
-                    'has_attachment' => true,
-                    // store original filename as message so conversation preview works
-                    'message'        => $file->getClientOriginalName(),
-                ]);
-            }
-
-            // update conversation
-            $conversation = Conversation::find($validated['conversation_id']);
-            $conversation->update([
-                'latest_message'  => $message->message ?? '📎 Attachment',
-                'last_message_at' => now(),
-            ]);
-        }else{
-            // Allow NULL or empty string when only sending an attachment
-            $messageText = $validated['message'] ?? null;
-            if ($request->hasFile('file') && empty($messageText)) {
-                $messageText = null; // ensure it's stored as NULL in DB
-            }
-
-            $message = Message::create([
-                'conversation_id' => $validated['conversation_id'],
-                'sender_id'       => $validated['sender_id'],
-                'sender_role'     => "lessor",
-                'message'         => $messageText, // this can be null
-                'type'            => $validated['type'],
-                'has_attachment'  => false,
-                'is_read'         => null,
-            ]);
-
-            if ($request->hasFile('file')) {
-                $file = $request->file('file');
-                $filePath = $file->store('messages', 'public');
-
-                Attachment::create([
-                    'attachable_type' => Message::class,
-                    'attachable_id'   => $message->id,
-                    'display_name'    => $file->getClientOriginalName(),
-                    'filename'        => pathinfo($file->hashName(), PATHINFO_FILENAME),
-                    'path'            => $filePath,
-                    'storage_disk'    => 'public',
-                    'type'            => $file->extension(),
-                    'size'            => $file->getSize(),
-                    'size_type'       => 'bytes',
-                ]);
-
-                // update message record
-                $message->update([
-                    'has_attachment' => true,
-                    // store original filename as message so conversation preview works
-                    'message'        => $file->getClientOriginalName(),
-                ]);
-            }
-
-            // update conversation
-            $conversation = Conversation::find($validated['conversation_id']);
-            $conversation->update([
-                'latest_message'  => $message->message ?? '📎 Attachment',
-                'last_message_at' => now(),
+            $message->update([
+                'has_attachment' => true,
+                'message'        => $file->getClientOriginalName(),
             ]);
         }
+        $conversation = Conversation::find($validated['conversation_id']);
+        $conversation->update([
+            'latest_message'  => $message->message ?? '📎 Attachment',
+            'last_message_at' => now(),
+        ]);
 
+       broadcast(new MessageSent($conversation->id, $message))->toOthers();
     }
-    // public function markRead($conversationId, $userId)
-    // {
-    //     $conversation = Conversation::findOrFail($conversationId);
-       
-    //     $currentRole = $conversation->lessee_id == $userId ? 'lessee' : 'lessor';
-    //     // Update unread messages for the opposite role
-    //     $data = $updatedMessages = Message::where('conversation_id', $conversationId)
-    //         ->where('sender_id', '!=', $userId)
-    //         ->where('sender_role', '!=', $currentRole)
-    //         ->where('is_read', 0)
-    //         ->get();
-       
-    //     // Mark them as read
-    //     $updatedMessages->each(function ($msg) {
-    //         $msg->is_read = 1;
-    //         $msg->save();
-    //     });
-      
-    //     // Fetch all conversations for the user after updating
-    //     $conversations = Conversation::with(['messages' => function($q) {
-    //             $q->latest();
-    //         }, 'lessee', 'shop'])
-    //         ->get();
-
-    //     return Inertia::render('LessorInquiries', [
-    //         'conversations' => $conversations,
-    //     ]);
-    // }
 }

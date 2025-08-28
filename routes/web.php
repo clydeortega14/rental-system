@@ -21,7 +21,8 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\Admin\LoginController;
-
+use App\Models\Message;
+use App\Events\MessageSent;
 use App\Http\Controllers\Lessor\RentalController;
 use App\Http\Controllers\Lessor\LessorController;
 use App\Http\Controllers\Lessor\ShopController;
@@ -43,6 +44,11 @@ use Inertia\Inertia;
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
+Route::get('/broadcast-test', function() {
+    $message = Message::first(); // pick any message
+    broadcast(new MessageSent($message));
+    return 'Event broadcasted!';
+});
 //ladingpage
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
 Route::get('/about-us', [LandingPageController::class, 'aboutUs'])->name('landing.page.aboutUs');
@@ -152,7 +158,7 @@ Route::middleware([
 ])->group(function () {
 
     Route::post('/conversations', [ConversationController::class, 'store'])->name('conversations.store');
-    Route::post('/conversations/store/lessee/message', [ConversationController::class, 'storeLesseeMessage'])->name('conversations.store.lessee');
+    Route::post('/conversations/store/lessee/message', [ConversationController::class, 'storeMessageSent'])->name('conversations.store.lessee');
     Route::get('/conversations', [ConversationController::class, 'getUserConversations'])->name('conversations.index');
     Route::post('/conversations/{conversation}/mark-read/{user}', [ConversationController::class, 'markRead'])->name('conversations.markRead');
     Route::get('/lessee', [LesseeController::class, 'index'])->name('lessee.profile');

@@ -34,6 +34,7 @@ import {
 } from "react-icons/bi";
 import { join } from "path";
 
+
 const Overview = lazy(() => import("@/Pages/Lessee/Overview"));
 const Bookings = lazy(() => import("@/Pages/Lessee/Bookings"));
 // const Reservations = lazy(() => import("@/Pages/Reservation/Index"));
@@ -68,20 +69,47 @@ interface RentalItem {
   shopId?: number;
 }
 
-interface Message {
+export interface Attachment {
   id: number;
-  sender: "lessee" | "lessor";
-  content: string;
-  timestamp: string;
+  attachable_id: number;
+  attachable_type: string;
+  filename: string;
+  display_name: string;
+  path: string;
+  type: string;
 }
 
-interface Conversation {
+export interface Message {
+  id: number;
+  sender_id: number;
+  sender_role: "lessee" | "lessor";
+  message: string;
+  is_read: number;
+  created_at: string;
+  type: "text" | "image" | "pdf";
+  attachments?: Attachment[];
+  sending?: boolean;
+  delivered?: boolean;
+}
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export interface Conversation {
   id: number;
   uuid: string;
   shop: string;
+  shopLocation: string;
+  shopId: number;
+  lessor_id: number;
   last_message_at: string;
-  latest_message: string;
+  latest_message: string | null;
+  latest_sender?: string | null;
   messages: Message[];
+  is_owned_by_user: boolean;
 }
 interface Props extends PageProps {
   bookings: BookingDetails[];
@@ -155,6 +183,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
   const { bookings, conversations, headerData, isApprovedLessor, lessorApplicationStatus, shops: rawShops, auth, categories, rentals, lessorReservations, lessorDashboard } = usePage().props as unknown as Props;
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [allConversations, setAllConversations] = useState<Conversation[]>(conversations);
+  const [activeConversationId, setActiveConversationId] = useState<number | null>(null);
   // const urlParams = new URLSearchParams(window.location.search);
   // const initialTab = urlParams.get('tab') || defaultTab;
   // const [activeTab, setActiveTab] = useState(initialTab);
@@ -171,6 +200,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
     month: "long",
     year: "numeric",
   });
+
 
   const lessee = {
     name: auth.user.name,
@@ -248,6 +278,14 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
     }
   }, []);
 
+
+  const mappedConversations: Conversation[] = conversations.map(c => ({
+    ...c,
+    shopLocation: c.shopLocation ?? "Unknown location",
+    shopId: c.shopId ?? 0,
+    lessor_id: c.lessor_id ?? 0,
+    is_owned_by_user: c.is_owned_by_user ?? false,
+  }));
 
 
   return (
@@ -410,7 +448,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
               <LessorInvoice />
             </TabsContent>
             <TabsContent value="lessorInquiries" className="h-full">
-              <LessorInquiries conversations={conversations} bookings={bookings} currentUserId={auth.user.id} />
+              <LessorInquiries conversations={mappedConversations} bookings={bookings} currentUserName={auth.user.name} currentUserId={auth.user.id} />
             </TabsContent>
             <TabsContent value="LessorReviews" className="h-full">
               <LessorReviews />
