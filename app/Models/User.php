@@ -30,6 +30,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'submitForm',
         'provider',
         'provider_id',
+        'email_verified_at',
     ];
 
     /**
@@ -147,7 +148,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     public function lessor()
     {
-        return $this->hasOne(Lessor::class, 'lessoruser_id'); 
+        return $this->hasOne(Lessor::class, 'lessoruser_id');
     }
 
 
@@ -162,5 +163,5 @@ class User extends Authenticatable implements MustVerifyEmail
             'id'             // Local key on lessors table
         );
     }
-        
+
 }

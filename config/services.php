@@ -35,5 +35,10 @@ return [
         'client_secret' => env('GOOGLE_OAUTH_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_OAUTH_REDIRECT_URI'),
     ],
+    'facebook' => [
+        'client_id' => env('FACEBOOK_OAUTH_APP_ID'),
+        'client_secret' => env('FACEBOOK_OAUTH_APP_SECRET'),
+        'redirect' => env('FACEBOOK_OAUTH_REDIRECT_URI', 'https://app.rent-hive.co/auth/facebook/callback'),
+    ],
 
 ];
