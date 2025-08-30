@@ -37,7 +37,7 @@ export interface DateAvailability {
   timeSlots: TimeSlot[];
 }
 
-export type RentalDuration = 'hourly' | 'daily' | 'weekly' | undefined;
+export type RentalDuration = 'hourly' | 'daily' | 'weekly' | 'days' | undefined;
 
 export interface BookingDetails {
   id?: string;
@@ -53,7 +53,7 @@ export interface BookingDetails {
   endTime?:string | null;
   status: 'pending' | 'confirmed' | 'canceled' | 'completed';
   totalPrice?: number;
-  duration?: 'hourly' | 'daily' | 'weekly';
+  duration?: 'hourly' | 'daily' | 'weekly' | 'days';
   quantity?: number;
   rentalItem?: RentalItem; 
 }
@@ -62,8 +62,9 @@ export interface BookingDetails {
 export interface BookingSession {
   startDate: Date;
   endDate: Date;
-  startTime: Date;
-  endTime: Date;
+  startTime: Date | string;
+  endTime: Date | string;
+  returnTime: string;
   duration: number;
   category: Category;
   rental_listing: {

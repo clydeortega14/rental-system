@@ -3,6 +3,7 @@ import { computeDateBetweenTwoDates, formatDateLocale, formatPrice, formatTimeLo
 import { FormEventHandler, useEffect, useState } from 'react';
 import Button from '../Renter/ui/Button';
 import PrimaryButton from '../PrimaryButton';
+import { toTwelveFormat } from '@/utils/timeUtils';
 
 interface BookingSummaryProps {
     bookingDetails: BookingDetails;
@@ -10,12 +11,23 @@ interface BookingSummaryProps {
         hourly: number;
         daily: number;
         weekly: number;
+        days: number;
     }
     onBookNow: () => void;
     calculatedTotal: number;
     processing: boolean;
+    pickUpTime: string;
+    returnTime: string;
 }
-const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal, processing}: BookingSummaryProps) => {
+const BookingSummary = ({
+  bookingDetails, 
+  itemPrice, 
+  onBookNow, 
+  calculatedTotal, 
+  processing,
+  pickUpTime,
+  returnTime
+}: BookingSummaryProps) => {
 
     const [hasSelectedDateTime, setHasSelectedDateTime] = useState<boolean>(false);
     const getDurationText = (duration: RentalDuration) => {
@@ -23,14 +35,19 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal, 
           case 'hourly': return 'hour';
           case 'daily': return 'day';
           case 'weekly': return 'week';
+          case 'days': return 'day';
         }
     };
 
     useEffect( () => {
-      //
-      if(bookingDetails.startDate && bookingDetails.startTime) setHasSelectedDateTime(true)
+
+      if(bookingDetails.startDate && pickUpTime && returnTime) setHasSelectedDateTime(true)
       
-    }, [bookingDetails]);
+    }, [
+      bookingDetails, 
+      pickUpTime, 
+      returnTime
+    ]);
 
   return (
     <div className="bg-gray-50 rounded-lg p-6">
@@ -58,19 +75,19 @@ const BookingSummary = ({bookingDetails, itemPrice, onBookNow, calculatedTotal, 
         {hasSelectedDateTime && (
           <>
             <div className="flex justify-between">
-              <span className="text-gray-600">Start</span>
+              <span className="text-gray-600">Pick up Time</span>
               <span className="font-medium">
                 {
-                  bookingDetails.startDate && formatDateLocale(bookingDetails.startDate) + ' @ ' + bookingDetails.startTime
+                  bookingDetails.startDate && formatDateLocale(bookingDetails.startDate) + ' - ' + toTwelveFormat(pickUpTime)
                 }
               </span>
             </div>
 
             <div className="flex justify-between">
-              <span className="text-gray-600">End</span>
+              <span className="text-gray-600">Return Time</span>
               <span className="font-medium">
                 {
-                  bookingDetails.endDate && formatDateLocale(bookingDetails.endDate) + ' @ ' + bookingDetails.startTime
+                  bookingDetails.endDate && formatDateLocale(bookingDetails.endDate) + ' - ' +toTwelveFormat(returnTime)
                 }
               </span>
             </div>

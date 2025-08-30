@@ -31,6 +31,8 @@ class BookingController extends Controller
             'startDate' => 'required',
             'endDate' => 'required',
             'startTime' => 'required',
+            'returnTime' => 'required',
+            'pickUpTime' => 'required',
             'duration' => 'required|string',
             'partial_total' => 'required',
             'duration_quantity' => 'nullable|integer'
@@ -49,7 +51,7 @@ class BookingController extends Controller
 
         // store requests to session
         $request->session()->put('booking_data', $request->only(
-            'startDate', 'endDate', 'startTime', 'duration'
+            'startDate', 'endDate', 'startTime', 'returnTime', 'duration', 'pickUpTime'
         ) + [
             'category' => [
                 'id' => $item->toCategory->id,
@@ -73,54 +75,22 @@ class BookingController extends Controller
         return redirect(route('item.review'));
     }
 
-    public function checkOutBooking(Request $request)
+    public function checkOutBooking(StoreBookingRequest $request)
     {
+        
 
         if(!$request->session()->has('booking_data')) return;
 
         $data = $request->session()->get('booking_data');
 
-        DB::transaction( function() use ($request, $data){
-
-            // store booking details to database
-            $this->booking_service->storeBooking([
-                'category_id' => $data['category']['id'],
-                'rental_listing_id' => $data['rental_listing']['id'],
-                'booked_by' => $request->user()->id,
-                'status' => $data['status']['id'],
-                'startDate' => $data['startDate'],
-                'startTime' => $data['startTime'],
-                'endDate' => $data['endDate'],
-                'endTime' => $data['startTime'],
-                'service_fee' => $request->service_fee,
-                'total_cost' => $request->total_cost,
-                'partial_total' => $data['partial_total'],
-                'duration_quantity' => $data['duration_quantity'],
-                'duration_type' => $data['duration']
-            ]);
-
-            // manage user contact details
-            $user_contact_detail = $request->user()->contact()->firstOrCreate(
-                ['mobile' => $request->phone]
-            );
-
-            dd($request->all());
-
-            // manage user billing address;
-            $biiling_address = $request->user()->billingAddress()->firstOrCreate(
-                ['street' => $request->address],
-                ['postal_code' => $request->zipCode],
-                ['region' => $request->region],
-                ['province' => $request->province],
-                ['city' => $request->city],
-                ['barangay' => $request->barangay],
-                ['country' => $request->country]
-            );
-            // online payment processing
+        $this->booking_service->storeBooking($data + [
+            'service_fee' => $request->service_fee,
+            'total_cost' => $request->total_cost,
+            'booked_by' => auth()->user()->id,
+            'endTime' => $data['startTime'],
+            'duration_type' => 'daily',
+        ]);
         
-            // online payment gateway processing
-        });
-
         RecentActivity::create([
             'user_id' => $request->user()->id,
             'message' => 'You booked a rental item successfully.',

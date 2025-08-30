@@ -7,6 +7,7 @@ import { formatDateDisplay } from '@/utils/dateUtils'
 import { BookingSession } from '@/types/rental'
 import { booking } from '@/data/bookingsData'
 import LoginWithSocial from '../Guest/LoginWithSocial'
+import { toTwelveFormat } from '@/utils/timeUtils'
 
 interface ICartMainContent {
     bookingData: BookingSession;
@@ -32,6 +33,8 @@ const CartMainContent = ({bookingData}: ICartMainContent) => {
 //       </div>
 //     );
 //   }
+
+console.log(bookingData.returnTime)
 
   return (
     <>
@@ -79,21 +82,27 @@ const CartMainContent = ({bookingData}: ICartMainContent) => {
                                         </button>
                                     </div>
                                 </div>
-                                <div className="mb-4">
+                                <div className="mb-4 space-y-4">
                                     <div className="flex items-center text-gray-600 mb-2">
-                                    <Calendar className="h-4 w-4 mr-2" />
-                                    <span>
-                                        {formatDateDisplay(bookingData.startDate)} - {formatDateDisplay(bookingData.endDate)}
-                                    </span>
-                                    <span className="ml-2 text-sm text-gray-500">
-                                        {/* ({days} {cartItem.item.priceUnit}{days > 1 ? 's' : ''}) */}
-                                        {booking.duration_quantity}
-                                    </span>
+                                        <Calendar className="h-4 w-4 mr-2" />
+                                        <span>
+                                            {formatDateDisplay(String(bookingData.startDate))} - {formatDateDisplay(String(bookingData.endDate))}
+                                        </span>
+                                        
                                     </div>
                                     <div className="text-gray-600 text-sm space-x-2">
-                                        {/* <span>${cartItem.item.price['daily']} per {cartItem.item.priceUnit}</span> */}
-                                        <span>{bookingData.rental_listing.price+'/'+bookingData.duration}</span>
-                                        <span className="bg-orange-500 px-2 py-1 border border-orange-100 text-white rounded-lg">{bookingData.status.name}</span>
+                                        <span >
+                                            <strong>Duration Periond:</strong>{` ${bookingData.duration_quantity} ${bookingData.duration}`}
+                                        </span>
+                                    </div>
+                                    <div className="text-gray-600 text-sm space-x-2">
+                                        <span><strong>{`Price per ${bookingData.duration}: `}</strong>{bookingData.rental_listing.price}</span>
+                                    </div>
+                                    <div className="text-gray-600 text-sm space-x-2">
+                                        <span><strong>{`Pick up time: `}</strong>{toTwelveFormat(String(bookingData.startTime)) }</span>
+                                    </div>
+                                    <div className="text-gray-600 text-sm space-x-2">
+                                        <span><strong>{`Return time: `}</strong>{bookingData.returnTime}</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-between">

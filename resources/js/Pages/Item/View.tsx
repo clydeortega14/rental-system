@@ -48,6 +48,8 @@ export default function View({
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
     const [selectedEndDate, setSelectedEndDate] = useState<string | null>(null);
+    const [pickUpTime, setPickUpTime] = useState<string>('');
+    const [returnTime, setReturnTime] = useState<string>('');
     
     const session_error_message = usePage<PageProps>().props.flash.error_message;
     const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[item.default_duration]);
@@ -82,7 +84,10 @@ export default function View({
 
     
 
-    const {post, errors, processing } = useForm({});
+    const {data, setData, post, errors, processing } = useForm({
+        returnTime: null,
+        pickUpTime: null
+    });
 
     const selectedDateData = availabilityData.find(d => d.date === selectedDate);
     const timeSlots = selectedDateData?.timeSlots || [];
@@ -110,7 +115,7 @@ export default function View({
     };
 
     const handleTimeSlotSelect = (timeSlot: TimeSlot) => {
-        setBookingDetails({...bookingDetails, startTime: timeSlot.startTime})
+        setBookingDetails({...bookingDetails, startTime: timeSlot.startTime, endTime: timeSlot.endTime});
         setSelectedTimeSlot(timeSlot);
     };
 
@@ -174,7 +179,9 @@ export default function View({
             item_uuid: item.uuid,
             startDate: selectedDate,
             endDate: selectedEndDate,
-            startTime: selectedTimeSlot?.startTime,
+            startTime: pickUpTime,
+            returnTime: returnTime,
+            pickUpTime: pickUpTime,
             duration: duration,
             duration_quantity: bookingDetails.quantity,
             partial_total: item.price[item.default_duration] * quantity,
@@ -231,11 +238,12 @@ export default function View({
                             unavailableDates={unavailable_dates}
                         />
                         
-                        {selectedDate && (
+                        {selectedDate && selectedEndDate && (
                             <TimeSlots
-                                timeSlots={timeSlots} 
-                                selectedTimeSlot={selectedTimeSlot} 
-                                onSelectTimeSlot={handleTimeSlotSelect} 
+                                pickUpTime={pickUpTime}
+                                setPickUpTime={setPickUpTime}
+                                returnTime={returnTime}
+                                setReturnTime={setReturnTime}
                             />
                         )}
                         
@@ -245,6 +253,8 @@ export default function View({
                             onBookNow={handleBookNow}
                             calculatedTotal={calculatedTotal}
                             processing={processing}
+                            pickUpTime={pickUpTime}
+                            returnTime={returnTime}
                         />
                     </div>
                 </div>
