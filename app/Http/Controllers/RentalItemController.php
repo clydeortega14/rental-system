@@ -92,7 +92,7 @@ class RentalItemController extends Controller
         $category = Category::with('custom_fields')->where('name', $category_name)->first();
         $modelType = $category->custom_fields->first()?->model_type;
         
-        $category_custom_fields = $category->getCustomFields($modelType);
+        $category_custom_fields = !is_null($modelType) ? $category->getCustomFields($modelType) : [];
 
         if(is_null($category)) return redirect()->back()->with('error', 'Category not found!');
         

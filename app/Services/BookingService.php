@@ -118,8 +118,8 @@ class BookingService {
                         'name' => $booking->rentalListing->itemName,
                         'description' => $booking->rentalListing->description,
                         'shopId'=> $booking->rentalListing->shop_id,
-                        'shopName'=> $booking->rentalListing->toShop->name,
-                        'shopLocation'=> $booking->rentalListing->toShop->location
+                        'shopName'=> !is_null($booking->rentalListing->toShop) ? $booking->rentalListing->toShop->name : 'n/a',
+                        'shopLocation'=> !is_null($booking->rentalListing->toShop) ? $booking->rentalListing->toShop->location : 'n/a',
 
                     ],
                     'itemId' => $booking->rental_listing_id,
