@@ -33,6 +33,8 @@ class SocialAuthenticateSessionController extends Controller
 
         Auth::login($user, true);
 
+        if(request()->session()->has('booking_data')) return redirect()->route('checkout.item');
+
         return redirect()->intended(route('landing.page.index', absolute: false));
 
     }
