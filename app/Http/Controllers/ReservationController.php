@@ -28,15 +28,7 @@ class ReservationController extends Controller
             ['name' => 'Action']
         ];
 
-        $bookings = $this->booking_service->formatBookings();
-
-        dd($bookings);
-
-      
-        // return Inertia::render('Layouts/LesseeLayout', [
-        //     'headerData' => $headersData,
-        //     'bookings' => $bookings
-        // ]);
+        $bookings = $this->booking_service->getBookingsByUser(auth()->user()->id);
 
         return Inertia::render('Lessee/Index', [
             'headerData' => $headersData,

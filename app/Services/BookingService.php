@@ -122,9 +122,15 @@ class BookingService {
                         'shopLocation'=> !is_null($booking->rentalListing->toShop) ? $booking->rentalListing->toShop->location : 'n/a',
 
                     ],
+                    'category' => [
+                        'id' => $booking->category->id,
+                        'name' => $booking->category->name
+                    ],
                     'itemId' => $booking->rental_listing_id,
                     'userId' => $booking->bookedBy->id,
                     'startDate' => $booking->start_date,
+                    'startTime' => $booking->start_time,
+                    'returnTime' => $booking->end_time,
                     'endDate' => $booking->end_date,
                     'status' => $booking->bookingStatus->name,
                     'totalPrice' => $booking->total_cost

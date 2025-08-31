@@ -281,7 +281,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
   }, []);
 
 
-  const mappedConversations: Conversation[] = conversations.map(c => ({
+  const mappedConversations: Conversation[] = conversations && conversations.map(c => ({
     ...c,
     shopLocation: c.shopLocation ?? "Unknown location",
     shopId: c.shopId ?? 0,
@@ -434,7 +434,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
               <LessorProperties
                 shops={shops}
                 categories={categories}
-                rentals={rentals.map((rental) => ({
+                rentals={rentals && rentals.map((rental) => ({
                   ...rental,
                   categoryId: rental.categoryId ?? null,
                   shopId: rental.shopId ?? null,
@@ -446,7 +446,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
               />
             </TabsContent>
             <TabsContent value="lessorReservations" className="h-full">
-              <LessorReservations lessorReservations={lessorReservations.map(transformBookingToReservation)} />
+              <LessorReservations lessorReservations={lessorReservations && lessorReservations.map(transformBookingToReservation)} />
             </TabsContent>
             <TabsContent value="lessorInvoice" className="h-full">
               <LessorInvoice />
