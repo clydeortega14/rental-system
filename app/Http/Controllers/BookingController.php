@@ -88,7 +88,7 @@ class BookingController extends Controller
             'service_fee' => $request->service_fee,
             'total_cost' => $request->total_cost,
             'booked_by' => auth()->user()->id,
-            'endTime' => $data['startTime'],
+            'endTime' => $data['returnTime'],
             'duration_type' => 'daily',
         ]);
         

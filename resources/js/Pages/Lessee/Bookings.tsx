@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { usePage, router } from "@inertiajs/react"; // 👈 add router
-import { format } from "date-fns";
+import { format, formatDate } from "date-fns";
 import Modal from "@/Components/Modal";
 import Button from "@/Components/Renter/ui/Button";
 import SecondaryButton from "@/Components/SecondaryButton";
 import { BookingDetails } from "@/types/rental";
 import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
 import { BiCalendar, BiMessageDetail } from "react-icons/bi"; // 👈 icon for inquiries
+import { toTwelveFormat } from "@/utils/timeUtils";
+import { Calendar } from "lucide-react";
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
@@ -112,11 +114,11 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-100">
               <tr>
-                <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">ID</th>
+                {/* <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">ID</th> */}
                 <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Image</th>
                 <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Property</th>
                 <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Category</th>
-                <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Date</th>
+                <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Date & Time</th>
                 <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Total</th>
                 <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Status</th>
                 <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Actions</th>
@@ -125,7 +127,7 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
             <tbody className="divide-y divide-gray-200 bg-white">
               {filteredBookings.map((booking) => (
                 <tr key={booking.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3">Booking ID: {booking.id}</td>
+                  {/* <td className="px-4 py-3">Booking ID: {booking.id}</td> */}
                   <td className="px-4 py-3">
                     <img
                       src={booking.rentalItem?.imageUrl || ""}
@@ -134,10 +136,26 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
                     />
                   </td>
                   <td className="px-4 py-3">{booking.rentalItem?.name}</td>
-                  <td className="px-4 py-3">{booking.rentalItem?.category?.name || "N/A"}</td>
+                  <td className="px-4 py-3">{booking.category?.name || "N/A"}</td>
                   <td className="px-4 py-3">
-                    {format(new Date(booking.startDate ?? ""), "PPP")} -{" "}
-                    {format(new Date(booking.endDate ?? ""), "PPP")}
+                    <div className="flex items-center">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      <span>{ formatDateDisplay(String(booking.startDate)) } - {formatDateDisplay(String(booking.endDate))}</span>
+                    </div>
+                    
+                    {
+                      booking.startTime && booking.returnTime && (
+                        <>
+                        <div>
+                          <small>Delivery Time: { toTwelveFormat(booking.startTime) }</small>
+                        </div>
+                        <div>
+                          <small>Return Time: { toTwelveFormat(booking.returnTime) }</small>
+                        </div>
+                        </>
+                      )
+                    }
+                    
                   </td>
                   <td className="px-4 py-3">
                     {booking.totalPrice && formatPrice(booking.totalPrice)}
@@ -151,19 +169,29 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
                       {booking.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 flex gap-2">
+                  <td className="py-3 flex items-center space-x-2 ">
                     <Button variant="outline" size="sm" onClick={() => openModal(booking)}>
                       View
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-1 text-blue-600 border-blue-600"
-                      onClick={() => handleInquiries(booking)}
-                    >
-                      <BiMessageDetail className="w-4 h-4" />
-                      Inquiries
+
+                    { booking.status === 'pending' && (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex items-center gap-1 text-blue-600 border-blue-600"
+                          onClick={() => handleInquiries(booking)}
+                        >
+                          <BiMessageDetail className="w-4 h-4" />
+                          Inquiries
+                        </Button>
+
+                        <Button variant="outline" size="sm" className="gap-1">
+                          Return
                     </Button>
+                      </>
+                    )}
+                    
                   </td>
                 </tr>
               ))}

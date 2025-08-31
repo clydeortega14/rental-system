@@ -60,6 +60,10 @@ export interface BookingDetails {
   duration?: 'hourly' | 'daily' | 'weekly' | 'days';
   quantity?: number;
   rentalItem?: RentalItem;
+  category?: {
+    id: number;
+    name: string;
+  }
 }
 
 
