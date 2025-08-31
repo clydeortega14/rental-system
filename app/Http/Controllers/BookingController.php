@@ -77,12 +77,13 @@ class BookingController extends Controller
 
     public function checkOutBooking(StoreBookingRequest $request)
     {
-        
-
+        // check if session has a booking data, if none then return back;
         if(!$request->session()->has('booking_data')) return;
 
+        // declare local variable to session booking data
         $data = $request->session()->get('booking_data');
 
+        // store booking data to database 
         $this->booking_service->storeBooking($data + [
             'service_fee' => $request->service_fee,
             'total_cost' => $request->total_cost,
@@ -91,6 +92,8 @@ class BookingController extends Controller
             'duration_type' => 'daily',
         ]);
         
+
+        // store transaction to activity logs
         RecentActivity::create([
             'user_id' => $request->user()->id,
             'message' => 'You booked a rental item successfully.',
@@ -100,6 +103,7 @@ class BookingController extends Controller
         
         // sending emails to users
 
+        // forget the session
         $request->session()->forget(['booking_data']);
 
         // return redirect(route('dashboard'));

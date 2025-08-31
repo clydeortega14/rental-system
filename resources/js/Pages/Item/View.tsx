@@ -16,6 +16,9 @@ import { similarItems } from "@/data/similarItems";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import { computeDateBetweenTwoDates, formatPrice } from "@/utils/dateUtils";
 import RentalCalendar from "../../Components/Renter/RentalCalendar";
+import { startOfToday } from "date-fns";
+import PrimaryButton from "@/Components/PrimaryButton";
+import SecondaryButton from "@/Components/SecondaryButton";
 
 
 
@@ -59,6 +62,7 @@ export default function View({
         endDate: null,
         startTime: null,
         endTime: null,
+        returnTime: null,
         duration: 'daily',
         quantity: 1,
         status: 'pending',
@@ -84,10 +88,7 @@ export default function View({
 
     
 
-    const {data, setData, post, errors, processing } = useForm({
-        returnTime: null,
-        pickUpTime: null
-    });
+    const {data, setData, post, errors, processing } = useForm({});
 
     const selectedDateData = availabilityData.find(d => d.date === selectedDate);
     const timeSlots = selectedDateData?.timeSlots || [];
@@ -148,6 +149,10 @@ export default function View({
     }, [bookingDetails]);
 
 
+    // Booking Summary State
+    const [showBookingSummaryComponent, setShowBookingSummaryComponent] = useState<boolean>(false);
+
+
     // side effects for selected start date and selected end date
     useEffect( () => {
 
@@ -170,12 +175,20 @@ export default function View({
                 bookingDetails.totalPrice && setBookingDetails({...bookingDetails, quantity: totalDays, totalPrice: item.price[item.default_duration] * totalDays});
                 // bookingDetails.totalPrice && setBookingDetails({...bookingDetails, totalPrice: bookingDetails.totalPrice * totalDays});
 
+                // show or hide booking summary content
+                // when the selectedDate and SelectedEndDate is null or empty, then hide the booking summary component
+                setShowBookingSummaryComponent(true);
+
+            }else{
+                setShowBookingSummaryComponent(false);
             }
+
     }, [selectedDate, selectedEndDate])
 
     const handleBookNow = () => {
 
         post(route('booking.store', {
+            
             item_uuid: item.uuid,
             startDate: selectedDate,
             endDate: selectedEndDate,
@@ -237,6 +250,8 @@ export default function View({
                             setSelectedEndDate={setSelectedDate}
                             unavailableDates={unavailable_dates}
                         />
+
+                        
                         
                         {selectedDate && selectedEndDate && (
                             <TimeSlots
@@ -246,16 +261,32 @@ export default function View({
                                 setReturnTime={setReturnTime}
                             />
                         )}
+                        <SecondaryButton 
+                            onClick={ () => {
+                                setSelectedDate(null);
+                                setSelectedEndDate(null);
+                                setPickUpTime(null);
+                                setReturnTime(null);
+                            }}
+                        >
+                            Reset
+                        </SecondaryButton>
                         
-                        <BookingSummary
-                            bookingDetails={bookingDetails} 
-                            itemPrice={item.price}
-                            onBookNow={handleBookNow}
-                            calculatedTotal={calculatedTotal}
-                            processing={processing}
-                            pickUpTime={pickUpTime}
-                            returnTime={returnTime}
-                        />
+
+                        {
+                            showBookingSummaryComponent && (
+                                <BookingSummary
+                                    bookingDetails={bookingDetails} 
+                                    itemPrice={item.price}
+                                    onBookNow={handleBookNow}
+                                    calculatedTotal={calculatedTotal}
+                                    processing={processing}
+                                    pickUpTime={pickUpTime}
+                                    returnTime={returnTime}
+                                />
+                            )
+                        }
+                        
                     </div>
                 </div>
 

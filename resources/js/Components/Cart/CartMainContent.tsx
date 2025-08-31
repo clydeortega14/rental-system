@@ -58,7 +58,7 @@ console.log(bookingData.returnTime)
                     <div className="divide-y divide-gray-200">
 
                         <div className="p-6">
-                            <div className="flex flex-col md:flex-row">
+                            <div className="flex items-center flex-col md:flex-row">
                                 <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
                                 <img
                                     src={`https://images.pexels.com/photos/243757/pexels-photo-243757.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2`}
@@ -102,7 +102,7 @@ console.log(bookingData.returnTime)
                                         <span><strong>{`Pick up time: `}</strong>{toTwelveFormat(String(bookingData.startTime)) }</span>
                                     </div>
                                     <div className="text-gray-600 text-sm space-x-2">
-                                        <span><strong>{`Return time: `}</strong>{bookingData.returnTime}</span>
+                                        <span><strong>{`Return time: `}</strong>{toTwelveFormat(bookingData.returnTime)}</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-between">
@@ -146,58 +146,39 @@ console.log(bookingData.returnTime)
 
             <div className="lg:col-span-1">
                 <div className="bg-white rounded-xl shadow-sm p-6 sticky top-24">
-                    <h2 className="text-lg font-semibold text-gray-800 mb-4">Order Summary</h2>
-            
-                    <div className="border-t border-b border-gray-200 py-4 mb-4">
-                        <div className="flex justify-between mb-2">
-                            <span className="text-gray-600">Subtotal</span>
-                            <span className="text-gray-900">${totalPrice.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between mb-2">
-                            <span className="text-gray-600">Service fee</span>
-                            <span className="text-gray-900">$10.00</span>
-                        </div>
+                    
+
+                    {
+                        !user ? (
+
+                            <>
+                            <div className="flex items-center gap-2">
+                                <hr className="flex-1" />
+                                    <span className="text-sm text-gray-400">you can continue with your social account</span>
+                                <hr className="flex-1" />
+                            </div>
+                            <LoginWithSocial />
+                            </>
+                        ) :
+                        <>
+                            <Link href={route('checkout.item')}>
+                                <Button variant="primary" fullWidth>
+                                    Proceed to Checkout
+                                </Button>
+                            </Link>
+
+                            <div className="mt-4 text-xs text-gray-500 text-center">
+                                <p>By proceeding, you agree to our</p>
+                                <div className="flex justify-center space-x-1">
+                                    <a href="#" className="text-blue-600 hover:underline">Terms of Service</a>
+                                    <span>and</span>
+                                    <a href="#" className="text-blue-600 hover:underline">Rental Policy</a>
+                                </div>
+                            </div>
+                        </>
+                    }
                 </div>
-            
-            <div className="flex justify-between mb-6">
-              <span className="font-semibold text-gray-900">Total</span>
-              <span className="font-semibold text-gray-900">${(totalPrice + 10).toFixed(2)}</span>
             </div>
-
-            {
-                !user ? (
-
-                    <>
-                    <div className="flex items-center gap-2">
-                        <hr className="flex-1" />
-                            <span className="text-sm text-gray-400">you can continue with your social account</span>
-                        <hr className="flex-1" />
-                    </div>
-                    <LoginWithSocial />
-                    </>
-                ) :
-                <>
-                    <Link href={route('checkout.item')}>
-                        <Button variant="primary" fullWidth>
-                            Proceed to Checkout
-                        </Button>
-                    </Link>
-
-                    <div className="mt-4 text-xs text-gray-500 text-center">
-                        <p>By proceeding, you agree to our</p>
-                        <div className="flex justify-center space-x-1">
-                            <a href="#" className="text-blue-600 hover:underline">Terms of Service</a>
-                            <span>and</span>
-                            <a href="#" className="text-blue-600 hover:underline">Rental Policy</a>
-                        </div>
-                    </div>
-                </>
-            }
-            
-            
-            
-          </div>
-        </div>
         </div>
     </div>
         

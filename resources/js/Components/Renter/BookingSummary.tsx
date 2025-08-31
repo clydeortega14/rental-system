@@ -4,6 +4,7 @@ import { FormEventHandler, useEffect, useState } from 'react';
 import Button from '../Renter/ui/Button';
 import PrimaryButton from '../PrimaryButton';
 import { toTwelveFormat } from '@/utils/timeUtils';
+import SecondaryButton from '../SecondaryButton';
 
 interface BookingSummaryProps {
     bookingDetails: BookingDetails;
@@ -78,7 +79,7 @@ const BookingSummary = ({
               <span className="text-gray-600">Pick up Time</span>
               <span className="font-medium">
                 {
-                  bookingDetails.startDate && formatDateLocale(bookingDetails.startDate) + ' - ' + toTwelveFormat(pickUpTime)
+                  bookingDetails.startDate && pickUpTime !== null && formatDateLocale(bookingDetails.startDate) + ' - ' + toTwelveFormat(pickUpTime)
                 }
               </span>
             </div>
@@ -87,7 +88,7 @@ const BookingSummary = ({
               <span className="text-gray-600">Return Time</span>
               <span className="font-medium">
                 {
-                  bookingDetails.endDate && formatDateLocale(bookingDetails.endDate) + ' - ' +toTwelveFormat(returnTime)
+                  bookingDetails.endDate && returnTime !== null && formatDateLocale(bookingDetails.endDate) + ' - ' +toTwelveFormat(returnTime)
                 }
               </span>
             </div>
