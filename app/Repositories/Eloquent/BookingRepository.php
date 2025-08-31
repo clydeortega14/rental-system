@@ -51,7 +51,7 @@ class BookingRepository implements BookingRepositoryInterface
 
     public function bookings(int $userId) : Collection
     {
-        return Booking::with(['category', 'bookedBy', 'rentalListing', 'bookingStatus'])
+        return Booking::with(['category', 'bookedBy', 'rentalListing.toShop', 'bookingStatus'])
             ->where('booked_by', $userId)
             ->get();
     }
