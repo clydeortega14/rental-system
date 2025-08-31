@@ -14,9 +14,17 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Str;
 use App\Jobs\SendEmailVerification;
+use App\Services\LoginService;
 
 class RegisteredUserController extends Controller
 {
+
+    protected $login_service;
+
+    public function __construct(LoginService $login_service)
+    {
+        $this->login_service = $login_service;
+    }
     /**
      * Display the registration view.
      */
@@ -30,27 +38,32 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
 
-        $user = User::create([
-            'id' => (string) Str::uuid(),
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        if($request->has('action'))
+        {
+            if($request->action === 'emailOnly')
+            {
+                $this->login_service->loginWithEmail($request);
+                // execute loginWithEmailService
+            }
+        }else{
 
-        // event(new Registered($user));
+            $user = User::create([
+                'id' => (string) Str::uuid(),
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        SendEmailVerification::dispatch($user);
+            // event(new Registered($user));
 
-        Auth::login($user);
+            SendEmailVerification::dispatch($user);
 
-        return redirect(route('lessee.profile', absolute: false));
+            Auth::login($user);
+
+            return redirect(route('lessee.profile', absolute: false));
+        }
     }
 }

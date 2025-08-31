@@ -1,6 +1,6 @@
 import { Link, useForm } from "@inertiajs/react";
 import { PageProps } from "@/types";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { usePage } from "@inertiajs/react";
 import { useCart } from "@/context/CartContext";
 import { Calendar, ChevronLeft, CreditCard, X } from "lucide-react";
@@ -10,6 +10,8 @@ import LoginWithGoogle from "../LoginWithGoogle";
 import { BookingSession } from "@/types/rental";
 import CardExpiryInput from "../CardExpiryInput";
 import InputError from "../InputError";
+import KycModal from "@/Pages/User/modals/KycModal";
+import { useKyc } from "@/context/KycContext";
 
 interface CheckOutProps {
     bookingData: BookingSession
@@ -17,12 +19,13 @@ interface CheckOutProps {
 
 export default function CheckOut({bookingData}: CheckOutProps) {
     const user = usePage<PageProps>().props.auth.user;
-    console.log(user);
+    console.log(user)
     const isVerified = user?.kyc?.kyc_verified === true;
     const [serviceFee, setServiceFee] = useState<number>(0);
     const [allTotal, setAllTotal] = useState<number>(0);
     const error_message = usePage<PageProps>().props.flash.error_message
-    // console.log(bookingData)
+
+    const {showKycModal, setShowKycModal } = useKyc();
 
     useEffect( () => {
 
@@ -31,6 +34,11 @@ export default function CheckOut({bookingData}: CheckOutProps) {
         setData
     }, [bookingData.partial_total]);
 
+    useEffect( () => {
+
+        if(user && user.kyc === null) setShowKycModal(true);
+
+    }, [user]);
 
     useEffect( () => {
 
@@ -38,12 +46,13 @@ export default function CheckOut({bookingData}: CheckOutProps) {
         setAllTotal(calculated_total);
 
     }, [bookingData.partial_total, serviceFee]);
+    
     const [formData, setFormData] = useState({
-            rental_listing_id: bookingData.rental_listing_id,
+            rental_listing_id: bookingData.rental_listing.id,
             name: user ? user.name : '',
             email: user ? user.email : '',
             phone: user ? user.contact?.mobile : '',
-            address: user && user.company && user.company?.street+', '+user.company?.barangay,
+            address: user && user.company && user.company?.street,
             city: user ? user.company?.city : '',
             zipCode: user ? user.company?.postal_code : '',
             cardNumber: '',
@@ -113,9 +122,12 @@ export default function CheckOut({bookingData}: CheckOutProps) {
             preserveState: false
         })
     }
+
+
     return (
         <>
             <div className="bg-gray-100 container mx-auto px-4 py-8">
+
                 <h1 className="font-semibold text-red-700">{error_message}</h1>
                 <div className="mb-6">
                     <Link href={route('cart.index')} className="inline-flex items-center text-blue-600 hover:text-blue-800">
@@ -124,9 +136,28 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                     </Link>
                 </div>
 
+                
+
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2">
-                    <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+                    <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6 px-2">
+                        
+                        {
+                            user.kyc === null && (
+                                <div className="text-center py-4 border border-yellow-500 rounded-lg bg-yellow-100 my-3">
+                                    <p className="text-red-600 text-lg">Please complete your identity verification to proceed.</p>
+                                </div>
+                            )
+                        }
+
+                        {
+                            user.kyc && user.kyc.kyc_status === 'Pending' && !user.kyc.kyc_verified && (
+                                <div className="text-center py-4 border border-blue-500 rounded-lg bg-blue-100 my-3">
+                                    <p className="text-blue-600 text-lg">Your KYC is now subjected for Verification. We will let you know once verified!</p>
+                                </div>
+                            )
+                        }
+
                         <div className="p-6 border-b border-gray-200">
                         <h1 className="text-2xl font-bold text-gray-800">Checkout</h1>
                         </div>
@@ -226,7 +257,33 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                             </div>
                         </div>
 
-                        <div className="p-6">
+                        <div className="mt-6">
+
+                            { user ? (
+                                isVerified ? (
+                                    <Button
+                                    type="submit"
+                                    variant="primary"
+                                    fullWidth
+                                    disabled={processing}
+                                    >
+                                    {processing ? 'Processing...' : `Complete Booking • ${formatPrice(allTotal)}`}
+                                    </Button>
+                                ) : (
+                                    <>
+                                    <div className="text-center py-4">
+                                        {/* <p className="text-red-600 text-sm">Please complete your identity verification to proceed.</p> */}
+                                    </div>
+                                    
+                                    </>
+                                )
+                            ) : (
+                                <LoginWithGoogle />
+                            )}
+                            
+                        </div>
+
+                        {/* <div className="p-6">
                             <h2 className="text-lg font-semibold text-gray-800 mb-4">Payment Method</h2>
                             <div className="mb-4">
                             <div className="flex space-x-4 mb-6">
@@ -308,29 +365,8 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                             </div>
                             )}
 
-                            <div className="mt-6">
-
-                            { user ? (
-                                isVerified ? (
-                                    <Button
-                                    type="submit"
-                                    variant="primary"
-                                    fullWidth
-                                    disabled={processing}
-                                    >
-                                    {processing ? 'Processing...' : `Complete Booking • ${formatPrice(allTotal)}`}
-                                    </Button>
-                                ) : (
-                                    <div className="text-sm text-red-600 text-center mt-4">
-                                        Please complete your identity verification to proceed.
-                                    </div>
-                                )
-                            ) : (
-                                <LoginWithGoogle />
-                            )}
                             
-                            </div>
-                        </div>
+                        </div> */}
                         </form>
 
                         {/* {
@@ -399,7 +435,28 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                 </div>
 
 
-
+            { showKycModal && (
+                <KycModal 
+                    user_id={user.id}
+                    userKyc={
+                        user.kyc
+                        ? {
+                            full_name: user.kyc.full_name,
+                            document_type: user.kyc.document_type,
+                            document_number: user.kyc.document_number,
+                            selfie_path: user.kyc.selfie_path ?? undefined,
+                            document_path: user.kyc.document_path ?? undefined,
+                            kyc_status:
+                                user.kyc.kyc_status && ["Pending", "Approved", "Rejected"].includes(user.kyc.kyc_status)
+                                ? (user.kyc.kyc_status as "Pending" | "Approved" | "Rejected")
+                                : undefined,
+                            }
+                        : undefined
+                    }
+                    isReadOnly={false}
+                    onClose={() => setShowKycModal(false)}
+                />
+            )}
             <div className="bg-gray-100"></div>
         </>
     );

@@ -16,6 +16,10 @@ import { similarItems } from "@/data/similarItems";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import { computeDateBetweenTwoDates, formatPrice } from "@/utils/dateUtils";
 import RentalCalendar from "../../Components/Renter/RentalCalendar";
+import { startOfToday } from "date-fns";
+import PrimaryButton from "@/Components/PrimaryButton";
+import SecondaryButton from "@/Components/SecondaryButton";
+
 
 
 interface IUnavailableDates  {
@@ -47,6 +51,8 @@ export default function View({
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
     const [selectedEndDate, setSelectedEndDate] = useState<string | null>(null);
+    const [pickUpTime, setPickUpTime] = useState<string>('');
+    const [returnTime, setReturnTime] = useState<string>('');
     
     const session_error_message = usePage<PageProps>().props.flash.error_message;
     const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[item.default_duration]);
@@ -56,6 +62,7 @@ export default function View({
         endDate: null,
         startTime: null,
         endTime: null,
+        returnTime: null,
         duration: 'daily',
         quantity: 1,
         status: 'pending',
@@ -81,7 +88,7 @@ export default function View({
 
     
 
-    const {post, errors, processing } = useForm({});
+    const {data, setData, post, errors, processing } = useForm({});
 
     const selectedDateData = availabilityData.find(d => d.date === selectedDate);
     const timeSlots = selectedDateData?.timeSlots || [];
@@ -109,7 +116,7 @@ export default function View({
     };
 
     const handleTimeSlotSelect = (timeSlot: TimeSlot) => {
-        setBookingDetails({...bookingDetails, startTime: timeSlot.startTime})
+        setBookingDetails({...bookingDetails, startTime: timeSlot.startTime, endTime: timeSlot.endTime});
         setSelectedTimeSlot(timeSlot);
     };
 
@@ -142,6 +149,10 @@ export default function View({
     }, [bookingDetails]);
 
 
+    // Booking Summary State
+    const [showBookingSummaryComponent, setShowBookingSummaryComponent] = useState<boolean>(false);
+
+
     // side effects for selected start date and selected end date
     useEffect( () => {
 
@@ -164,15 +175,26 @@ export default function View({
                 bookingDetails.totalPrice && setBookingDetails({...bookingDetails, quantity: totalDays, totalPrice: item.price[item.default_duration] * totalDays});
                 // bookingDetails.totalPrice && setBookingDetails({...bookingDetails, totalPrice: bookingDetails.totalPrice * totalDays});
 
+                // show or hide booking summary content
+                // when the selectedDate and SelectedEndDate is null or empty, then hide the booking summary component
+                setShowBookingSummaryComponent(true);
+
+            }else{
+                setShowBookingSummaryComponent(false);
             }
+
     }, [selectedDate, selectedEndDate])
 
     const handleBookNow = () => {
+
         post(route('booking.store', {
+            
             item_uuid: item.uuid,
             startDate: selectedDate,
             endDate: selectedEndDate,
-            startTime: selectedTimeSlot?.startTime,
+            startTime: pickUpTime,
+            returnTime: returnTime,
+            pickUpTime: pickUpTime,
             duration: duration,
             duration_quantity: bookingDetails.quantity,
             partial_total: item.price[item.default_duration] * quantity,
@@ -182,11 +204,7 @@ export default function View({
             preserveState: true
         });
     };
-
-
-
     
-
     return (
         <RenterLayout>
             
@@ -232,22 +250,43 @@ export default function View({
                             setSelectedEndDate={setSelectedDate}
                             unavailableDates={unavailable_dates}
                         />
+
                         
-                        {selectedDate && (
+                        
+                        {selectedDate && selectedEndDate && (
                             <TimeSlots
-                                timeSlots={timeSlots} 
-                                selectedTimeSlot={selectedTimeSlot} 
-                                onSelectTimeSlot={handleTimeSlotSelect} 
+                                pickUpTime={pickUpTime}
+                                setPickUpTime={setPickUpTime}
+                                returnTime={returnTime}
+                                setReturnTime={setReturnTime}
                             />
                         )}
+                        <SecondaryButton 
+                            onClick={ () => {
+                                setSelectedDate(null);
+                                setSelectedEndDate(null);
+                                setPickUpTime('');
+                                setReturnTime('');
+                            }}
+                        >
+                            Reset
+                        </SecondaryButton>
                         
-                        <BookingSummary
-                            bookingDetails={bookingDetails} 
-                            itemPrice={item.price}
-                            onBookNow={handleBookNow}
-                            calculatedTotal={calculatedTotal}
-                            processing={processing}
-                        />
+
+                        {
+                            showBookingSummaryComponent && (
+                                <BookingSummary
+                                    bookingDetails={bookingDetails} 
+                                    itemPrice={item.price}
+                                    onBookNow={handleBookNow}
+                                    calculatedTotal={calculatedTotal}
+                                    processing={processing}
+                                    pickUpTime={pickUpTime}
+                                    returnTime={returnTime}
+                                />
+                            )
+                        }
+                        
                     </div>
                 </div>
 

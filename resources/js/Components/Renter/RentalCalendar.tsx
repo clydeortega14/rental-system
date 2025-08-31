@@ -15,7 +15,13 @@ interface RentalCalendarProps {
     setSelectedEndDate: (d: string | null) => void;
     unavailableDates: Availability;
 }
-const RentalCalendar = ({onSelectDate, selectedDate, selectedEndDate, setSelectedEndDate, unavailableDates}: RentalCalendarProps) => {
+const RentalCalendar = ({
+  onSelectDate, 
+  selectedDate, 
+  selectedEndDate, 
+  setSelectedEndDate, 
+  unavailableDates
+}: RentalCalendarProps) => {
   
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [availability, setAvailability] = useState<Availability>(unavailableDates);
@@ -105,13 +111,6 @@ const RentalCalendar = ({onSelectDate, selectedDate, selectedEndDate, setSelecte
             )
           })
         }
-      </div>
-      <div className="py-4">
-        <PrimaryButton onClick={ () => {
-          setSelectedEndDate(null)
-        }}>
-          Reset
-        </PrimaryButton>
       </div>
     </div>
   )

@@ -1,46 +1,43 @@
-import { TimeSlot } from '@/types/rental';
-import { formatTimeLocale } from '@/utils/dateUtils';
-import React from 'react'
+import TextInput from '../TextInput';
+import InputLabel from '../InputLabel';
 
 
 interface TimeSlotsProps {
-  timeSlots: TimeSlot[];
-  selectedTimeSlot: TimeSlot | null;
-  onSelectTimeSlot: (timeSlot: TimeSlot) => void;
+  pickUpTime: string;
+  setPickUpTime: (data: string) => void;
+  returnTime: string;
+  setReturnTime: (data: string) => void;
 }
 
 const TimeSlots = ({
-    timeSlots,
-    selectedTimeSlot,
-    onSelectTimeSlot
+  pickUpTime,
+  setPickUpTime,
+  returnTime,
+  setReturnTime
 }:TimeSlotsProps) => {
   return (
+    <>
     <div className="mb-6">
-      <h3 className="text-lg font-semibold mb-3">Select Time</h3>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {timeSlots.map((slot, index) => (
-          <button
-            key={index}
-            onClick={() => slot.available && onSelectTimeSlot(slot)}
-            disabled={!slot.available}
-            className={`
-              px-3 py-2 rounded-lg border-2 transition-all duration-300 text-center
-              ${
-                selectedTimeSlot === slot
-                  ? 'border-blue-600 bg-blue-50 text-blue-700'
-                  : slot.available
-                  ? 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
-                  : 'border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed'
-              }
-            `}
-          >
-            <span className="text-sm">
-              {slot.startTime} - {slot.endTime}
-            </span>
-          </button>
-        ))}
-      </div>
+      <InputLabel htmlFor="pick-up-time" value="Select time of pickup"/>
+      <TextInput 
+        type="time" 
+        className="w-full mt-1 block" 
+        id="pick-up-time"
+        value={pickUpTime}
+        onChange={ (e) => setPickUpTime(e.target.value)} 
+      />
     </div>
+    <div className="mb-6">
+      <InputLabel htmlFor="return-time" value="Select time of return"/>
+      <TextInput 
+        type="time" 
+        className="w-full mt-1 block" 
+        id="return-time"
+        value={returnTime}
+        onChange={ (e) => setReturnTime(e.target.value)}
+      />
+    </div>
+    </>
   )
 }
 

@@ -15,13 +15,10 @@ class StoreBookingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'item_uuid' => ['required'],
-            'pick_up_date' => ['required','date'],
-            'pick_up_time' => ['nullable','string'],
-            'pick_up_location' => ['required', 'string', 'max:255'],
-            'drop_off_date' => ['required', 'date'],
-            'drop_off_time' => ['nullable', 'string'],
-            'drop_off_location' => ['nullable', 'string', 'max:255']
+            'rental_listing_id' => 'required|integer',
+            'name' => 'required|string|max:50',
+            'email' => 'required|string|max:50',
+            'phone' => 'required|max:20',
         ];
     }
 }

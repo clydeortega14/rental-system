@@ -7,46 +7,20 @@ use Carbon\Carbon;
 use App\Traits\CalendarTheme;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use App\Repositories\Contracts\BookingRepositoryInterface;
 
 class BookingService {
 
     use CalendarTheme;
 
+    public function __construct
+    (
+        protected BookingRepositoryInterface $booking_repository
+    ){}
+
     public function storeBooking(array $data)
     {
-
-        DB::transaction( function() use ($data) {
-
-            try {
-
-                $booking = Booking::create([
-                    'category_id' => $data['category_id'],
-                    'rental_listing_id' => $data['rental_listing_id'],
-                    'booked_by' => $data['booked_by'],
-                    'status' => $data['status'],
-                    'start_date' => date('Y-m-d', strtotime( $data['startDate'])),
-                    'end_date' => date('Y-m-d', strtotime( $data['endDate'])),
-                    'start_time' => $data['startTime'],
-                    'end_time' => $data['endTime'],
-                    'total_cost' => $data['total_cost'],
-                    'duration' => $data['duration_quantity'],
-                    'duration_type' => $data['duration_type'],
-                    'partial_total' => $data['partial_total'],
-                    'service_fee' => $data['service_fee'],
-                ]);
-
-                DB::commit();
-
-            } catch (\Exception $e) {
-                //throw $th;
-                DB::rollback();
-
-                throw new Exception($e, 500);
-                
-            }
-            
-        });
-        
+        $this->booking_repository->store($data);
     }
 
     public function updateStatus($booking, array $data)
@@ -93,12 +67,8 @@ class BookingService {
 
     public function getBookings()
     {
-        $booking = Booking::with(['category', 'bookedBy', 'rentalListing', 'bookingStatus'])
-        ->get();
-
-        return $booking;
+        return $this->booking_repository->bookings();
     }
-
 
     public function formatBookings()
     {
@@ -118,43 +88,6 @@ class BookingService {
                 'status' => $booking->bookingStatus->name,
                 'totalPrice' => $booking->total_cost
             ];
-
-
-            // return [
-
-            //     'id' => $booking->id,
-            //     'uuid' => $booking->uuid,
-            //     'category' => [
-            //         'id' => $booking->category->id,
-            //         'name' => $booking->category->name
-            //     ],
-            //     'rental_item' => [
-            //         'id' => $booking->rentalListing->id,
-            //         'itemName' => $booking->rentalListing->itemName,
-            //         'images' => $booking->rentalListing->attachment->map(function($item){
-            //             return [
-            //                 'src' => config('app.url').'/storage/'.$item->file_path
-            //             ];
-            //         }),
-            //     ],
-            //     'booked_by' => [
-            //         'id' => $booking->bookedBy->id,
-            //         'name' => $booking->bookedBy->name
-            //     ],
-            //     'status' => [
-            //         'id' => $booking->bookingStatus->id,
-            //         'name' => $booking->bookingStatus->name,
-            //         'className' => $booking->bookingStatus->class_name
-            //     ],
-            //     'completed_at' => $booking->completed_at,
-            //     'pick_up_date' => $booking->format_pick_up,
-            //     'pick_up_time' => $booking->pick_up_time,
-            //     'pick_up_location' => $booking->pick_up_location,
-            //     'drop_off_date' => $booking->format_drop_off,
-            //     'drop_off_time' => $booking->drop_off_time,
-            //     'drop_off_location' => $booking->drop_off_location,
-            //     'is_rescheduled' => $booking->is_rescheduled
-            // ];
         });
     }
 
@@ -170,12 +103,10 @@ class BookingService {
             ];
         });
     }
-    public function getBookingsByUser($userId)
+    public function getBookingsByUser(int $userId)
     {
-        return Booking::with(['category', 'bookedBy', 'rentalListing', 'bookingStatus'])
-            ->where('booked_by', $userId)
-            ->get()
-            ->map(function($booking) { 
+        return $this->booking_repository->bookings($userId)
+            ->map(function($booking) {
                 return [
                     'id' => $booking->id,
                     'uuid' => $booking->uuid,

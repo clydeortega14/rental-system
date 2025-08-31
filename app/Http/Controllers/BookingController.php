@@ -31,6 +31,8 @@ class BookingController extends Controller
             'startDate' => 'required',
             'endDate' => 'required',
             'startTime' => 'required',
+            'returnTime' => 'required',
+            'pickUpTime' => 'required',
             'duration' => 'required|string',
             'partial_total' => 'required',
             'duration_quantity' => 'nullable|integer'
@@ -49,101 +51,49 @@ class BookingController extends Controller
 
         // store requests to session
         $request->session()->put('booking_data', $request->only(
-            'startDate', 'endDate', 'startTime', 'duration'
+            'startDate', 'endDate', 'startTime', 'returnTime', 'duration', 'pickUpTime'
         ) + [
-            'category_id' => $item->category_id,
-            'rental_listing_id' => $item->id,
-            'status' => $status->id,
+            'category' => [
+                'id' => $item->toCategory->id,
+                'name' => $item->toCategory->name
+            ],
+            'rental_listing' => [
+                'id' => $item->id,
+                'name' => $item->itemName,
+                'description' => $item->description,
+                'price' => $item->price,
+            ],
+            'status' => [
+                'id' => $status->id,
+                'name' => $status->name
+            ],
             'partial_total' => $request->partial_total,
             'duration_quantity' => $duration,
+            'checkout' => true,
         ]);
 
-        return redirect(route('checkout.item'));
+        return redirect(route('item.review'));
     }
 
-    public function checkOutBooking(Request $request)
+    public function checkOutBooking(StoreBookingRequest $request)
     {
-
+        // check if session has a booking data, if none then return back;
         if(!$request->session()->has('booking_data')) return;
-        // validate checkout inputs
-        // $request->validate([
-        //     'phone' => 'required'
-        // ]);
 
+        // declare local variable to session booking data
         $data = $request->session()->get('booking_data');
 
-        DB::transaction( function() use ($request, $data){
-
-            // store booking details to database
-            $this->booking_service->storeBooking([
-                'category_id' => $data['category_id'],
-                'rental_listing_id' => $data['rental_listing_id'],
-                'booked_by' => $request->user()->id,
-                'status' => $data['status'],
-                'startDate' => $data['startDate'],
-                'startTime' => $data['startTime'],
-                'endDate' => $data['endDate'],
-                'endTime' => $data['startTime'],
-                'service_fee' => $request->service_fee,
-                'total_cost' => $request->total_cost,
-                'partial_total' => $data['partial_total'],
-                'duration_quantity' => $data['duration_quantity'],
-                'duration_type' => $data['duration']
-            ]);
-
-            // manage user contact details
-            $user_contact_detail = $request->user()->contact()->firstOrCreate(
-                ['mobile' => $request->phone]
-            );
-
-            // manage user billing address;
-            $biiling_address = $request->user()->billingAddress()->firstOrCreate(
-                ['street' => $request->address],
-                ['postal_code' => $request->zipCode],
-                ['region' => $request->region],
-                ['province' => $request->province],
-                ['city' => $request->city],
-                ['barangay' => $request->barangay],
-                ['country' => $request->country]
-            );
-            // online payment processing
+        // store booking data to database 
+        $this->booking_service->storeBooking($data + [
+            'service_fee' => $request->service_fee,
+            'total_cost' => $request->total_cost,
+            'booked_by' => auth()->user()->id,
+            'endTime' => $data['startTime'],
+            'duration_type' => 'daily',
+        ]);
         
-            // online payment gateway processing
 
-            // if success, then store the data to database
-            // check user card details
-            if($request->payment_method === 'card')
-            {
-                // check card expiry date
-                if(!$this->isDateFormatValid($request->cardExpiry)) return back()->with('error_message', 'invalid card format');
-
-                if($this->isDateExpired($request->cardExpiry)) return back()->with('error_message', 'card is expired!');
-                // then check card details
-                // $card_detail = $request->user()->cardDetail()->firstOrCreate(
-                //     ['card_number' => $request->cardNumber],
-                //     ['card_expiry' => $request->cardExpiry],
-                //     ['card_cvv' => $request->cardCvv]
-                // );
-
-                $card_detail = $request->user()->cardDetail()->firstOrCreate([
-                    'card_number' => $request->cardNumber,
-                    'card_expiry' => $request->cardExpiry,
-                    'card_cvv' => $request->cardCvv
-                ]);
-
-                $payment = $card_detail->payments()->firstOrCreate(
-                    // ['rental_listing_id' => $request->rental_listing_id],
-                    // ['amount' => $request->total_cost],
-                    // ['status' => $request->status]
-                    [
-                        'rental_listing_id' => $request->rental_listing_id,
-                        'amount' => $request->total_cost,
-                        'status' => $request->status
-                    ]
-                );
-            } 
-        });
-
+        // store transaction to activity logs
         RecentActivity::create([
             'user_id' => $request->user()->id,
             'message' => 'You booked a rental item successfully.',
@@ -153,6 +103,7 @@ class BookingController extends Controller
         
         // sending emails to users
 
+        // forget the session
         $request->session()->forget(['booking_data']);
 
         // return redirect(route('dashboard'));

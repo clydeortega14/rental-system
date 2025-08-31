@@ -61,34 +61,31 @@ Route::group(['prefix' => 'admin'], function () {
 
 Route::get('/itemDetails/{uuid}', [RentalItemController::class, 'itemDetails'])->name('itemDetails');
 
-
-
 // If the user is not authenticated but the user wants to rent an item, then the user must be redirect to a page where the user will be force to login/signup
 Route::get('/signupsignin/withsocial', [GuestController::class, 'viewSingupSigninWithSocial'])->name('signupsigninwithsocial');
+
+/* -- Submit for reservation -- */
+Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('booking.store');
+
+Route::get('item/review', [CartController::class, 'index'])->name('item.review');
 
 
 // This routes must be wrap in KYC verified middleware,
 // this middleware will force to user to submit the requirements before they can rent an item
 Route::middleware(['kyc-verified'])->group(function(){
-
-    // Check out item page
-    Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('checkout.item');
-
-    // Checkout item POST request
-    Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->middleware('kyc-verified')->name('checkout.item');
-
-    /* -- Submit for reservation -- */
-    Route::post('booking/store', [BookingController::class, 'bookingStore'])->name('booking.store');
+    
+    // proceed to checkout
+    Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
 });
 
-Route::get('shopping-cart', [CartController::class, 'index'])->name('cart.index');
-
-Route::post('checkout/booking', [BookingController::class, 'checkOutBooking'])->name('checkout.booking');
-
-
-// Route Group for lessee
+// Route Groups and Authenticated User middleware
 Route::middleware(['auth'])->group(function(){
+
+    // booking details
     Route::get('booking/details/{uuid}', [BookingController::class, 'bookingView'])->name('booking.view');
+
+    // Checkout Items Route
+    Route::get('/item/checkout', [RentalItemController::class, 'checkoutItem'])->name('checkout.item');
 });
 
 Route::middleware([
