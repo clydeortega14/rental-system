@@ -8,6 +8,7 @@ import { BookingSession } from '@/types/rental'
 import { booking } from '@/data/bookingsData'
 import LoginWithSocial from '../Guest/LoginWithSocial'
 import { toTwelveFormat } from '@/utils/timeUtils'
+import { PageProps } from '@/types'
 
 interface ICartMainContent {
     bookingData: BookingSession;
@@ -33,9 +34,6 @@ const CartMainContent = ({bookingData}: ICartMainContent) => {
 //       </div>
 //     );
 //   }
-
-console.log(bookingData.returnTime)
-
   return (
     <>
     <div className="container mx-auto px-4 py-8 bg-gray-50">

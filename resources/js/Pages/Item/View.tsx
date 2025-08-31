@@ -265,8 +265,8 @@ export default function View({
                             onClick={ () => {
                                 setSelectedDate(null);
                                 setSelectedEndDate(null);
-                                setPickUpTime(null);
-                                setReturnTime(null);
+                                setPickUpTime('');
+                                setReturnTime('');
                             }}
                         >
                             Reset
