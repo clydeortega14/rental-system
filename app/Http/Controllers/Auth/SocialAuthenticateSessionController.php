@@ -27,6 +27,7 @@ class SocialAuthenticateSessionController extends Controller
                 'provider' => $provider,
                 'provider_id' => $socialUser->getId(),
                 'password' => bcrypt(Str::random(24)),
+                'email_verified_at' => now(),
             ]
         );
 

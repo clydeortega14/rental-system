@@ -1,6 +1,6 @@
 <?php
 namespace App\Http\Controllers;
-
+use App\Http\Controllers\ConversationController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserCompanyInformation;
 use App\Models\User;
@@ -18,8 +18,6 @@ use App\Services\RentalItem\RentalItemService;
 use App\Models\RentalAddItem as RentalListing;
 use App\Models\Shop;
 use App\Models\RecentActivity;
-
-
 use Illuminate\Support\Facades\DB;
 use App\Http\Traits\DateHelpers;
 use App\Models\Booking;
@@ -42,7 +40,7 @@ class LesseeController extends Controller
         $this->category_service = $category_service;
         $this->rental_items_service = $rental_items_service;
     }
-    public function index()
+    public function index(Request $request)
     {
         $headersData = [
             ['name' => 'Item'],
@@ -113,11 +111,14 @@ class LesseeController extends Controller
             ];
         });
         $bookings = $this->booking_service->getBookingsByUser(auth()->id());
-
         $lessorReservations = $this->getLessorReservations($user->id);
         $lessorDashboard = $this->getLessorDashboardData($user->id);
         $recentActivities = $this->getRecentActivities($user->id);
-
+        // fetch conversations
+        $conversationController = new ConversationController();
+        $conversationsResponse = $conversationController->getUserConversations($request);
+        $conversations = $conversationsResponse->getData()->conversations ?? [];
+         
         return Inertia::render('Lessee/Landing', [
             'auth' => [
                 'user' => $user,
@@ -133,6 +134,7 @@ class LesseeController extends Controller
             'rentals' => $rentals,
             'recentActivities' => $recentActivities,
             'user' => $user,
+            'conversations' => $conversations,
         ]);
     }
 

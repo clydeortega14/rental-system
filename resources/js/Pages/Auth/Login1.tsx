@@ -52,7 +52,7 @@ export default function Login({ status, canResetPassword }: { status?: string; c
                                 <h2 className="text-xl font-bold mb-4  ">Login </h2>
                                 {/* LOGIN FORM */}
                                 <form onSubmit={submit} className="space-y-4">
-                                    {/* <div>
+                                    <div>
                                         <TextInput
                                             id="email"
                                             type="email"
@@ -64,9 +64,9 @@ export default function Login({ status, canResetPassword }: { status?: string; c
                                             onChange={(e) => setData('email', e.target.value)}
                                         />
                                         <InputError message={errors.email} className="mt-2" />
-                                    </div> */}
+                                    </div>
 
-                                    {/* <div className="relative">
+                                    <div className="relative">
                                         <TextInput
                                             id="password"
                                             type={showPassword ? 'text' : 'password'}
@@ -85,22 +85,22 @@ export default function Login({ status, canResetPassword }: { status?: string; c
                                         >
                                             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                         </button>
-                                    </div> */}
+                                    </div>
 
                                     {/* Remember Me */}
-                                    {/* <div className="flex items-center">
+                                    <div className="flex items-center">
                                         <Checkbox
                                             name="remember"
                                             checked={data.remember}
                                             onChange={(e) => setData('remember', e.target.checked)}
                                         />
                                         <span className="ml-2 text-sm text-gray-600">Remember me</span>
-                                    </div> */}
+                                    </div>
 
                                     {/* Submit Button */}
-                                    {/* <PrimaryButton className="w-full bg-[#f53d2d] hover:bg-[#e03728] text-white py-2 rounded" disabled={processing}>
+                                    <PrimaryButton className="w-full bg-[#f53d2d] hover:bg-[#e03728] text-white py-2 rounded" disabled={processing}>
                                         LOG IN
-                                    </PrimaryButton> */}
+                                    </PrimaryButton>
                                     {/* <button
                                         type='button'
                                         onClick={() => setIsOpen(true)}
@@ -175,7 +175,7 @@ export default function Login({ status, canResetPassword }: { status?: string; c
                                         </div>
                                     )} */}
                                     {/* Forgot Password */}
-                                    {/* {canResetPassword && (
+                                    {canResetPassword && (
                                         <div className="text-sm text-right mt-2">
                                             <Link
                                                 href={route('password.request')}
@@ -184,7 +184,7 @@ export default function Login({ status, canResetPassword }: { status?: string; c
                                                 Forgot your password?
                                             </Link>
                                         </div>
-                                    )} */}
+                                    )}
 
                                     {/* Divider */}
                                     <div className="flex items-center my-4">

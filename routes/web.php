@@ -21,14 +21,17 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\Admin\LoginController;
-
+use App\Models\Message;
+use App\Events\MessageSent;
 use App\Http\Controllers\Lessor\RentalController;
 use App\Http\Controllers\Lessor\LessorController;
 use App\Http\Controllers\Lessor\ShopController;
 use App\Http\Controllers\Lessor\ReservationController as ProperReserveController;
 use App\Http\Controllers\GuestController;
 
+
 use App\Http\Controllers\LesseeController;
+use App\Http\Controllers\ConversationController;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Client\Request;
@@ -36,7 +39,7 @@ use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-//ladingpage
+
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page.index');
 Route::get('/about-us', [LandingPageController::class, 'aboutUs'])->name('landing.page.aboutUs');
 Route::get('/how-it-works', [LandingPageController::class, 'howitWorks'])->name('landing.page.howitWorks');
@@ -141,8 +144,11 @@ Route::middleware([
     'check-user-info' // completed information details
 ])->group(function () {
 
+    Route::post('/conversations', [ConversationController::class, 'store'])->name('conversations.store');
+    Route::post('/conversations/store/lessee/message', [ConversationController::class, 'storeMessageSent'])->name('conversations.store.lessee');
+    Route::get('/conversations', [ConversationController::class, 'getUserConversations'])->name('conversations.index');
+    Route::post('/conversations/{conversation}/mark-read/{user}', [ConversationController::class, 'markRead'])->name('conversations.markRead');
     Route::get('/lessee', [LesseeController::class, 'index'])->name('lessee.profile');
-
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

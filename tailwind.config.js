@@ -49,6 +49,7 @@ export default {
                 float: 'float 3s ease-in-out infinite',
 				'slide-left': 'slideLeft 30s linear infinite',
 				popBounce: 'popBounce 0.6s ease-out',
+				bounce: "bounce 1s infinite",
 				shine: "shine 1.5s ease-in-out infinite",
 				"shrink-during-shine": "shrinkDuringShine 1.5s ease-in-out infinite",
             },
