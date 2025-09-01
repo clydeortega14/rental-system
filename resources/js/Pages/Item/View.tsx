@@ -19,6 +19,7 @@ import RentalCalendar from "../../Components/Renter/RentalCalendar";
 import { startOfToday } from "date-fns";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
+import { formatTo24Hour, timeInUTCFormat } from "@/utils/timeUtils";
 
 
 
@@ -51,8 +52,8 @@ export default function View({
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
     const [selectedEndDate, setSelectedEndDate] = useState<string | null>(null);
-    const [pickUpTime, setPickUpTime] = useState<string>('');
-    const [returnTime, setReturnTime] = useState<string>('');
+    const [pickUpTime, setPickUpTime] = useState<string>(formatTo24Hour(new Date()));
+    const [returnTime, setReturnTime] = useState<string>(formatTo24Hour(new Date()));
     
     const session_error_message = usePage<PageProps>().props.flash.error_message;
     const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[item.default_duration]);
@@ -60,8 +61,8 @@ export default function View({
     const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
         startDate: null,
         endDate: null,
-        startTime: null,
-        endTime: null,
+        startTime: formatTo24Hour(new Date()),
+        endTime: formatTo24Hour(new Date()),
         returnTime: null,
         duration: 'daily',
         quantity: 1,
@@ -85,6 +86,7 @@ export default function View({
             location: ''
         }
     });
+
 
     
 
@@ -169,6 +171,9 @@ export default function View({
                 let startOfDate = new Date(selectedDate);
                 let endOfDate = new Date(selectedEndDate);
 
+                setPickUpTime(formatTo24Hour(new Date()));
+                setReturnTime(formatTo24Hour(new Date()));
+
                 const { totalDays } = computeDateBetweenTwoDates(startOfDate, endOfDate);
                 setQuantity(totalDays);
 
@@ -183,7 +188,11 @@ export default function View({
                 setShowBookingSummaryComponent(false);
             }
 
-    }, [selectedDate, selectedEndDate])
+
+           
+            
+
+    }, [selectedDate, selectedEndDate]);
 
     const handleBookNow = () => {
 

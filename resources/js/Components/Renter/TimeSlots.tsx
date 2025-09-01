@@ -24,7 +24,10 @@ const TimeSlots = ({
         className="w-full mt-1 block" 
         id="pick-up-time"
         value={pickUpTime}
-        onChange={ (e) => setPickUpTime(e.target.value)} 
+        onChange={ (e) => {
+          console.log(e.target.value)
+          setPickUpTime(e.target.value)
+        }} 
       />
     </div>
     <div className="mb-6">
