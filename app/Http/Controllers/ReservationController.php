@@ -60,10 +60,10 @@ class ReservationController extends Controller
 
 
             $booking->is_rescheduled = true;
-            $booking->pick_up_date = $request->pick_up_date;
-            $booking->drop_off_date = $request->drop_off_date;
-            $booking->pick_up_time = !is_null($request->pick_up_time) || $request->pick_up_time !== "" ? $request->pick_up_time : $booking->pick_up_time;
-            $booking->drop_off_time = !is_null($request->drop_off_time) || $request->drop_off_time !== "" ? $request->drop_off_time : $booking->drop_off_time;
+            $booking->start_date = $request->pick_up_date;
+            $booking->end_date = $request->drop_off_date;
+            $booking->start_time = !is_null($request->pick_up_time) || $request->pick_up_time !== "" ? $request->pick_up_time : $booking->pick_up_time;
+            $booking->end_time = !is_null($request->drop_off_time) || $request->drop_off_time !== "" ? $request->drop_off_time : $booking->drop_off_time;
             $booking->save();
         }
 

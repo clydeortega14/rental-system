@@ -6,9 +6,11 @@ namespace App\Repositories\Eloquent;
 use App\Repositories\Contracts\BookingRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use App\Models\Booking;
+use App\Models\BookingStatus;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
+
 
 class BookingRepository implements BookingRepositoryInterface
 {
@@ -46,6 +48,62 @@ class BookingRepository implements BookingRepositoryInterface
                 throw new Exception('Internal Server Error', 500);
             }
             
+        });
+    }
+
+    public function updateStatus(Booking $booking, string $action) : void
+    {
+        DB::beginTransaction(function(){
+            try 
+            {
+                switch($action)
+                {
+                    case 'accept':
+
+                        $status = BookingStatus::withName('reserved')->first();
+                        break;
+
+                    case "completed":
+
+                        $status = BookingStatus:: withName('completed')->first();
+                        $booking->completed_at = Carbon::now();
+
+                        break;
+
+                    case "cancelled":
+
+                        $status = BookingStatus::withName('cancelled')->first();
+
+                        break;
+
+                    case "rescheduled":
+
+                        $status = BookingStatus::withName('rescheduled')->first();
+
+                        break;
+                    
+                    case "return":
+
+                        $status = BookingStatus::withName('returning')->first();
+
+                        break;
+
+                    default:
+
+                        break;
+                }
+
+
+                $booking->status = $status->id;
+                $booking->save();
+
+                DB::commit();
+
+            } catch (\Exception $e) {
+                DB:: rollback();
+                Log::error('{message}', ['message' => $e->getMessage()]);
+                throw new Exception('Internal Server Error', 500);
+            }
         });
     }
 
