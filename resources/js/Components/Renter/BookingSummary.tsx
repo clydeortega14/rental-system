@@ -73,13 +73,12 @@ const BookingSummary = ({
         }
         
         
-        {hasSelectedDateTime && (
-          <>
+        
             <div className="flex justify-between">
               <span className="text-gray-600">Pick up Time</span>
               <span className="font-medium">
                 {
-                  bookingDetails.startDate && pickUpTime !== null && formatDateLocale(bookingDetails.startDate) + ' - ' + toTwelveFormat(pickUpTime)
+                  bookingDetails.startDate && pickUpTime !== null && pickUpTime && formatDateLocale(bookingDetails.startDate) + ' - ' + toTwelveFormat(pickUpTime)
                 }
               </span>
             </div>
@@ -88,12 +87,11 @@ const BookingSummary = ({
               <span className="text-gray-600">Return Time</span>
               <span className="font-medium">
                 {
-                  bookingDetails.endDate && returnTime !== null && formatDateLocale(bookingDetails.endDate) + ' - ' +toTwelveFormat(returnTime)
+                  bookingDetails.endDate && returnTime !== null && returnTime && formatDateLocale(bookingDetails.endDate) + ' - ' +toTwelveFormat(returnTime)
                 }
               </span>
             </div>
-          </>
-        )}
+          
         
         {
           bookingDetails.totalPrice && (

@@ -12,6 +12,9 @@ import CardExpiryInput from "../CardExpiryInput";
 import InputError from "../InputError";
 import KycModal from "@/Pages/User/modals/KycModal";
 import { useKyc } from "@/context/KycContext";
+import Address from "./Address";
+import InputLabel from "../InputLabel";
+import TextInput from "../TextInput";
 
 interface CheckOutProps {
     bookingData: BookingSession
@@ -19,7 +22,6 @@ interface CheckOutProps {
 
 export default function CheckOut({bookingData}: CheckOutProps) {
     const user = usePage<PageProps>().props.auth.user;
-    console.log(user)
     const isVerified = user?.kyc?.kyc_verified === true;
     const [serviceFee, setServiceFee] = useState<number>(0);
     const [allTotal, setAllTotal] = useState<number>(0);
@@ -47,18 +49,25 @@ export default function CheckOut({bookingData}: CheckOutProps) {
 
     }, [bookingData.partial_total, serviceFee]);
     
+    const [deliveryAddressIsSameWithBilling, setDeliveryAddressIsSameWithBilling] = useState<boolean>(false);
     const [formData, setFormData] = useState({
-            rental_listing_id: bookingData.rental_listing.id,
-            name: user ? user.name : '',
-            email: user ? user.email : '',
-            phone: user ? user.contact?.mobile : '',
-            address: user && user.company && user.company?.street,
-            city: user ? user.company?.city : '',
-            zipCode: user ? user.company?.postal_code : '',
-            cardNumber: '',
-            cardExpiry: '',
-            cardCvv: '',
-        });
+        rental_listing_id: bookingData.rental_listing.id,
+        name: user ? user.name : '',
+        email: user ? user.email : '',
+        phone: user ? user.contact?.mobile : '',
+        address: user && user.billing_address && user.billing_address?.street,
+        province: user && user.billing_address?.province,
+        city: user ? user.billing_address?.city : '',
+        barangay: user ? user.billing_address?.barangay : '',
+        zipCode: user ? user.billing_address?.postal_code : '',
+        delivery_address: {
+            province: deliveryAddressIsSameWithBilling ? user.billing_address?.province : '',
+            city: deliveryAddressIsSameWithBilling ? user.billing_address?.city : '',
+            barangay: deliveryAddressIsSameWithBilling ? user.billing_address?.barangay: '',
+            zipcode: deliveryAddressIsSameWithBilling ? user.billing_address?.postal_code: '',
+            street: deliveryAddressIsSameWithBilling ? user.billing_address?.street : ''
+        }
+    });
 
     const { data, setData, post, processing, errors } = useForm(formData);
 
@@ -70,20 +79,11 @@ export default function CheckOut({bookingData}: CheckOutProps) {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        if(name === 'cardExpiry')
-        {
-            let exp_value = e.target.value;
 
-            if (/^\d{2}$/.test(exp_value)) {
-                exp_value += '/';
-            }
-            setFormData({...formData, [name]:exp_value})
-        }else{
-            setFormData({
-                ...formData,
-                [name]: value
-            });
-        }
+        setFormData({
+            ...formData,
+            [name]: value
+        });
         
     };
 
@@ -112,15 +112,37 @@ export default function CheckOut({bookingData}: CheckOutProps) {
         });
     };
 
+    useEffect( () => {
 
-    const handleSubmitLogin = (e: React.FormEvent) => {
+        if(deliveryAddressIsSameWithBilling) {
+            setFormData({
+                ...formData,
+                delivery_address: {
+                    province: user.billing_address?.province,
+                    city: user.billing_address?.city,
+                    barangay: user.billing_address?.barangay,
+                    zipcode: user.billing_address?.postal_code,
+                    street: user.billing_address?.street
+                }
+            })
+        }else{
+            setFormData({
+                ...formData,
+                delivery_address: {
+                    province: '',
+                    city: '',
+                    barangay: '',
+                    zipcode: '',
+                    street: ''
+                }
+            })
+        }
 
-        e.preventDefault();
+    }, [deliveryAddressIsSameWithBilling])
 
-        post(route('login'), {
-            preserveScroll: true,
-            preserveState: false
-        })
+    const handleDeliveryCheckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+        setDeliveryAddressIsSameWithBilling(e.target.checked);
     }
 
 
@@ -163,215 +185,221 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                         </div>
 
                         <form onSubmit={handleSubmit}>
-                        <div className="p-6 border-b border-gray-200">
-                            <h2 className="text-lg font-semibold text-gray-800 mb-4">Contact Information</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                                Full Name
-                                </label>
-                                <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                value={user ? user.name : formData.name}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                                Email Address
-                                </label>
-                                <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={user ? user.email : formData.email}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                                Phone Number
-                                </label>
-                                <input
-                                type="tel"
-                                id="phone"
-                                name="phone"
-                                value={ user && user.contact ? user.contact.mobile : formData.phone}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                />
-
-                                <InputError message={errors.phone} />
-                            </div>
-                            </div>
-                        </div>
-
-                        <div className="p-6 border-b border-gray-200">
-                            <h2 className="text-lg font-semibold text-gray-800 mb-4">Billing Address</h2>
-                            <div className="grid grid-cols-1 gap-4">
-                            <div>
-                                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                                Street Address
-                                </label>
-                                <input
-                                type="text"
-                                id="address"
-                                name="address"
-                                value={user &&  user.billing_address ? user.billing_address.street : formData.address}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                />
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
-                                    City
-                                </label>
-                                <input
-                                    type="text"
-                                    id="city"
-                                    name="city"
-                                    value={user &&  user.billing_address ? user.billing_address.city : formData.city}
-                                    onChange={handleInputChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                />
-                                </div>
-                                <div>
-                                <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">
-                                    ZIP / Postal Code
-                                </label>
-                                <input
-                                    type="text"
-                                    id="zipCode"
-                                    name="zipCode"
-                                    value={user &&  user.billing_address ? user.billing_address.postal_code : formData.zipCode}
-                                    onChange={handleInputChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                />
-                                </div>
-                            </div>
-                            </div>
-                        </div>
-
-                        <div className="mt-6">
-
-                            { user ? (
-                                isVerified ? (
-                                    <Button
-                                    type="submit"
-                                    variant="primary"
-                                    fullWidth
-                                    disabled={processing}
-                                    >
-                                    {processing ? 'Processing...' : `Complete Booking • ${formatPrice(allTotal)}`}
-                                    </Button>
-                                ) : (
-                                    <>
-                                    <div className="text-center py-4">
-                                        {/* <p className="text-red-600 text-sm">Please complete your identity verification to proceed.</p> */}
-                                    </div>
-                                    
-                                    </>
-                                )
-                            ) : (
-                                <LoginWithGoogle />
-                            )}
-                            
-                        </div>
-
-                        {/* <div className="p-6">
-                            <h2 className="text-lg font-semibold text-gray-800 mb-4">Payment Method</h2>
-                            <div className="mb-4">
-                            <div className="flex space-x-4 mb-6">
-                                <button
-                                type="button"
-                                onClick={() => setPaymentMethod('card')}
-                                className={`flex-1 flex items-center justify-center px-4 py-3 border rounded-lg ${
-                                    paymentMethod === 'card'
-                                    ? 'border-blue-600 bg-blue-50 text-blue-600'
-                                    : 'border-gray-300 text-gray-700'
-                                }`}
-                                >
-                                <CreditCard className="h-5 w-5 mr-2" />
-                                Credit Card
-                                </button>
-                                <button
-                                type="button"
-                                onClick={() => setPaymentMethod('paypal')}
-                                className={`flex-1 flex items-center justify-center px-4 py-3 border rounded-lg ${
-                                    paymentMethod === 'paypal'
-                                    ? 'border-blue-600 bg-blue-50 text-blue-600'
-                                    : 'border-gray-300 text-gray-700'
-                                }`}
-                                >
-                                <span className="font-bold mr-2">P</span>
-                                PayPal
-                                </button>
-                            </div>
-                            </div>
-
-                            {paymentMethod === 'card' && (
-                            <div className="grid grid-cols-1 gap-4">
-                                <div>
-                                <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700 mb-1">
-                                    Card Number
-                                </label>
-                                <input
-                                    type="text"
-                                    id="cardNumber"
-                                    name="cardNumber"
-                                    value={user && user.card_detail ? user.card_detail.card_number : formData.cardNumber}
-                                    onChange={handleInputChange}
-                                    placeholder="1234 5678 9012 3456"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                />
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    
-                                    <CardExpiryInput 
-                                        name={"cardExpiry"}
+                            <div className="p-6 border-b bordesr-gray-200">
+                                <h2 className="text-lg font-semibold text-gray-800 mb-4">Contact Information</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                                        Full Name
+                                        </label>
+                                        <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        value={user ? user.name : formData.name}
                                         onChange={handleInputChange}
-                                        value={user && user.card_detail ? user.card_detail.card_expiry :formData.cardExpiry}
-                                    />
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                                        Email Address
+                                        </label>
+                                        <input
+                                            type="email"
+                                            id="email"
+                                            name="email"
+                                            value={user ? user.email : formData.email}
+                                            onChange={handleInputChange}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                                        Phone Number
+                                        </label>
+                                        <input
+                                        type="tel"
+                                        id="phone"
+                                        name="phone"
+                                        value={ user && user.contact ? user.contact.mobile : formData.phone}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                        />
+
+                                        <InputError message={errors.phone} />
+                                    </div>
                                 </div>
+                            </div>
+
+                            <div className="p-6 border-b border-gray-200">
+
+                                <h2 className="text-lg font-semibold text-gray-800 mb-4 py-4 px-2">Billing Address</h2>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+                                    <div>
+                                        <InputLabel htmlFor="billing-province" value="Province" />
+                                        <TextInput 
+                                            id="billing-province"
+                                            name="billing_street_address"
+                                            value={formData.province}
+                                            className="w-full block mt-1"
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <InputLabel htmlFor="billing-city" value="City" />
+                                        <TextInput 
+                                            id="billing-city"
+                                            name="billing_city"
+                                            value={formData.city}
+                                            className="w-full block mt-1"
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-7">
+                                    <div>
+                                        <InputLabel htmlFor="billing-barangay" value="Barangay" />
+                                        <TextInput 
+                                            id="billing-barangay"
+                                            name="billing_barangay"
+                                            value={formData.barangay}
+                                            className="w-full block mt-1"
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+
+
+                                    <div>
+                                        <InputLabel htmlFor="billing-zipcode" value="ZipCode" />
+                                        <TextInput 
+                                            id="billing-zipcode"
+                                            name="billing_zipcode"
+                                            value={formData.zipCode}
+                                            className="w-full block mt-1"
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+                                </div>
+
                                 <div>
-                                    <label htmlFor="cardCvv" className="block text-sm font-medium text-gray-700 mb-1">
-                                    CVV
-                                    </label>
-                                    <input
-                                    type="text"
-                                    id="cardCvv"
-                                    name="cardCvv"
-                                    value={user && user.card_detail ? user.card_detail.cvv :formData.cardCvv}
-                                    onChange={handleInputChange}
-                                    placeholder="123"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                    <InputLabel htmlFor="billing-" value="Street/Floor No./House No." />
+                                    <TextInput 
+                                        id="billing-street-address"
+                                        name="billing_street_address"
+                                        value={formData.address}
+                                        className="w-full block mt-1"
+                                        onChange={handleInputChange}
                                     />
                                 </div>
+
+
+                                <h2 className="text-lg font-semibold text-gray-800 mb-4 py-4 px-2">Delivery Address</h2>
+
+                                <label className="flex items-center space-x-2">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={deliveryAddressIsSameWithBilling} 
+                                        className="h-5 w-5 text-indigoo-600 rounded-md border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                                        onChange={handleDeliveryCheckChange}
+                                    />
+                                    <span className="text-gray-800">Same As Billing Address</span> 
+                                </label>
+
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                                    <div>
+                                        <InputLabel htmlFor="billing-province" value="Province" />
+                                        <TextInput 
+                                            id="billing-province"
+                                            name="billing_street_address"
+                                            value={formData.delivery_address.province}
+                                            className="w-full block mt-1"
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <InputLabel htmlFor="billing-city" value="City" />
+                                        <TextInput 
+                                            id="billing-city"
+                                            name="billing_city"
+                                            value={formData.delivery_address.city}
+                                            className="w-full block mt-1"
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            )}
 
-                            {paymentMethod === 'paypal' && (
-                            <div className="text-center py-6">
-                                <p className="text-gray-600 mb-4">
-                                You will be redirected to PayPal to complete your payment.
-                                </p>
-                            </div>
-                            )}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+                                    <div>
+                                        <InputLabel htmlFor="billing-barangay" value="Barangay" />
+                                        <TextInput 
+                                            id="billing-barangay"
+                                            name="billing_barangay"
+                                            value={formData.delivery_address.barangay}
+                                            className="w-full block mt-1"
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
 
-                            
-                        </div> */}
+
+                                    <div>
+                                        <InputLabel htmlFor="billing-zipcode" value="ZipCode" />
+                                        <TextInput 
+                                            id="billing-zipcode"
+                                            name="billing_zipcode"
+                                            value={formData.delivery_address.zipcode}
+                                            className="w-full block mt-1"
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+                                </div>
+
+                                
+
+                                <div className="mb-6">
+                                    <InputLabel htmlFor="billing-" value="Street/Floor No./House No." />
+                                    <TextInput 
+                                        id="billing-street-address"
+                                        name="billing_street_address"
+                                        value={formData.delivery_address.street}
+                                        className="w-full block mt-1"
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                                
+                            </div>
+
+                            <div className="mt-6">
+
+                                { user ? (
+                                    isVerified ? (
+                                        <Button
+                                        type="submit"
+                                        variant="primary"
+                                        fullWidth
+                                        disabled={processing}
+                                        >
+                                        {processing ? 'Processing...' : `Complete Booking • ${formatPrice(allTotal)}`}
+                                        </Button>
+                                    ) : (
+                                        <>
+                                        <div className="text-center py-4">
+                                            {/* <p className="text-red-600 text-sm">Please complete your identity verification to proceed.</p> */}
+                                        </div>
+                                        
+                                        </>
+                                    )
+                                ) : (
+                                    <LoginWithGoogle />
+                                )}
+                                
+                            </div>
                         </form>
-
-                        {/* {
-                            !user && <LoginWithGoogle />
-                        } */}
                     </div>
                     </div>
 
