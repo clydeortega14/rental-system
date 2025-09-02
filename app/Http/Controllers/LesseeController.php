@@ -140,6 +140,7 @@ class LesseeController extends Controller
 
     public function store(Request $request)
     {
+       
         $validated = $request->validate([
             'fullname' => 'required|string',
             'business_name' => 'required|string',

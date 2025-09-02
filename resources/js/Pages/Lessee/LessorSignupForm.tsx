@@ -1,4 +1,5 @@
-import { useEffect, useState,useRef  } from "react";
+
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "@inertiajs/react";
 import {
   regions,
@@ -8,6 +9,7 @@ import {
 } from "select-philippines-address";
 import Swal from 'sweetalert2';
 import { router } from "@inertiajs/react";
+import UploadCard from "./UploadCard";
 
 interface LessorsignUserupFormProps {
   signUser: {
@@ -47,21 +49,21 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
   const [step, setStep] = useState(1);
 
   const { data, setData, post, processing, errors } = useForm({
-    fullname: signUser.user.name || "N/A",
-    business_name: signUser.user.company?.name || "N/A",
-    email: signUser.user.email || "N/A",
-    phone: signUser.user.contact?.mobile || "N/A",
+    fullname: signUser.user.name,
+    business_name: signUser.user.company?.name,
+    email: signUser.user.email,
+    phone: signUser.user.contact?.mobile,
     type: signUser.user.company?.business_type,
     business_reg_number: signUser.user.company?.business_reg_number,
-    business_address: signUser.user.company?.business_address || "N/A",
-    street: signUser.user.company?.street || "N/A",
-    region: signUser.user.company?.region || "N/A",
+    business_address: signUser.user.company?.business_address,
+    street: signUser.user.company?.street,
+    region: signUser.user.company?.region,
     province: signUser.user.company?.province,
-    city: signUser.user.company?.city || "",
-    country: signUser.user.company?.country || "Philippines",
-    postal_code: signUser.user.company?.postal_code || "N/A",
-    tin: signUser.user.company?.tin || "N/A",
-    barangay: signUser.user.company?.barangay || "",
+    city: signUser.user.company?.city,
+    country: signUser.user.company?.country,
+    postal_code: signUser.user.company?.postal_code,
+    tin: signUser.user.company?.tin,
+    barangay: signUser.user.company?.barangay,
     business_documents: [] as { file: File; type: string }[],
   });
 
@@ -82,7 +84,14 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
   const permitRef = useRef<HTMLInputElement>(null);
   const secRef = useRef<HTMLInputElement>(null);
   const birRef = useRef<HTMLInputElement>(null);
-  
+  const [uploadedFiles, setUploadedFiles] = useState<Record<string, Record<string, File | null>>>({});
+  const [localErrors, setLocalErrors] = useState<Record<string, string>>({});
+
+
+  type DocumentRequirement = {
+    label: string;
+    required: boolean;
+  };
 
 
   type Region = {
@@ -106,79 +115,127 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
   };
 
   type BusinessField =
-  | "type"
-  | "business_reg_number"
-  | "province"
-  | "fullname"
-  | "business_name"
-  | "email"
-  | "phone"
-  | "business_address"
-  | "street"
-  | "region"
-  | "city"
-  | "country"
-  | "postal_code"
-  | "tin"
-  | "barangay";
+    | "type"
+    | "business_reg_number"
+    | "province"
+    | "fullname"
+    | "business_name"
+    | "email"
+    | "phone"
+    | "business_address"
+    | "street"
+    | "region"
+    | "city"
+    | "country"
+    | "postal_code"
+    | "tin"
+    | "barangay";
 
-  const fields: { key: BusinessField; label: string; type?: string }[] = [
-    { key: "fullname", label: "Name" },
-    { key: "business_name", label: "Business Name" },
+
+  const businessRequirements: Record<string, DocumentRequirement[]> = {
+    "Sole Proprietorship": [
+      { label: "Business Permit", required: true },
+      { label: "DTI Registration", required: true },
+    ],
+    "Property Manager": [
+      { label: "Business Permit", required: true },
+      { label: "SEC Registration", required: true },
+    ],
+    "Agency": [
+      { label: "Business Permit", required: true },
+      { label: "SEC Registration", required: true },
+    ],
+    "Equipment Owner": [
+      { label: "Government-issued ID", required: true },
+    ],
+    "Individual": [
+      { label: "Government-issued ID", required: true },
+    ],
+  };
+  const handleDynamicFileUpload = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    docLabel: string
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        Swal.fire({
+          title: "File Too Large",
+          text: `${docLabel} must be less than 2MB.`,
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+        e.target.value = "";
+        return;
+      }
+
+      setUploadedFiles((prev) => ({
+        ...prev,
+        [data.type || ""]: {
+          ...(prev[data.type || ""] || {}),
+          [docLabel]: file,
+        },
+      }));
+    }
+  };
+
+  const fields: { key: BusinessField; label: string; type?: string; pattern?: string; maxLength?: number }[] = [
+    { key: "fullname", label: "Name", pattern: "^[a-zA-Z0-9 ]*$", },
+    { key: "business_name", label: "Business Name", pattern: "^[a-zA-Z0-9 ]*$" },
     { key: "email", label: "Email", type: "email" },
-    { key: "phone", label: "Phone Number" },
+    { key: "phone", label: "Phone Number", pattern: "^[0-9]{11}$", maxLength: 11 },
   ];
 
-  const fieldsData: { key: BusinessField; label: string }[] = [
-  { key: "business_reg_number", label: "Business Registration Number" },
-  { key: "business_address", label: "Business Address" },
-  { key: "street", label: "Street" },
-  { key: "postal_code", label: "Postal Code" },
-  { key: "tin", label: "TIN (Tax ID)" },
-];
+  const fieldsData: { key: BusinessField; label: string; pattern?: string; maxLength?: number }[] = [
+    { key: "business_reg_number", label: "Business Registration Number", pattern: "^[a-zA-Z0-9 ]*$" },
+    { key: "business_address", label: "Business Address", pattern: "^[a-zA-Z0-9 ]*$" },
+    { key: "street", label: "Street", pattern: "^[a-zA-Z0-9 ]*$" },
+    { key: "postal_code", label: "Postal Code", pattern: "^[0-9]{4}$", maxLength: 4 }, // ✅ exactly 4 digits
+    { key: "tin", label: "TIN (Tax ID)", pattern: "^[a-zA-Z0-9]*$" },
+  ];
 
   useEffect(() => {
-  // Initial region list
-  regions().then((regions: Region[]) => {
-    setRegionList(regions);
+    // Initial region list
+    regions().then((regions: Region[]) => {
+      setRegionList(regions);
 
-    const userRegion = signUser.user.company?.region;
-    const regionObj = regions.find(r => r.region_name === userRegion);
-    if (regionObj) {
-      const regionCode = regionObj.region_code;
-      setSelectedRegion(regionCode);
-      setData("region", regionObj.region_name);
+      const userRegion = signUser.user.company?.region;
+      const regionObj = regions.find(r => r.region_name === userRegion);
+      if (regionObj) {
+        const regionCode = regionObj.region_code;
+        setSelectedRegion(regionCode);
+        setData("region", regionObj.region_name);
 
-      provinces(regionCode).then((prov: Province[]) => {
-        setProvList(prov);
+        provinces(regionCode).then((prov: Province[]) => {
+          setProvList(prov);
 
-        const userProvince = signUser.user.company?.province;
-        const provObj = prov.find(p => p.province_name === userProvince);
-        if (provObj) {
-          const provCode = provObj.province_code;
-          setSelectedProvince(provCode);
-          setData("province", provObj.province_name);
+          const userProvince = signUser.user.company?.province;
+          const provObj = prov.find(p => p.province_name === userProvince);
+          if (provObj) {
+            const provCode = provObj.province_code;
+            setSelectedProvince(provCode);
+            setData("province", provObj.province_name);
 
-          cities(provCode).then((cityList: City[]) => {
-            setCityList(cityList);
+            cities(provCode).then((cityList: City[]) => {
+              setCityList(cityList);
 
-            const userCity = signUser.user.company?.city;
-            const cityObj = cityList.find(c => c.city_name === userCity);
-            if (cityObj) {
-              const cityCode = cityObj.city_code;
-              setSelectedCity(cityCode);
-              setData("city", cityObj.city_name);
+              const userCity = signUser.user.company?.city;
+              const cityObj = cityList.find(c => c.city_name === userCity);
+              if (cityObj) {
+                const cityCode = cityObj.city_code;
+                setSelectedCity(cityCode);
+                setData("city", cityObj.city_name);
 
-              barangays(cityCode).then((brgyList: Barangay[]) => {
-                setBrgyList(brgyList);
-              });
-            }
-          });
-        }
-      });
-    }
-  });
-}, []);
+                barangays(cityCode).then((brgyList: Barangay[]) => {
+                  setBrgyList(brgyList);
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+  }, []);
   const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const regionCode = e.target.value;
     setSelectedRegion(regionCode);
@@ -191,7 +248,7 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
     setData("barangay", "");
 
     // Fetch provinces
-     provinces(regionCode).then((prov: Province[]) => {
+    provinces(regionCode).then((prov: Province[]) => {
       setProvList(prov);
 
       const selectedRegionObj = regionList.find(r => r.region_code === regionCode);
@@ -238,42 +295,142 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
     setData("barangay", e.target.value);
   };
 
-  const handleNext = () => setStep((prev) => prev + 1);
+  const validateStep1 = () => {
+    let valid = true;
+    const newErrors: Record<string, string> = {};
+
+    fields.forEach(({ key, label }) => {
+      const value = data[key] || "";
+
+      if (!value.trim()) {
+        newErrors[key] = `${label} is required.`;
+        valid = false;
+      } else if (key === "phone" && !/^[0-9]{11}$/.test(value)) {
+        newErrors[key] = "Phone number must be exactly 11 digits.";
+        valid = false;
+      } else if (key === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        newErrors[key] = "Invalid email address.";
+        valid = false;
+      } else if (key !== "email" && key !== "phone" && !/^[a-zA-Z0-9 ]*$/.test(value)) {
+        newErrors[key] = `${label} can only contain letters and numbers.`;
+        valid = false;
+      }
+    });
+
+    setLocalErrors(newErrors);
+
+    if (!valid) {
+      Swal.fire({
+        title: "Validation Error",
+        text: "Please fix the highlighted errors before continuing.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+
+    return valid;
+  };
+
+
+  const handleNext = () => {
+    if (validateStep1()) {
+      setStep((prev) => prev + 1);
+    }
+  };
+
   const handlePrev = () => setStep((prev) => prev - 1);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const formData = new FormData();
+    let valid = true;
+    const newErrors: Record<string, string> = {};
 
-    // Append all form fields
+    // ✅ Step 1: Validate all required fields in fieldsData
+    for (const field of fieldsData) {
+      const value = data[field.key];
+
+      if (!value || value.toString().trim() === "") {
+        newErrors[field.key] = `${field.label} is required.`;
+        valid = false;
+      } else if (field.pattern && !(new RegExp(field.pattern).test(value.toString()))) {
+        newErrors[field.key] = `${field.label} has an invalid format.`;
+        valid = false;
+      } else if (field.maxLength && value.toString().length > field.maxLength) {
+        newErrors[field.key] = `${field.label} must not exceed ${field.maxLength} characters.`;
+        valid = false;
+      }
+    }
+
+    // ✅ Step 2: Validate required dropdowns
+    if (!data.type) {
+      newErrors["type"] = "Please select a Business Type.";
+      valid = false;
+    }
+    if (!data.region) {
+      newErrors["region"] = "Please select a Region.";
+      valid = false;
+    }
+    if (!data.province) {
+      newErrors["province"] = "Please select a Province.";
+      valid = false;
+    }
+    if (!data.city) {
+      newErrors["city"] = "Please select a City/Municipality.";
+      valid = false;
+    }
+    if (!data.barangay) {
+      newErrors["barangay"] = "Please select a Barangay.";
+      valid = false;
+    }
+    if (!data.country) {
+      newErrors["country"] = "Please input Country name.";
+      valid = false;
+    }
+
+    setLocalErrors(newErrors);
+
+    if (!valid) {
+      Swal.fire({
+        title: "Validation Error",
+        text: "Please fix the highlighted errors before continuing.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
+    // ✅ Step 3: Validate required documents
+    const requirements = businessRequirements[data.type || ""] || [];
+    const typeFiles = uploadedFiles[data.type || ""] || {};
+
+    for (const req of requirements) {
+      if (req.required && !typeFiles[req.label]) {
+        Swal.fire({
+          title: "Missing File",
+          text: `Please upload ${req.label}.`,
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+        return;
+      }
+    }
+
+    const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         formData.append(key, value as string);
       }
     });
 
-    // Validate required files before appending
-    if (!permitFile || !secFile || !birFile) {
-      Swal.fire({
-        title: "Missing Files",
-        text: "Please upload all required business documents.",
-        icon: "warning",
-        confirmButtonText: "OK",
-      });
-      return;
-    }
+    Object.entries(typeFiles).forEach(([label, file]) => {
+      if (file) {
+        formData.append("business_documents[]", file);
+        formData.append("document_names[]", label);
+      }
+    });
 
-    formData.append("business_documents[]", permitFile);
-    formData.append("document_names[]", "Business Permit");
-
-    formData.append("business_documents[]", secFile);
-    formData.append("document_names[]", "SEC Certificate");
-
-    formData.append("business_documents[]", birFile);
-    formData.append("document_names[]", "BIR Form 2303");
-
-    // Submit using Inertia router (not useForm) because we’re using FormData
+    // ✅ Step 4: Submit with Inertia
     router.post("/lessor/signUserup", formData, {
       forceFormData: true,
       onSuccess: () => {
@@ -297,6 +454,7 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
     });
   };
 
+
   const handleFileUpload = (
     e: React.ChangeEvent<HTMLInputElement>,
     setFile: React.Dispatch<React.SetStateAction<File | null>>,
@@ -317,97 +475,43 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
     }
   };
 
-  const UploadCard = ({
-    title,
-    file,
-    onClick,
-    onRemove,
-  }: {
-    title: string;
-    file: File | null;
-    onClick: () => void;
-    onRemove: () => void;
-  }) => {
-    const isImage = file?.type.startsWith("image/");
-    const previewUrl = file && isImage ? URL.createObjectURL(file) : null;
-
-    return (
-      <div
-        onClick={onClick}
-        className="relative cursor-pointer h-40 border-2 border-dashed border-orange-400 flex flex-col items-center justify-center rounded-lg hover:bg-orange-50 transition overflow-hidden"
-      >
-        {file ? (
-          <>
-            {/* Preview */}
-            {isImage ? (
-              <img
-                src={previewUrl!}
-                alt={title}
-                className="absolute inset-0 object-cover w-full h-full"
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-10 w-10 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              </div>
-            )}
-
-            {/* Overlay Info */}
-            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2 flex justify-between items-center">
-              <span className="truncate">{file.name}</span>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRemove();
-                }}
-                className="ml-2 text-red-300 hover:text-red-500"
-              >
-                Remove
-              </button>
-            </div>
-          </>
-        ) : (
-          <>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-10 w-10 text-orange-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            <span className="mt-2 text-sm text-orange-600 font-semibold text-center">{title}</span>
-          </>
-        )}
-      </div>
-    );
-  };
-
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-8xl mx-auto">
       {step === 1 && (
         <div>
           <h3 className="text-2xl font-bold mb-6 text-orange-600">Account Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {fields.map(({ key, label, type }) => (
+            {fields.map(({ key, label, type, pattern, maxLength }) => (
               <div key={key}>
                 <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>
                 <input
                   type={type || "text"}
                   value={data[key] || ""}
-                  onChange={(e) => setData(key, e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                  onChange={(e) => {
+                    let value = e.target.value;
+
+                    // ✅ Input restrictions
+                    if (key === "phone") {
+                      value = value.replace(/[^0-9]/g, "").slice(0, 11);
+                    } else if (key === "email") {
+                      // leave raw for email
+                    } else {
+                      value = value.replace(/[^a-zA-Z0-9 ]/g, "");
+                    }
+
+                    setData(key, value);
+                  }}
+                  maxLength={maxLength}
+                  pattern={pattern}
+                  className={`w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none ${localErrors[key] ? "border-red-500" : "border-gray-300"
+                    }`}
+                  required
                 />
-                {errors[key] && <p className="text-sm text-red-500 mt-1">{errors[key]}</p>}
+                {(localErrors[key] || errors[key]) && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {localErrors[key] || errors[key]}
+                  </p>
+                )}
               </div>
             ))}
           </div>
@@ -428,36 +532,62 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
           <h3 className="text-2xl font-bold mb-6 text-orange-600">Business Profile</h3>
 
           <div className="mb-6">
-            <label className="block mb-2 text-sm font-medium text-gray-700">Business Type</label>
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+              Business Type
+            </label>
             <div className="flex flex-wrap gap-4">
-              {["Individual", "Company", "Agency", "Property Manager", "Equipment Owner"].map((type) => (
-                <label key={type} className="flex items-center gap-2 text-sm text-gray-700">
-                  <input
-                    type="radio"
-                    value={type}
-                    checked={data.type === type}
-                    onChange={(e) => setData("type", e.target.value)}
-                    className="accent-orange-600"
-                  />
-                  {type}
-                </label>
-              ))}
+              {["Individual", "Sole Proprietorship", "Agency", "Property Manager", "Equipment Owner"].map(
+                (type) => (
+                  <label
+                    key={type}
+                    className="flex items-center gap-2 text-sm text-gray-700"
+                  >
+                    <input
+                      type="radio"
+                      value={type}
+                      checked={data.type === type}
+                      onChange={(e) => setData("type", e.target.value)}
+                      className="accent-orange-600"
+                    />
+                    {type}
+                  </label>
+                )
+              )}
             </div>
-            {errors.type && <p className="text-sm text-red-500 mt-1">{errors.type}</p>}
+            {localErrors["type"] && <p className="text-sm text-red-500 mt-1">{localErrors["type"]}</p>}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Business Registration and Address */}
-            {fieldsData.map(({ key, label }) => (
+            {fieldsData.map(({ key, label, pattern, maxLength }) => (
               <div key={key}>
                 <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>
                 <input
                   type="text"
                   value={data[key] || ""}
-                  onChange={(e) => setData(key, e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                  onChange={(e) => {
+                    let value = e.target.value;
+                    if (key === "postal_code") {
+                      value = value.replace(/[^0-9]/g, "").slice(0, 4);
+                    }
+                    setData(key, value);
+
+                    // ✅ Clear error if field now has a valid value
+                    setLocalErrors((prev) => {
+                      const newErrors = { ...prev };
+                      if (value.trim()) {
+                        delete newErrors[key]; // remove error for this field
+                      }
+                      return newErrors;
+                    });
+                  }}
+                  maxLength={maxLength}
+                  pattern={pattern}
+                  className={`w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none ${localErrors[key] ? "border-red-500" : "border-gray-300"
+                    }`}
                 />
-                {errors[key] && <p className="text-sm text-red-500 mt-1">{errors[key]}</p>}
+                {localErrors[key] && <p className="text-sm text-red-500 mt-1">{localErrors[key]}</p>}
+
               </div>
             ))}
 
@@ -468,7 +598,8 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
               <select
                 value={selectedRegion}
                 onChange={handleRegionChange}
-                className="w-full border border-gray-300 rounded-md px-4 py-2"
+                className={`w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none ${errors.region ? "border-red-500" : "border-gray-300"
+                  }`}
               >
                 <option value="">Select Region</option>
                 {regionList.map((r) => (
@@ -477,6 +608,7 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
                   </option>
                 ))}
               </select>
+              {localErrors["region"] && <p className="text-sm text-red-500 mt-1">{localErrors["region"]}</p>}
             </div>
 
             {/* Province */}
@@ -485,7 +617,8 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
               <select
                 value={selectedProvince}
                 onChange={handleProvinceChange}
-                className="w-full border border-gray-300 rounded-md px-4 py-2"
+                className={`w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none ${errors.province ? "border-red-500" : "border-gray-300"
+                  }`}
               >
                 <option value="">Select Province</option>
                 {provList.map((p) => (
@@ -494,6 +627,7 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
                   </option>
                 ))}
               </select>
+              {localErrors["province"] && <p className="text-sm text-red-500 mt-1">{localErrors["province"]}</p>}
             </div>
 
             {/* City */}
@@ -502,16 +636,18 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
               <select
                 value={selectedCity}
                 onChange={handleCityChange}
-                className="w-full border border-gray-300 rounded-md px-4 py-2"
+                className={`w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none ${errors.city ? "border-red-500" : "border-gray-300"
+                  }`}
               >
                 <option value="">Select City</option>
                 {cityList.map((c) => (
                   <option key={c.city_code} value={c.city_code}>
-                    
+
                     {c.city_name}
                   </option>
                 ))}
               </select>
+              {localErrors["city"] && <p className="text-sm text-red-500 mt-1">{localErrors["city"]}</p>}
             </div>
 
             {/* Barangay */}
@@ -520,7 +656,8 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
               <select
                 value={data.barangay}
                 onChange={handleBarangayChange}
-                className="w-full border border-gray-300 rounded-md px-4 py-2"
+                className={`w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none ${errors.barangay ? "border-red-500" : "border-gray-300"
+                  }`}
               >
                 <option value="">Select Barangay</option>
                 {brgyList.map((b) => (
@@ -529,6 +666,7 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
                   </option>
                 ))}
               </select>
+              {localErrors["barangay"] && <p className="text-sm text-red-500 mt-1">{localErrors["barangay"]}</p>}
             </div>
 
             {/* Country */}
@@ -540,43 +678,52 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
                 onChange={(e) => setData("country", e.target.value)}
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
               />
-              {errors.country && <p className="text-sm text-red-500 mt-1">{errors.country}</p>}
+              {localErrors["country"] && <p className="text-sm text-red-500 mt-1">{localErrors["country"]}</p>}
+
             </div>
           </div>
 
-          {/* Upload Card + Previews */}
-          <div className="mt-6">
-            <p className="text-sm font-semibold text-gray-700 mb-2">
-              Upload Business Documents <span className="text-red-400">(Required: Business Permit, SEC Certificate, BIR Form 2303)</span>
-            </p>
+          {/* ✅ Only show this if a type is selected */}
+          {data.type && (
+            <div className="mt-6">
+              <h3 className="text-base font-semibold text-gray-800 mb-3">
+                Upload Business Documents{" "}
+                {data.type && (
+                  <span className="text-gray-500 font-normal">
+                    ({data.type})
+                  </span>
+                )}
+              </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {/* File inputs (hidden) */}
-              <input ref={permitRef} type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => handleFileUpload(e, setPermitFile, "Business Permit")} />
-              <input ref={secRef} type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => handleFileUpload(e, setSecFile, "SEC Certificate")} />
-              <input ref={birRef} type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => handleFileUpload(e, setBirFile, "BIR Form 2303")} />
-
-              {/* Upload cards */}
-              <UploadCard
-                title="Business Permit"
-                file={permitFile}
-                onClick={() => permitRef.current?.click()}
-                onRemove={() => setPermitFile(null)}
-              />
-              <UploadCard
-                title="SEC Certificate"
-                file={secFile}
-                onClick={() => secRef.current?.click()}
-                onRemove={() => setSecFile(null)}
-              />
-              <UploadCard
-                title="BIR Form 2303"
-                file={birFile}
-                onClick={() => birRef.current?.click()}
-                onRemove={() => setBirFile(null)}
-              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {businessRequirements[data.type]?.map((doc) => (
+                  <div key={doc.label}>
+                    <input
+                      type="file"
+                      id={doc.label}
+                      className="hidden"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={(e) => handleDynamicFileUpload(e, doc.label)}
+                    />
+                    <UploadCard
+                      title={`${doc.label} *`}
+                      file={uploadedFiles[data.type || ""]?.[doc.label] || null}
+                      onClick={() => document.getElementById(doc.label)?.click()}
+                      onRemove={() =>
+                        setUploadedFiles((prev) => ({
+                          ...prev,
+                          [data.type || ""]: {
+                            ...(prev[data.type || ""] || {}),
+                            [doc.label]: null,
+                          },
+                        }))
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="flex justify-between mt-8">
             <button
@@ -589,15 +736,15 @@ export default function LessorsignUserupForm({ signUser }: LessorsignUserupFormP
             <button
               type="submit"
               disabled={processing}
-              className={`${
-                processing ? "bg-orange-300 cursor-not-allowed" : "bg-orange-600 hover:bg-orange-700"
-              } text-white font-semibold px-6 py-2 rounded transition`}
+              className={`${processing ? "bg-orange-300 cursor-not-allowed" : "bg-orange-600 hover:bg-orange-700"
+                } text-white font-semibold px-6 py-2 rounded transition`}
             >
               {processing ? "Submitting..." : "Submit"}
             </button>
           </div>
         </div>
-      )}
-    </form>
+      )
+      }
+    </form >
   );
 }
