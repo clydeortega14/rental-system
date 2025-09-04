@@ -16,10 +16,11 @@ import { PropsWithChildren, useState } from "react";
 
 interface CheckOutProps {
     booking_data: BookingSession;
+    serviceFee: number;
     user: User;
 }
 
-export default function Checkout({booking_data, user}: CheckOutProps){
+export default function Checkout({booking_data, user, serviceFee}: CheckOutProps){
     return (
 
         <RenterLayout>
@@ -30,6 +31,7 @@ export default function Checkout({booking_data, user}: CheckOutProps){
                 <KycProvider>
                     <CheckOut 
                         bookingData={booking_data}
+                        serviceFee={serviceFee}
                     />
                 </KycProvider>
             </CartProvider>

@@ -17,24 +17,25 @@ import InputLabel from "../InputLabel";
 import TextInput from "../TextInput";
 
 interface CheckOutProps {
-    bookingData: BookingSession
+    bookingData: BookingSession;
+    serviceFee: number;
 }
 
-export default function CheckOut({bookingData}: CheckOutProps) {
+export default function CheckOut({bookingData, serviceFee}: CheckOutProps) {
     const user = usePage<PageProps>().props.auth.user;
     const isVerified = user?.kyc?.kyc_verified === true;
-    const [serviceFee, setServiceFee] = useState<number>(0);
+    // const [serviceFee, setServiceFee] = useState<number>(0);
     const [allTotal, setAllTotal] = useState<number>(0);
     const error_message = usePage<PageProps>().props.flash.error_message
 
     const {showKycModal, setShowKycModal } = useKyc();
 
-    useEffect( () => {
+    // useEffect( () => {
 
-        const service_fee = bookingData.partial_total * 0.03;
-        setServiceFee(service_fee)
-        setData
-    }, [bookingData.partial_total]);
+    //     const service_fee = bookingData.partial_total * 0.03;
+    //     setServiceFee(service_fee)
+    //     setData
+    // }, [bookingData.partial_total]);
 
     useEffect( () => {
 
