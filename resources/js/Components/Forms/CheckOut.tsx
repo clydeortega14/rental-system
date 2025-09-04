@@ -18,13 +18,13 @@ import TextInput from "../TextInput";
 
 interface CheckOutProps {
     bookingData: BookingSession;
-    serviceFee: number;
+    categoryServiceFee: number;
 }
 
-export default function CheckOut({bookingData, serviceFee}: CheckOutProps) {
+export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProps) {
     const user = usePage<PageProps>().props.auth.user;
     const isVerified = user?.kyc?.kyc_verified === true;
-    // const [serviceFee, setServiceFee] = useState<number>(0);
+    const [serviceFee, setServiceFee] = useState<number>(categoryServiceFee);
     const [allTotal, setAllTotal] = useState<number>(0);
     const error_message = usePage<PageProps>().props.flash.error_message
 
@@ -32,10 +32,9 @@ export default function CheckOut({bookingData, serviceFee}: CheckOutProps) {
 
     // useEffect( () => {
 
-    //     const service_fee = bookingData.partial_total * 0.03;
-    //     setServiceFee(service_fee)
-    //     setData
-    // }, [bookingData.partial_total]);
+    //     const service_fee = Number(bookingData.partial_total) + categoryServiceFee;
+    //     setServiceFee(service_fee);
+    // }, [bookingData.partial_total, categoryServiceFee]);
 
     useEffect( () => {
 
@@ -450,7 +449,7 @@ export default function CheckOut({bookingData, serviceFee}: CheckOutProps) {
                         </div>
                         <div className="flex justify-between mb-2">
                             <span className="text-gray-600">Service fee</span>
-                            <span className="text-gray-900">{formatPrice(serviceFee)}</span>
+                            <span className="text-gray-900">{serviceFee}</span>
                         </div>
                         </div>
                         

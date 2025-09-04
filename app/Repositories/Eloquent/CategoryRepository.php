@@ -12,7 +12,7 @@ class CategoryRepository implements CategoryRepositoryInterface
     {
         $category = $this->findCategoryById($categoryId);
 
-        return !is_null($category->templateCategory) ? $category->templateCategory->service_free : 0.03;
+        return !is_null($category->templateCategory) ? $category->templateCategory->service_fee : 0.03;
     }
 
     public function findCategoryById(int $categoryId): ?Category

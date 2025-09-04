@@ -31,7 +31,7 @@ export default function Checkout({booking_data, user, serviceFee}: CheckOutProps
                 <KycProvider>
                     <CheckOut 
                         bookingData={booking_data}
-                        serviceFee={serviceFee}
+                        categoryServiceFee={serviceFee}
                     />
                 </KycProvider>
             </CartProvider>
