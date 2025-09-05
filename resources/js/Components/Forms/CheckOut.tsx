@@ -273,7 +273,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="billing-" value="Street/Floor No./House No." />
+                                    <InputLabel htmlFor="billing-street-address" value="Street/Floor No./House No." />
                                     <TextInput 
                                         id="billing-street-address"
                                         name="billing_street_address"
@@ -349,7 +349,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                 
 
                                 <div className="mb-6">
-                                    <InputLabel htmlFor="billing-" value="Street/Floor No./House No." />
+                                    <InputLabel htmlFor="billing-street-address" value="Street/Floor No./House No." />
                                     <TextInput 
                                         id="billing-street-address"
                                         name="billing_street_address"
@@ -436,7 +436,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                         </div>
                         <div className="flex justify-between mb-2">
                             <span className="text-gray-600">Service fee </span>
-                            <span className="text-gray-900">{serviceFee}</span>
+                            <span className="text-gray-900">{formatPrice(serviceFee)}</span>
                         </div>
                         </div>
                         
