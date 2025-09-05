@@ -24,17 +24,11 @@ interface CheckOutProps {
 export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProps) {
     const user = usePage<PageProps>().props.auth.user;
     const isVerified = user?.kyc?.kyc_verified === true;
-    const [serviceFee, setServiceFee] = useState<number>(categoryServiceFee);
-    const [allTotal, setAllTotal] = useState<number>(0);
+    const [serviceFee, setServiceFee] = useState<number>(Number(bookingData.partial_total) * categoryServiceFee);
+    const [allTotal, setAllTotal] = useState<number>(Number(bookingData.partial_total) + serviceFee);
     const error_message = usePage<PageProps>().props.flash.error_message
 
     const {showKycModal, setShowKycModal } = useKyc();
-
-    // useEffect( () => {
-
-    //     const service_fee = Number(bookingData.partial_total) + categoryServiceFee;
-    //     setServiceFee(service_fee);
-    // }, [bookingData.partial_total, categoryServiceFee]);
 
     useEffect( () => {
 
@@ -42,13 +36,6 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
 
     }, [user]);
 
-    useEffect( () => {
-
-        let calculated_total = Number(bookingData.partial_total) + serviceFee;
-        setAllTotal(calculated_total);
-
-    }, [bookingData.partial_total, serviceFee]);
-    
     const [deliveryAddressIsSameWithBilling, setDeliveryAddressIsSameWithBilling] = useState<boolean>(false);
     const [formData, setFormData] = useState({
         rental_listing_id: bookingData.rental_listing.id,
@@ -448,7 +435,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                             <span className="text-gray-900">{formatPrice(bookingData.partial_total)}</span>
                         </div>
                         <div className="flex justify-between mb-2">
-                            <span className="text-gray-600">Service fee</span>
+                            <span className="text-gray-600">Service fee </span>
                             <span className="text-gray-900">{serviceFee}</span>
                         </div>
                         </div>
