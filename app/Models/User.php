@@ -11,10 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Traits\Uuid;
 use App\Models\Lessor;
+use App\Http\Traits\PostalAddress\hasPostalAddressTraits;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable, Uuid;
+    use HasFactory, Notifiable, Uuid, hasPostalAddressTraits;
 
     /**
      * The attributes that are mass assignable.

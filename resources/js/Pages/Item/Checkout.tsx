@@ -6,6 +6,7 @@ import NavbarHeader from "@/Components/Header";
 import Button from "@/Components/Renter/ui/Button";
 import { CartProvider, useCart } from "@/context/CartContext";
 import { KycProvider } from "@/context/KycContext";
+import { PostalAddressProvider } from "@/context/PostalAddressContext";
 import RenterLayout from "@/Layouts/RenterLayout";
 import { User } from "@/types";
 import { BookingSession } from "@/types/rental";
@@ -29,10 +30,12 @@ export default function Checkout({booking_data, user, serviceFee}: CheckOutProps
 
             <CartProvider>
                 <KycProvider>
-                    <CheckOut 
-                        bookingData={booking_data}
-                        categoryServiceFee={serviceFee}
-                    />
+                    <PostalAddressProvider>
+                        <CheckOut 
+                            bookingData={booking_data}
+                            categoryServiceFee={serviceFee}
+                        />
+                    </PostalAddressProvider>
                 </KycProvider>
             </CartProvider>
             
