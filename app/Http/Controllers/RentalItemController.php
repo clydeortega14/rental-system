@@ -82,8 +82,13 @@ class RentalItemController extends Controller
 
     public function checkoutItem()
     {
+        $session = request()->session()->has('booking_data') ? request()->session()->get('booking_data') : [];
+        
+        $serviceFee = $this->category_service->getServiceFee($session['category']['id']);
+
         return inertia('Item/Checkout', [
-            'booking_data' => request()->session()->has('booking_data') ? request()->session()->get('booking_data') : []
+            'booking_data' => $session,
+            'serviceFee' => $serviceFee
         ]);
     }
 

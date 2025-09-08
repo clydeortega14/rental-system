@@ -23,46 +23,9 @@ class BookingService {
         $this->booking_repository->store($data);
     }
 
-    public function updateStatus($booking, array $data)
+    public function updateStatus(Booking $booking, array $data)
     {
-        $status_query = BookingStatus::query();
-        $status = '';
-        
-        switch($data['action']){    
-
-            case "accept":
-
-                $status = $status_query->where('name', 'reserved')->first();
-                
-                break;
-
-            case "completed":
-
-                $status = $status_query->where('name', 'completed')->first();
-                $booking->completed_at = Carbon::now();
-
-                break;
-
-            case "cancelled":
-
-                $status = $status_query->where('name', 'cancelled')->first();
-
-                break;
-
-            case "rescheduled":
-
-                $status = $status_query->where('name', 'rescheduled')->first();
-
-                break;
-
-            default:
-
-                break;
-
-        }
-
-        $booking->status = $status->id;
-        $booking->save();
+        $this->booking_repository->updateStatus($booking, $data['action']);
     }
 
     public function getBookings()

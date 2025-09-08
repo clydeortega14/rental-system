@@ -17,24 +17,18 @@ import InputLabel from "../InputLabel";
 import TextInput from "../TextInput";
 
 interface CheckOutProps {
-    bookingData: BookingSession
+    bookingData: BookingSession;
+    categoryServiceFee: number;
 }
 
-export default function CheckOut({bookingData}: CheckOutProps) {
+export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProps) {
     const user = usePage<PageProps>().props.auth.user;
     const isVerified = user?.kyc?.kyc_verified === true;
-    const [serviceFee, setServiceFee] = useState<number>(0);
-    const [allTotal, setAllTotal] = useState<number>(0);
+    const [serviceFee, setServiceFee] = useState<number>(Number(bookingData.partial_total) * categoryServiceFee);
+    const [allTotal, setAllTotal] = useState<number>(Number(bookingData.partial_total) + serviceFee);
     const error_message = usePage<PageProps>().props.flash.error_message
 
     const {showKycModal, setShowKycModal } = useKyc();
-
-    useEffect( () => {
-
-        const service_fee = bookingData.partial_total * 0.03;
-        setServiceFee(service_fee)
-        setData
-    }, [bookingData.partial_total]);
 
     useEffect( () => {
 
@@ -42,13 +36,6 @@ export default function CheckOut({bookingData}: CheckOutProps) {
 
     }, [user]);
 
-    useEffect( () => {
-
-        let calculated_total = Number(bookingData.partial_total) + serviceFee;
-        setAllTotal(calculated_total);
-
-    }, [bookingData.partial_total, serviceFee]);
-    
     const [deliveryAddressIsSameWithBilling, setDeliveryAddressIsSameWithBilling] = useState<boolean>(false);
     const [formData, setFormData] = useState({
         rental_listing_id: bookingData.rental_listing.id,
@@ -148,7 +135,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
 
     return (
         <>
-            <div className="bg-gray-100 container mx-auto px-4 py-8">
+            <div className="bg-gray-100 container mx-auto sm:px-4 lg:px-8">
 
                 <h1 className="font-semibold text-red-700">{error_message}</h1>
                 <div className="mb-6">
@@ -181,7 +168,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                         }
 
                         <div className="p-6 border-b border-gray-200">
-                        <h1 className="text-2xl font-bold text-gray-800">Checkout</h1>
+                            <h1 className="text-2xl font-bold text-gray-800">Checkout</h1>
                         </div>
 
                         <form onSubmit={handleSubmit}>
@@ -286,7 +273,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="billing-" value="Street/Floor No./House No." />
+                                    <InputLabel htmlFor="billing-street-address" value="Street/Floor No./House No." />
                                     <TextInput 
                                         id="billing-street-address"
                                         name="billing_street_address"
@@ -296,21 +283,23 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                     />
                                 </div>
 
+                                <div className="flex justify-between items-center md:flex-row space-x-4">
+                                    <h2 className="text-lg font-bold text-gray-600 my-7">Delivery Address</h2>
 
-                                <h2 className="text-lg font-semibold text-gray-800 mb-4 py-4 px-2">Delivery Address</h2>
+                                    <label className="flex items-center space-x-2 mb-4">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={deliveryAddressIsSameWithBilling} 
+                                            className="h-5 w-5 text-indigoo-600 rounded-md border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                                            onChange={handleDeliveryCheckChange}
+                                        />
+                                        <span className="text-gray-800">Same As Billing Address</span> 
+                                    </label>
+                                </div>
+                                
 
-                                <label className="flex items-center space-x-2">
-                                    <input 
-                                        type="checkbox" 
-                                        checked={deliveryAddressIsSameWithBilling} 
-                                        className="h-5 w-5 text-indigoo-600 rounded-md border-gray-300 focus:ring-2 focus:ring-indigo-500"
-                                        onChange={handleDeliveryCheckChange}
-                                    />
-                                    <span className="text-gray-800">Same As Billing Address</span> 
-                                </label>
 
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <InputLabel htmlFor="billing-province" value="Province" />
                                         <TextInput 
@@ -362,7 +351,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                                 
 
                                 <div className="mb-6">
-                                    <InputLabel htmlFor="billing-" value="Street/Floor No./House No." />
+                                    <InputLabel htmlFor="billing-street-address" value="Street/Floor No./House No." />
                                     <TextInput 
                                         id="billing-street-address"
                                         name="billing_street_address"
@@ -448,7 +437,7 @@ export default function CheckOut({bookingData}: CheckOutProps) {
                             <span className="text-gray-900">{formatPrice(bookingData.partial_total)}</span>
                         </div>
                         <div className="flex justify-between mb-2">
-                            <span className="text-gray-600">Service fee</span>
+                            <span className="text-gray-600">Service fee </span>
                             <span className="text-gray-900">{formatPrice(serviceFee)}</span>
                         </div>
                         </div>
