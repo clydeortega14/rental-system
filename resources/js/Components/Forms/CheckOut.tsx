@@ -18,7 +18,7 @@ import TextInput from "../TextInput";
 import Select from "../Select";
 import axios from "axios";
 import { usePostalAddress } from "@/context/PostalAddressContext";
-import { City, Region } from "@/types/postalAddress";
+import { Barangay, City, Region } from "@/types/postalAddress";
 
 interface CheckOutProps {
     bookingData: BookingSession;
@@ -42,17 +42,23 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
 
     const [deliveryAddressIsSameWithBilling, setDeliveryAddressIsSameWithBilling] = useState<boolean>(false);
     const {
+        // Regions state
         regions, 
         selectedRegion,
         handleSelectedRegion, 
         getRegions,
+
         // PROVINCES State
         provinces,
         selectedProvince,
         handleSelectedProvince,
+
+        // Cities state
         cities,
         selectedCity,
         handleSelectedCity,
+
+        // Barangay state
         barangays,
         selectedBarangay
     } = usePostalAddress();
@@ -78,11 +84,20 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
         }
     });
 
+    const [postalData, setPostalData] = useState([
+        {
+            type: 'billing',
+            region_id: selectedRegion,
+            province_id: selectedProvince,
+            city_id: selectedCity,
+            barangay_id: selectedBarangay
+        }
+    ]);
+
 
     useEffect( () => {
 
         getRegions();
-        console.log(selectedRegion)
         
     },[])
 
@@ -333,8 +348,8 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                         <InputLabel htmlFor="billing-zipcode" value="ZipCode" />
                                         <TextInput 
                                             id="billing-zipcode"
-                                            name="billing_zipcode"
-                                            value={formData.zipCode}
+                                            name="zipcode"
+                                            value={formData.zipCode ?? ''}
                                             className="w-full block mt-1"
                                             onChange={handleInputChange}
                                         />

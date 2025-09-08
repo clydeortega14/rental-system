@@ -51,27 +51,30 @@ export const PostalAddressProvider: React.FC<{children: React.ReactNode}> = ({ch
 
     const getRegions = async () => {
         const response = await axios.get(`/api/address/regions`);
-        setRegions(response.data);
-        handleSelectedRegion(response.data[0].region_id);
+
+        let response_data = response.data;
+        
+        setRegions(response_data);
     }
 
     const handleSelectedRegion = async (region_id) => {
 
         const response = await axios.get(`/api/address/provinces/${region_id}`);
         setProvinces(response.data);
-        // setSelectedRegion(response.data[0].province_id);
-        // handleSelectedProvince(response.data[0].province_id);
+        setSelectedRegion(region_id);
     }
 
     const handleSelectedProvince = async (province_id: string) => {
         const response = await axios.get(`/api/address/cities/${province_id}`);
+        setSelectedProvince(province_id)
         setCities(response.data);
     }
 
     const handleSelectedCity = async (city_id: string) => {
         const response = await axios.get(`/api/address/barangays/${city_id}`);
-        setBarangays(response.data)
         setSelectedCity(city_id)
+        setBarangays(response.data)
+        
     }
 
     const [barangays, setBarangays] = useState<Barangay[]>([]);
