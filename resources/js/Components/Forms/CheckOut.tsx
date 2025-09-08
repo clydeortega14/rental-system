@@ -135,7 +135,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
 
     return (
         <>
-            <div className="bg-gray-100 container mx-auto px-4 py-8">
+            <div className="bg-gray-100 container mx-auto sm:px-4 lg:px-8">
 
                 <h1 className="font-semibold text-red-700">{error_message}</h1>
                 <div className="mb-6">
@@ -168,7 +168,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                         }
 
                         <div className="p-6 border-b border-gray-200">
-                        <h1 className="text-2xl font-bold text-gray-800">Checkout</h1>
+                            <h1 className="text-2xl font-bold text-gray-800">Checkout</h1>
                         </div>
 
                         <form onSubmit={handleSubmit}>
@@ -283,21 +283,23 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                     />
                                 </div>
 
+                                <div className="flex justify-between items-center md:flex-row space-x-4">
+                                    <h2 className="text-lg font-bold text-gray-600 my-7">Delivery Address</h2>
 
-                                <h2 className="text-lg font-semibold text-gray-800 mb-4 py-4 px-2">Delivery Address</h2>
+                                    <label className="flex items-center space-x-2 mb-4">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={deliveryAddressIsSameWithBilling} 
+                                            className="h-5 w-5 text-indigoo-600 rounded-md border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                                            onChange={handleDeliveryCheckChange}
+                                        />
+                                        <span className="text-gray-800">Same As Billing Address</span> 
+                                    </label>
+                                </div>
+                                
 
-                                <label className="flex items-center space-x-2">
-                                    <input 
-                                        type="checkbox" 
-                                        checked={deliveryAddressIsSameWithBilling} 
-                                        className="h-5 w-5 text-indigoo-600 rounded-md border-gray-300 focus:ring-2 focus:ring-indigo-500"
-                                        onChange={handleDeliveryCheckChange}
-                                    />
-                                    <span className="text-gray-800">Same As Billing Address</span> 
-                                </label>
 
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <InputLabel htmlFor="billing-province" value="Province" />
                                         <TextInput 
