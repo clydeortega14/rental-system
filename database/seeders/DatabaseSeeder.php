@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             PermissionsTableSeeder::class,
             RolesTableSeeder::class,
             AdminsTableSeeder::class,
+            AddressTypesSeeder::class
         ]);
     }
 }
