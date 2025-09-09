@@ -14,8 +14,17 @@ class CategoryController extends Controller
 {
     public function index()
     {
+     
+        $categories = \App\Models\Category::with([
+            'templateCategory', 
+            'detail', 
+            'custom_fields', 
+            'filters', 
+            'rentalItems'
+        ])->get();
+
         return inertia('Admin/Configurations/Categories/Index', [
-            'categories' => \App\Models\Category::all(),
+            'categories' => $categories,
         ]);
     }
     public function create(Request $request)
@@ -24,6 +33,7 @@ class CategoryController extends Controller
     }
     public function store(Request $request)
     {
+        
          // Validate request
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -34,6 +44,7 @@ class CategoryController extends Controller
             'pricing_duration' => 'required|array',
             'custom_fields' => 'nullable|array',
             'detail_active' => 'nullable|boolean',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
          // Save template category first
@@ -43,10 +54,22 @@ class CategoryController extends Controller
             'pricing_duration' => $validated['pricing_duration'],
         ]);
 
+         // Handle file upload
+        $imageName = null;
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $imageName = time().'_'.$file->getClientOriginalName();
+            $imagePath = $file->storeAs('categories', $imageName, 'public');
+        }
+
          // Save main category
         $category = Category::create([
             'name' => $validated['name'],
             'description' => $validated['description'],
+            'status' => 1,
+            'image' => $imageName,
+            'image_path' => $imagePath,
             'template_category_id' => $template->id,
         ]);
 
@@ -70,13 +93,18 @@ class CategoryController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', 'Category created successfully.');
+        // return redirect()->back()->with('success', 'Category created successfully.');
+        // return redirect()->route('configurations.categories.index')->with('success', 'Category created successfully.');
+        return redirect()->route('admin.configurations.categories.index')->with('success', 'Category created successfully.');
     }
 
     public function edit($id)
     {
-        return inertia('Admin/Configurations/Categories/Categories/CategoryEdit', [
-            'id' => $id
+       $category = Category::with(['templateCategory', 'detail', 'customFields', 'filters', 'rentalItems'])->findOrFail($id);
+       dd($category);
+
+        return inertia('Admin/Configurations/Categories/Categories/CategoryEdit/Index', [
+        'category' => $category,
         ]);
     }
 

@@ -18,6 +18,6 @@ class TemplateCategory extends Model
 
      protected $casts = [
         'mode_of_payment' => 'array',
-        'pricing_duration' => 'array',
+        'pricing_duration' => 'array',  
     ];
 }
