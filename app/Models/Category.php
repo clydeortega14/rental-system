@@ -53,8 +53,5 @@ class Category extends Model
     {
         return $this->customFields();
     }
-    public function templateCategory()
-    {
-        return $this->belongsTo(TemplateCategory::class, 'template_category_id');
-    }
+
 }
