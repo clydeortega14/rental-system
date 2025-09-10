@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { usePage, router } from "@inertiajs/react"; // 👈 add router
+import { usePage, router, useForm } from "@inertiajs/react"; // 👈 add router
 import { format, formatDate } from "date-fns";
 import Modal from "@/Components/Modal";
 import Button from "@/Components/Renter/ui/Button";
@@ -36,6 +36,8 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
   const [activeTab, setActiveTab] = useState<"Upcoming" | "Past" | "All">("Upcoming");
   const [showModal, setShowModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<BookingDetails | null>(null);
+
+  const { post } = useForm({});
 
   const openModal = (booking: BookingDetails) => {
     setSelectedBooking(booking);
@@ -86,14 +88,24 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
     return true;
   });
 
-  const handleClickReturn = () => 
+  const handleClickReturn = (booking_id: string) => 
   {
       confirmDialog(
         'Do you wish to return this already?', 
         'Yes i will return it now', 
         'Cancel'
       ).then((result) => {
-        if(result.isConfirmed) isConfirmedAlert('Success', "success");
+        if(result.isConfirmed) {
+          post(route('booking.update.status', {
+            booking_id: booking_id,
+            action: 'returning'
+          }), {
+            preserveScroll: false,
+            onSuccess: () => {
+              isConfirmedAlert('Success', "success");
+            }
+          })
+        }
       });
   }
 
@@ -198,7 +210,7 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
                           Inquiries
                         </Button>
 
-                        <Button variant="outline" size="sm" className="gap-1" onClick={handleClickReturn}>
+                        <Button variant="outline" size="sm" className="gap-1" onClick={ () => handleClickReturn(booking.id) }>
                           Return
                         </Button>
                       </>

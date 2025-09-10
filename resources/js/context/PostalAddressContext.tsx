@@ -30,8 +30,8 @@ interface IPostalAddress {
     // Barangays
     barangays: Barangay[];
     setBarangays: (barangays: Barangay[]) => void;
-    selectedBarangay: string;
-    setSelectedBarangay: (brgy_id: number) => void;
+    selectedBarangay: number | null;
+    setSelectedBarangay: (brgy_id: number | null) => void;
 }
 
 const PostalAddressContext = createContext<IPostalAddress | undefined>(undefined);
@@ -53,11 +53,11 @@ export const PostalAddressProvider: React.FC<{children: React.ReactNode}> = ({ch
         const response = await axios.get(`/api/address/regions`);
 
         let response_data = response.data;
-        
+
         setRegions(response_data);
     }
 
-    const handleSelectedRegion = async (region_id) => {
+    const handleSelectedRegion = async (region_id: string) => {
 
         const response = await axios.get(`/api/address/provinces/${region_id}`);
         setProvinces(response.data);

@@ -51,59 +51,50 @@ class BookingRepository implements BookingRepositoryInterface
         });
     }
 
-    public function updateStatus(Booking $booking, string $action) : void
+    public function updateStatus(int $bookingId, string $action) : void
     {
-        DB::beginTransaction(function(){
-            try 
-            {
+        $booking = Booking::findOrFail($bookingId);
+
+        DB::transaction(function() use($booking, $action) {
                 switch($action)
                 {
                     case 'accept':
 
-                        $status = BookingStatus::withName('reserved')->first();
-                        break;
+                        $status = BookingStatus::query()->withName('reserved')->first();
+                    break;
 
                     case "completed":
 
-                        $status = BookingStatus:: withName('completed')->first();
+                        $status = BookingStatus::query()->withName('completed')->first();
                         $booking->completed_at = Carbon::now();
 
-                        break;
+                    break;
 
                     case "cancelled":
 
-                        $status = BookingStatus::withName('cancelled')->first();
+                        $status = BookingStatus::query()->withName('cancelled')->first();
 
-                        break;
+                    break;
 
                     case "rescheduled":
 
-                        $status = BookingStatus::withName('rescheduled')->first();
+                        $status = BookingStatus::query()->withName('rescheduled')->first();
 
-                        break;
+                    break;
                     
-                    case "return":
+                    case "returning":
 
-                        $status = BookingStatus::withName('returning')->first();
+                        $status = BookingStatus::query()->withName('returning')->first();
 
-                        break;
+                    break;
 
                     default:
-
-                        break;
+                        $status = BookingStatus::query()->withName('pending')->first();;
+                    break;
                 }
-
 
                 $booking->status = $status->id;
                 $booking->save();
-
-                DB::commit();
-
-            } catch (\Exception $e) {
-                DB:: rollback();
-                Log::error('{message}', ['message' => $e->getMessage()]);
-                throw new Exception('Internal Server Error', 500);
-            }
         });
     }
 

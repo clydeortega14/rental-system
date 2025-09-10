@@ -23,9 +23,9 @@ class BookingService {
         $this->booking_repository->store($data);
     }
 
-    public function updateStatus(Booking $booking, array $data)
+    public function updateStatus(int $bookingId, string $action)
     {
-        $this->booking_repository->updateStatus($booking, $data['action']);
+        $this->booking_repository->updateStatus($bookingId, $action);
     }
 
     public function getBookings()

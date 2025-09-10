@@ -147,4 +147,12 @@ class BookingController extends Controller
             'booking' => $booking
         ]);
     }
+
+    public function updateStatus(Request $request)
+    {
+
+        $this->booking_service->updateStatus($request->booking_id, $request->action);
+
+        return redirect()->back()->with('success', 'STATUS UPDATED!');
+    }
 }
