@@ -16,7 +16,14 @@ class Category extends Model
 
     protected $table = 'categories';
 
-    protected $fillable = ['name','description','status','template_category_id'];
+    protected $fillable = [
+        'name',
+        'description',
+        'status',
+        'image',
+        'image_path',
+        'template_category_id',
+    ];
 
     protected $hidden = ['pivot'];
 
@@ -45,5 +52,9 @@ class Category extends Model
     public function custom_fields()
     {
         return $this->customFields();
+    }
+    public function templateCategory()
+    {
+        return $this->belongsTo(TemplateCategory::class, 'template_category_id');
     }
 }

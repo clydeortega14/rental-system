@@ -10,7 +10,7 @@ import PromoModal from '@/Components/PromoModal'; // new
 import SupportSlider from '@/Components/SupportSlider'
 import { Category } from '@/Interface/CategoryInterface'
 import { PageProps } from '@/types'
-import FeedbackModal from '@/Components/FeedbackModal'; 
+import FeedbackModal from '@/Components/FeedbackModal';
 import CookieConsent from '@/Components/CookieConsent';
 import React, { useEffect, useState } from 'react';
 import { MessageCircle } from 'lucide-react';
@@ -19,11 +19,11 @@ import { usePage } from '@inertiajs/react'
 import KycPromptModal from "@/Pages/User/modals/KycPromptModal";
 import KycModal from "@/Pages/User/modals/KycModal";
 
-  interface LandingPageLayoutuProps {
-    categories: Category[];
-    children?: React.ReactNode
+interface LandingPageLayoutuProps {
+  categories: Category[];
+  children?: React.ReactNode
 
-  }
+}
 
 
 const LandingPageLayout = ({ categories, children }: LandingPageLayoutuProps) => {
@@ -45,7 +45,7 @@ const LandingPageLayout = ({ categories, children }: LandingPageLayoutuProps) =>
     'img/promo/8.png',
   ];
 
-// disable background scroll when promo is visible
+  // disable background scroll when promo is visible
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
     if (showPromo) {
@@ -57,7 +57,7 @@ const LandingPageLayout = ({ categories, children }: LandingPageLayoutuProps) =>
       document.body.style.overflow = originalOverflow;
     };
   }, [showPromo]);
-
+  console.log(categories);
   return (
     <div className="flex flex-col min-h-screen relative">
       <main className="flex-grow">
@@ -91,16 +91,16 @@ const LandingPageLayout = ({ categories, children }: LandingPageLayoutuProps) =>
               userKyc={
                 auth.user.kyc
                   ? {
-                      full_name: auth.user.kyc.full_name,
-                      document_type: auth.user.kyc.document_type,
-                      document_number: auth.user.kyc.document_number,
-                      selfie_path: auth.user.kyc.selfie_path ?? undefined,
-                      document_path: auth.user.kyc.document_path ?? undefined,
-                      kyc_status:
-                        auth.user.kyc.kyc_status && ["Pending", "Approved", "Rejected"].includes(auth.user.kyc.kyc_status)
-                          ? (auth.user.kyc.kyc_status as "Pending" | "Approved" | "Rejected")
-                          : undefined,
-                    }
+                    full_name: auth.user.kyc.full_name,
+                    document_type: auth.user.kyc.document_type,
+                    document_number: auth.user.kyc.document_number,
+                    selfie_path: auth.user.kyc.selfie_path ?? undefined,
+                    document_path: auth.user.kyc.document_path ?? undefined,
+                    kyc_status:
+                      auth.user.kyc.kyc_status && ["Pending", "Approved", "Rejected"].includes(auth.user.kyc.kyc_status)
+                        ? (auth.user.kyc.kyc_status as "Pending" | "Approved" | "Rejected")
+                        : undefined,
+                  }
                   : undefined
               }
               isReadOnly={false}
@@ -117,9 +117,8 @@ const LandingPageLayout = ({ categories, children }: LandingPageLayoutuProps) =>
       {!showFeedback && !showPromo && (
         <button
           onClick={() => setShowFeedback(true)}
-          className={`fixed ${
-            cookieVisible ? 'bottom-[100px]' : 'bottom-[88px] sm:bottom-6'
-          } right-6 z-40 bg-brandYellow hover:bg-yellow-500 text-white p-3 rounded-full shadow-lg transition`}
+          className={`fixed ${cookieVisible ? 'bottom-[100px]' : 'bottom-[88px] sm:bottom-6'
+            } right-6 z-40 bg-brandYellow hover:bg-yellow-500 text-white p-3 rounded-full shadow-lg transition`}
           aria-label="Feedback"
         >
           <MessageCircle size={24} />

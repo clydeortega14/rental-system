@@ -29,7 +29,6 @@ class ShopController extends Controller
 
     public function store(Request $request)
     {
-      
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -39,39 +38,28 @@ class ShopController extends Controller
             'barangay' => 'nullable|string',
         ]);
 
-        // Combine the full location string from parts
-        $locationParts = [
-            $validated['barangay'] ?? null,
-            $validated['city'] ?? null,
-            $validated['province'] ?? null,
-            $validated['region'] ?? null,
-        ];
-
-        $fullLocation = implode(', ', array_filter($locationParts));
-
-        // Prepare data for saving, replacing location with the full combined string
-        $data = [
-            'name' => $validated['name'],
-            'description' => $validated['description'] ?? null,
-            'location' => $fullLocation,
-        ];
-
         $lessor = Lessor::where('lessoruser_id', Auth::id())->first();
-    
+
         if (!$lessor) {
             return redirect()->back()->withErrors(['shop' => 'Lessor not registered.']);
         }
 
-        $lessor->shops()->create($data);
+        // Directly create shop with validated data
+        $lessor->shops()->create([
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+            'region' => $validated['region'] ?? null,
+            'province' => $validated['province'] ?? null,
+            'city' => $validated['city'] ?? null,
+            'barangay' => $validated['barangay'] ?? null,
+        ]);
 
         return redirect()->back()->with('success', 'Shop saved successfully.');
-
     }
 
     public function update(Request $request, Shop $shop)
     {
-
-         $validated = $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'region' => 'nullable|string',
@@ -80,23 +68,15 @@ class ShopController extends Controller
             'barangay' => 'nullable|string',
         ]);
 
-        // Combine the full location string from parts
-        $locationParts = [
-            $validated['barangay'] ?? null,
-            $validated['city'] ?? null,
-            $validated['province'] ?? null,
-            $validated['region'] ?? null,
-        ];
-
-        $fullLocation = implode(', ', array_filter($locationParts));
-
-        $data = [
+        // Update shop directly with validated fields
+        $shop->update([
             'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
-            'location' => $fullLocation,
-        ];
-
-        $shop->update($data);
+            'region' => $validated['region'] ?? null,
+            'province' => $validated['province'] ?? null,
+            'city' => $validated['city'] ?? null,
+            'barangay' => $validated['barangay'] ?? null,
+        ]);
 
         return redirect()->back()->with('success', 'Shop updated successfully!');
     }

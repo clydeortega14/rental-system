@@ -1,13 +1,5 @@
 import { Category } from '@/Interface/CategoryInterface';
-import { ArrowRight,Heart } from 'lucide-react';
-
-const categoryImageMap: Record<string, string> = {
-  vehicle: '/img/banner/2.png',
-  residential: '/img/banner/3.png',
-  events: '/img/banner/events.png',
-  'digital devices': '/img/banner/1.png',
-  Others: '/img/banner/default.png',
-};
+import { ArrowRight, Heart } from 'lucide-react';
 
 interface User {
   id: number;
@@ -22,7 +14,8 @@ interface Props {
   };
 }
 
-const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+const capitalize = (str: string) =>
+  str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 
 const FeaturedCategories = ({ categories }: Props) => {
   const filtered = categories.filter(c => (c.rental_items_count ?? 0) > 0);
@@ -34,7 +27,8 @@ const FeaturedCategories = ({ categories }: Props) => {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold">Categories</h2>
           <p className="text-gray-500 mt-3 max-w-xl mx-auto">
-            Know what you’re looking for? Pick from our extensive selection of items and rent now.
+            Know what you’re looking for? Pick from our extensive selection of
+            items and rent now.
           </p>
         </div>
 
@@ -43,8 +37,11 @@ const FeaturedCategories = ({ categories }: Props) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
             {filtered.map(category => {
               const label = category.detail?.label ?? 'No Label';
-              const imageKey = category.detail?.label?.toLowerCase() ?? '';
-              const imageSrc = categoryImageMap[imageKey] ?? categoryImageMap['Others'];
+
+              // ✅ Use storage image if available, otherwise fallback to default
+              const imageSrc = category.image_path
+                ? `/storage/${category.image_path}`
+                : '/img/banner/default.png';
 
               return (
                 <div
@@ -52,23 +49,25 @@ const FeaturedCategories = ({ categories }: Props) => {
                   className="relative bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col transform transition-transform duration-300 hover:scale-105"
                   aria-label={`Category ${label}`}
                 >
-                  {/* Full image, not cropped */}
+                  {/* Badge */}
                   <div className="absolute top-0 left-0 z-10">
                     <div className="relative bg-gray-800 text-white text-xs font-semibold px-3 py-1 origin-top-left absolute top-4 left-0 w-[100px] text-center rounded-md overflow-hidden shadow">
-                      {/* Shine effect */}
                       <span className="absolute inset-0 bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.6)_30%,rgba(255,255,255,0.8)_50%,rgba(255,255,255,0.6)_70%,transparent)] blur-[2px] animate-shine pointer-events-none" />
-                      
-                      {/* Text content */}
                       <span className="relative z-10">HOT! Deals</span>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-100 flex items-center justify-center p-4">
+
+                  {/* Image */}
+                  {/* Image */}
+                  <div className="w-full h-48 bg-gray-100 flex items-center justify-center">
                     <img
                       src={imageSrc}
                       alt={label}
-                      className="w-full h-auto object-contain"
+                      className="max-w-full max-h-full object-contain rounded-t-3xl"
                       loading="lazy"
-                      style={{ maxHeight: '180px' }}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/img/banner/default.png';
+                      }}
                     />
                   </div>
 
@@ -81,14 +80,16 @@ const FeaturedCategories = ({ categories }: Props) => {
                         </h3>
                         <p className="text-sm text-gray-500 mt-1">
                           {category.rental_items_count ?? 0} item
-                          {(category.rental_items_count ?? 0) === 1 ? '' : 's'} available
+                          {(category.rental_items_count ?? 0) === 1 ? '' : 's'}{' '}
+                          available
                         </p>
                       </div>
                       <Heart className="w-6 h-6 text-orange-500 mt-1" />
                     </div>
 
                     <p className="text-gray-600 flex-grow">
-                      Rent quality items from this category quickly and securely.
+                      Rent quality items from this category quickly and
+                      securely.
                     </p>
 
                     <div className="mt-6 flex items-center justify-between gap-2">
@@ -100,13 +101,6 @@ const FeaturedCategories = ({ categories }: Props) => {
                         View Category
                         <ArrowRight className="w-4 h-4" />
                       </a>
-                      {/* <a
-                        href={route('rental.browser.index', category.name)}
-                        className="flex-none text-sm font-semibold px-4 py-2 rounded-full border border-orange-500 hover:bg-orange-50 transition"
-                        aria-label={`Rent now from ${label}`}
-                      >
-                        Rent Now
-                      </a> */}
                     </div>
                   </div>
                 </div>
@@ -114,7 +108,9 @@ const FeaturedCategories = ({ categories }: Props) => {
             })}
           </div>
         ) : (
-          <p className="text-gray-400 w-full text-center">No categories with items found</p>
+          <p className="text-gray-400 w-full text-center">
+            No categories with items found
+          </p>
         )}
       </div>
     </section>
