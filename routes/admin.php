@@ -44,6 +44,7 @@ Route::middleware(['auth:admin'])->group(function () {
                 Route::get('/create', [AdminCategoryController::class, 'create'])->name('configurations.categories.create');
                 Route::post('/store', [AdminCategoryController::class, 'store'])->name('configurations.categories.store');
                 Route::get('/{id}/edit', [AdminCategoryController::class, 'edit'])->name('configurations.categories.edit');
+                Route::put('/{id}/update', [AdminCategoryController::class, 'update'])->name('configurations.categories.update');
             });
 
             Route::group(['prefix' => 'forms'], function () {

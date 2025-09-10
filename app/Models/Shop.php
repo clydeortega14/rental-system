@@ -16,7 +16,10 @@ class Shop extends Model
         'lessor_id',
         'name',
         'description',
-        'location',
+        'region',
+        'province',
+        'city',
+        'barangay',
     ];
 
     public static function boot()

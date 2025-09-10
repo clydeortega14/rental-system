@@ -3,13 +3,14 @@ export type Category = {
     category_id?: number;
     id: number;
     name: string;
+    image_path: string;
     detail?: {
         id: number;
         label: string;
         detailable_id: number;
         active: boolean
     }
-    rental_items_count?: number; 
+    rental_items_count?: number;
 }
 
 export interface ICategory {

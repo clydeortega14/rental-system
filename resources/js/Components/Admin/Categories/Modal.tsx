@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Category } from "@/types/category";
+import { router } from '@inertiajs/react';
 
 
 type ModalProps = {
@@ -17,11 +18,29 @@ const EditCategoryModal: React.FC<ModalProps> = ({
 }) => {
   const [imageError, setImageError] = useState<string | null>(null);
 
+  const normalizeOptions = (options: any): string[] => {
+    if (Array.isArray(options)) return options;
+    if (typeof options === "string") {
+      try {
+        return JSON.parse(options) || [];
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  };
+
   const [editedCategory, setEditedCategory] = useState<Category>({
     ...category,
     mode_of_payment: category.mode_of_payment || [],
     pricing_duration: category.pricing_duration || [],
     image: null,
+    service_fee_value: category.template_category?.service_fee || "",
+    service_fee_type: category.service_fee_type || "amount",
+    custom_fields: (category.custom_fields || []).map((field) => ({
+      ...field,
+      options: normalizeOptions(field.options),
+    })),
   });
 
   useEffect(() => {
@@ -30,9 +49,14 @@ const EditCategoryModal: React.FC<ModalProps> = ({
       mode_of_payment: category.mode_of_payment || [],
       pricing_duration: category.pricing_duration || [],
       image: null,
+      service_fee_value: category.template_category?.service_fee || "",
+      service_fee_type: category.service_fee_type || "amount",
+      custom_fields: (category.custom_fields || []).map((field) => ({
+        ...field,
+        options: normalizeOptions(field.options),
+      })),
     });
 
-    // Ensure correct absolute storage path
     if (category?.image_path) {
       setImagePreview(`/storage/${category.image_path}`);
     } else {
@@ -107,9 +131,68 @@ const EditCategoryModal: React.FC<ModalProps> = ({
   ];
 
   const pricingDurationStatic = ["Hourly", "Daily", "Weekly", "Monthly"];
-
   if (!isOpen || !category) return null;
-  console.log(imagePreview)
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("_method", "PUT");
+
+    // --- Required fields ---
+    formData.append("name", editedCategory.name?.trim() || "");
+    formData.append("description", editedCategory.description?.trim() || "");
+    formData.append("service_fee_type", editedCategory.service_fee_type || "amount");
+    formData.append("service_fee_value", String(editedCategory.service_fee_value ?? ""));
+
+    // --- Arrays: mode_of_payment + pricing_duration ---
+    (editedCategory.mode_of_payment || []).forEach((val, i) => {
+      formData.append(`mode_of_payment[${i}]`, val);
+    });
+    (editedCategory.pricing_duration || []).forEach((val, i) => {
+      formData.append(`pricing_duration[${i}]`, val);
+    });
+
+    // --- Custom Fields (normalize options + send JSON) ---
+    const safeCustomFields = (editedCategory.custom_fields || []).map((field) => ({
+      id: field.id ?? null,
+      label: field.label?.trim() || "",
+      type: field.type || "text",
+      options: Array.isArray(field.options)
+        ? field.options.map((opt) => opt.trim()).filter((opt) => opt !== "")
+        : [],
+    }));
+
+    formData.append("custom_fields", JSON.stringify(safeCustomFields));
+
+    // --- Deleted Custom Fields (IDs only) ---
+    // Compare original category.custom_fields with editedCategory.custom_fields
+    const originalIds = (category.custom_fields || []).map((f) => f.id);
+    const editedIds = safeCustomFields.map((f) => f.id).filter(Boolean);
+
+    const deletedIds = originalIds.filter((id) => !editedIds.includes(id));
+
+    if (deletedIds.length > 0) {
+      formData.append("deleted_custom_fields", JSON.stringify(deletedIds));
+    }
+
+    // --- Image (only if a new one is chosen) ---
+    if (editedCategory.image instanceof File) {
+      formData.append("image", editedCategory.image);
+    }
+
+    // --- 🚀 Send request with FormData ---
+    router.post(route("admin.configurations.categories.update", category.id), formData, {
+      forceFormData: true, // ensures multipart/form-data
+      onSuccess: () => {
+        onSave({ ...category, ...editedCategory });
+        onClose();
+      },
+    });
+  };
+
+
+
   return (
     <div
       className="fixed inset-0 flex items-start justify-center bg-black bg-opacity-40 z-50"
@@ -129,7 +212,7 @@ const EditCategoryModal: React.FC<ModalProps> = ({
           </button>
         </div>
 
-        <form className="space-y-8">
+        <form className="space-y-8" onSubmit={handleSave}>
           {/* Category Info Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Image Upload */}
@@ -184,18 +267,18 @@ const EditCategoryModal: React.FC<ModalProps> = ({
                     <input
                       type="number"
                       name="service_fee_value"
-                      value={editedCategory.template_category?.service_fee}
+                      value={editedCategory.service_fee_value || ""}
                       onChange={handleInputChange}
                       className="w-full border rounded px-3 py-2"
                     />
                     <select
                       name="service_fee_type"
-                      value={editedCategory.service_fee_type}
+                      value={editedCategory.service_fee_type || "amount"}
                       onChange={handleInputChange}
                       className="border rounded px-3 py-2"
                     >
                       <option value="amount">₱</option>
-                      <option value="percent">%</option>
+                      <option value="percentage">%</option>
                     </select>
                   </div>
                 </div>
@@ -341,7 +424,7 @@ const EditCategoryModal: React.FC<ModalProps> = ({
                     </button>
                   </div>
 
-                  {(field.type === "select" || field.type === "Checkbox") && (
+                  {(field.type === "select" || field.type === "Checkbox" || field.type === "checkbox") && (
                     <div className="space-y-2">
                       {(field.options || []).map((option, optIndex) => (
                         <div key={optIndex} className="flex gap-2">

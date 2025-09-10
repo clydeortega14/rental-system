@@ -25,9 +25,8 @@ const ItemFilter = ({
 
   return (
     <aside
-      className={`w-full md:w-64 bg-white border-r border-gray-200 h-full ${
-        showFilters ? 'block' : 'hidden'
-      } md:block`}
+      className={`w-full md:w-64 bg-white border-r border-gray-200 h-full ${showFilters ? 'block' : 'hidden'
+        } md:block`}
     >
       {/* Sidebar Header */}
       <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200">
@@ -59,25 +58,26 @@ const ItemFilter = ({
 
             {/* Submenu Items */}
             <div
-              className={`ml-3 border-l border-gray-200 pl-3 transition-all duration-300 overflow-hidden ${
-                openCategory === index ? 'max-h-96' : 'max-h-0'
-              }`}
+              className={`ml-3 border-l border-gray-200 pl-3 transition-all duration-300 overflow-hidden ${openCategory === index ? 'max-h-96' : 'max-h-0'
+                }`}
             >
-              {category_filter.options.map((choice, idx) => (
-                <label
-                  key={idx}
-                  htmlFor={`category-${index}-${idx}`}
-                  className="flex items-center py-1.5 text-gray-600 hover:text-gray-800 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    id={`category-${index}-${idx}`}
-                    onChange={() => handleSelectedCategories(choice)}
-                    className="mr-2 h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
-                  />
-                  {choice}
-                </label>
-              ))}
+              {(Array.isArray(category_filter.options) ? category_filter.options : []).map(
+                (choice, idx) => (
+                  <label
+                    key={idx}
+                    htmlFor={`category-${index}-${idx}`}
+                    className="flex items-center py-1.5 text-gray-600 hover:text-gray-800 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      id={`category-${index}-${idx}`}
+                      onChange={() => handleSelectedCategories(choice)}
+                      className="mr-2 h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
+                    />
+                    {choice}
+                  </label>
+                )
+              )}
             </div>
           </div>
         ))}

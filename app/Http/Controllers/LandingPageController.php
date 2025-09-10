@@ -32,7 +32,7 @@ class LandingPageController extends Controller
     public function index()
     {
         $categories = $this->category_service->getCategories();
-         
+       
 
         return Inertia::render('LandingPage', [
             'canLogin' => Route::has('login'),

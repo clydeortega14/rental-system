@@ -1,47 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import Modal from '@/Components/Admin/Categories/Modal';  // Import the modal component
-
-// Define the Category type to match your server-side data structure
-type TemplateCategory = {
-  service_fee: number;
-  mode_of_payment: string[];
-  pricing_duration: string[];
-};
-
-type CustomField = {
-  label: string;
-  type: string;
-  options: string[];
-};
-
-type Category = {
-  id: number;
-  name: string;
-  description: string;
-  templateCategory: TemplateCategory;
-  customFields: CustomField[];
-  detail: any; // Refine based on your `Detailable` model
-  filters: any[]; // Adjust based on the `Filter` model
-  rentalItems: any[]; // Adjust based on the `RentalAddItem` model
-};
+import { Category } from '@/types/category'; // Import the correct Category type
 
 type PageProps = {
-  category: Category;
-  errors: any;
+  category: Category;      // Make sure this matches your backend data
+  errors?: any;
 };
 
 const CategoryEdit = () => {
-  const { category }: PageProps = usePage().props;  // Destructure category from props
+  // Cast props to your PageProps type
+  const { category } = usePage().props as PageProps;
 
-  const [isModalOpen, setIsModalOpen] = useState(false);  // Modal open/close state
-  const [selectedCategory, setSelectedCategory] = useState<Category>(category);  // State to store selected category
+  // State for modal open/close
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Function to handle saving the category (You can send a PUT request to update it)
+  // State to store selected category
+  const [selectedCategory, setSelectedCategory] = useState<Category>(category);
+
   const handleSave = (updatedCategory: Category) => {
-    // Here you can send the updated category data to the backend
     console.log('Updated Category:', updatedCategory);
-    // After saving, close the modal
     setIsModalOpen(false);
   };
 
@@ -56,7 +34,6 @@ const CategoryEdit = () => {
         Edit Category Details
       </button>
 
-      {/* Modal to edit category details */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
