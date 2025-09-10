@@ -3,9 +3,22 @@
 namespace App\Services\Category;
 use App\Models\Detailable;
 use App\Models\Category;
+use App\Repositories\Contracts\CategoryRepositoryInterface;
 
 class CategoryService 
 {
+    protected $category_repository;
+
+    public function __construct(CategoryRepositoryInterface $category_repository)
+    {
+        $this->category_repository = $category_repository;
+    }
+
+    public function getServiceFee(int $categoryId)
+    {
+        return $this->category_repository->serviceFee($categoryId);
+    }
+    
     public function getCategories()
     {
         // return Detailable::where('detailable_type', 'App\Models\Category')

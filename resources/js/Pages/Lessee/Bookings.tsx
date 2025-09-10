@@ -9,6 +9,7 @@ import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
 import { BiCalendar, BiMessageDetail } from "react-icons/bi"; // 👈 icon for inquiries
 import { toTwelveFormat } from "@/utils/timeUtils";
 import { Calendar } from "lucide-react";
+import { confirmDialog, isConfirmedAlert } from "@/utils/alert";
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
@@ -84,6 +85,17 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
     if (activeTab === "Past") return end < today || booking.status.toLowerCase() === "canceled";
     return true;
   });
+
+  const handleClickReturn = () => 
+  {
+      confirmDialog(
+        'Do you wish to return this already?', 
+        'Yes i will return it now', 
+        'Cancel'
+      ).then((result) => {
+        if(result.isConfirmed) isConfirmedAlert('Success', "success");
+      });
+  }
 
   return (
     <div className="max-w-8xl mx-auto p-6 space-y-6">
@@ -186,9 +198,9 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
                           Inquiries
                         </Button>
 
-                        <Button variant="outline" size="sm" className="gap-1">
+                        <Button variant="outline" size="sm" className="gap-1" onClick={handleClickReturn}>
                           Return
-                    </Button>
+                        </Button>
                       </>
                     )}
                     

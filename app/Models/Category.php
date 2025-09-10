@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Http\Traits\CustomFields\HasCustomFields;
 
 class Category extends Model
@@ -22,7 +25,6 @@ class Category extends Model
         'template_category_id',
     ];
 
-
     protected $hidden = ['pivot'];
 
     public $timestamps = false;
@@ -32,14 +34,19 @@ class Category extends Model
         return $this->morphOne(Detailable::class, 'detailable');
     }
 
-    public function rentalItems()
+    public function rentalItems():HasMany
     {
         return $this->hasMany(RentalAddItem::class, 'category_id');
     }
 
-    public function filters()
+    public function filters():BelongsToMany
     {
         return $this->belongsToMany(Filter::class, 'category_filters', 'category_id', 'filter_id');
+    }
+
+    public function templateCategory():BelongsTo
+    {
+        return $this->belongsTo(TemplateCategory::class, 'template_category_id');
     }
 
     public function custom_fields()

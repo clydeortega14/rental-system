@@ -31,6 +31,7 @@ export interface User {
       created_at: string; 
     }
     billing_address?: BillingAddress;
+    delivery_address?: BillingAddress;
     card_detail?: CardDetail;
     created_at: string;
 }
