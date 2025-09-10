@@ -48,7 +48,6 @@ const AdminConfigurationCategoryIndex: PageWithAdminLayout = () => {
 
   // Function to save the edited category (you can send a PUT request to update it)
   const handleSave = (updatedCategory: Category) => {
-    console.log('Updated Category:', updatedCategory);
     setIsModalOpen(false);  // Close the modal after saving
   };
 

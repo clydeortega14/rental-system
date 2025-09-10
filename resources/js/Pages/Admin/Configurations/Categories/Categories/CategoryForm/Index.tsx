@@ -39,9 +39,8 @@ const CategoryForm: PageWithAdminLayout = () => {
                         name="name"
                         value={data.name}
                         onChange={(e) => setData('name', e.target.value)}
-                        className={`mt-1 block w-full rounded-md border ${
-                            errors.name ? 'border-red-500' : 'border-gray-300'
-                        } shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+                        className={`mt-1 block w-full rounded-md border ${errors.name ? 'border-red-500' : 'border-gray-300'
+                            } shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
                         placeholder="Enter category name"
                         required
                     />
@@ -61,10 +60,9 @@ const CategoryForm: PageWithAdminLayout = () => {
                         rows={4}
                         value={data.description}
                         onChange={(e) => setData('description', e.target.value)}
-                        className={`mt-1 block w-full rounded-md border ${
-                            errors.description ? 'border-red-500' : 'border-gray-300'
-                        } shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-                        placeholder="Enter description (optional)" 
+                        className={`mt-1 block w-full rounded-md border ${errors.description ? 'border-red-500' : 'border-gray-300'
+                            } shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+                        placeholder="Enter description (optional)"
                     ></textarea>
                     {errors.description && (
                         <p className="mt-1 text-sm text-red-600">{errors.description}</p>
@@ -101,9 +99,8 @@ const CategoryForm: PageWithAdminLayout = () => {
                     <button
                         type="submit"
                         disabled={processing}
-                        className={`px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition ${
-                            processing ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
+                        className={`px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition ${processing ? 'opacity-50 cursor-not-allowed' : ''
+                            }`}
                     >
                         {processing ? 'Creating...' : 'Create'}
                     </button>

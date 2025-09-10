@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import Modal from '@/Components/Admin/Categories/Modal';  // Import the modal component
 import { Category } from '@/types/category'; // Import the correct Category type
+import Swal from 'sweetalert2';
 
 type PageProps = {
   category: Category;      // Make sure this matches your backend data
@@ -19,7 +20,6 @@ const CategoryEdit = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category>(category);
 
   const handleSave = (updatedCategory: Category) => {
-    console.log('Updated Category:', updatedCategory);
     setIsModalOpen(false);
   };
 
