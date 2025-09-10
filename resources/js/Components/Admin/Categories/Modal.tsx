@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Category } from "@/types/category";
 import { router } from '@inertiajs/react';
+import Swal from 'sweetalert2';
+
+// Create a reusable Toast instance
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+});
 
 
 type ModalProps = {
@@ -182,13 +192,27 @@ const EditCategoryModal: React.FC<ModalProps> = ({
     }
 
     // --- 🚀 Send request with FormData ---
-    router.post(route("admin.configurations.categories.update", category.id), formData, {
-      forceFormData: true, // ensures multipart/form-data
-      onSuccess: () => {
-        onSave({ ...category, ...editedCategory });
-        onClose();
-      },
-    });
+    router.post(
+      route("admin.configurations.categories.update", category.id),
+      formData,
+      {
+        forceFormData: true,
+        onSuccess: () => {
+          Toast.fire({
+            icon: "success",
+            title: "Category updated successfully",
+          });
+          onSave({ ...category, ...editedCategory });
+          onClose();
+        },
+        onError: () => {
+          Toast.fire({
+            icon: "error",
+            title: "Failed to update category",
+          });
+        },
+      }
+    );
   };
 
 
