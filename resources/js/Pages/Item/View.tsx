@@ -88,9 +88,6 @@ export default function View({
         }
     });
 
-
-
-
     const { data, setData, post, errors, processing } = useForm({});
 
     const selectedDateData = availabilityData.find(d => d.date === selectedDate);
