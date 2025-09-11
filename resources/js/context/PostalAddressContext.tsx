@@ -31,7 +31,8 @@ interface IPostalAddress {
     barangays: Barangay[];
     setBarangays: (barangays: Barangay[]) => void;
     selectedBarangay: string;
-    setSelectedBarangay: (brgy_id: number) => void;
+    setSelectedBarangay: (brgy_id: string) => void;
+    handleSelectedBarangay: (barangay_id: string) => void;
 }
 
 const PostalAddressContext = createContext<IPostalAddress | undefined>(undefined);
@@ -53,11 +54,11 @@ export const PostalAddressProvider: React.FC<{children: React.ReactNode}> = ({ch
         const response = await axios.get(`/api/address/regions`);
 
         let response_data = response.data;
-        
+
         setRegions(response_data);
     }
 
-    const handleSelectedRegion = async (region_id) => {
+    const handleSelectedRegion = async (region_id: string) => {
 
         const response = await axios.get(`/api/address/provinces/${region_id}`);
         setProvinces(response.data);
@@ -78,8 +79,8 @@ export const PostalAddressProvider: React.FC<{children: React.ReactNode}> = ({ch
     }
 
     const [barangays, setBarangays] = useState<Barangay[]>([]);
-    const [selectedBarangay, setSelectedBarangay] = useState<number | null>(null);
-    const handleSelectedBarangay = async (barangay_id: number) => {
+    const [selectedBarangay, setSelectedBarangay] = useState<string>('');
+    const handleSelectedBarangay = async (barangay_id: string) => {
         setSelectedBarangay(barangay_id);
     }
 
@@ -101,10 +102,12 @@ export const PostalAddressProvider: React.FC<{children: React.ReactNode}> = ({ch
                 handleSelectedProvince,
                 
                 cities,
+                setCities,
                 selectedCity,
                 setSelectedCity,
                 handleSelectedCity,
                 barangays,
+                setBarangays,
                 selectedBarangay,
                 setSelectedBarangay,
                 handleSelectedBarangay,

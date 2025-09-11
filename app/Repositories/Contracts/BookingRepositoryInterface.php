@@ -9,7 +9,7 @@ interface BookingRepositoryInterface
 {
     public function store(array $data): void;
 
-    public function updateStatus(Booking $booking, string $action) : void;
+    public function updateStatus(int $bookingId, string $action) : void;
 
     public function bookings(int $userId) : Collection;
 }

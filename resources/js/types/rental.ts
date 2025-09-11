@@ -55,7 +55,7 @@ export interface BookingDetails {
   endDate?: string | null;
   endTime?: string | null;
   returnTime?: string | null;
-  status: 'pending' | 'confirmed' | 'canceled' | 'completed';
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'reserved' | 'returning';
   totalPrice?: number;
   duration?: 'hourly' | 'daily' | 'weekly' | 'days';
   quantity?: number;
