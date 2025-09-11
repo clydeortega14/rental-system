@@ -13,14 +13,16 @@ import { confirmDialog, isConfirmedAlert } from "@/utils/alert";
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
-    case "confirmed":
+    case "reserved":
       return "bg-green-100 text-green-700";
     case "pending":
-      return "bg-yellow-100 text-yellow-700";
+      return "bg-orange-100 text-orange-700";
     case "completed":
-      return "bg-blue-100 text-blue-700";
-    case "canceled":
+      return "bg-emerald-100 text-emerald-700";
+    case "cancelled":
       return "bg-red-100 text-red-700";
+    case "returning":
+      return "bg-yellow-100 text-yellow-700";
     default:
       return "bg-gray-100 text-gray-700";
   }
@@ -37,7 +39,7 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
   const [showModal, setShowModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<BookingDetails | null>(null);
 
-  const { post } = useForm({});
+  const { post, processing } = useForm({});
 
   const openModal = (booking: BookingDetails) => {
     setSelectedBooking(booking);
@@ -102,11 +104,46 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
           }), {
             preserveScroll: false,
             onSuccess: () => {
-              isConfirmedAlert('Success', "success");
+              isConfirmedAlert('the item you were rented was about to be return to the owner.', "success");
             }
           })
         }
       });
+  }
+
+  const handleClickConfirm = (booking_id: string) => {
+    post(route('booking.update.status', {
+      booking_id,
+      action: 'accept'
+    }), {
+      preserveScroll: true,
+      onSuccess: () => {
+        isConfirmedAlert('Reservation of rental items has been confirmed!', "success");
+      }
+    })
+  }
+
+  const handleClickCancel = (booking_id: string) => {
+
+    confirmDialog(
+      'Are you sure, you want to cancel this booking?',
+      'Yes, cancel it',
+      'No'
+    ).then((result) => {
+      if(result.isConfirmed)
+      {
+        post(route('booking.update.status', {
+          booking_id,
+          action: 'cancelled'
+        }), {
+          preserveScroll: true,
+          onSuccess: () => {
+            isConfirmedAlert('Booking has been cancelled', 'warning')
+          }
+        });
+      }
+    })
+    
   }
 
   return (
@@ -198,7 +235,7 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
                       View
                     </Button>
 
-                    { booking.status === 'pending' && (
+                    { (booking.status === 'pending') && new Date() < new Date(booking.endDate ?? '') && (
                       <>
                         <Button
                           variant="outline"
@@ -207,14 +244,38 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
                           onClick={() => handleInquiries(booking)}
                         >
                           <BiMessageDetail className="w-4 h-4" />
-                          Inquiries
-                        </Button>
+                            Inquiries
+                          </Button>
 
-                        <Button variant="outline" size="sm" className="gap-1" onClick={ () => handleClickReturn(booking.id) }>
-                          Return
-                        </Button>
+                          
+
+                          <Button variant="secondary" size="sm" className="gap-1" onClick={ () => handleClickConfirm(booking.id) } disabled={processing}>
+                            Confirm
+                          </Button>
                       </>
                     )}
+
+
+
+                    {
+                      booking.status === 'reserved' && (
+                        <>
+                          <Button variant="danger" size="sm" className="gap-1" onClick={ () => handleClickCancel(booking.id) } disabled={processing}>
+                              Cancel
+                          </Button>
+                        </>
+                      )
+                    }
+                    {
+                      new Date(booking.endDate ?? '') < new Date && (booking.status === 'reserved' || booking.status === 'pending') && (
+
+                        <>
+                          <Button variant="outline" size="sm" className="gap-1" onClick={ () => handleClickReturn(booking.id) } disabled={processing}>
+                              Return
+                          </Button>
+                        </>
+                      )
+                    }
                     
                   </td>
                 </tr>
