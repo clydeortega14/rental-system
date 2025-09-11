@@ -5,7 +5,7 @@ import RenterLayout from "@/Layouts/RenterLayout";
 import ImageGallery from "../../Components/Renter/ImageGallery";
 import { MapPin, Star } from 'lucide-react';
 import PricingOptions from "../../Components/Renter/PricingOptions";
-import { BookingDetails, RentalDuration,TimeSlot } from "@/types/rental";
+import { BookingDetails, RentalDuration, TimeSlot } from "@/types/rental";
 import { availabilityData } from "@/data/mockData";
 import TimeSlots from "../../Components/Renter/TimeSlots";
 import BookingSummary from "../../Components/Renter/BookingSummary";
@@ -23,7 +23,7 @@ import { formatTo24Hour, timeInUTCFormat } from "@/utils/timeUtils";
 
 
 
-interface IUnavailableDates  {
+interface IUnavailableDates {
     dates: string[]
 }
 
@@ -37,12 +37,12 @@ export default function View({
     auth,
     laravelVersion,
     phpVersion,
-}: PageProps<{ 
-    laravelVersion: string; 
-    phpVersion: string; 
+}: PageProps<{
+    laravelVersion: string;
+    phpVersion: string;
     item: Item,
-    unavailable_dates: { 
-        [date:string]: boolean 
+    unavailable_dates: {
+        [date: string]: boolean
     };
 }>) {
     const [open, setOpen] = useState(false);
@@ -54,10 +54,10 @@ export default function View({
     const [selectedEndDate, setSelectedEndDate] = useState<string | null>(null);
     const [pickUpTime, setPickUpTime] = useState<string>(formatTo24Hour(new Date()));
     const [returnTime, setReturnTime] = useState<string>(formatTo24Hour(new Date()));
-    
+
     const session_error_message = usePage<PageProps>().props.flash.error_message;
     const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[item.default_duration]);
-    
+    console.log(item);
     const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
         startDate: null,
         endDate: null,
@@ -80,6 +80,7 @@ export default function View({
                 label: item.category.label,
                 id: 0,
                 name: '',
+                image_path: ''
             },
             rating: 4.7,
             reviewCount: 255,
@@ -88,16 +89,16 @@ export default function View({
     });
 
 
-    
 
-    const {data, setData, post, errors, processing } = useForm({});
+
+    const { data, setData, post, errors, processing } = useForm({});
 
     const selectedDateData = availabilityData.find(d => d.date === selectedDate);
     const timeSlots = selectedDateData?.timeSlots || [];
 
     const handleDurationChange = (newDuration: RentalDuration) => {
 
-        setBookingDetails({...bookingDetails, duration: newDuration});
+        setBookingDetails({ ...bookingDetails, duration: newDuration });
         setDuration(newDuration);
     };
 
@@ -105,24 +106,24 @@ export default function View({
 
         // let formatDate = new Date(date);
 
-        if(bookingDetails.startDate === null){
-            setBookingDetails({...bookingDetails, startDate: date})
+        if (bookingDetails.startDate === null) {
+            setBookingDetails({ ...bookingDetails, startDate: date })
             setSelectedDate(date);
             setSelectedTimeSlot(null); // Reset time slot when date changes
             setSelectedEndDate(null)
-        }else{
-            setBookingDetails({...bookingDetails, endDate: date});
+        } else {
+            setBookingDetails({ ...bookingDetails, endDate: date });
             setSelectedEndDate(date);
         }
-        
+
     };
 
     const handleTimeSlotSelect = (timeSlot: TimeSlot) => {
-        setBookingDetails({...bookingDetails, startTime: timeSlot.startTime, endTime: timeSlot.endTime});
+        setBookingDetails({ ...bookingDetails, startTime: timeSlot.startTime, endTime: timeSlot.endTime });
         setSelectedTimeSlot(timeSlot);
     };
 
-    useEffect( () => {
+    useEffect(() => {
 
         // calculate total
         const basePrice = item.price[item.default_duration];
@@ -131,23 +132,22 @@ export default function View({
         setCalculatedTotal(calculate_total);
 
     }, [duration, quantity]);
-    
+
 
     // side effects on booking details
-    useEffect( () => {
+    useEffect(() => {
 
-        if(bookingDetails.endDate && bookingDetails.startDate){
-            if(bookingDetails.endDate < bookingDetails.startDate) {
+        if (bookingDetails.endDate && bookingDetails.startDate) {
+            if (bookingDetails.endDate < bookingDetails.startDate) {
                 setSelectedEndDate(null)
-                setBookingDetails({...bookingDetails, endDate: null})
+                setBookingDetails({ ...bookingDetails, endDate: null })
             }
 
-            if(bookingDetails.startDate === null)
-            {
+            if (bookingDetails.startDate === null) {
                 setSelectedEndDate(null);
             }
         }
-        
+
     }, [bookingDetails]);
 
 
@@ -156,48 +156,47 @@ export default function View({
 
 
     // side effects for selected start date and selected end date
-    useEffect( () => {
+    useEffect(() => {
 
-            // const durationText = computeDateBetweenTwoDates(selectedDate, selectedEndDate)s
+        // const durationText = computeDateBetweenTwoDates(selectedDate, selectedEndDate)s
 
-            if(selectedDate === null){
-                setBookingDetails({...bookingDetails, startDate: selectedDate});
-                // setBookingDetails({...bookingDetails, endDate: null})
-                setSelectedEndDate(null);
-            }
+        if (selectedDate === null) {
+            setBookingDetails({ ...bookingDetails, startDate: selectedDate });
+            // setBookingDetails({...bookingDetails, endDate: null})
+            setSelectedEndDate(null);
+        }
 
-            if(selectedEndDate !== null && selectedDate !== null)
-            {
-                let startOfDate = new Date(selectedDate);
-                let endOfDate = new Date(selectedEndDate);
+        if (selectedEndDate !== null && selectedDate !== null) {
+            let startOfDate = new Date(selectedDate);
+            let endOfDate = new Date(selectedEndDate);
 
-                setPickUpTime(formatTo24Hour(new Date()));
-                setReturnTime(formatTo24Hour(new Date()));
+            setPickUpTime(formatTo24Hour(new Date()));
+            setReturnTime(formatTo24Hour(new Date()));
 
-                const { totalDays } = computeDateBetweenTwoDates(startOfDate, endOfDate);
-                setQuantity(totalDays);
+            const { totalDays } = computeDateBetweenTwoDates(startOfDate, endOfDate);
+            setQuantity(totalDays);
 
-                bookingDetails.totalPrice && setBookingDetails({...bookingDetails, quantity: totalDays, totalPrice: item.price[item.default_duration] * totalDays});
-                // bookingDetails.totalPrice && setBookingDetails({...bookingDetails, totalPrice: bookingDetails.totalPrice * totalDays});
+            bookingDetails.totalPrice && setBookingDetails({ ...bookingDetails, quantity: totalDays, totalPrice: item.price[item.default_duration] * totalDays });
+            // bookingDetails.totalPrice && setBookingDetails({...bookingDetails, totalPrice: bookingDetails.totalPrice * totalDays});
 
-                // show or hide booking summary content
-                // when the selectedDate and SelectedEndDate is null or empty, then hide the booking summary component
-                setShowBookingSummaryComponent(true);
+            // show or hide booking summary content
+            // when the selectedDate and SelectedEndDate is null or empty, then hide the booking summary component
+            setShowBookingSummaryComponent(true);
 
-            }else{
-                setShowBookingSummaryComponent(false);
-            }
+        } else {
+            setShowBookingSummaryComponent(false);
+        }
 
 
-           
-            
+
+
 
     }, [selectedDate, selectedEndDate]);
 
     const handleBookNow = () => {
 
         post(route('booking.store', {
-            
+
             item_uuid: item.uuid,
             startDate: selectedDate,
             endDate: selectedEndDate,
@@ -213,18 +212,18 @@ export default function View({
             preserveState: true
         });
     };
-    
+
     return (
         <RenterLayout>
-            
+
             <Head title={"Item Detail"} />
-            
+
             <p>{session_error_message}</p>
 
             <div className="max-w-7xl mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
-                        <ImageGallery images={item.src}/>
+                        <ImageGallery images={item.src} />
                     </div>
                     <div>
                         <div className="flex items-center text-sm text-gray-600 mb-2">
@@ -233,22 +232,22 @@ export default function View({
                             <span className="mx-2">•</span>
                             <span>{item.category.label}</span>
                         </div>
-                    
+
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">{item.name}</h1>
-                    
+
                         <div className="flex items-center mb-4">
                             <div className="flex items-center">
-                            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                            <span className="ml-1 text-gray-700">{item.rating}</span>
+                                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                                <span className="ml-1 text-gray-700">{item.rating}</span>
                             </div>
                             <span className="mx-2 text-gray-400">•</span>
                             <span className="text-gray-600">{item.reviewCount} reviews</span>
                         </div>
-                    
+
                         <p className="text-gray-700 mb-6">{item.description}</p>
-                    
+
                         <PricingOptions
-                            prices={item.price} 
+                            prices={item.price}
                             selectedDuration={duration}
                         />
 
@@ -260,8 +259,8 @@ export default function View({
                             unavailableDates={unavailable_dates}
                         />
 
-                        
-                        
+
+
                         {selectedDate && selectedEndDate && (
                             <TimeSlots
                                 pickUpTime={pickUpTime}
@@ -270,8 +269,8 @@ export default function View({
                                 setReturnTime={setReturnTime}
                             />
                         )}
-                        <SecondaryButton 
-                            onClick={ () => {
+                        <SecondaryButton
+                            onClick={() => {
                                 setSelectedDate(null);
                                 setSelectedEndDate(null);
                                 setPickUpTime('');
@@ -280,12 +279,12 @@ export default function View({
                         >
                             Reset
                         </SecondaryButton>
-                        
+
 
                         {
                             showBookingSummaryComponent && (
                                 <BookingSummary
-                                    bookingDetails={bookingDetails} 
+                                    bookingDetails={bookingDetails}
                                     itemPrice={item.price}
                                     onBookNow={handleBookNow}
                                     calculatedTotal={calculatedTotal}
@@ -295,15 +294,15 @@ export default function View({
                                 />
                             )
                         }
-                        
+
                     </div>
                 </div>
 
-                <ItemSpecification specifications={item.specifications}/>
+                <ItemSpecification specifications={item.specifications} />
 
-                <ReviewsSection rating={4.8} reviewCount={255}/>
+                <ReviewsSection rating={4.8} reviewCount={255} />
 
-                <SimilarItems items={similarItems}/>
+                <SimilarItems items={similarItems} />
             </div>
         </RenterLayout>
     );
