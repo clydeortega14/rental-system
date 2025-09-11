@@ -112,6 +112,7 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
   }
 
   const handleClickConfirm = (booking_id: string) => {
+    
     post(route('booking.update.status', {
       booking_id,
       action: 'accept'
@@ -246,10 +247,8 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
                           <BiMessageDetail className="w-4 h-4" />
                             Inquiries
                           </Button>
-
-                          
-
-                          <Button variant="secondary" size="sm" className="gap-1" onClick={ () => handleClickConfirm(booking.id) } disabled={processing}>
+                        
+                          <Button variant="secondary" size="sm" className="gap-1" onClick={ () => handleClickConfirm(booking.id ?? '') } disabled={processing}>
                             Confirm
                           </Button>
                       </>
@@ -260,7 +259,7 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
                     {
                       booking.status === 'reserved' && (
                         <>
-                          <Button variant="danger" size="sm" className="gap-1" onClick={ () => handleClickCancel(booking.id) } disabled={processing}>
+                          <Button variant="danger" size="sm" className="gap-1" onClick={ () => handleClickCancel(booking.id ?? '') } disabled={processing}>
                               Cancel
                           </Button>
                         </>
@@ -270,7 +269,7 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
                       new Date(booking.endDate ?? '') < new Date && (booking.status === 'reserved' || booking.status === 'pending') && (
 
                         <>
-                          <Button variant="outline" size="sm" className="gap-1" onClick={ () => handleClickReturn(booking.id) } disabled={processing}>
+                          <Button variant="outline" size="sm" className="gap-1" onClick={ () => handleClickReturn(booking.id ?? '') } disabled={processing}>
                               Return
                           </Button>
                         </>
