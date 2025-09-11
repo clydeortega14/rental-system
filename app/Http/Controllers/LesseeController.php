@@ -73,7 +73,7 @@ class LesseeController extends Controller
 
             if ($lessor) {
                 $shops = $lessor->shops()
-                    ->select('id', 'lessor_id', 'name', 'description', 'location', 'created_at')
+                    ->select('id', 'lessor_id', 'name', 'description', 'region','province','city','barangay', 'created_at')
                     ->latest()
                     ->paginate(10)
                     ->withQueryString();
@@ -95,7 +95,12 @@ class LesseeController extends Controller
                             'reservationAmt' => $rental->price,
                             'media_paths' => $rental->media_paths ?? '',
                             'customFieldAnswers' => $rental->customFieldAnswers ?? [],
-                            'address' => optional($rental->toShop)->location ?? '',
+                            'address' => implode(', ', array_filter([
+                                optional($rental->toShop)->barangay,
+                                optional($rental->toShop)->city,
+                                optional($rental->toShop)->province,
+                                optional($rental->toShop)->region,
+                            ])),
                             'shopId' => optional($rental->toShop)->id ?? null, // Keep null for type clarity
                         ];
                     });
@@ -118,7 +123,7 @@ class LesseeController extends Controller
         $conversationController = new ConversationController();
         $conversationsResponse = $conversationController->getUserConversations($request);
         $conversations = $conversationsResponse->getData()->conversations ?? [];
-         
+        
         return Inertia::render('Lessee/Landing', [
             'auth' => [
                 'user' => $user,
@@ -140,6 +145,7 @@ class LesseeController extends Controller
 
     public function store(Request $request)
     {
+       
         $validated = $request->validate([
             'fullname' => 'required|string',
             'business_name' => 'required|string',
