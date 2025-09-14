@@ -5,6 +5,7 @@ export interface RentalItem {
   name: string;
   description: string;
   images?: string[];
+  rentalPrice?: string;
   price: {
     hourly: number;
     daily: number;
@@ -57,7 +58,9 @@ export interface BookingDetails {
   returnTime?: string | null;
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'reserved' | 'returning';
   totalPrice?: number;
-  duration?: 'hourly' | 'daily' | 'weekly' | 'days';
+  rentalPrice?: string;
+  duration?: number;
+  duration_type?: 'hourly' | 'daily' | 'weekly' | 'days',
   quantity?: number;
   rentalItem?: RentalItem;
   category?: {

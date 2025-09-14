@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { usePage, router, useForm } from "@inertiajs/react"; // 👈 add router
+import { usePage, router, useForm, Link } from "@inertiajs/react"; // 👈 add router
 import { format, formatDate } from "date-fns";
 import Modal from "@/Components/Modal";
 import Button from "@/Components/Renter/ui/Button";
@@ -232,9 +232,9 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
                     </span>
                   </td>
                   <td className="py-3 flex items-center space-x-2 ">
-                    <Button variant="outline" size="sm" onClick={() => openModal(booking)}>
+                    <Link href={route('booking.view', {uuid: booking.uuid}) } className="shadow-sm bg-white px-3 py-1 text-slate-700 rounded-lg border border-gray-300">
                       View
-                    </Button>
+                    </Link>
 
                     { (booking.status === 'pending') && new Date() < new Date(booking.endDate ?? '') && (
                       <>

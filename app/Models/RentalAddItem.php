@@ -10,13 +10,15 @@ use App\Traits\Uuid;
 use Illuminate\Support\Str;
 use App\Http\Traits\CustomFields\HasCustomFieldValues;
 use App\Http\Traits\HasPolymorphicRelation;
+use App\Traits\FileTraits;
 
 class RentalAddItem extends Model
 {
     use HasFactory, 
     Uuid, 
     HasCustomFieldValues, 
-    HasPolymorphicRelation;
+    HasPolymorphicRelation,
+    FileTraits;
 
     protected $table = 'rental_listings';
 

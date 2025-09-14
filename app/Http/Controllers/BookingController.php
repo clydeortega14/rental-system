@@ -121,8 +121,7 @@ class BookingController extends Controller
 
     public function bookingView($uuid)
     {
-        $booking = Booking::
-        leftJoin('users', 'bookings.booked_by', '=', 'users.id')
+        $booking = Booking::leftJoin('users', 'bookings.booked_by', '=', 'users.id')
         ->leftJoin('rental_listings as rl', 'bookings.rental_listing_id', '=', 'rl.id')
         ->leftJoin('booking_statuses as bs', 'bookings.status', '=', 'bs.id')
         ->select(
@@ -136,12 +135,20 @@ class BookingController extends Controller
             'bookings.end_time as endTime',
             'rl.itemName as itemName',
             'rl.id as itemId',
+            'rl.price as rentalPrice',
             'bs.name as status',
-            'bookings.total_cost as totalPrice'
+            'bookings.total_cost as totalPrice',
+            'bookings.duration',
+            'bookings.duration_type'
         )
-        ->where('bookings.uuid', $uuid)->first();
+        ->where('bookings.uuid', $uuid)
+        ->first();
 
         if(is_null($booking)) return back()->with('error', 'booking not found!');
+
+        $rental_item = RentalAddItem::findOrFail($booking->itemId);
+
+        $attachments = $rental_item->with(['attachment' => fn ($attachment) =>$attachment->chaperone()])->get();
 
         return inertia('BookingView', [
             'booking' => $booking
