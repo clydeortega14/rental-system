@@ -52,5 +52,11 @@ class BookingStatusSeeder extends Seeder
             'text' => 'text-yellow-700',
             'background' => 'bg-yellow-100'
         ]);
+        BookingStatus::create([
+            'name' => 'returned',
+            'border' => 'border-0 border-pink-200', 
+            'text' => 'text-pink-700',
+            'background' => 'bg-pink-100'
+        ]);
     }
 }

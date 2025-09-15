@@ -55,6 +55,8 @@ class BookingRepository implements BookingRepositoryInterface
     {
         $booking = Booking::findOrFail($bookingId);
 
+       
+
         DB::transaction(function() use($booking, $action) {
                 switch($action)
                 {
@@ -85,6 +87,17 @@ class BookingRepository implements BookingRepositoryInterface
                     case "returning":
 
                         $status = BookingStatus::query()->withName('returning')->first();
+
+                    break;
+
+                    case "returned":
+
+                        $status = BookingStatus::query()->withName('returned')->first();
+                    break;
+
+                    case "in use":
+                        
+                        $status = BookingStatus::query()->withName('in use')->first();
 
                     break;
 

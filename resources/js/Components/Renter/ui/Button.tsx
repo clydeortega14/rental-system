@@ -4,7 +4,7 @@ interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
   type?: 'button' | 'submit' | 'reset';
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'returning' | 'return' | 'in_use';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
   disabled?: boolean;
@@ -31,6 +31,9 @@ const Button: React.FC<ButtonProps> = ({
     outline: 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50 focus:ring-gray-400',
     ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-400',
     danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
+    returning: 'bg-pink-600 text-white hover:bg-pink-700 focus:ring-pink-500',
+    return: 'bg-sky-600 text-white hover:bg-sky-700 focus:ring-sky-500',
+    in_use: 'bg-teal-600 text-white hover:bg-teal-700 focus:ring-teal-500'
   };
   
   const sizeStyles = {
