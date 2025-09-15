@@ -64,7 +64,7 @@ export default function View({
         startTime: formatTo24Hour(new Date()),
         endTime: formatTo24Hour(new Date()),
         returnTime: null,
-        duration: 'daily',
+        duration: 0,
         quantity: 1,
         status: 'pending',
         totalPrice: item.price[item.default_duration],
@@ -93,11 +93,11 @@ export default function View({
     const selectedDateData = availabilityData.find(d => d.date === selectedDate);
     const timeSlots = selectedDateData?.timeSlots || [];
 
-    const handleDurationChange = (newDuration: RentalDuration) => {
+    // const handleDurationChange = (newDuration: RentalDuration) => {
 
-        setBookingDetails({ ...bookingDetails, duration: newDuration });
-        setDuration(newDuration);
-    };
+    //     setBookingDetails({ ...bookingDetails, duration: newDuration });
+    //     setDuration(newDuration);
+    // };
 
     const handleDateSelect = (date: string) => {
 

@@ -58,15 +58,15 @@ const BookingSummary = ({
         <div className="flex justify-between">
           <span className="text-gray-600">Duration</span>
           <span className="font-medium">
-            {bookingDetails.quantity} {getDurationText(bookingDetails.duration)}
-            {bookingDetails.quantity && bookingDetails.quantity > 1 ? 's' : ''}
+            {bookingDetails.quantity} {getDurationText('daily')}
+            {/* {bookingDetails.quantity && bookingDetails.quantity > 1 ? 's' : ''} */}
           </span>
         </div>
         
         {
-          bookingDetails.duration && (
+           (
             <div className="flex justify-between">
-              <span className="text-gray-600">Price per {getDurationText(bookingDetails.duration)}</span>
+              <span className="text-gray-600">Price per {getDurationText('daily')}</span>
               { bookingDetails.totalPrice && <span className="font-medium">{formatPrice(bookingDetails.totalPrice)}</span> }
             </div>
           )
