@@ -11,9 +11,10 @@ import BookingStatus from './BookingStatus';
 
 interface BookingDetailsProps {
   booking: BookingDetails
+  serviceFee: number;
 }
 
-const BookingInfo: React.FC<BookingDetailsProps> = ({booking}) => {
+const BookingInfo: React.FC<BookingDetailsProps> = ({booking, serviceFee}:BookingDetailsProps) => {
 
     const images = [
       "https://picsum.photos/seed/picsum/200/300",
@@ -23,9 +24,6 @@ const BookingInfo: React.FC<BookingDetailsProps> = ({booking}) => {
       "https://picsum.photos/200/300?random=3",
       "https://picsum.photos/200/300?random=4"
     ];
-
-    
-
    
   return (
       <div className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-3xl mx-auto my-6">
@@ -74,7 +72,7 @@ const BookingInfo: React.FC<BookingDetailsProps> = ({booking}) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <p className="text-gray-600">Rate:</p>
             <p className="text-lg font-semibold text-slate-700">{formatPrice(Number(booking.rentalPrice))} {booking.duration_type}</p>
@@ -83,6 +81,11 @@ const BookingInfo: React.FC<BookingDetailsProps> = ({booking}) => {
           <div>
             <p className="text-gray-600">Duration:</p>
             <p className="text-lg font-semibold text-slate-700">{`${booking.duration} ${booking.duration_type === 'daily' ? 'Days' : 'booking.duration_type'}`}</p>
+          </div>
+
+          <div>
+            <p className="text-gray-600">Service Fee:</p>
+            <p className="text-lg font-semibold text-slate-700">{`${booking.service_fee}`}</p>
           </div>
 
           <div>

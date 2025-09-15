@@ -56,6 +56,7 @@ export interface BookingDetails {
   endDate?: string | null;
   endTime?: string | null;
   returnTime?: string | null;
+  service_fee?: string;
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'reserved' | 'returning';
   totalPrice?: number;
   rentalPrice?: string;

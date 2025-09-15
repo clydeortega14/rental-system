@@ -121,14 +121,23 @@ export default function BookingActions({ booking }: Props) {
                   </Button>
                 )
               }
-
-              <Button variant="return" size="sm" className="gap-1" onClick={ () => handleClickReturn(booking.id ?? '') } disabled={processing}>
-                Return Now
-              </Button>
-
-              <Button variant="in_use" size="sm" className="gap-1" onClick={ () => handleClickInUse(booking.id ?? '')} disabled={processing}>
-                In Use
-              </Button>
+              
+              {
+                booking.status === 'in use' && (
+                    <Button variant="return" size="sm" className="gap-1" onClick={ () => handleClickReturn(booking.id ?? '') } disabled={processing}>
+                        Return Now
+                    </Button>
+                )
+              }
+              
+              {
+                booking.status === 'reserved' && (
+                    <Button variant="in_use" size="sm" className="gap-1" onClick={ () => handleClickInUse(booking.id ?? '')} disabled={processing}>
+                        In Use
+                    </Button>
+                )
+              }
+              
         </div>
     );
 }
