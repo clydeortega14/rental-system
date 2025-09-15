@@ -76,4 +76,26 @@ trait FileTraits {
             $this->storeFile($model, $file, $driver, $path);
         }
     }
+
+    public function attachmentsLink()
+    {
+        if(count($model->attachment) > 0){
+            $images = [];
+            foreach($model->attachment as $attach)
+            {
+                $images[] = $attach->filename;
+            }
+
+            return $images;
+        }else{
+            return [
+                "https://picsum.photos/seed/picsum/200/300",
+                "https://picsum.photos/id/237/200/300",
+                "https://picsum.photos/200/300?random=1",
+                "https://picsum.photos/200/300?random=2",
+                "https://picsum.photos/200/300?random=3",
+                "https://picsum.photos/200/300?random=4"
+            ];
+        }
+    }
 }

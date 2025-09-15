@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { usePage, router, useForm } from "@inertiajs/react"; // 👈 add router
+import { usePage, router, useForm, Link } from "@inertiajs/react"; // 👈 add router
 import { format, formatDate } from "date-fns";
 import Modal from "@/Components/Modal";
 import Button from "@/Components/Renter/ui/Button";
@@ -10,6 +10,8 @@ import { BiCalendar, BiMessageDetail } from "react-icons/bi"; // 👈 icon for i
 import { toTwelveFormat } from "@/utils/timeUtils";
 import { Calendar } from "lucide-react";
 import { confirmDialog, isConfirmedAlert } from "@/utils/alert";
+import BookingActions from "@/Components/Booking/BookingActions";
+import BookingStatus from "@/Components/Booking/BookingStatus";
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
@@ -23,6 +25,8 @@ const getStatusColor = (status: string) => {
       return "bg-red-100 text-red-700";
     case "returning":
       return "bg-yellow-100 text-yellow-700";
+    case "returned":
+      return "bg-pink-100 text-pink-700";
     default:
       return "bg-gray-100 text-gray-700";
   }
@@ -223,58 +227,14 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
                     {booking.totalPrice && formatPrice(booking.totalPrice)}
                   </td>
                   <td className="px-4 py-3">
-                    <span
-                      className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusColor(
-                        booking.status
-                      )}`}
-                    >
-                      {booking.status}
-                    </span>
+                    <BookingStatus booking={booking} />
                   </td>
                   <td className="py-3 flex items-center space-x-2 ">
-                    <Button variant="outline" size="sm" onClick={() => openModal(booking)}>
+                    <Link href={route('booking.view', {uuid: booking.uuid}) } className="shadow-sm bg-white px-3 py-1 text-slate-700 rounded-lg border border-gray-300">
                       View
-                    </Button>
+                    </Link>
 
-                    { (booking.status === 'pending') && new Date() < new Date(booking.endDate ?? '') && (
-                      <>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="flex items-center gap-1 text-blue-600 border-blue-600"
-                          onClick={() => handleInquiries(booking)}
-                        >
-                          <BiMessageDetail className="w-4 h-4" />
-                            Inquiries
-                          </Button>
-                        
-                          <Button variant="secondary" size="sm" className="gap-1" onClick={ () => handleClickConfirm(booking.id ?? '') } disabled={processing}>
-                            Confirm
-                          </Button>
-                      </>
-                    )}
-
-
-
-                    {
-                      booking.status === 'reserved' && (
-                        <>
-                          <Button variant="danger" size="sm" className="gap-1" onClick={ () => handleClickCancel(booking.id ?? '') } disabled={processing}>
-                              Cancel
-                          </Button>
-                        </>
-                      )
-                    }
-                    {
-                      new Date(booking.endDate ?? '') < new Date && (booking.status === 'reserved' || booking.status === 'pending') && (
-
-                        <>
-                          <Button variant="outline" size="sm" className="gap-1" onClick={ () => handleClickReturn(booking.id ?? '') } disabled={processing}>
-                              Return
-                          </Button>
-                        </>
-                      )
-                    }
+                    <BookingActions booking={booking} />
                     
                   </td>
                 </tr>
