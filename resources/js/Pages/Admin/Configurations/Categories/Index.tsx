@@ -2,29 +2,26 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AdminLayout from '../../../../../js/Layouts/AdminLayout';
 import { PageWithAdminLayout } from '@/types';
-import EditCategoryModal from '@/Components/Admin/Categories/Modal';  // Import the modal component
 
-interface Category {
-  id: number;
-  name: string;
-  description?: string;
-  image_path?: string | null; // Add image field
-  tags: {
-    id: number;
-    name: string;
-  }[];
+import EditCategoryModal from '@/Components/Admin/Categories/Modal';
+import { Category as BaseCategory } from '@/types/category'; // ✅ import shared Category type
+
+// Extend the base Category for index view
+interface CategoryWithRelations extends Omit<BaseCategory, 'tags' | 'image'> {
+  tags: { id: number; name: string }[]; // relation objects from backend
+  image?: string | null;                // path string for displaying
 }
 
 type PageProps = {
-  categories: Category[];
+  categories: CategoryWithRelations[];
 };
 
 const AdminConfigurationCategoryIndex: PageWithAdminLayout = () => {
   const { categories } = usePage<PageProps>().props;
   const [searchText, setSearchText] = useState('');
   const [tagFilter, setTagFilter] = useState<number[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);  // Modal open/close state
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);  // Selected category for editing
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryWithRelations | null>(null);
 
   // Filter categories based on search text and tags
   const filteredCategories = categories.filter((category) => {
@@ -40,18 +37,17 @@ const AdminConfigurationCategoryIndex: PageWithAdminLayout = () => {
     return matchesSearch && matchesTags;
   });
 
-  // Function to open the modal and set selected category
-  const handleEditClick = (category: Category) => {
+  // Open modal and set selected category
+  const handleEditClick = (category: CategoryWithRelations) => {
     setSelectedCategory(category);
     setIsModalOpen(true);
   };
 
-  // Function to save the edited category (you can send a PUT request to update it)
-  const handleSave = (updatedCategory: Category) => {
-    setIsModalOpen(false);  // Close the modal after saving
+  // Save edited category (you’ll connect Inertia PUT later)
+  const handleSave = (updatedCategory: BaseCategory) => {
+    setIsModalOpen(false);
+    // TODO: Inertia PUT request here
   };
-
-
 
   return (
     <div className="space-y-6 p-4 max-w-8xl mx-auto">
@@ -90,7 +86,7 @@ const AdminConfigurationCategoryIndex: PageWithAdminLayout = () => {
         <tbody>
           {filteredCategories.length === 0 && (
             <tr>
-              <td colSpan={4} className="text-center py-4 text-gray-500">
+              <td colSpan={5} className="text-center py-4 text-gray-500">
                 No categories found.
               </td>
             </tr>
@@ -124,7 +120,7 @@ const AdminConfigurationCategoryIndex: PageWithAdminLayout = () => {
               </td>
               <td className="py-3 px-6 text-center space-x-2">
                 <button
-                  onClick={() => handleEditClick(category)}  // Open modal to edit this category
+                  onClick={() => handleEditClick(category)}
                   className="text-indigo-600 hover:text-indigo-800"
                 >
                   Edit
@@ -140,7 +136,7 @@ const AdminConfigurationCategoryIndex: PageWithAdminLayout = () => {
         <EditCategoryModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          category={selectedCategory}
+          category={selectedCategory as unknown as BaseCategory} // cast to base for modal
           onSave={handleSave}
         />
       )}
