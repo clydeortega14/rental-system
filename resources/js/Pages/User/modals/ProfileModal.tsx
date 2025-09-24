@@ -9,6 +9,7 @@ import {
   DialogClose,
 } from "@/Components/Lessor/ui/dialog";
 import { User, BillingAddress, Contact } from "@/Pages/User/types/Profile";
+import { regions, provinces, cities, barangays } from "select-philippines-address";
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -31,7 +32,7 @@ export default function ProfileModal({
     city: "",
     barangay: "",
     country: "",
-    postal_code: 0,
+    postal_code: undefined,
   };
 
   const defaultContact: Contact = {
@@ -50,6 +51,12 @@ export default function ProfileModal({
   const [preview, setPreview] = useState<string>(user.avatar ?? "/images/avatar.jpg");
   const [error, setError] = useState<string | null>(null);
 
+  /** Dropdown lists */
+  const [regionList, setRegionList] = useState<any[]>([]);
+  const [provinceList, setProvinceList] = useState<any[]>([]);
+  const [cityList, setCityList] = useState<any[]>([]);
+  const [barangayList, setBarangayList] = useState<any[]>([]);
+
   /** Reset state on open */
   useEffect(() => {
     if (isOpen) {
@@ -61,14 +68,43 @@ export default function ProfileModal({
       setPreview(user.avatar ?? "/images/avatar.jpg");
       setProfileImage(null);
       setError(null);
+
+      regions().then((res: any) => setRegionList(res));
     }
   }, [isOpen, user]);
+
+  /** Preload dependent dropdowns */
+  useEffect(() => {
+    if (formData.billing_address?.region && regionList.length) {
+      const regionCode = regionList.find(
+        (r) => r.region_name === formData.billing_address?.region
+      )?.region_code;
+      if (regionCode) provinces(regionCode).then((res: any) => setProvinceList(res));
+    }
+  }, [formData.billing_address?.region, regionList]);
+
+  useEffect(() => {
+    if (formData.billing_address?.province && provinceList.length) {
+      const provinceCode = provinceList.find(
+        (p) => p.province_name === formData.billing_address?.province
+      )?.province_code;
+      if (provinceCode) cities(provinceCode).then((res: any) => setCityList(res));
+    }
+  }, [formData.billing_address?.province, provinceList]);
+
+  useEffect(() => {
+    if (formData.billing_address?.city && cityList.length) {
+      const cityCode = cityList.find(
+        (c) => c.city_name === formData.billing_address?.city
+      )?.city_code;
+      if (cityCode) barangays(cityCode).then((res: any) => setBarangayList(res));
+    }
+  }, [formData.billing_address?.city, cityList]);
 
   /** Handle input changes */
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
-    setError(null); // clear error on change
+    setError(null);
 
     if (name.startsWith("contact.")) {
       const field = name.split(".")[1];
@@ -81,21 +117,70 @@ export default function ProfileModal({
       setFormData((prev) => ({
         ...prev,
         billing_address: {
-          ...((prev.billing_address as BillingAddress) ?? {
-            street: "",
-            region: "",
-            province: "",
-            city: "",
-            barangay: "",
-            country: "",
-            postal_code: 0,
-          }),
-          [field]: field === "postal_code" ? parseInt(value) || 0 : value,
+          ...prev.billing_address,
+          [field]:
+            field === "postal_code" ? (value ? parseInt(value) : undefined) : value,
         },
       }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
+  };
+
+  /** Dropdown change handlers */
+  const handleRegionChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    const regionName =
+      regionList.find((r) => r.region_code === code)?.region_name || "";
+
+    setFormData((prev) => ({
+      ...prev,
+      billing_address: {
+        ...prev.billing_address,
+        region: regionName,
+        province: "",
+        city: "",
+        barangay: "",
+      },
+    }));
+
+    provinces(code).then((res: any) => setProvinceList(res));
+    setCityList([]);
+    setBarangayList([]);
+  };
+
+  const handleProvinceChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    const provinceName =
+      provinceList.find((p) => p.province_code === code)?.province_name || "";
+
+    setFormData((prev) => ({
+      ...prev,
+      billing_address: { ...prev.billing_address, province: provinceName, city: "", barangay: "" },
+    }));
+
+    cities(code).then((res: any) => setCityList(res));
+    setBarangayList([]);
+  };
+
+  const handleCityChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    const cityName = cityList.find((c) => c.city_code === code)?.city_name || "";
+
+    setFormData((prev) => ({
+      ...prev,
+      billing_address: { ...prev.billing_address, city: cityName, barangay: "" },
+    }));
+
+    barangays(code).then((res: any) => setBarangayList(res));
+  };
+
+  const handleBarangayChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const barangayName = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      billing_address: { ...prev.billing_address, barangay: barangayName },
+    }));
   };
 
   /** Handle profile image change */
@@ -105,6 +190,15 @@ export default function ProfileModal({
       setProfileImage(file);
       setPreview(URL.createObjectURL(file));
     }
+  };
+
+  /** Utility to append nested data */
+  const appendNested = (data: FormData, prefix: string, obj: Record<string, any>) => {
+    Object.entries(obj).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        data.append(`${prefix}[${key}]`, String(value));
+      }
+    });
   };
 
   /** Handle submit */
@@ -120,26 +214,13 @@ export default function ProfileModal({
     data.append("name", formData.name);
     data.append("email", formData.email);
 
-    // contact
-    if (formData.contact?.mobile) {
-      data.append("contact[mobile]", formData.contact.mobile);
-    }
+    if (formData.contact) appendNested(data, "contact", formData.contact);
+    if (formData.billing_address)
+      appendNested(data, "billing_address", formData.billing_address);
 
-    // billing address
-    const ba = formData.billing_address;
-    if (ba) {
-      data.append("billing_address[street]", ba.street);
-      data.append("billing_address[city]", ba.city);
-      data.append("billing_address[province]", ba.province);
-      data.append("billing_address[region]", ba.region);
-      data.append("billing_address[barangay]", ba.barangay);
-      data.append("billing_address[country]", ba.country);
-      data.append("billing_address[postal_code]", ba.postal_code.toString());
-    }
-
-    // profile image
     if (profileImage) {
-      data.append("profile_image", profileImage);
+      // Use "avatar" if that's what backend expects
+      data.append("avatar", profileImage);
     }
 
     onSave(data);
@@ -220,8 +301,17 @@ export default function ProfileModal({
               name="contact.mobile"
               type="tel"
               value={formData.contact?.mobile || ""}
-              onChange={handleChange}
-              placeholder="e.g. +1 555 123 4567"
+              onChange={(e) => {
+                const onlyDigits = e.target.value.replace(/\D/g, "");
+                setFormData((prev) => ({
+                  ...prev,
+                  contact: {
+                    ...prev.contact,
+                    mobile: onlyDigits, // keep as string
+                  },
+                }));
+              }}
+              placeholder="e.g. 09123456789"
               className={inputClass}
             />
           </div>
@@ -241,64 +331,80 @@ export default function ProfileModal({
             />
           </div>
 
-          {/* Barangay + City */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="billing_address.barangay" className={labelClass}>
-                Barangay
-              </label>
-              <input
-                id="billing_address.barangay"
-                name="billing_address.barangay"
-                value={formData.billing_address?.barangay || ""}
-                onChange={handleChange}
-                placeholder="Barangay"
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label htmlFor="billing_address.city" className={labelClass}>
-                City
-              </label>
-              <input
-                id="billing_address.city"
-                name="billing_address.city"
-                value={formData.billing_address?.city || ""}
-                onChange={handleChange}
-                placeholder="City"
-                className={inputClass}
-              />
-            </div>
+          {/* Region */}
+          <div>
+            <label className={labelClass}>Region</label>
+            <select
+              className={inputClass}
+              value={
+                regionList.find((r) => r.region_name === formData.billing_address?.region)
+                  ?.region_code || ""
+              }
+              onChange={handleRegionChange}
+            >
+              <option value="">Select Region</option>
+              {regionList.map((r) => (
+                <option key={r.region_code} value={r.region_code}>
+                  {r.region_name}
+                </option>
+              ))}
+            </select>
           </div>
 
-          {/* Province + Region */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="billing_address.province" className={labelClass}>
-                Province
-              </label>
-              <input
-                id="billing_address.province"
-                name="billing_address.province"
-                value={formData.billing_address?.province || ""}
-                onChange={handleChange}
-                placeholder="Province"
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label htmlFor="billing_address.region" className={labelClass}>
-                Region
-              </label>
-              <input
-                id="billing_address.region"
-                name="billing_address.region"
-                value={formData.billing_address?.region || ""}
-                onChange={handleChange}
-                placeholder="Region"
-                className={inputClass}
-              />
-            </div>
+          {/* Province */}
+          <div>
+            <label className={labelClass}>Province</label>
+            <select
+              className={inputClass}
+              value={
+                provinceList.find((p) => p.province_name === formData.billing_address?.province)
+                  ?.province_code || ""
+              }
+              onChange={handleProvinceChange}
+            >
+              <option value="">Select Province</option>
+              {provinceList.map((p) => (
+                <option key={p.province_code} value={p.province_code}>
+                  {p.province_name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* City */}
+          <div>
+            <label className={labelClass}>City</label>
+            <select
+              className={inputClass}
+              value={
+                cityList.find((c) => c.city_name === formData.billing_address?.city)?.city_code || ""
+              }
+              onChange={handleCityChange}
+            >
+              <option value="">Select City</option>
+              {cityList.map((c) => (
+                <option key={c.city_code} value={c.city_code}>
+                  {c.city_name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Barangay */}
+          <div>
+            <label className={labelClass}>Barangay</label>
+            <select
+              className={inputClass}
+              value={formData.billing_address?.barangay || ""}
+              onChange={handleBarangayChange}
+            >
+              <option value="">Select Barangay</option>
+              {barangayList.map((b) => (
+                <option key={b.brgy_code} value={b.brgy_name}>
+                  {b.brgy_name}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Country + Postal Code */}

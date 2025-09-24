@@ -26,13 +26,13 @@ export type Company = {
 }
 
 export type BillingAddress = {
-  street: string;
-  region: string;
-  province: string;
-  city: string;
-  barangay: string;
-  country: string;
-  postal_code: number;
+  street?: string;
+  region?: string;
+  province?: string;
+  city?: string;
+  barangay?: string;
+  country?: string;
+  postal_code?: number;
 
 }
 
