@@ -68,12 +68,6 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
         name: user ? user.name : '',
         email: user ? user.email : '',
         phone: user ? user.contact?.mobile : '',
-        address: user && user.billing_address && user.billing_address?.street,
-        region: '',
-        province: user && user.billing_address?.province,
-        city: user ? user.billing_address?.city : '',
-        barangay: user ? user.billing_address?.barangay : '',
-        zipCode: user ? user.billing_address?.postal_code : '',
         delivery_address: {
             region: '',
             province: deliveryAddressIsSameWithBilling ? user.billing_address?.province : '',
@@ -82,18 +76,8 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
             zipcode: deliveryAddressIsSameWithBilling ? user.billing_address?.postal_code: '',
             street: deliveryAddressIsSameWithBilling ? user.billing_address?.street : ''
         }
+        
     });
-
-    const [postalData, setPostalData] = useState([
-        {
-            type: 'billing',
-            region_id: selectedRegion,
-            province_id: selectedProvince,
-            city_id: selectedCity,
-            barangay_id: selectedBarangay
-        }
-    ]);
-
 
     useEffect( () => {
 
@@ -126,6 +110,15 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
 
         post(route("checkout.booking", {
             ...formData, 
+            billing_address: {
+                region: selectedRegion,
+                province: selectedProvince,
+                city: selectedCity,
+                barangay: selectedBarangay,
+                zipcode: '',
+                street: ''
+                
+            },
             service_fee: serviceFee, 
             total_cost: allTotal,
             payment_method: paymentMethod,
@@ -219,8 +212,8 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                         </div>
 
                         <form onSubmit={handleSubmit}>
-                            <div className="p-6 border-b border-gray-400">
-                                <h2 className="text-lg font-semibold text-gray-800 mb-4">Contact Information</h2>
+                            <div className="p-6 border-b border-gray-200">
+                                <h2 className="text-lg font-bold text-gray-800 mb-4">Contact Information</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -266,8 +259,8 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                 </div>
                             </div>
 
-                            <div className="p-6 border-b border-gray-400">
-                                <h2 className="text-lg font-semibold text-gray-800 mb-4 py-4 px-2">Billing Address</h2>
+                            <div className="p-6 border-b border-gray-200">
+                                <h2 className="text-lg font-bold text-gray-800 mb-4">Billing Address</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-2">
                                     <div>
                                         <InputLabel htmlFor="billing-region" value="Region" />
@@ -368,9 +361,9 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                 </div>
                             </div>
 
-                            <div className="p-6 border-b border-gray-400">
+                            <div className="p-6 border-b border-gray-200">
                                 <div className="flex justify-between items-center md:flex-row space-x-4">
-                                    <h2 className="text-lg font-bold text-gray-600 my-7">Delivery Address</h2>
+                                    <h2 className="text-lg font-bold text-gray-600 mb-4">Delivery Address</h2>
 
                                     <label className="flex items-center space-x-2 mb-4">
                                         <input 
@@ -385,42 +378,81 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                 
 
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-2">
+                                    <div>
+                                        <InputLabel htmlFor="billing-region" value="Region" />
+                                        <Select
+                                            id="billing-region"
+                                            name="billing_region"
+                                            value={selectedRegion}
+                                            onChange={ (e) => handleSelectedRegion(e.target.value)}
+                                        >
+                                            {
+                                                regions.map((region:Region) => {
+
+                                                    return (
+                                                        <option value={region.region_id} key={region.region_id}>{region.name}</option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+
                                     <div>
                                         <InputLabel htmlFor="billing-province" value="Province" />
-                                        <TextInput 
+                                        <Select
                                             id="billing-province"
-                                            name="billing_street_address"
-                                            value={formData.delivery_address.province}
-                                            className="w-full block mt-1"
-                                            onChange={handleInputChange}
-                                        />
+                                            name="billing_province"
+                                            value={selectedProvince}
+                                            onChange={ (e) => handleSelectedProvince(e.target.value)}
+                                        >
+                                            {
+                                                provinces.length > 0 && provinces.map(province => {
+                                                    return (
+                                                        <option value={province.province_id} key={province.province_id} >{province.name}</option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
                                     </div>
 
                                     <div>
                                         <InputLabel htmlFor="billing-city" value="City" />
-                                        <TextInput 
+                                        <Select
                                             id="billing-city"
                                             name="billing_city"
-                                            value={formData.delivery_address.city}
-                                            className="w-full block mt-1"
-                                            onChange={handleInputChange}
-                                        />
+                                            value={selectedCity}
+                                            onChange={ (e) => handleSelectedCity(e.target.value)}
+                                        >
+                                            {cities.map((city: City) => {
+                                                return (
+                                                    <option value={city.city_id} key={city.city_id}>{city.name}</option>
+                                                )
+                                            })}
+                                        </Select>
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-7">
                                     <div>
                                         <InputLabel htmlFor="billing-barangay" value="Barangay" />
-                                        <TextInput 
+                                        <Select
                                             id="billing-barangay"
                                             name="billing_barangay"
-                                            value={formData.delivery_address.barangay}
-                                            className="w-full block mt-1"
+                                            value={selectedBarangay}
                                             onChange={handleInputChange}
-                                        />
-                                    </div>
+                                            className="block w-full rounded-lg border border-gray-300 bg-white p-2 text-gray-700 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                        >
+                                            {
+                                                barangays.map((barangay: Barangay) => {
+                                                    return (
+                                                        <option value={barangay.id} key={barangay.id}>{barangay.name}</option>
+                                                    );
 
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
 
                                     <div>
                                         <InputLabel htmlFor="billing-zipcode" value="ZipCode" />
