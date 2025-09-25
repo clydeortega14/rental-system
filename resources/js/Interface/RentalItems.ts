@@ -23,7 +23,7 @@ export type RentalItem = {
     available: boolean;
   };
   features?: string[];
-
+  shop_id?: number;
   // ✅ Add these fields
   region_code?: string;
   province_code?: string;

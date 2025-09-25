@@ -49,6 +49,7 @@ Route::get('/contact-us', [LandingPageController::class, 'contactUs'])->name('la
 Route::get('/cookies-policy', [LandingPageController::class, 'cookiesPolicy'])->name('cookies.policy');
 
 Route::get('rental-browser/{category}', [RentalItemController::class, 'rentalBrowserIndex'])->name('rental.browser.index');
+Route::get('/shop/search', [ShopController::class, 'searchShops'])->name('shop.search');
 Route::group(['prefix' => 'admin'], function () {
     // Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
