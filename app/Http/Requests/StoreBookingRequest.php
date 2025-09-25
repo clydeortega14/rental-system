@@ -19,6 +19,12 @@ class StoreBookingRequest extends FormRequest
             'name' => 'required|string|max:50',
             'email' => 'required|string|max:50',
             'phone' => 'required|max:20',
+            'billing_address.region' => 'required',
+            'billing_address.province' => 'required',
+            'billing_address.city' => 'required',
+            'billing_address.barangay' => 'required',
+            'billing_address.zipcode' => 'required',
+            'billing_address.street' => 'required',
         ];
     }
 }

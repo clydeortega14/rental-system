@@ -60,7 +60,15 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
 
         // Barangay state
         barangays,
-        selectedBarangay
+        selectedBarangay,
+        handleSelectedBarangay,
+
+        billing_zipcode,
+        handleBillingZipcode,
+
+        billing_street,
+        handleBillingStreet
+
     } = usePostalAddress();
 
     const [formData, setFormData] = useState({
@@ -68,6 +76,14 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
         name: user ? user.name : '',
         email: user ? user.email : '',
         phone: user ? user.contact?.mobile : '',
+        billing_address: {
+            region: '',
+            province: '',
+            city: '',
+            barangay: '',
+            zipcode: '',
+            street: ''
+        },
         delivery_address: {
             region: '',
             province: deliveryAddressIsSameWithBilling ? user.billing_address?.province : '',
@@ -76,8 +92,30 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
             zipcode: deliveryAddressIsSameWithBilling ? user.billing_address?.postal_code: '',
             street: deliveryAddressIsSameWithBilling ? user.billing_address?.street : ''
         }
-        
     });
+
+    useEffect( () => {
+
+        setFormData({
+            ...formData, 
+            billing_address: { 
+                region: selectedRegion,
+                province: selectedProvince,
+                city: selectedCity,
+                barangay: selectedBarangay,
+                zipcode: billing_zipcode,
+                street: billing_street
+            }
+        })
+
+    }, [
+        selectedRegion, 
+        selectedProvince, 
+        selectedCity, 
+        selectedBarangay,
+        billing_zipcode,
+        billing_street
+    ]) 
 
     useEffect( () => {
 
@@ -85,7 +123,20 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
         
     },[])
 
-    const { data, setData, post, processing, errors } = useForm(formData);
+    const { data, setData, post, processing, errors } = useForm({
+        rental_listing_id: bookingData.rental_listing.id,
+        name: user ? user.name : '',
+        email: user ? user.email : '',
+        phone: user ? user.contact?.mobile : '',
+        billing_address: {
+            region: '',
+            province: '',
+            city: '',
+            barangay: '',
+            zipcode: '',
+            street: ''
+        }
+    });
 
     const { cart, removeFromCart, clearCart, totalPrice } = useCart();
     const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
@@ -109,22 +160,15 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
         setIsProcessing(true);
 
         post(route("checkout.booking", {
-            ...formData, 
-            billing_address: {
-                region: selectedRegion,
-                province: selectedProvince,
-                city: selectedCity,
-                barangay: selectedBarangay,
-                zipcode: '',
-                street: ''
-                
-            },
             service_fee: serviceFee, 
             total_cost: allTotal,
             payment_method: paymentMethod,
             status: 'Pending'
         }), {
             preserveScroll: true,
+            onError: (page) => {
+                console.log(page)
+            },
             onSuccess: () => {
                 setTimeout(() => {
                     setIsProcessing(false);
@@ -211,6 +255,8 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                             <h1 className="text-2xl font-bold text-gray-800">Checkout</h1>
                         </div>
 
+                        <h1>{errors.billing_address}</h1>
+
                         <form onSubmit={handleSubmit}>
                             <div className="p-6 border-b border-gray-200">
                                 <h2 className="text-lg font-bold text-gray-800 mb-4">Contact Information</h2>
@@ -223,8 +269,8 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                         type="text"
                                         id="name"
                                         name="name"
-                                        value={user ? user.name : formData.name}
-                                        onChange={handleInputChange}
+                                        value={data.name}
+                                        onChange={ (e) => setData('name', {...data, name: e.target.value})}
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         />
                                     </div>
@@ -236,8 +282,8 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                             type="email"
                                             id="email"
                                             name="email"
-                                            value={user ? user.email : formData.email}
-                                            onChange={handleInputChange}
+                                            value={data.email}
+                                            onChange={(e) => setData('email', {...data, email: e.target.value})}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         />
                                     </div>
@@ -249,8 +295,8 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                         type="tel"
                                         id="phone"
                                         name="phone"
-                                        value={ user && user.contact ? user.contact.mobile : formData.phone}
-                                        onChange={handleInputChange}
+                                        value={data.phone}
+                                        onChange={(e) => setData('phone', {...data, phone: e.target.value})}
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         />
 
@@ -267,8 +313,11 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                         <Select
                                             id="billing-region"
                                             name="billing_region"
-                                            value={selectedRegion}
-                                            onChange={ (e) => handleSelectedRegion(e.target.value)}
+                                            value={data.billing_address.region}
+                                            onChange={ (e) => {
+                                                setData('billing_address', {...data.billing_address, region: e.target.value})
+                                                handleSelectedRegion(e.target.value)
+                                            }}
                                         >
                                             {
                                                 regions.map((region:Region) => {
@@ -279,14 +328,19 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                                 })
                                             }
                                         </Select>
+
+                                        {errors['billing_address.region'] && <InputError className="mt-1" message={errors['billing_address.region']} />}
                                     </div>
                                     <div>
                                         <InputLabel htmlFor="billing-province" value="Province" />
                                         <Select
                                             id="billing-province"
                                             name="billing_province"
-                                            value={selectedProvince}
-                                            onChange={ (e) => handleSelectedProvince(e.target.value)}
+                                            value={data.billing_address.province}
+                                            onChange={ (e) => {
+                                                handleSelectedProvince(e.target.value);
+                                                setData('billing_address', {...data.billing_address, province: e.target.value})
+                                            }}
                                         >
                                             {
                                                 provinces.length > 0 && provinces.map(province => {
@@ -296,6 +350,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                                 })
                                             }
                                         </Select>
+                                        {errors['billing_address.province'] && <InputError className="mt-1" message={errors['billing_address.province']} />}
                                     </div>
 
                                     <div>
@@ -303,8 +358,11 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                         <Select
                                             id="billing-city"
                                             name="billing_city"
-                                            value={selectedCity}
-                                            onChange={ (e) => handleSelectedCity(e.target.value)}
+                                            value={data.billing_address.city}
+                                            onChange={ (e) => {
+                                                setData('billing_address',{...data.billing_address, city: e.target.value})
+                                                handleSelectedCity(e.target.value)
+                                            }}
                                         >
                                             {cities.map((city: City) => {
                                                 return (
@@ -312,6 +370,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                                 )
                                             })}
                                         </Select>
+                                        {errors['billing_address.city'] && <InputError className="mt-1" message={errors['billing_address.city']} />}
                                     </div>
                                 </div>
 
@@ -321,8 +380,14 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                         <Select
                                             id="billing-barangay"
                                             name="billing_barangay"
-                                            value={selectedBarangay}
-                                            onChange={handleInputChange}
+                                            value={data.billing_address.barangay}
+                                            onChange={ (e) => {
+                                                setData(
+                                                    'billing_address',
+                                                    {...data.billing_address, barangay: e.target.value}
+                                                )
+                                                handleSelectedBarangay
+                                            }}
                                             className="block w-full rounded-lg border border-gray-300 bg-white p-2 text-gray-700 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                         >
                                             {
@@ -334,6 +399,8 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                                 })
                                             }
                                         </Select>
+
+                                        {errors['billing_address.barangay'] && <InputError className="mt-1" message={errors['billing_address.barangay']} />}
                                     </div>
 
 
@@ -342,10 +409,17 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                         <TextInput 
                                             id="billing-zipcode"
                                             name="zipcode"
-                                            value={formData.zipCode ?? ''}
+                                            value={data.billing_address.zipcode}
                                             className="w-full block mt-1"
-                                            onChange={handleInputChange}
+                                            onChange={ (e) => {
+                                                setData(
+                                                    'billing_address',
+                                                    {...data.billing_address, zipcode: e.target.value}
+                                                )
+                                                handleBillingZipcode
+                                            }}
                                         />
+                                        {errors['billing_address.zipcode'] && <InputError className="mt-1" message={errors['billing_address.zipcode']} />}
                                     </div>
                                 </div>
 
@@ -354,10 +428,16 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                     <TextInput 
                                         id="billing-street-address"
                                         name="billing_street_address"
-                                        value={formData.address}
+                                        value={data.billing_address.street}
                                         className="w-full block mt-1"
-                                        onChange={handleInputChange}
+                                        onChange={ (e) => {
+                                            setData(
+                                                'billing_address',
+                                                {...data.billing_address, street: e.target.value}
+                                            );
+                                        }}
                                     />
+                                    {errors['billing_address.street'] && <InputError className="mt-1" message={errors['billing_address.street']} />}
                                 </div>
                             </div>
 
@@ -380,12 +460,12 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-2">
                                     <div>
-                                        <InputLabel htmlFor="billing-region" value="Region" />
+                                        <InputLabel htmlFor="delivery-region" value="Region" />
                                         <Select
-                                            id="billing-region"
-                                            name="billing_region"
-                                            value={selectedRegion}
-                                            onChange={ (e) => handleSelectedRegion(e.target.value)}
+                                            id="delivery-region"
+                                            name="delivery_region"
+                                            value={''}
+                                            onChange={ (e) => console.log(e.target.value)}
                                         >
                                             {
                                                 regions.map((region:Region) => {
@@ -399,12 +479,12 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                     </div>
 
                                     <div>
-                                        <InputLabel htmlFor="billing-province" value="Province" />
+                                        <InputLabel htmlFor="delivery-province" value="Province" />
                                         <Select
-                                            id="billing-province"
-                                            name="billing_province"
-                                            value={selectedProvince}
-                                            onChange={ (e) => handleSelectedProvince(e.target.value)}
+                                            id="delivery-province"
+                                            name="delivery_province"
+                                            value={''}
+                                            onChange={ (e) => console.log(e.target.value)}
                                         >
                                             {
                                                 provinces.length > 0 && provinces.map(province => {
@@ -417,12 +497,12 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                     </div>
 
                                     <div>
-                                        <InputLabel htmlFor="billing-city" value="City" />
+                                        <InputLabel htmlFor="delivery-city" value="City" />
                                         <Select
-                                            id="billing-city"
-                                            name="billing_city"
-                                            value={selectedCity}
-                                            onChange={ (e) => handleSelectedCity(e.target.value)}
+                                            id="delivery-city"
+                                            name="delivery_city"
+                                            value={''}
+                                            onChange={ (e) => console.log(e.target.value)}
                                         >
                                             {cities.map((city: City) => {
                                                 return (
@@ -435,12 +515,12 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-7">
                                     <div>
-                                        <InputLabel htmlFor="billing-barangay" value="Barangay" />
+                                        <InputLabel htmlFor="delivery-barangay" value="Barangay" />
                                         <Select
-                                            id="billing-barangay"
-                                            name="billing_barangay"
-                                            value={selectedBarangay}
-                                            onChange={handleInputChange}
+                                            id="delivery-barangay"
+                                            name="delivery_barangay"
+                                            value={''}
+                                            onChange={ (e) => console.log(e.target.value) }
                                             className="block w-full rounded-lg border border-gray-300 bg-white p-2 text-gray-700 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                         >
                                             {
@@ -455,13 +535,13 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                     </div>
 
                                     <div>
-                                        <InputLabel htmlFor="billing-zipcode" value="ZipCode" />
+                                        <InputLabel htmlFor="delivery-zipcode" value="ZipCode" />
                                         <TextInput 
-                                            id="billing-zipcode"
-                                            name="billing_zipcode"
-                                            value={formData.delivery_address.zipcode}
+                                            id="delivery-zipcode"
+                                            name="delivery_zipcode"
+                                            value={''}
                                             className="w-full block mt-1"
-                                            onChange={handleInputChange}
+                                            onChange={ (e) => console.log(e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -469,13 +549,13 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                 
 
                                 <div className="mb-6">
-                                    <InputLabel htmlFor="billing-street-address" value="Street/Floor No./House No." />
+                                    <InputLabel htmlFor="delivery-street-address" value="Street/Floor No./House No." />
                                     <TextInput 
-                                        id="billing-street-address"
-                                        name="billing_street_address"
-                                        value={formData.delivery_address.street}
+                                        id="delivery-street-address"
+                                        name="delivery_street_address"
+                                        value={''}
                                         className="w-full block mt-1"
-                                        onChange={handleInputChange}
+                                        onChange={(e) => console.log(e.target.value)}
                                     />
                                 </div>
                                 

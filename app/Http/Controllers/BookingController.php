@@ -92,12 +92,17 @@ class BookingController extends Controller
             'endTime' => $data['returnTime'],
             'duration_type' => 'daily',
         ]);
+
+        // handle billing address
+
+
+        // handle delivery address
         
 
         // store transaction to activity logs
         RecentActivity::create([
             'user_id' => $request->user()->id,
-            'message' => 'You booked a rental item successfully.',
+            'message' => 'Booking created successfully!',
             'status' => '1',
         ]);
 
