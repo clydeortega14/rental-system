@@ -55,8 +55,6 @@ const RentalItemBrowser = ({
         params.location = location;
       }
 
-      console.log('🔍 sending params:', params);
-
       const res = await axios.get('/shop/search', { params });
       setFilteredItems(res.data.listings || []);
     } catch (err) {
