@@ -1,6 +1,5 @@
 import { Link, useForm } from "@inertiajs/react";
-import { PageProps } from "@/types";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {useEffect, useState } from "react";
 import { usePage } from "@inertiajs/react";
 import { useCart } from "@/context/CartContext";
 import { Calendar, ChevronLeft, CreditCard, X } from "lucide-react";
@@ -8,22 +7,31 @@ import Button from "../Renter/ui/Button";
 import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
 import LoginWithGoogle from "../LoginWithGoogle";
 import { BookingSession } from "@/types/rental";
-import CardExpiryInput from "../CardExpiryInput";
 import InputError from "../InputError";
 import KycModal from "@/Pages/User/modals/KycModal";
 import { useKyc } from "@/context/KycContext";
-import Address from "./Address";
 import InputLabel from "../InputLabel";
 import TextInput from "../TextInput";
 import Select from "../Select";
-import axios from "axios";
 import { usePostalAddress } from "@/context/PostalAddressContext";
 import { Barangay, City, Region } from "@/types/postalAddress";
+import { BillingAddress } from "@/types";
+import { PageProps } from "@/types";
 
 interface CheckOutProps {
     bookingData: BookingSession;
     categoryServiceFee: number;
 }
+
+interface checkOutForm {
+    rental_listing_id: number,
+    name: string,
+    email: string,
+    phone: string,
+    billing_address: BillingAddress
+}
+
+type ErrorBag = Record<string, string>;
 
 export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProps) {
     const user = usePage<PageProps>().props.auth.user;
@@ -89,7 +97,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
             province: deliveryAddressIsSameWithBilling ? user.billing_address?.province : '',
             city: deliveryAddressIsSameWithBilling ? user.billing_address?.city : '',
             barangay: deliveryAddressIsSameWithBilling ? user.billing_address?.barangay: '',
-            zipcode: deliveryAddressIsSameWithBilling ? user.billing_address?.postal_code: '',
+            zipcode: deliveryAddressIsSameWithBilling ? user.billing_address?.zipcode: '',
             street: deliveryAddressIsSameWithBilling ? user.billing_address?.street : ''
         }
     });
@@ -115,7 +123,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
         selectedBarangay,
         billing_zipcode,
         billing_street
-    ]) 
+    ]);
 
     useEffect( () => {
 
@@ -123,7 +131,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
         
     },[])
 
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors } = useForm<checkOutForm>({
         rental_listing_id: bookingData.rental_listing.id,
         name: user ? user.name : '',
         email: user ? user.email : '',
@@ -136,7 +144,9 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
             zipcode: '',
             street: ''
         }
-    });
+    }) as {data: checkOutForm, setData: any, post: any, processing: boolean, errors: ErrorBag};
+
+    console.log(errors)
 
     const { cart, removeFromCart, clearCart, totalPrice } = useCart();
     const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
@@ -166,9 +176,6 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
             status: 'Pending'
         }), {
             preserveScroll: true,
-            onError: (page) => {
-                console.log(page)
-            },
             onSuccess: () => {
                 setTimeout(() => {
                     setIsProcessing(false);
@@ -191,7 +198,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                     province: user.billing_address?.province,
                     city: user.billing_address?.city,
                     barangay: user.billing_address?.barangay,
-                    zipcode: user.billing_address?.postal_code,
+                    zipcode: user.billing_address?.zipcode,
                     street: user.billing_address?.street
                 }
             })
@@ -270,7 +277,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                         id="name"
                                         name="name"
                                         value={data.name}
-                                        onChange={ (e) => setData('name', {...data, name: e.target.value})}
+                                        onChange={ (e) => setData('name', e.target.value)}
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         />
                                     </div>
@@ -283,7 +290,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                             id="email"
                                             name="email"
                                             value={data.email}
-                                            onChange={(e) => setData('email', {...data, email: e.target.value})}
+                                            onChange={(e) => setData('email', e.target.value)}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         />
                                     </div>
@@ -296,7 +303,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                         id="phone"
                                         name="phone"
                                         value={data.phone}
-                                        onChange={(e) => setData('phone', {...data, phone: e.target.value})}
+                                        onChange={(e) => setData('phone',  e.target.value)}
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         />
 
@@ -329,7 +336,9 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                             }
                                         </Select>
 
-                                        {errors['billing_address.region'] && <InputError className="mt-1" message={errors['billing_address.region']} />}
+                                        {errors["billing_address.region"] && (
+                                            <div className="text-red-500">{errors["billing_address.region"]}</div>
+                                        )}
                                     </div>
                                     <div>
                                         <InputLabel htmlFor="billing-province" value="Province" />

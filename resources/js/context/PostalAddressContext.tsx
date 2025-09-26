@@ -137,6 +137,7 @@ export const PostalAddressProvider: React.FC<{children: React.ReactNode}> = ({ch
                 handleBillingZipcode,
 
                 billing_street,
+                setBillingStreet,
                 handleBillingStreet
              }}
         >

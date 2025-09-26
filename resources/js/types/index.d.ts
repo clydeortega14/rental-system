@@ -42,9 +42,8 @@ export type BillingAddress = {
   province: string;
   city: string;
   barangay: string;
-  country: string;
-  postal_code: number;
-
+  country?: string;
+  zipcode: string;
 }
 
 export type CardDetail = {
