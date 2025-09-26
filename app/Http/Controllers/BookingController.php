@@ -85,14 +85,13 @@ class BookingController extends Controller
         $data = $request->session()->get('booking_data');
 
         // store booking data to database 
-        $this->booking_service->storeBooking($data + [
+        $booking = $this->booking_service->storeBooking($data + [
             'service_fee' => $request->service_fee,
             'total_cost' => $request->total_cost,
             'booked_by' => auth()->user()->id,
             'endTime' => $data['returnTime'],
             'duration_type' => 'daily',
         ]);
-
         // handle billing address
         $billing_address = $request->billing_address;
 
@@ -120,8 +119,8 @@ class BookingController extends Controller
         // forget the session
         $request->session()->forget(['booking_data']);
 
-        // return redirect(route('dashboard'));
-        return to_route('lessee.profile');
+        return redirect(route('booking.view', $booking->uuid));
+        // return to_route('lessee.profile');
     }
 
     public function calendar()
