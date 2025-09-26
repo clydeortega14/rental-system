@@ -94,7 +94,15 @@ class BookingController extends Controller
         ]);
 
         // handle billing address
+        $billing_address = $request->billing_address;
 
+        auth()->user()->createBillingAddress([
+            'street' => $billing_address['street'],
+            'region' => $billing_address['region'],
+            'province' => $billing_address['province'],
+            'city' => $billing_address['city'],
+            'barangay' => $billing_address['barangay']
+        ]);
 
         // handle delivery address
         

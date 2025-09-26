@@ -11,7 +11,7 @@ class PostalAddress extends Model
 {
     use HasFactory;
 
-    protected $table = 'postal_address';
+    protected $table = 'postal_addresses';
     protected $fillable = [
         'addressable_type',
         'addressable_type',

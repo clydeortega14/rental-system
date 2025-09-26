@@ -35,6 +35,11 @@ type ErrorBag = Record<string, string>;
 
 export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProps) {
     const user = usePage<PageProps>().props.auth.user;
+
+    const map_billing_address = user.postal_addresses.find(billing => billing.address_type.name === 'Billing');
+    const map_delivery_address = user.postal_addresses.find(delivery => delivery.address_type.name === 'Delivery');
+
+    console.log(map_billing_address)
     const isVerified = user?.kyc?.kyc_verified === true;
     const [serviceFee, setServiceFee] = useState<number>(Number(bookingData.partial_total) * categoryServiceFee);
     const [allTotal, setAllTotal] = useState<number>(Number(bookingData.partial_total) + serviceFee);
@@ -51,83 +56,38 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
     const [deliveryAddressIsSameWithBilling, setDeliveryAddressIsSameWithBilling] = useState<boolean>(false);
     const {
         // Regions state
-        regions, 
-        selectedRegion,
+        regions,
         handleSelectedRegion, 
         getRegions,
 
         // PROVINCES State
         provinces,
-        selectedProvince,
         handleSelectedProvince,
 
         // Cities state
         cities,
-        selectedCity,
         handleSelectedCity,
 
         // Barangay state
         barangays,
-        selectedBarangay,
         handleSelectedBarangay,
 
-        billing_zipcode,
-        handleBillingZipcode,
-
-        billing_street,
-        handleBillingStreet
+        handleBillingZipcode
 
     } = usePostalAddress();
 
-    const [formData, setFormData] = useState({
-        rental_listing_id: bookingData.rental_listing.id,
-        name: user ? user.name : '',
-        email: user ? user.email : '',
-        phone: user ? user.contact?.mobile : '',
-        billing_address: {
-            region: '',
-            province: '',
-            city: '',
-            barangay: '',
-            zipcode: '',
-            street: ''
-        },
-        delivery_address: {
-            region: '',
-            province: deliveryAddressIsSameWithBilling ? user.billing_address?.province : '',
-            city: deliveryAddressIsSameWithBilling ? user.billing_address?.city : '',
-            barangay: deliveryAddressIsSameWithBilling ? user.billing_address?.barangay: '',
-            zipcode: deliveryAddressIsSameWithBilling ? user.billing_address?.zipcode: '',
-            street: deliveryAddressIsSameWithBilling ? user.billing_address?.street : ''
-        }
-    });
-
-    useEffect( () => {
-
-        setFormData({
-            ...formData, 
-            billing_address: { 
-                region: selectedRegion,
-                province: selectedProvince,
-                city: selectedCity,
-                barangay: selectedBarangay,
-                zipcode: billing_zipcode,
-                street: billing_street
-            }
-        })
-
-    }, [
-        selectedRegion, 
-        selectedProvince, 
-        selectedCity, 
-        selectedBarangay,
-        billing_zipcode,
-        billing_street
-    ]);
+    const [formData, setFormData] = useState({});
 
     useEffect( () => {
 
         getRegions();
+
+        if(map_billing_address)
+        {
+            handleSelectedRegion(map_billing_address.region_id);
+            handleSelectedProvince(map_billing_address.province_id);
+            handleSelectedCity(map_billing_address.city_id);
+        }
         
     },[])
 
@@ -137,14 +97,20 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
         email: user ? user.email : '',
         phone: user ? user.contact?.mobile : '',
         billing_address: {
-            region: '',
-            province: '',
-            city: '',
-            barangay: '',
-            zipcode: '',
-            street: ''
+            region: map_billing_address && map_billing_address.region_id,
+            province: map_billing_address && map_billing_address.province_id,
+            city: map_billing_address && map_billing_address.city_id,
+            barangay: map_billing_address && map_billing_address.barangay_id,
+            zipcode: map_billing_address && map_billing_address.zipcode,
+            street: map_billing_address && map_billing_address.street,
         }
-    }) as {data: checkOutForm, setData: any, post: any, processing: boolean, errors: ErrorBag};
+    }) as {
+        data: checkOutForm, 
+        setData: any, 
+        post: any, 
+        processing: boolean, 
+        errors: ErrorBag
+    };
 
     console.log(errors)
 

@@ -34,7 +34,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $user ? $user->load(['kyc', 'company', 'contact', 'billingAddress']) : null,
+                'user' => $user ? $user->load(['kyc', 'company', 'contact', 'postalAddresses.addressType']) : null,
             ],
             'flash' => [
                 'error_message' => session('error')
