@@ -64,6 +64,6 @@ Route::middleware('auth')->group(function () {
 
 });
     Route::prefix('auth')->name('auth.*')->group(function() {
-        Route::get('/{provider}/redirect', [SocialAuthenticateSessionController::class, 'redirect'])->name('auth.social');
-        Route::get('/{provider}/callback', [SocialAuthenticateSessionController::class, 'callback'])->name('auth.social.callback');
+        Route::get('/{provider}/redirect', [SocialAuthenticateSessionController::class, 'redirect'])->name('social');
+        Route::get('/{provider}/callback', [SocialAuthenticateSessionController::class, 'callback'])->name('social.callback');
     })->middleware('guest');
