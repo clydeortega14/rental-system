@@ -11,9 +11,10 @@ import { BookingDetails } from "@/types/rental";
 
 interface BookingViewProps {
   booking: BookingDetails
+  serviceFee: number;
 }
 
-const BookingView: React.FC<BookingViewProps> = ({booking}) => {
+const BookingView: React.FC<BookingViewProps> = ({booking, serviceFee}) => {
 
   return (
     
@@ -30,7 +31,7 @@ const BookingView: React.FC<BookingViewProps> = ({booking}) => {
               </SecondaryButton>
           </Link>
         </div>
-        <BookingInfo booking={booking}/>
+        <BookingInfo booking={booking} serviceFee={serviceFee}/>
       </div>
     </RenterLayout>
   );

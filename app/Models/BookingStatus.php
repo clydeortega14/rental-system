@@ -19,5 +19,10 @@ class BookingStatus extends Model
     {
         return $this->background.' '.$this->border.' '.$this->text;
     }
+
+    public function scopeWithName($query, $name)
+    {
+        return $query->where('name', $name);
+    }
     
 }

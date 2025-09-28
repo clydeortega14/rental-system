@@ -6,9 +6,11 @@ namespace App\Repositories\Eloquent;
 use App\Repositories\Contracts\BookingRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use App\Models\Booking;
+use App\Models\BookingStatus;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
+
 
 class BookingRepository implements BookingRepositoryInterface
 {
@@ -46,6 +48,66 @@ class BookingRepository implements BookingRepositoryInterface
                 throw new Exception('Internal Server Error', 500);
             }
             
+        });
+    }
+
+    public function updateStatus(int $bookingId, string $action) : void
+    {
+        $booking = Booking::findOrFail($bookingId);
+
+       
+
+        DB::transaction(function() use($booking, $action) {
+                switch($action)
+                {
+                    case 'accept':
+
+                        $status = BookingStatus::query()->withName('reserved')->first();
+                    break;
+
+                    case "completed":
+
+                        $status = BookingStatus::query()->withName('completed')->first();
+                        $booking->completed_at = Carbon::now();
+
+                    break;
+
+                    case "cancelled":
+
+                        $status = BookingStatus::query()->withName('cancelled')->first();
+
+                    break;
+
+                    case "rescheduled":
+
+                        $status = BookingStatus::query()->withName('rescheduled')->first();
+
+                    break;
+                    
+                    case "returning":
+
+                        $status = BookingStatus::query()->withName('returning')->first();
+
+                    break;
+
+                    case "returned":
+
+                        $status = BookingStatus::query()->withName('returned')->first();
+                    break;
+
+                    case "in use":
+                        
+                        $status = BookingStatus::query()->withName('in use')->first();
+
+                    break;
+
+                    default:
+                        $status = BookingStatus::query()->withName('pending')->first();;
+                    break;
+                }
+
+                $booking->status = $status->id;
+                $booking->save();
         });
     }
 

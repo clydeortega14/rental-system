@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { usePage, router } from "@inertiajs/react"; // 👈 add router
+import { usePage, router, useForm, Link } from "@inertiajs/react"; // 👈 add router
 import { format, formatDate } from "date-fns";
 import Modal from "@/Components/Modal";
 import Button from "@/Components/Renter/ui/Button";
@@ -9,17 +9,24 @@ import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
 import { BiCalendar, BiMessageDetail } from "react-icons/bi"; // 👈 icon for inquiries
 import { toTwelveFormat } from "@/utils/timeUtils";
 import { Calendar } from "lucide-react";
+import { confirmDialog, isConfirmedAlert } from "@/utils/alert";
+import BookingActions from "@/Components/Booking/BookingActions";
+import BookingStatus from "@/Components/Booking/BookingStatus";
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
-    case "confirmed":
+    case "reserved":
       return "bg-green-100 text-green-700";
     case "pending":
-      return "bg-yellow-100 text-yellow-700";
+      return "bg-orange-100 text-orange-700";
     case "completed":
-      return "bg-blue-100 text-blue-700";
-    case "canceled":
+      return "bg-emerald-100 text-emerald-700";
+    case "cancelled":
       return "bg-red-100 text-red-700";
+    case "returning":
+      return "bg-yellow-100 text-yellow-700";
+    case "returned":
+      return "bg-pink-100 text-pink-700";
     default:
       return "bg-gray-100 text-gray-700";
   }
@@ -35,6 +42,8 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
   const [activeTab, setActiveTab] = useState<"Upcoming" | "Past" | "All">("Upcoming");
   const [showModal, setShowModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<BookingDetails | null>(null);
+
+  const { post, processing } = useForm({});
 
   const openModal = (booking: BookingDetails) => {
     setSelectedBooking(booking);
@@ -84,6 +93,63 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
     if (activeTab === "Past") return end < today || booking.status.toLowerCase() === "canceled";
     return true;
   });
+
+  const handleClickReturn = (booking_id: string) => 
+  {
+      confirmDialog(
+        'Do you wish to return this already?', 
+        'Yes i will return it now', 
+        'Cancel'
+      ).then((result) => {
+        if(result.isConfirmed) {
+          post(route('booking.update.status', {
+            booking_id: booking_id,
+            action: 'returning'
+          }), {
+            preserveScroll: false,
+            onSuccess: () => {
+              isConfirmedAlert('the item you were rented was about to be return to the owner.', "success");
+            }
+          })
+        }
+      });
+  }
+
+  const handleClickConfirm = (booking_id: string) => {
+    
+    post(route('booking.update.status', {
+      booking_id,
+      action: 'accept'
+    }), {
+      preserveScroll: true,
+      onSuccess: () => {
+        isConfirmedAlert('Reservation of rental items has been confirmed!', "success");
+      }
+    })
+  }
+
+  const handleClickCancel = (booking_id: string) => {
+
+    confirmDialog(
+      'Are you sure, you want to cancel this booking?',
+      'Yes, cancel it',
+      'No'
+    ).then((result) => {
+      if(result.isConfirmed)
+      {
+        post(route('booking.update.status', {
+          booking_id,
+          action: 'cancelled'
+        }), {
+          preserveScroll: true,
+          onSuccess: () => {
+            isConfirmedAlert('Booking has been cancelled', 'warning')
+          }
+        });
+      }
+    })
+    
+  }
 
   return (
     <div className="max-w-8xl mx-auto p-6 space-y-6">
@@ -161,36 +227,14 @@ export default function Bookings({ onSwitchTab }: BookingsProps) {
                     {booking.totalPrice && formatPrice(booking.totalPrice)}
                   </td>
                   <td className="px-4 py-3">
-                    <span
-                      className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusColor(
-                        booking.status
-                      )}`}
-                    >
-                      {booking.status}
-                    </span>
+                    <BookingStatus booking={booking} />
                   </td>
                   <td className="py-3 flex items-center space-x-2 ">
-                    <Button variant="outline" size="sm" onClick={() => openModal(booking)}>
+                    <Link href={route('booking.view', {uuid: booking.uuid}) } className="shadow-sm bg-white px-3 py-1 text-slate-700 rounded-lg border border-gray-300">
                       View
-                    </Button>
+                    </Link>
 
-                    { booking.status === 'pending' && (
-                      <>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="flex items-center gap-1 text-blue-600 border-blue-600"
-                          onClick={() => handleInquiries(booking)}
-                        >
-                          <BiMessageDetail className="w-4 h-4" />
-                          Inquiries
-                        </Button>
-
-                        <Button variant="outline" size="sm" className="gap-1">
-                          Return
-                    </Button>
-                      </>
-                    )}
+                    <BookingActions booking={booking} />
                     
                   </td>
                 </tr>

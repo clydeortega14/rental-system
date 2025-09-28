@@ -40,106 +40,240 @@ class LesseeController extends Controller
         $this->category_service = $category_service;
         $this->rental_items_service = $rental_items_service;
     }
+
     public function index(Request $request)
     {
-        $headersData = [
-            ['name' => 'Item'],
-            ['name' => 'Reservation Detail'],
-            ['name' => 'Status'],
-            ['name' => 'Booked By'],
-            ['name' => 'Action']
-        ];
+        $headersData = $this->getHeadersData();
 
-        $user = Auth::user()?->loadMissing(['company', 'contact', 'kyc', 'billingAddress']);
+        $user = $this->getUser();
         $isApprovedLessor = false;
         $lessorApplicationStatus = null;
         $shops = [];
-        $rentals = collect(); // Default rentals
+        $rentals = collect();
 
         if ($user) {
-            // Check approval
-            $isApprovedLessor = Lessor::where('lessoruser_id', $user->id)
-                ->whereHas('status', fn($query) => $query->where('name', 'approved'))
-                ->exists();
+            $isApprovedLessor = $this->checkIfApprovedLessor($user->id);
+            $lessorApplicationStatus = $this->getLessorApplicationStatus($user->id);
 
-            // Application status
-            $application = \App\Models\LessorApplication::where('lessoruser_id', $user->id)->first();
-            if ($application) {
-                $lessorApplicationStatus = optional($application->status)->name;
-            }
-
-            // Get lessor
-            $lessor = Lessor::with('user')->where('lessoruser_id', $user->id)->first();
+            $lessor = $this->getLessor($user->id);
 
             if ($lessor) {
-                $shops = $lessor->shops()
-                    ->select('id', 'lessor_id', 'name', 'description', 'location', 'created_at')
-                    ->latest()
-                    ->paginate(10)
-                    ->withQueryString();
-
-                // Rentals logic added here
-                $rawRentals = RentalListing::with(['toCategory', 'toShop'])
-                    ->where('user_id', $lessor->user->id)
-                    ->get();
-
-
-                    $rentals = $rawRentals->map(function ($rental) {
-                        return [
-                            'id' => $rental->id,
-                            'uuid' => $rental->uuid,
-                            'name' => $rental->itemName,
-                            'description' => $rental->description ?? '',
-                            'categoryId' => $rental->category_id,
-                            'categoryType' => optional($rental->toCategory)->name ?? '',
-                            'reservationAmt' => $rental->price,
-                            'media_paths' => $rental->media_paths ?? '',
-                            'customFieldAnswers' => $rental->customFieldAnswers ?? [],
-                            'address' => optional($rental->toShop)->location ?? '',
-                            'shopId' => optional($rental->toShop)->id ?? null, // Keep null for type clarity
-                        ];
-                    });
-
+                $shops = $this->getShops($lessor);
+                $rentals = $this->getRentals($lessor);
             }
         }
 
-        $categories = Category::with('customFields')->get()->map(function ($category) {
-            return [
-                'id' => $category->id,
-                'name' => $category->name,
-                'custom_fields' => $category->custom_fields, // Must exist
-            ];
-        });
-        $bookings = $this->booking_service->getBookingsByUser(auth()->id());
+        $categories = $this->getCategories();
+        $bookings = $this->booking_service->getBookingsByUser($user->id);
         $lessorReservations = $this->getLessorReservations($user->id);
         $lessorDashboard = $this->getLessorDashboardData($user->id);
         $recentActivities = $this->getRecentActivities($user->id);
-        // fetch conversations
-        $conversationController = new ConversationController();
-        $conversationsResponse = $conversationController->getUserConversations($request);
-        $conversations = $conversationsResponse->getData()->conversations ?? [];
-         
+        $conversations = $this->getUserConversations($request);
+
         return Inertia::render('Lessee/Landing', [
-            'auth' => [
-                'user' => $user,
-            ],
-            'bookings' => $bookings,
+            'auth' => ['user' => $user],
             'headerData' => $headersData,
             'isApprovedLessor' => $isApprovedLessor,
             'lessorApplicationStatus' => $lessorApplicationStatus,
+            'shops' => $shops,
+            'rentals' => $rentals,
+            'categories' => $categories,
+            'bookings' => $bookings,
             'lessorReservations' => $lessorReservations,
             'lessorDashboard' => $lessorDashboard,
-            'shops' => $shops,
-            'categories' => $categories,
-            'rentals' => $rentals,
             'recentActivities' => $recentActivities,
             'user' => $user,
             'conversations' => $conversations,
         ]);
     }
 
+    private function getHeadersData()
+    {
+        return [
+            ['name' => 'Item'],
+            ['name' => 'Reservation Detail'],
+            ['name' => 'Status'],
+            ['name' => 'Booked By'],
+            ['name' => 'Action']
+        ];
+    }
+    private function getUser()
+    {
+        return Auth::user()?->loadMissing(['company', 'contact', 'kyc', 'billingAddress']);
+    }
+    private function checkIfApprovedLessor($userId)
+    {
+        return Lessor::where('lessoruser_id', $userId)
+            ->whereHas('status', fn($query) => $query->where('name', 'approved'))
+            ->exists();
+    }
+    private function getLessorApplicationStatus($userId)
+    {
+        $application = \App\Models\LessorApplication::where('lessoruser_id', $userId)->first();
+        return $application ? optional($application->status)->name : null;
+    }
+    private function getLessor($userId)
+    {
+        return Lessor::with('user')->where('lessoruser_id', $userId)->first();
+    }
+    private function getShops($lessor)
+    {
+        return $lessor->shops()
+            ->select('id', 'lessor_id', 'name', 'description', 'region','province','city','barangay', 'created_at')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+    }
+    private function getRentals($lessor)
+    {
+        $rawRentals = RentalListing::with(['toCategory', 'toShop'])
+            ->where('user_id', $lessor->user->id)
+            ->get();
+
+        return $rawRentals->map(function ($rental) {
+            return [
+                'id' => $rental->id,
+                'uuid' => $rental->uuid,
+                'name' => $rental->itemName,
+                'description' => $rental->description ?? '',
+                'categoryId' => $rental->category_id,
+                'categoryType' => optional($rental->toCategory)->name ?? '',
+                'reservationAmt' => $rental->price,
+                'media_paths' => $rental->media_paths ?? '',
+                'customFieldAnswers' => $rental->customFieldAnswers ?? [],
+                'address' => implode(', ', array_filter([
+                    optional($rental->toShop)->barangay,
+                    optional($rental->toShop)->city,
+                    optional($rental->toShop)->province,
+                    optional($rental->toShop)->region,
+                ])),
+                'shopId' => optional($rental->toShop)->id ?? null,
+            ];
+        });
+    }
+    private function getCategories()
+    {
+        return Category::with('customFields')->get()->map(function ($category) {
+            return [
+                'id' => $category->id,
+                'name' => $category->name,
+                'custom_fields' => $category->customFields,
+            ];
+        });
+    }
+    private function getUserConversations($request)
+    {
+        $conversationController = new ConversationController();
+        $conversationsResponse = $conversationController->getUserConversations($request);
+        return $conversationsResponse->getData()->conversations ?? [];
+    }
+
+    // public function index(Request $request)
+    // {
+    //     $headersData = [
+    //         ['name' => 'Item'],
+    //         ['name' => 'Reservation Detail'],
+    //         ['name' => 'Status'],
+    //         ['name' => 'Booked By'],
+    //         ['name' => 'Action']
+    //     ];
+
+    //     $user = Auth::user()?->loadMissing(['company', 'contact', 'kyc', 'billingAddress']);
+    //     $isApprovedLessor = false;
+    //     $lessorApplicationStatus = null;
+    //     $shops = [];
+    //     $rentals = collect(); // Default rentals
+
+    //     if ($user) {
+    //         // Check approval
+    //         $isApprovedLessor = Lessor::where('lessoruser_id', $user->id)
+    //             ->whereHas('status', fn($query) => $query->where('name', 'approved'))
+    //             ->exists();
+
+    //         // Application status
+    //         $application = \App\Models\LessorApplication::where('lessoruser_id', $user->id)->first();
+    //         if ($application) {
+    //             $lessorApplicationStatus = optional($application->status)->name;
+    //         }
+
+    //         // Get lessor
+    //         $lessor = Lessor::with('user')->where('lessoruser_id', $user->id)->first();
+
+    //         if ($lessor) {
+    //             $shops = $lessor->shops()
+    //                 ->select('id', 'lessor_id', 'name', 'description', 'region','province','city','barangay', 'created_at')
+    //                 ->latest()
+    //                 ->paginate(10)
+    //                 ->withQueryString();
+
+    //             // Rentals logic added here
+    //             $rawRentals = RentalListing::with(['toCategory', 'toShop'])
+    //                 ->where('user_id', $lessor->user->id)
+    //                 ->get();
+
+
+    //                 $rentals = $rawRentals->map(function ($rental) {
+    //                     return [
+    //                         'id' => $rental->id,
+    //                         'uuid' => $rental->uuid,
+    //                         'name' => $rental->itemName,
+    //                         'description' => $rental->description ?? '',
+    //                         'categoryId' => $rental->category_id,
+    //                         'categoryType' => optional($rental->toCategory)->name ?? '',
+    //                         'reservationAmt' => $rental->price,
+    //                         'media_paths' => $rental->media_paths ?? '',
+    //                         'customFieldAnswers' => $rental->customFieldAnswers ?? [],
+    //                         'address' => implode(', ', array_filter([
+    //                             optional($rental->toShop)->barangay,
+    //                             optional($rental->toShop)->city,
+    //                             optional($rental->toShop)->province,
+    //                             optional($rental->toShop)->region,
+    //                         ])),
+    //                         'shopId' => optional($rental->toShop)->id ?? null, // Keep null for type clarity
+    //                     ];
+    //                 });
+
+    //         }
+    //     }
+
+    //     $categories = Category::with('customFields')->get()->map(function ($category) {
+    //         return [
+    //             'id' => $category->id,
+    //             'name' => $category->name,
+    //             'custom_fields' => $category->custom_fields, // Must exist
+    //         ];
+    //     });
+    //     $bookings = $this->booking_service->getBookingsByUser(auth()->id());
+    //     $lessorReservations = $this->getLessorReservations($user->id);
+    //     $lessorDashboard = $this->getLessorDashboardData($user->id);
+    //     $recentActivities = $this->getRecentActivities($user->id);
+    //     // fetch conversations
+    //     $conversationController = new ConversationController();
+    //     $conversationsResponse = $conversationController->getUserConversations($request);
+    //     $conversations = $conversationsResponse->getData()->conversations ?? [];
+        
+    //     return Inertia::render('Lessee/Landing', [
+    //         'auth' => [
+    //             'user' => $user,
+    //         ],
+    //         'bookings' => $bookings,
+    //         'headerData' => $headersData,
+    //         'isApprovedLessor' => $isApprovedLessor,
+    //         'lessorApplicationStatus' => $lessorApplicationStatus,
+    //         'lessorReservations' => $lessorReservations,
+    //         'lessorDashboard' => $lessorDashboard,
+    //         'shops' => $shops,
+    //         'categories' => $categories,
+    //         'rentals' => $rentals,
+    //         'recentActivities' => $recentActivities,
+    //         'user' => $user,
+    //         'conversations' => $conversations,
+    //     ]);
+    // }
+
     public function store(Request $request)
     {
+       
         $validated = $request->validate([
             'fullname' => 'required|string',
             'business_name' => 'required|string',
@@ -375,4 +509,6 @@ class LesseeController extends Controller
                 ];
             });
     }
+
+    
 }

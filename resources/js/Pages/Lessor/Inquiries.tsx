@@ -123,12 +123,77 @@ export default function LessorInquiries({
   }, [attachment]);
 
   useEffect(() => {
+    if (!echo.connector) return;
+
+    const pusher = (echo.connector as any).pusher;
+    if (!pusher) return;
+
+    const logError = (err: any) =>
+      console.error("❌ Reverb connection error:", err);
+
+    const logDisconnected = () =>
+      console.warn("⚠️ Reverb disconnected");
+
+    const logConnecting = () =>
+      console.log("🔄 Reverb reconnecting...");
+
+    const logConnected = () => {
+      console.log("✅ Connected to Reverb", {
+        socketId: pusher.connection.socket_id,
+        host: pusher.config.wsHost,
+        port: pusher.config.forceTLS
+          ? pusher.config.wssPort
+          : pusher.config.wsPort,
+        secure: pusher.config.forceTLS ?? false,
+      });
+      console.log("📡 Active channels:", pusher.channels);
+    };
+
+    console.log("🔌 Reverb is connecting to:", {
+      wsHost: pusher.config.wsHost,
+      wsPort: pusher.config.wsPort,
+      wssPort: pusher.config.wssPort,
+      forceTLS: pusher.config.forceTLS,
+    });
+
+    // Bind listeners
+    pusher.connection.bind("error", logError);
+    pusher.connection.bind("disconnected", logDisconnected);
+    pusher.connection.bind("connecting", logConnecting);
+    pusher.connection.bind("connected", logConnected);
+
+    // ✅ Cleanup on unmount
+    return () => {
+      pusher.connection.unbind("error", logError);
+      pusher.connection.unbind("disconnected", logDisconnected);
+      pusher.connection.unbind("connecting", logConnecting);
+      pusher.connection.unbind("connected", logConnected);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!activeConversationId) return;
-    const channel = echo.private(`conversations.${activeConversationId}`);
+
+    const channelName = `conversations.${activeConversationId}`;
+    console.log("📡 Subscribing to channel:", channelName);
+
+    const channel = echo.private(channelName);
+
+    // ✅ log when subscribed
+    channel.subscribed(() => {
+      console.log(`✅ Subscribed to ${channelName}`);
+    });
+
+    channel.error((err: any) => {
+      console.error(`❌ Error on channel ${channelName}:`, err);
+    });
+
     channel.listen("MessageSent", (event: any) => {
+      console.log("💬 Message received:", event);
       setConversations((prev) => {
         const updated = prev.map((c) => {
           if (c.id === event.conversationId) {
+            console.log("✅ Updating conversation:", c.id);
             return {
               ...c,
               messages: [...c.messages, event.message],
@@ -144,18 +209,21 @@ export default function LessorInquiries({
         return updated;
       });
     });
+
     // 🔹 Listen for typing whispers
     channel.listenForWhisper("typing", (data: { userId: number; name: string }) => {
+      console.log("⌨️ Typing whisper received:", data);
       if (data.userId !== currentUserId) {
         setIsTyping({ userId: data.userId, name: data.name });
         setTimeout(() => setIsTyping(null), 3000);
       }
     });
+
     return () => {
-      // console.log("Leaving channel:", `conversations.${activeConversationId}`);
+      console.log("🚪 Leaving channel:", channelName);
       channel.stopListening("MessageSent");
       channel.stopListening("typing"); // ✅ cleanup whisper listener too
-      echo.leave(`conversations.${activeConversationId}`);
+      echo.leave(channelName);
     };
   }, [activeConversationId]);
 

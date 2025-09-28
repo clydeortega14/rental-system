@@ -10,6 +10,7 @@ use App\Services\BookingService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Traits\DateHelpers;
 use App\Models\Booking;
+use App\Models\Category;
 use App\Models\RecentActivity;
 
 class BookingController extends Controller
@@ -121,10 +122,10 @@ class BookingController extends Controller
 
     public function bookingView($uuid)
     {
-        $booking = Booking::
-        leftJoin('users', 'bookings.booked_by', '=', 'users.id')
+        $booking = Booking::leftJoin('users', 'bookings.booked_by', '=', 'users.id')
         ->leftJoin('rental_listings as rl', 'bookings.rental_listing_id', '=', 'rl.id')
         ->leftJoin('booking_statuses as bs', 'bookings.status', '=', 'bs.id')
+        ->leftJoin('categories as cat', 'bookings.category_id', '=','cat.id')
         ->select(
             'bookings.id', 
             'bookings.uuid',
@@ -134,17 +135,43 @@ class BookingController extends Controller
             'bookings.start_time as startTime', 
             'bookings.end_date as endDate', 
             'bookings.end_time as endTime',
+            'bookings.service_fee',
             'rl.itemName as itemName',
             'rl.id as itemId',
+            'rl.price as rentalPrice',
+            'cat.id as categoryId',
             'bs.name as status',
-            'bookings.total_cost as totalPrice'
+            'bookings.total_cost as totalPrice',
+            'bookings.duration',
+            'bookings.duration_type'
         )
-        ->where('bookings.uuid', $uuid)->first();
+        ->where('bookings.uuid', $uuid)
+        ->first();
+        
 
         if(is_null($booking)) return back()->with('error', 'booking not found!');
 
+        $rental_item = RentalAddItem::findOrFail($booking->itemId);
+
+        $category = Category::findOrFail($booking->categoryId);
+
+        $category_template = $category->templateCategory;
+
+        $serviceFee = $category_template ? $category_template->service_fee : 0;
+
+        $attachments = $rental_item->with(['attachment' => fn ($attachment) =>$attachment->chaperone()])->get();
+
         return inertia('BookingView', [
-            'booking' => $booking
+            'booking' => $booking,
+            'serviceFee' => $serviceFee
         ]);
+    }
+
+    public function updateStatus(Request $request)
+    {
+
+        $this->booking_service->updateStatus($request->booking_id, $request->action);
+
+        return redirect()->back()->with('success', 'STATUS UPDATED!');
     }
 }

@@ -65,14 +65,14 @@ function Index({ bookings, status }: Props) {
                 booking =>
                     booking.endDate && // ✅ ensure it's defined
                     new Date(booking.endDate) >= today &&
-                    booking.status !== 'canceled'
+                    booking.status !== 'cancelled'
             );
         } else if (activeTab === 'Past') {
             return bookings.filter(
                 booking =>
                     !booking.endDate || // if no endDate, treat it as past
                     new Date(booking.endDate) < today ||
-                    booking.status === 'canceled'
+                    booking.status === 'cancelled'
             );
         }
 

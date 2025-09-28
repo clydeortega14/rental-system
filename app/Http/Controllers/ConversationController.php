@@ -19,6 +19,7 @@ class ConversationController extends Controller
 {
     public function store(Request $request)
     {
+      
         // Validate nested JSON fields
         $validated = $request->validate([
             'userId'                => 'required|integer|exists:users,id',
