@@ -84,6 +84,8 @@ class BookingController extends Controller
         // declare local variable to session booking data
         $data = $request->session()->get('booking_data');
 
+        // before checkout, the system must check if the user has comply with the requirements needed before they can proceed to the checkout process
+
         // store booking data to database 
         $booking = $this->booking_service->storeBooking($data + [
             'service_fee' => $request->service_fee,
@@ -92,10 +94,12 @@ class BookingController extends Controller
             'endTime' => $data['returnTime'],
             'duration_type' => 'daily',
         ]);
+        
         // handle billing address
         $billing_address = $request->billing_address;
 
-        auth()->user()->createBillingAddress([
+        $booking->storePostalAddress([
+            'address_type' => 'Billing',
             'street' => $billing_address['street'],
             'region' => $billing_address['region'],
             'province' => $billing_address['province'],
@@ -104,6 +108,16 @@ class BookingController extends Controller
         ]);
 
         // handle delivery address
+        $delivery_address = $request->delivery_address;
+
+        $booking->storePostalAddress([
+            'address_type' => 'Delivery',
+            'street' => $delivery_address['street'],
+            'region' => $delivery_address['region'],
+            'province' => $delivery_address['province'],
+            'city' => $delivery_address['city'],
+            'barangay' => $delivery_address['barangay']
+        ]);
         
 
         // store transaction to activity logs

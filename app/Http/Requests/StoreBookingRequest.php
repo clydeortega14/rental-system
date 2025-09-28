@@ -28,7 +28,8 @@ class StoreBookingRequest extends FormRequest
             'delivery_address.province' => 'required',
             'delivery_address.city' => 'required',
             'delivery_address.barangay' => 'required',
-            'delivery_address.street' => 'required'
+            'delivery_address.street' => 'required',
+            'payment_method' => 'required'
         ];
     }
 }

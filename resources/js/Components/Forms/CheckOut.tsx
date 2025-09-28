@@ -17,6 +17,8 @@ import { usePostalAddress } from "@/context/PostalAddressContext";
 import { Barangay, City, Region } from "@/types/postalAddress";
 import { BillingAddress } from "@/types";
 import { PageProps } from "@/types";
+import PaymentMethodSelector from "./PaymentMethod";
+import { PaymentMethod } from "@/types/paymentTypes";
 
 interface CheckOutProps {
     bookingData: BookingSession;
@@ -120,7 +122,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
     };
 
     const { cart, removeFromCart, clearCart, totalPrice } = useCart();
-    const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
     
     const [isProcessing, setIsProcessing] = useState(false);
     const [isComplete, setIsComplete] = useState(false);
@@ -415,7 +417,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                 
 
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-2">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
                                     <div>
                                         <InputLabel htmlFor="delivery-region" value="Region" />
                                         <Select
@@ -455,6 +457,10 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                         {errors['delivery_address.province'] && <InputError className="mt-1" message={errors['delivery_address.province']} />}
                                     </div>
 
+                                    
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-7">
                                     <div>
                                         <InputLabel htmlFor="delivery-city" value="City" />
                                         <Select
@@ -471,9 +477,6 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                         </Select>
                                         {errors['devlivery_address.city'] && <InputError className="mt-1" message={errors['devlivery_address.city']} />}
                                     </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-7">
                                     <div>
                                         <InputLabel htmlFor="delivery-barangay" value="Barangay" />
                                         <Select
@@ -513,18 +516,27 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                 
                             </div>
 
-                            <div className="mt-6">
+                            <div className="mt-6 p-4">
+                                
+                                <hr />
+                                <PaymentMethodSelector 
+                                    selectedMethod={paymentMethod}
+                                    setPaymentMethod={setPaymentMethod}
+                                />
 
                                 { user ? (
                                     isVerified ? (
-                                        <Button
-                                        type="submit"
-                                        variant="primary"
-                                        fullWidth
-                                        disabled={processing}
-                                        >
-                                        {processing ? 'Processing...' : `Complete Booking • ${formatPrice(allTotal)}`}
-                                        </Button>
+                                        paymentMethod !== null && (
+                                            <Button
+                                                type="submit"
+                                                variant="primary"
+                                                fullWidth
+                                                disabled={processing}
+                                            >
+                                                {processing ? 'Processing...' : `Continue`}
+                                            </Button>
+                                        )
+                                        
                                     ) : (
                                         <>
                                         <div className="text-center py-4">

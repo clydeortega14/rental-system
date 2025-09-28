@@ -29,11 +29,11 @@ trait hasPostalAddressTraits
             ]);
     }
 
-    public function createBillingAddress(array $data)
+    public function storePostalAddress(array $data)
     {
-        $address_type = AddressType::withType('Billing')->first();
+        $address_type = AddressType::withType($data['address_type'])->first();
 
-        if(is_null($address_type)) throw new Exception("Billing address type is not found!", 404);
+        if(is_null($address_type)) throw new Exception($data['address_type']."address type is not found!", 404);
 
         $this->createPostalAddress(['address_type_id' => $address_type->id] + $data);
     }
