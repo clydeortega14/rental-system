@@ -5,7 +5,7 @@ import SecondaryButton from "../SecondaryButton";
 
 
 interface IPaymentMethodProps {
-    selectedMethod: string;
+    selectedMethod: PaymentMethod;
     setPaymentMethod: (method: string) => void;
 }
 const PaymentMethodSelector: React.FC = ({selectedMethod, setPaymentMethod}: IPaymentMethodProps) => {
