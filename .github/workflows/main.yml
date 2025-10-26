@@ -8,7 +8,7 @@ on:
 
 jobs:
   no-plans-to-mege:
-    runs-on: ubuntu_latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Craate a comment on the PR
