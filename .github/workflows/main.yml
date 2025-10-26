@@ -8,8 +8,8 @@ on:
 
 jobs:
   no-plans-to-mege:
-    runs_on: ubuntu_latest
-    
+    runs-on: ubuntu_latest
+
     steps:
       - name: Craate a comment on the PR
         uses: actions/github-script@v7
