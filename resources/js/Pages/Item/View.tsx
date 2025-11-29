@@ -57,7 +57,6 @@ export default function View({
 
     const session_error_message = usePage<PageProps>().props.flash.error_message;
     const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[item.default_duration]);
-    console.log(item);
     const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
         startDate: null,
         endDate: null,

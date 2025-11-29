@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { IUserPostalAddress } from "../types/postalAddress";
 
 export interface User {
     submitForm: any;
@@ -30,6 +31,7 @@ export interface User {
       kyc_verified: boolean;
       created_at: string; 
     }
+    postal_addresses?: IUserPostalAddress[];
     billing_address?: BillingAddress;
     delivery_address?: BillingAddress;
     card_detail?: CardDetail;
@@ -42,9 +44,8 @@ export type BillingAddress = {
   province: string;
   city: string;
   barangay: string;
-  country: string;
-  postal_code: number;
-
+  country?: string;
+  zipcode?: string;
 }
 
 export type CardDetail = {
