@@ -53,6 +53,8 @@ compiling the changes in the front end, just run:
 ``` bash
 npm run dev
 ```
+
+### Before we push our changes/updates we must run this commands first
 Detect linting errors with ESLint
 ```bash
 npm run lint
