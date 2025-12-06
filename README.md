@@ -49,10 +49,6 @@ Install npm packages
 npm install --no-save
 ```
 
-compiling the changes in the front end, just run:
-``` bash
-npm run dev
-```
 
 ### Before we push our changes/updates we must run this commands first
 Detect linting errors with ESLint
@@ -67,6 +63,12 @@ npm run lint:fix
 Safety type checking
 ```bash
 npm run type-check
+```
+
+### Commands to compile frontend assets
+to compile the changes in the front end, just run:
+``` bash
+npm run dev
 ```
 
 compiling build for production
