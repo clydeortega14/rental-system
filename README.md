@@ -46,27 +46,12 @@ php artisan migrate
 
 Install npm packages
 ``` bash
-npm install --no-save
+npm install
 ```
 
 compiling the changes in the front end, just run:
 ``` bash
 npm run dev
-```
-
-### Before we push our changes/updates we must run this commands first
-Detect linting errors with ESLint
-```bash
-npm run lint
-```
-
-Fix errors detects from ESLint
-```bash
-npm run lint:fix
-```
-Safety type checking
-```bash
-npm run type-check
 ```
 
 compiling build for production

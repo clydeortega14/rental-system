@@ -7,7 +7,7 @@ use App\Models\Booking;
 
 interface BookingRepositoryInterface
 {
-    public function store(array $data): Booking;
+    public function store(array $data): void;
 
     public function updateStatus(int $bookingId, string $action) : void;
 

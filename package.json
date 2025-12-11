@@ -6,10 +6,7 @@
         "dev": "vite",
         "check": "tsc",
         "build": "tsc && vite build",
-        "updates": "updates",
-        "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-        "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-        "type-check": "tsc --noEmit"
+        "updates": "updates"
     },
     "devDependencies": {
         "@headlessui/react": "^1.4.2",
@@ -20,25 +17,17 @@
         "@types/react": "^18.0.28",
         "@types/react-dom": "^18.0.10",
         "@types/react-modal": "^3.16.3",
-        "@typescript-eslint/eslint-plugin": "^8.48.0",
-        "@typescript-eslint/parser": "^8.48.0",
         "@vitejs/plugin-react": "^4.2.0",
         "autoprefixer": "^10.4.12",
         "axios": "^1.6.4",
-        "eslint": "^9.39.1",
-        "eslint-config-prettier": "^9.1.2",
-        "eslint-plugin-react": "^7.37.5",
-        "eslint-plugin-react-hooks": "^7.0.1",
-        "eslint-plugin-react-refresh": "^0.4.24",
-        "eslint-plugin-tailwindcss": "^3.18.2",
+        "eslint-config-prettier": "^9.1.0",
         "laravel-vite-plugin": "^1.0",
         "patch-package": "^8.0.0",
         "postcss": "^8.4.31",
-        "prettier": "^3.7.2",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "tailwindcss": "^3.2.1",
-        "typescript": "^5.9.3",
+        "typescript": "^5.0.2",
         "vite": "^6.3.5"
     },
     "dependencies": {
@@ -75,6 +64,7 @@
         "laravel-echo": "^2.2.0",
         "lucide-react": "^0.511.0",
         "nodemon": "^3.1.0",
+        "prettier": "^3.2.5",
         "pusher-js": "^8.4.0",
         "react-icons": "^5.0.1",
         "react-modal": "^3.16.1",
@@ -88,7 +78,6 @@
         "tailwind-merge": "^3.3.0",
         "tailwind-variants": "^1.0.0",
         "tailwindcss-animate": "^1.0.7",
-        "typescript-eslint": "^8.48.0",
         "updates": "^16.0.0"
     }
 }

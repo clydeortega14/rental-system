@@ -47,8 +47,6 @@ class RentalItemController extends Controller
 
     public function index(RentalAddItem $getItem) : Response
     {
-        ///
-        // thi is s test comment
         // Fetch rental items along with their attachments
         $formattedRentalItems = RentalAddItem::with('attachment')->get();
 

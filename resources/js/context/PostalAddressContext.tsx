@@ -2,7 +2,7 @@ import { City } from "@/types/postalAddress";
 import { Barangay } from "@/types/postalAddress";
 import { Region, Province } from "@/types/postalAddress";
 import axios from "axios";
-import { ChangeEvent, createContext, SetStateAction, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 interface IPostalAddress {
     // Regions
@@ -32,18 +32,7 @@ interface IPostalAddress {
     setBarangays: (barangays: Barangay[]) => void;
     selectedBarangay: string;
     setSelectedBarangay: (brgy_id: string) => void;
-    handleSelectedBarangay: (e: ChangeEvent<HTMLSelectElement>) => void;
-
-    // Billing zipcode
-    billing_zipcode: string;
-    setBillingZipcode: React.Dispatch<SetStateAction<string>>;
-    handleBillingZipcode: (e: ChangeEvent<HTMLInputElement>) => void;
-
-    // billing street/floor no./house no.
-    billing_street: string
-    setBillingStreet: React.Dispatch<SetStateAction<string>>;
-    handleBillingStreet: (e: ChangeEvent<HTMLInputElement>) => void;
-
+    handleSelectedBarangay: (barangay_id: string) => void;
 }
 
 const PostalAddressContext = createContext<IPostalAddress | undefined>(undefined);
@@ -59,8 +48,7 @@ export const PostalAddressProvider: React.FC<{children: React.ReactNode}> = ({ch
     const [cities, setCities] = useState<City[]>([]);
     const [selectedCity, setSelectedCity] = useState<string>('');
 
-    const [billing_zipcode, setBillingZipcode] = useState<string>('');
-    const [billing_street, setBillingStreet] = useState<string>('');
+    
 
     const getRegions = async () => {
         const response = await axios.get(`/api/address/regions`);
@@ -92,16 +80,8 @@ export const PostalAddressProvider: React.FC<{children: React.ReactNode}> = ({ch
 
     const [barangays, setBarangays] = useState<Barangay[]>([]);
     const [selectedBarangay, setSelectedBarangay] = useState<string>('');
-    const handleSelectedBarangay = (e: ChangeEvent<HTMLSelectElement>) => {
-        setSelectedBarangay(e.target.value);
-    }
-
-    const handleBillingZipcode = (e: ChangeEvent<HTMLInputElement>) => {
-        setBillingZipcode(e.target.value)
-    }
-
-    const handleBillingStreet = (e: ChangeEvent<HTMLInputElement>) => {
-        setBillingStreet(e.target.value)
+    const handleSelectedBarangay = async (barangay_id: string) => {
+        setSelectedBarangay(barangay_id);
     }
 
     return (
@@ -131,14 +111,6 @@ export const PostalAddressProvider: React.FC<{children: React.ReactNode}> = ({ch
                 selectedBarangay,
                 setSelectedBarangay,
                 handleSelectedBarangay,
-
-                billing_zipcode,
-                setBillingZipcode,
-                handleBillingZipcode,
-
-                billing_street,
-                setBillingStreet,
-                handleBillingStreet
              }}
         >
             {children}

@@ -1,1 +1,0 @@
-export type PaymentMethod = "qrph" | "ewallet" | "bank_transfer";

@@ -84,10 +84,8 @@ class BookingController extends Controller
         // declare local variable to session booking data
         $data = $request->session()->get('booking_data');
 
-        // before checkout, the system must check if the user has comply with the requirements needed before they can proceed to the checkout process
-
         // store booking data to database 
-        $booking = $this->booking_service->storeBooking($data + [
+        $this->booking_service->storeBooking($data + [
             'service_fee' => $request->service_fee,
             'total_cost' => $request->total_cost,
             'booked_by' => auth()->user()->id,
@@ -95,35 +93,11 @@ class BookingController extends Controller
             'duration_type' => 'daily',
         ]);
         
-        // handle billing address
-        $billing_address = $request->billing_address;
-
-        $booking->storePostalAddress([
-            'address_type' => 'Billing',
-            'street' => $billing_address['street'],
-            'region' => $billing_address['region'],
-            'province' => $billing_address['province'],
-            'city' => $billing_address['city'],
-            'barangay' => $billing_address['barangay']
-        ]);
-
-        // handle delivery address
-        $delivery_address = $request->delivery_address;
-
-        $booking->storePostalAddress([
-            'address_type' => 'Delivery',
-            'street' => $delivery_address['street'],
-            'region' => $delivery_address['region'],
-            'province' => $delivery_address['province'],
-            'city' => $delivery_address['city'],
-            'barangay' => $delivery_address['barangay']
-        ]);
-        
 
         // store transaction to activity logs
         RecentActivity::create([
             'user_id' => $request->user()->id,
-            'message' => 'Booking created successfully!',
+            'message' => 'You booked a rental item successfully.',
             'status' => '1',
         ]);
 
@@ -133,8 +107,8 @@ class BookingController extends Controller
         // forget the session
         $request->session()->forget(['booking_data']);
 
-        return redirect(route('booking.view', $booking->uuid));
-        // return to_route('lessee.profile');
+        // return redirect(route('dashboard'));
+        return to_route('lessee.profile');
     }
 
     public function calendar()
