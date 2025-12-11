@@ -20,7 +20,7 @@ class BookingService {
 
     public function storeBooking(array $data)
     {
-        return $this->booking_repository->store($data);
+        $this->booking_repository->store($data);
     }
 
     public function updateStatus(int $bookingId, string $action)

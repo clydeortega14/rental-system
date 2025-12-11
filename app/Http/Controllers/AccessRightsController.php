@@ -6,7 +6,6 @@ use Inertia\Inertia;
 
 class AccessRightsController extends Controller
 {
-    // Access Rights Controller
     public function index()
     {
         return Inertia::render('AccessRights/Index');

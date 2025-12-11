@@ -1,5 +1,6 @@
 import { Link, useForm } from "@inertiajs/react";
-import React, {useEffect, useState } from "react";
+import { PageProps } from "@/types";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { usePage } from "@inertiajs/react";
 import { useCart } from "@/context/CartContext";
 import { Calendar, ChevronLeft, CreditCard, X } from "lucide-react";
@@ -7,42 +8,25 @@ import Button from "../Renter/ui/Button";
 import { formatDateDisplay, formatPrice } from "@/utils/dateUtils";
 import LoginWithGoogle from "../LoginWithGoogle";
 import { BookingSession } from "@/types/rental";
+import CardExpiryInput from "../CardExpiryInput";
 import InputError from "../InputError";
 import KycModal from "@/Pages/User/modals/KycModal";
 import { useKyc } from "@/context/KycContext";
+import Address from "./Address";
 import InputLabel from "../InputLabel";
 import TextInput from "../TextInput";
 import Select from "../Select";
+import axios from "axios";
 import { usePostalAddress } from "@/context/PostalAddressContext";
 import { Barangay, City, Region } from "@/types/postalAddress";
-import { BillingAddress } from "@/types";
-import { PageProps } from "@/types";
-import PaymentMethodSelector from "./PaymentMethod";
-import { PaymentMethod } from "@/types/paymentTypes";
 
 interface CheckOutProps {
     bookingData: BookingSession;
     categoryServiceFee: number;
 }
 
-interface checkOutForm {
-    rental_listing_id: number,
-    name: string,
-    email: string,
-    phone: string,
-    billing_address: BillingAddress,
-    delivery_address: BillingAddress,
-}
-
-type ErrorBag = Record<string, string>;
-
 export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProps) {
     const user = usePage<PageProps>().props.auth.user;
-
-    const map_billing_address = user.postal_addresses && user.postal_addresses.find(billing => billing.address_type.name === 'Billing');
-    // console.log(map_billing_address.region_id)
-    const map_delivery_address = user.postal_addresses && user.postal_addresses.find(delivery => delivery.address_type.name === 'Delivery');
-
     const isVerified = user?.kyc?.kyc_verified === true;
     const [serviceFee, setServiceFee] = useState<number>(Number(bookingData.partial_total) * categoryServiceFee);
     const [allTotal, setAllTotal] = useState<number>(Number(bookingData.partial_total) + serviceFee);
@@ -56,73 +40,71 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
 
     }, [user]);
 
-    const [deliveryAddressIsSameWithBilling, setDeliveryAddressIsSameWithBilling] = useState<boolean>(true);
+    const [deliveryAddressIsSameWithBilling, setDeliveryAddressIsSameWithBilling] = useState<boolean>(false);
     const {
         // Regions state
-        regions,
+        regions, 
+        selectedRegion,
         handleSelectedRegion, 
         getRegions,
 
         // PROVINCES State
         provinces,
+        selectedProvince,
         handleSelectedProvince,
 
         // Cities state
         cities,
+        selectedCity,
         handleSelectedCity,
 
         // Barangay state
         barangays,
-        handleSelectedBarangay,
-
-        handleBillingZipcode
-
+        selectedBarangay
     } = usePostalAddress();
 
-    const [formData, setFormData] = useState({});
-
-    useEffect( () => {
-
-        getRegions();
-
-        if(map_billing_address)
-        {
-            handleSelectedRegion(map_billing_address.region_id);
-            handleSelectedProvince(map_billing_address.province_id);
-            handleSelectedCity(map_billing_address.city_id);
-        }
-        
-    },[])
-
-    const { data, setData, post, processing, errors } = useForm<checkOutForm>({
+    const [formData, setFormData] = useState({
         rental_listing_id: bookingData.rental_listing.id,
         name: user ? user.name : '',
         email: user ? user.email : '',
         phone: user ? user.contact?.mobile : '',
-        billing_address: {
-            region: map_billing_address ? map_billing_address.region_id : '',
-            province: map_billing_address ? map_billing_address.province_id : '',
-            city: map_billing_address ? map_billing_address.city_id : '',
-            barangay: map_billing_address ? map_billing_address.barangay_id : '',
-            street: map_billing_address ? map_billing_address.street: ''
-        },
+        address: user && user.billing_address && user.billing_address?.street,
+        region: '',
+        province: user && user.billing_address?.province,
+        city: user ? user.billing_address?.city : '',
+        barangay: user ? user.billing_address?.barangay : '',
+        zipCode: user ? user.billing_address?.postal_code : '',
         delivery_address: {
             region: '',
-            province: '',
-            city: '',
-            barangay: '',
-            street: ''
+            province: deliveryAddressIsSameWithBilling ? user.billing_address?.province : '',
+            city: deliveryAddressIsSameWithBilling ? user.billing_address?.city : '',
+            barangay: deliveryAddressIsSameWithBilling ? user.billing_address?.barangay: '',
+            zipcode: deliveryAddressIsSameWithBilling ? user.billing_address?.postal_code: '',
+            street: deliveryAddressIsSameWithBilling ? user.billing_address?.street : ''
         }
-    }) as {
-        data: checkOutForm, 
-        setData: any, 
-        post: any, 
-        processing: boolean, 
-        errors: ErrorBag
-    };
+    });
+
+    const [postalData, setPostalData] = useState([
+        {
+            type: 'billing',
+            region_id: selectedRegion,
+            province_id: selectedProvince,
+            city_id: selectedCity,
+            barangay_id: selectedBarangay
+        }
+    ]);
+
+
+    useEffect( () => {
+
+        getRegions();
+        
+    },[])
+
+    const { data, setData, post, processing, errors } = useForm(formData);
 
     const { cart, removeFromCart, clearCart, totalPrice } = useCart();
-    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
+    const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
     
     const [isProcessing, setIsProcessing] = useState(false);
     const [isComplete, setIsComplete] = useState(false);
@@ -143,6 +125,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
         setIsProcessing(true);
 
         post(route("checkout.booking", {
+            ...formData, 
             service_fee: serviceFee, 
             total_cost: allTotal,
             payment_method: paymentMethod,
@@ -164,24 +147,29 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
     useEffect( () => {
 
         if(deliveryAddressIsSameWithBilling) {
-
-            setData('delivery_address', {...data.delivery_address, 
-                region: data.billing_address.region,
-                province: data.billing_address.province,
-                city: data.billing_address.city,
-                barangay: data.billing_address.barangay,
-                street: data.billing_address.street
-            });
-
+            setFormData({
+                ...formData,
+                delivery_address: {
+                    region:'',
+                    province: user.billing_address?.province,
+                    city: user.billing_address?.city,
+                    barangay: user.billing_address?.barangay,
+                    zipcode: user.billing_address?.postal_code,
+                    street: user.billing_address?.street
+                }
+            })
         }else{
-
-            setData('delivery_address', {...data.delivery_address, 
-                region: '',
-                province: '',
-                city: '',
-                barangay: '',
-                street: ''
-            });
+            setFormData({
+                ...formData,
+                delivery_address: {
+                    region: '',
+                    province: '',
+                    city: '',
+                    barangay: '',
+                    zipcode: '',
+                    street: ''
+                }
+            })
         }
 
     }, [deliveryAddressIsSameWithBilling])
@@ -230,11 +218,9 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                             <h1 className="text-2xl font-bold text-gray-800">Checkout</h1>
                         </div>
 
-                        <h1>{errors.billing_address}</h1>
-
                         <form onSubmit={handleSubmit}>
-                            <div className="p-6 border-b border-gray-200">
-                                <h2 className="text-lg font-bold text-gray-800 mb-4">Contact Information</h2>
+                            <div className="p-6 border-b border-gray-400">
+                                <h2 className="text-lg font-semibold text-gray-800 mb-4">Contact Information</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -244,8 +230,8 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                         type="text"
                                         id="name"
                                         name="name"
-                                        value={data.name}
-                                        onChange={ (e) => setData('name', e.target.value)}
+                                        value={user ? user.name : formData.name}
+                                        onChange={handleInputChange}
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         />
                                     </div>
@@ -257,8 +243,8 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                             type="email"
                                             id="email"
                                             name="email"
-                                            value={data.email}
-                                            onChange={(e) => setData('email', e.target.value)}
+                                            value={user ? user.email : formData.email}
+                                            onChange={handleInputChange}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         />
                                     </div>
@@ -270,8 +256,8 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                         type="tel"
                                         id="phone"
                                         name="phone"
-                                        value={data.phone}
-                                        onChange={(e) => setData('phone',  e.target.value)}
+                                        value={ user && user.contact ? user.contact.mobile : formData.phone}
+                                        onChange={handleInputChange}
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         />
 
@@ -280,19 +266,16 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                 </div>
                             </div>
 
-                            <div className="p-6 border-b border-gray-200">
-                                <h2 className="text-lg font-bold text-gray-800 mb-4">Billing Address</h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+                            <div className="p-6 border-b border-gray-400">
+                                <h2 className="text-lg font-semibold text-gray-800 mb-4 py-4 px-2">Billing Address</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-2">
                                     <div>
                                         <InputLabel htmlFor="billing-region" value="Region" />
                                         <Select
                                             id="billing-region"
                                             name="billing_region"
-                                            value={data.billing_address.region}
-                                            onChange={ (e) => {
-                                                setData('billing_address', {...data.billing_address, region: e.target.value})
-                                                handleSelectedRegion(e.target.value)
-                                            }}
+                                            value={selectedRegion}
+                                            onChange={ (e) => handleSelectedRegion(e.target.value)}
                                         >
                                             {
                                                 regions.map((region:Region) => {
@@ -303,21 +286,14 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                                 })
                                             }
                                         </Select>
-
-                                        {errors["billing_address.region"] && (
-                                            <div className="text-red-500">{errors["billing_address.region"]}</div>
-                                        )}
                                     </div>
                                     <div>
                                         <InputLabel htmlFor="billing-province" value="Province" />
                                         <Select
                                             id="billing-province"
                                             name="billing_province"
-                                            value={data.billing_address.province}
-                                            onChange={ (e) => {
-                                                handleSelectedProvince(e.target.value);
-                                                setData('billing_address', {...data.billing_address, province: e.target.value})
-                                            }}
+                                            value={selectedProvince}
+                                            onChange={ (e) => handleSelectedProvince(e.target.value)}
                                         >
                                             {
                                                 provinces.length > 0 && provinces.map(province => {
@@ -327,23 +303,15 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                                 })
                                             }
                                         </Select>
-                                        {errors['billing_address.province'] && <InputError className="mt-1" message={errors['billing_address.province']} />}
                                     </div>
 
-                                    
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-7">
                                     <div>
                                         <InputLabel htmlFor="billing-city" value="City" />
                                         <Select
                                             id="billing-city"
                                             name="billing_city"
-                                            value={data.billing_address.city}
-                                            onChange={ (e) => {
-                                                setData('billing_address',{...data.billing_address, city: e.target.value})
-                                                handleSelectedCity(e.target.value)
-                                            }}
+                                            value={selectedCity}
+                                            onChange={ (e) => handleSelectedCity(e.target.value)}
                                         >
                                             {cities.map((city: City) => {
                                                 return (
@@ -351,21 +319,17 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                                 )
                                             })}
                                         </Select>
-                                        {errors['billing_address.city'] && <InputError className="mt-1" message={errors['billing_address.city']} />}
                                     </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-7">
                                     <div>
                                         <InputLabel htmlFor="billing-barangay" value="Barangay" />
                                         <Select
                                             id="billing-barangay"
                                             name="billing_barangay"
-                                            value={data.billing_address.barangay}
-                                            onChange={ (e) => {
-                                                setData(
-                                                    'billing_address',
-                                                    {...data.billing_address, barangay: e.target.value}
-                                                )
-                                                handleSelectedBarangay
-                                            }}
+                                            value={selectedBarangay}
+                                            onChange={handleInputChange}
                                             className="block w-full rounded-lg border border-gray-300 bg-white p-2 text-gray-700 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                         >
                                             {
@@ -377,8 +341,18 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                                 })
                                             }
                                         </Select>
+                                    </div>
 
-                                        {errors['billing_address.barangay'] && <InputError className="mt-1" message={errors['billing_address.barangay']} />}
+
+                                    <div>
+                                        <InputLabel htmlFor="billing-zipcode" value="ZipCode" />
+                                        <TextInput 
+                                            id="billing-zipcode"
+                                            name="zipcode"
+                                            value={formData.zipCode ?? ''}
+                                            className="w-full block mt-1"
+                                            onChange={handleInputChange}
+                                        />
                                     </div>
                                 </div>
 
@@ -387,22 +361,16 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                     <TextInput 
                                         id="billing-street-address"
                                         name="billing_street_address"
-                                        value={data.billing_address.street}
+                                        value={formData.address}
                                         className="w-full block mt-1"
-                                        onChange={ (e) => {
-                                            setData(
-                                                'billing_address',
-                                                {...data.billing_address, street: e.target.value}
-                                            );
-                                        }}
+                                        onChange={handleInputChange}
                                     />
-                                    {errors['billing_address.street'] && <InputError className="mt-1" message={errors['billing_address.street']} />}
                                 </div>
                             </div>
 
-                            <div className="p-6 border-b border-gray-200">
+                            <div className="p-6 border-b border-gray-400">
                                 <div className="flex justify-between items-center md:flex-row space-x-4">
-                                    <h2 className="text-lg font-bold text-gray-600 mb-4">Delivery Address</h2>
+                                    <h2 className="text-lg font-bold text-gray-600 my-7">Delivery Address</h2>
 
                                     <label className="flex items-center space-x-2 mb-4">
                                         <input 
@@ -417,126 +385,82 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
                                 
 
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <InputLabel htmlFor="delivery-region" value="Region" />
-                                        <Select
-                                            id="delivery-region"
-                                            name="delivery_region"
-                                            value={data.delivery_address.region}
-                                            onChange={ (e) => setData('delivery_address', {...data.delivery_address, region: e.target.value}) }
-                                        >
-                                            {
-                                                regions.map((region:Region) => {
-
-                                                    return (
-                                                        <option value={region.region_id} key={region.region_id}>{region.name}</option>
-                                                    )
-                                                })
-                                            }
-                                        </Select>
-                                        {errors['delivery_address.region'] && <InputError className="mt-1" message={errors['delivery_address.region']} />}
+                                        <InputLabel htmlFor="billing-province" value="Province" />
+                                        <TextInput 
+                                            id="billing-province"
+                                            name="billing_street_address"
+                                            value={formData.delivery_address.province}
+                                            className="w-full block mt-1"
+                                            onChange={handleInputChange}
+                                        />
                                     </div>
 
                                     <div>
-                                        <InputLabel htmlFor="delivery-province" value="Province" />
-                                        <Select
-                                            id="delivery-province"
-                                            name="delivery_province"
-                                            value={data.delivery_address.province}
-                                            onChange={ (e) => setData('delivery_address', {...data.delivery_address, province: e.target.value})}
-                                        >
-                                            {
-                                                provinces.length > 0 && provinces.map(province => {
-                                                    return (
-                                                        <option value={province.province_id} key={province.province_id} >{province.name}</option>
-                                                    )
-                                                })
-                                            }
-                                        </Select>
-                                        {errors['delivery_address.province'] && <InputError className="mt-1" message={errors['delivery_address.province']} />}
+                                        <InputLabel htmlFor="billing-city" value="City" />
+                                        <TextInput 
+                                            id="billing-city"
+                                            name="billing_city"
+                                            value={formData.delivery_address.city}
+                                            className="w-full block mt-1"
+                                            onChange={handleInputChange}
+                                        />
                                     </div>
-
-                                    
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-7">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
                                     <div>
-                                        <InputLabel htmlFor="delivery-city" value="City" />
-                                        <Select
-                                            id="delivery-city"
-                                            name="delivery_city"
-                                            value={data.delivery_address.city}
-                                            onChange={ (e) => setData('delivery_address', {...data.delivery_address, city: e.target.value})}
-                                        >
-                                            {cities.map((city: City) => {
-                                                return (
-                                                    <option value={city.city_id} key={city.city_id}>{city.name}</option>
-                                                )
-                                            })}
-                                        </Select>
-                                        {errors['devlivery_address.city'] && <InputError className="mt-1" message={errors['devlivery_address.city']} />}
+                                        <InputLabel htmlFor="billing-barangay" value="Barangay" />
+                                        <TextInput 
+                                            id="billing-barangay"
+                                            name="billing_barangay"
+                                            value={formData.delivery_address.barangay}
+                                            className="w-full block mt-1"
+                                            onChange={handleInputChange}
+                                        />
                                     </div>
+
+
                                     <div>
-                                        <InputLabel htmlFor="delivery-barangay" value="Barangay" />
-                                        <Select
-                                            id="delivery-barangay"
-                                            name="delivery_barangay"
-                                            value={data.delivery_address.barangay}
-                                            onChange={ (e) => setData('delivery_address', {...data.delivery_address, barangay: e.target.value}) }
-                                            className="block w-full rounded-lg border border-gray-300 bg-white p-2 text-gray-700 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                        >
-                                            {
-                                                barangays.map((barangay: Barangay) => {
-                                                    return (
-                                                        <option value={barangay.id} key={barangay.id}>{barangay.name}</option>
-                                                    );
-
-                                                })
-                                            }
-                                        </Select>
-
-                                        {errors['delivery_address.barangay'] && <InputError className="mt-1" message={errors['delivery_address.barangay']} />}
+                                        <InputLabel htmlFor="billing-zipcode" value="ZipCode" />
+                                        <TextInput 
+                                            id="billing-zipcode"
+                                            name="billing_zipcode"
+                                            value={formData.delivery_address.zipcode}
+                                            className="w-full block mt-1"
+                                            onChange={handleInputChange}
+                                        />
                                     </div>
                                 </div>
 
                                 
 
                                 <div className="mb-6">
-                                    <InputLabel htmlFor="delivery-street-address" value="Street/Floor No./House No." />
+                                    <InputLabel htmlFor="billing-street-address" value="Street/Floor No./House No." />
                                     <TextInput 
-                                        id="delivery-street-address"
-                                        name="delivery_street_address"
-                                        value={data.delivery_address.street}
+                                        id="billing-street-address"
+                                        name="billing_street_address"
+                                        value={formData.delivery_address.street}
                                         className="w-full block mt-1"
-                                        onChange={(e) => setData('delivery_address', {...data.delivery_address, street: e.target.value})}
+                                        onChange={handleInputChange}
                                     />
-                                    {errors['delivery_address.street'] && <InputError className="mt-1" message={errors['delivery_address.street']} />}
                                 </div>
                                 
                             </div>
 
-                            <div className="mt-6 p-4">
-                                
-                                <hr />
-                                <PaymentMethodSelector 
-                                    selectedMethod={paymentMethod}
-                                    setPaymentMethod={setPaymentMethod}
-                                />
+                            <div className="mt-6">
 
                                 { user ? (
                                     isVerified ? (
-                                        paymentMethod !== null && (
-                                            <Button
-                                                type="submit"
-                                                variant="primary"
-                                                fullWidth
-                                                disabled={processing}
-                                            >
-                                                {processing ? 'Processing...' : `Continue`}
-                                            </Button>
-                                        )
-                                        
+                                        <Button
+                                        type="submit"
+                                        variant="primary"
+                                        fullWidth
+                                        disabled={processing}
+                                        >
+                                        {processing ? 'Processing...' : `Complete Booking • ${formatPrice(allTotal)}`}
+                                        </Button>
                                     ) : (
                                         <>
                                         <div className="text-center py-4">
