@@ -3,7 +3,27 @@ import laravel from 'laravel-vite-plugin';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-export default defineConfig({
+export default defineConfig(({command}) => ({
+    base: '/build/',
+    build: {
+        outDir: 'public/build',
+        manifest: true,
+        sourcemap: false,
+        emptyOutDir: true,
+    },
+    server: command === 'serve' ? {
+        host: true,
+        port: 5173,
+        strictPort: true,
+        hmr: {
+            host: 'localhost',
+            port: 5173,
+            protocol: 'ws',
+        },
+        watch: {
+            usePolling: true,
+        },
+    } : undefined,
     plugins: [
         laravel({
             input: 'resources/js/app.tsx',
@@ -20,4 +40,4 @@ export default defineConfig({
             
         },
     },
-});
+}));
