@@ -1,0 +1,65 @@
+name: Laravel Docker CI
+
+on: 
+  push:
+    branches: [master]
+  pull_request: 
+    branches: [master]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout the code
+        uses: actions/checkout@v4
+      
+      # 2. Setup Docker buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-actions@v3
+      
+      # 3. Build the Docker images
+      - name: Build docker images
+        run: |
+          docker compose -f docker-compose.prod.yml build
+
+      # 4. Start the containers
+      - name: Start the containers
+        run: |
+          docker compose -f docker-compose.prod.yml up -d
+      
+      # 5. Wait for the MySQL service to be ready
+      - name: Wait for MySQL
+        run: |
+          until the docker compose exec mysql mysqladmin ping -h "localhost" --silent; do
+            echo "Waiting for MySQL..."
+            sleep 3
+          done
+      # 6. Install Composer dependencies
+      - name: Install Composer Dependencies
+        run: |
+          docker compose exec -it php composer install --no-dev --prefer-dist --optimize-autoloader
+
+      # 7. Copy the .env.example and generate the application key
+      - name: Setup the environment
+        run: |
+          docker compose exec -it php cp .env.example .env
+          docker compose exec -it php php artisan key:generate
+
+      # 8. Run the migrations and seeders
+      - name: Run the migrations and seeders
+        run: |
+          docker compose exec -it php php artisan migrate
+          docker compose exec -it php php artisan db:seed
+
+      # 9. Run the tests
+      - name: Run the tests
+        run: |
+          docker compose exec -it php php artisan test
+      
+      # 10. Stop containers
+      - name: Stop the containers
+        if: always()
+        run: |
+          docker compose -f docker-compose.prod.yml down -v
