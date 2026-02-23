@@ -44,6 +44,7 @@ const EditCategoryModal: React.FC<ModalProps> = ({
 
   const [editedCategory, setEditedCategory] = useState<Category>({
     ...category,
+    label: category.detail.label.trim().toLowerCase().replace(/\s+/g, "_"),
     mode_of_payment: category.mode_of_payment || [],
     pricing_duration: category.pricing_duration || [],
     image: null,
@@ -58,6 +59,7 @@ const EditCategoryModal: React.FC<ModalProps> = ({
   useEffect(() => {
     setEditedCategory({
       ...category,
+      label: category.detail.label.trim().toLowerCase().replace(/\s+/g, "_"),
       mode_of_payment: category.mode_of_payment || [],
       pricing_duration: category.pricing_duration || [],
       image: null,
@@ -75,6 +77,8 @@ const EditCategoryModal: React.FC<ModalProps> = ({
       setImagePreview(null);
     }
   }, [category]);
+
+  useEffect
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -152,6 +156,7 @@ const EditCategoryModal: React.FC<ModalProps> = ({
     formData.append("_method", "PUT");
 
     // --- Required fields ---
+    formData.append("label", editedCategory?.detail.label.trim() || "");
     formData.append("name", editedCategory.name?.trim() || "");
     formData.append("description", editedCategory.description?.trim() || "");
     formData.append("service_fee_type", editedCategory.service_fee_type || "amount");
@@ -277,16 +282,31 @@ const EditCategoryModal: React.FC<ModalProps> = ({
               {/* Name + Service Fee inline */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-medium mb-1">Name</label>
+                  <label className="block font-medium mb-1">Label</label>
                   <input
                     type="text"
-                    name="name"
-                    value={editedCategory.name}
+                    name="label"
+                    value={editedCategory.detail.label}
                     onChange={handleInputChange}
                     className="w-full border rounded px-3 py-2"
                     required
                   />
                 </div>
+
+                <div>
+                  <label className="block font-medium mb-1">Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={editedCategory.label}
+                    onChange={handleInputChange}
+                    className="w-full border rounded px-3 py-2"
+                    
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-4">
+                
                 <div>
                   <label className="block font-medium mb-1">Service Fee</label>
                   <div className="flex gap-2">
@@ -303,7 +323,6 @@ const EditCategoryModal: React.FC<ModalProps> = ({
                       onChange={handleInputChange}
                       className="border rounded px-3 py-2"
                     >
-                      <option value="amount">₱</option>
                       <option value="percentage">%</option>
                     </select>
                   </div>
