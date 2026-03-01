@@ -40,5 +40,9 @@ return [
         'client_secret' => env('FACEBOOK_OAUTH_APP_SECRET'),
         'redirect' => env('FACEBOOK_OAUTH_REDIRECT_URI', 'https://app.rent-hive.co/auth/facebook/callback'),
     ],
-
+    'github' => [
+        'client_id' => env('GITHUB_OAUTH_CLIENT_ID'),
+        'client_secret' => env('GITHUB_OAUTH_CLIENT_SECRET'),
+        'redirect' => env('GITHUB_OAUTH_REDIRECT_URI'),
+    ],
 ];
