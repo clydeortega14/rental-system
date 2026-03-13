@@ -50,7 +50,7 @@ class ProfileController extends Controller
             'document_type' => 'required|string|max:100',
             'document_number' => 'required|string|max:100',
             'document_image' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
-            'selfie' => 'required|string',
+            // 'selfie' => 'required|string',
         ]);
 
         // Check if KYC exists

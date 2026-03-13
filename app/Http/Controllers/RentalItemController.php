@@ -11,6 +11,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\RentalItems\ItemDetails;
@@ -85,6 +86,14 @@ class RentalItemController extends Controller
         $session = request()->session()->has('booking_data') ? request()->session()->get('booking_data') : [];
         
         $serviceFee = $this->category_service->getServiceFee($session['category']['id']);
+
+        $regions = DB::table('regions')->select('id', 'code', 'name', 'region_id')->get();
+
+        $provinces = DB::table('provinces')->select('id', 'code', 'name', 'region_id', 'province_id')->get();
+
+        $cities = DB::table('cities')->select('id', 'code', 'name', 'region_id', 'province_id', 'city_id')->get();
+
+        $barangays = DB::table('barangays')->select('id', 'code', 'name', 'region_id', 'province_id', 'city_id')->get();
 
         return inertia('Item/Checkout', [
             'booking_data' => $session,
