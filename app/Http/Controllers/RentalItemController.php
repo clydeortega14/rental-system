@@ -97,7 +97,11 @@ class RentalItemController extends Controller
 
         return inertia('Item/Checkout', [
             'booking_data' => $session,
-            'serviceFee' => $serviceFee
+            'serviceFee' => $serviceFee,
+            'regions' => $regions,
+            'provinces' => $provinces,
+            'cities' => $cities,
+            'barangays' => $barangays
         ]);
     }
 

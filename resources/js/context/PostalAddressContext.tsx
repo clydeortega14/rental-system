@@ -1,8 +1,6 @@
-import { City } from "@/types/postalAddress";
-import { Barangay } from "@/types/postalAddress";
-import { Region, Province } from "@/types/postalAddress";
+import { Region, Province, Barangay, City } from "@/types/postalAddress";
 import axios from "axios";
-import { createContext, useContext, useState } from "react";
+import React, { createContext, SetStateAction, useContext, useState } from "react";
 
 interface IPostalAddress {
     // Regions
@@ -13,12 +11,17 @@ interface IPostalAddress {
     handleSelectedRegion: (region_id: string) => void;
     getRegions: () => void;
 
+    daRegion: string | '';
+    setDaRegion: React.Dispatch<SetStateAction<string|''>>;
+
     // Provinces
     provinces: Province[];
     setProvinces: (provinces: Province[]) => void;
     selectedProvince: string;
     setSelectedProvince: (province_id: string) => void;
     handleSelectedProvince: (province_id: string) => void;
+    da_province: string | '',
+    setDaProvince: React.Dispatch<SetStateAction<string | ''>>,
 
     // Cities
     cities: City[];
@@ -27,12 +30,17 @@ interface IPostalAddress {
     setSelectedCity: (city: string) => void;
     handleSelectedCity: (city_id: string) => void;
 
+    daCity: string | '',
+    setDaCity: React.Dispatch<SetStateAction<string | ''>>;
+
     // Barangays
     barangays: Barangay[];
     setBarangays: (barangays: Barangay[]) => void;
     selectedBarangay: string;
     setSelectedBarangay: (brgy_id: string) => void;
     handleSelectedBarangay: (barangay_id: string) => void;
+    daBarangay: string | '';
+    setDaBarangay: React.Dispatch<SetStateAction<string | ''>>;
 }
 
 const PostalAddressContext = createContext<IPostalAddress | undefined>(undefined);
@@ -40,15 +48,22 @@ const PostalAddressContext = createContext<IPostalAddress | undefined>(undefined
 export const PostalAddressProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
     
     const [regions, setRegions ] = useState<Region[]>([]);
-    const [selectedRegion, setSelectedRegion] = useState<string>('');
+    const [selectedRegion, setSelectedRegion] = useState<string | ''>('');
+
+    // Delivery address for region
+    const [daRegion, setDaRegion] = useState<string | ''>('');
 
     const [provinces, setProvinces] = useState<Province[]>([]);
     const [selectedProvince, setSelectedProvince] = useState<string>('');
 
+    const [da_province, setDaProvince] = useState<string | ''>('');
+
     const [cities, setCities] = useState<City[]>([]);
     const [selectedCity, setSelectedCity] = useState<string>('');
 
-    
+    const [daCity, setDaCity] = useState<string | ''>('');
+
+    const [daBarangay, setDaBarangay] = useState<string | ''>('');
 
     const getRegions = async () => {
         const response = await axios.get(`/api/address/regions`);
@@ -56,6 +71,7 @@ export const PostalAddressProvider: React.FC<{children: React.ReactNode}> = ({ch
         let response_data = response.data;
 
         setRegions(response_data);
+        
     }
 
     const handleSelectedRegion = async (region_id: string) => {
@@ -95,22 +111,33 @@ export const PostalAddressProvider: React.FC<{children: React.ReactNode}> = ({ch
                 handleSelectedRegion,
                 getRegions,
 
+                daRegion,
+                setDaRegion,
+
                 provinces,
                 setProvinces,
                 selectedProvince,
                 setSelectedProvince,
                 handleSelectedProvince,
+                da_province,
+                setDaProvince,
                 
                 cities,
                 setCities,
                 selectedCity,
                 setSelectedCity,
                 handleSelectedCity,
+
+                daCity,
+                setDaCity,
+
                 barangays,
                 setBarangays,
                 selectedBarangay,
                 setSelectedBarangay,
                 handleSelectedBarangay,
+                daBarangay,
+                setDaBarangay
              }}
         >
             {children}
