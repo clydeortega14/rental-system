@@ -13,17 +13,11 @@ class ShopController extends Controller
 {
     public function index()
     {
-        $lessor = Lessor::with(['shops', 'user'])
-            ->where('lessoruser_id', auth()->id())
-            ->first();
-            
-        if (!$lessor) {
-            abort(403, 'Lessor not found for this user.');
-        }
+        
 
         return Inertia::render('Lessor/Shop', [
-            'shops' => $lessor->shops,
-            'lessorName' => $lessor->user->name,
+            'shops' => [],
+            'lessorName' => auth()->user()->name,
         ]);
     }
 

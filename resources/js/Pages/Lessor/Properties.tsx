@@ -1,23 +1,36 @@
-import React, { useState, ReactElement } from "react";
+import React, { useState, ReactElement, useEffect } from "react";
 import RentalItemModal, { Category } from "@/Pages/Lessor/modals/RentalItemModal";
 import { Property as RentalItem } from "@/Pages/Lessor/types/Property";
 import { Button } from "@/Components/Lessor/ui/button";
 import { usePage, router } from "@inertiajs/react";
-import LessorLayout from "@/Layouts/LessorLayout";
+// import LessorLayout from "@/Layouts/LessorLayout";
+import LesseeLayout from "@/Layouts/LesseeLayout";
 
 interface Shop {
   id: number;
   name: string;
 }
 
-function Properties() {
-  const { rentals: initialRentals, categories, shops } = usePage<{
-    rentals: RentalItem[];
-    categories: Category[];
-    shops: Shop[];
-  }>().props;
+interface PropertiesProps {
+  rentals: RentalItem[];
+}
 
-  const [rentals, setRentals] = useState<RentalItem[]>(initialRentals || []);
+function Properties({rentals}: PropertiesProps) {
+  // const { rentals: initialRentals, categories, shops } = usePage<{
+  //   rentals: RentalItem[];
+  //   categories: Category[];
+  //   shops: Shop[];
+  // }>().props;
+
+  // const [rentals, setRentals] = useState<RentalItem[]>(initialRentals || []);
+
+  useEffect( () => {
+
+    console.log(rentals)
+
+  }, [rentals]);
+
+  
   const [filteredShopId, setFilteredShopId] = useState<number | "all">("all");
   const [showModal, setShowModal] = useState(false);
 
@@ -80,9 +93,10 @@ function Properties() {
 
       router.post(`/lessor/properties/${form.uuid}`, formData, {
         preserveScroll: true,
+        preserveState: true,
         forceFormData: true,
         onSuccess: () => {
-          router.reload({ only: ["rentals"] });
+          // router.reload({ only: ["rentals"] });
           setShowModal(false);
         },
         onError: (errors) => {
@@ -93,9 +107,10 @@ function Properties() {
       // CREATE
       router.post(`/lessor/properties`, formData, {
         preserveScroll: true,
+        preserveState: true,
         forceFormData: true,
         onSuccess: () => {
-          router.reload({ only: ["rentals"] });
+          // router.reload({ only: ["rentals"] });
           setShowModal(false);
         },
         onError: (errors) => {
@@ -159,7 +174,7 @@ function Properties() {
         </div>
       </header>
 
-      {filteredRentals.length === 0 ? (
+      {rentals.length === 0 ? (
         <p className="text-gray-500 italic text-center mt-12">
           No rentals found for this shop.
         </p>
@@ -189,7 +204,7 @@ function Properties() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredRentals.map((rental, idx) => (
+              {rentals.map((rental, idx) => (
                 <tr
                   key={rental.id}
                   className={
@@ -245,6 +260,6 @@ function Properties() {
   );
 }
 
-Properties.layout = (page: ReactElement) => <LessorLayout>{page}</LessorLayout>;
+Properties.layout = (page: ReactElement) => <LesseeLayout defaultTab="lessorProperties" >{page}</LesseeLayout>;
 
 export default Properties;

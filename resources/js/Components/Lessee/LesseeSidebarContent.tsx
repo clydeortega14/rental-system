@@ -39,16 +39,16 @@ export default function LesseeSidebarContent({
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const sidebarTabs = [
-    {
-      section: "Menu",
-      items: [
-        { key: "overview", label: "Overview", icon: <BiFile size={18} /> },
-        { key: "bookings", label: "Bookings", icon: <BiCalendar size={18} /> },
-        { key: "reviews", label: "Reviews", icon: <BiCalendarEvent size={18} /> },
-        { key: "lessorInquiries", label: "Inquiries", icon: <BiMessageDetail size={18} /> },
-        { key: "lessorProfile", label: "Account Settings", icon: <BiCog size={18} /> },
-      ],
-    },
+    // {
+    //   section: "Menu",
+    //   items: [
+    //     { key: "overview", label: "Overview", icon: <BiFile size={18} /> },
+    //     { key: "bookings", label: "Bookings", icon: <BiCalendar size={18} /> },
+    //     { key: "reviews", label: "Reviews", icon: <BiCalendarEvent size={18} /> },
+    //     { key: "lessorInquiries", label: "Inquiries", icon: <BiMessageDetail size={18} /> },
+    //     { key: "lessorProfile", label: "Account Settings", icon: <BiCog size={18} /> },
+    //   ],
+    // },
     ...(!isApprovedLessor
       ? [
         {
@@ -62,11 +62,11 @@ export default function LesseeSidebarContent({
     ...(isApprovedLessor
       ? [
         {
-          section: "Lessor Access",
+          section: "Main Menu",
           items: [
-            { key: "lessorDashboard", label: "Dashboard Lessor", icon: <BiSolidDashboard size={18} /> },
-            { key: "lessorShop", label: "Shop", icon: <BiSolidStore size={18} /> },
-            { key: "lessorProperties", label: "Properties", icon: <BiBuildingHouse size={18} /> },
+            { key: "lessorDashboard", label: "Dashboard", icon: <BiSolidDashboard size={18} />, route: route('lessee.profile') },
+            // { key: "lessorShop", label: "Shop", icon: <BiSolidStore size={18} /> },
+            { key: "lessorProperties", label: "Properties", icon: <BiBuildingHouse size={18}/>, route: route('lessor.properties')  },
             { key: "lessorReservations", label: "Reservations", icon: <BiCalendarCheck size={18} /> },
             //ongoing --- need backend and ui-----
             { key: "lessorInvoice", label: "Invoice", icon: <BiReceipt size={18} /> },
@@ -131,45 +131,48 @@ export default function LesseeSidebarContent({
                 }
 
                 return (
-                  <TabsTrigger
-                    key={item.key}
-                    value={item.key}
-                    onClick={() => {
-                      if (item.key === "signup") {
-                        setIsModalOpen(true);
-                      } else {
-                        setActiveTab(item.key);
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                      }
-                    }}
-                    className={`
-                    relative w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors overflow-hidden
-                    ${isSignup
-                        ? "bg-brandYellow text-white hover:bg-jaba-hover data-[state=active]:bg-brandYellow data-[state=active]:text-white"
-                        : "bg-gray-100 text-gray-600 hover:bg-jaba-hover data-[state=active]:bg-brandYellow data-[state=active]:text-white"
-                      }
-                  `}
-                    title={item.label}
-                  >
-                    {isSignup && (
-                      <>
-                        {/* Shine effect only for signup */}
-                        {/* <span className="absolute inset-0 pointer-events-none bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.6)_30%,rgba(255,255,255,0.8)_50%,rgba(255,255,255,0.6)_70%,transparent)] blur-[4px] animate-shine" /> */}
+                  <Link href={item.route}>
+                    <TabsTrigger
+                      key={item.key}
+                      value={item.key}
+                      onClick={() => {
+                        if (item.key === "signup") {
+                          setIsModalOpen(true);
+                        } else {
+                          setActiveTab(item.key);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }
+                      }}
+                      className={`
+                      relative w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors overflow-hidden
+                      ${isSignup
+                          ? "bg-brandYellow text-white hover:bg-jaba-hover data-[state=active]:bg-brandYellow data-[state=active]:text-white"
+                          : "bg-gray-100 text-gray-600 hover:bg-jaba-hover data-[state=active]:bg-brandYellow data-[state=active]:text-white"
+                        }
+                    `}
+                      title={item.label}
+                    >
+                      
+                      {isSignup && (
+                        <>
+                          {/* Shine effect only for signup */}
+                          {/* <span className="absolute inset-0 pointer-events-none bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.6)_30%,rgba(255,255,255,0.8)_50%,rgba(255,255,255,0.6)_70%,transparent)] blur-[4px] animate-shine" /> */}
 
-                        {/* Shrink-wrapper synced with shine */}
-                        <span className="relative z-10 inline-flex items-center gap-2 animate-shrink-during-shine">
+                          {/* Shrink-wrapper synced with shine */}
+                          <span className="relative z-10 inline-flex items-center gap-2 animate-shrink-during-shine">
+                            {item.icon}
+                            <span className="truncate">{item.label}</span>
+                          </span>
+                        </>
+                      )}
+                      {!isSignup && (
+                        <>
                           {item.icon}
                           <span className="truncate">{item.label}</span>
-                        </span>
-                      </>
-                    )}
-                    {!isSignup && (
-                      <>
-                        {item.icon}
-                        <span className="truncate">{item.label}</span>
-                      </>
-                    )}
-                  </TabsTrigger>
+                        </>
+                      )}
+                    </TabsTrigger>
+                  </Link>
                 );
               })}
           </div>

@@ -141,7 +141,6 @@ Route::middleware([
 Route::middleware([
     'auth', // auth middleware
     'verified', // email verification middleware
-    'check-user-info' // completed information details
 ])->group(function () {
 
     Route::post('/conversations', [ConversationController::class, 'store'])->name('conversations.store');

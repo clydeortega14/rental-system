@@ -5,17 +5,10 @@ import { CalendarDays, BarChart3, Wallet } from "lucide-react";
 import {
   BiSolidDashboard,
 } from "react-icons/bi";
+import { Card, CardContent } from "@/Components/Lessee/ui/card";
 
 
-// import {
-//   LineChart,
-//   Line,
-//   XAxis,
-//   YAxis,
-//   Tooltip,
-//   CartesianGrid,
-//   ResponsiveContainer,
-// } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
 type Reservation = {
   property: string;
@@ -48,6 +41,45 @@ const Dashboard = ({ dashboardData }: DashboardProps) => {
     reservationChartData = [],
   } = dashboardData || {};
 
+
+  const kpiSummaryData = [
+    {
+      title: "Revenue",
+      value: "₱19,000",
+    },
+    {
+      title: "Active Rentals",
+      value: "18",
+    },
+    {
+      title: "Pending",
+      value: "6",
+    },
+    {
+      title: "Available",
+      value: "24",
+    },
+  ];
+
+  const revenueData = [
+  { date: "Apr 1", revenue: 4000 },
+  { date: "Apr 2", revenue: 3000 },
+  { date: "Apr 3", revenue: 5000 },
+  { date: "Apr 4", revenue: 7000 },
+];
+
+const statusData = [
+  { name: "Active", value: 18 },
+  { name: "Available", value: 24 },
+  { name: "Maintenance", value: 4 },
+  { name: "Reserved", value: 6 },
+];
+
+const rentalMonitoringData = [
+  { name: "Toyota Vios", status: "Active", next: "Apr 5" },
+  { name: "Ford Ranger", status: "Available", next: "—" },
+]
+
   return (
     <div className="max-w-8xl mx-auto p-6">
       {/* <h1 className="text-3xl font-bold mb-6 text-orange-600">Dashboard</h1> */}
@@ -58,83 +90,84 @@ const Dashboard = ({ dashboardData }: DashboardProps) => {
       
 
       {/* Income Summary & Upcoming Reservations */}
-      <section className="mb-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded shadow">
-          <h2 className="flex items-center text-xl font-semibold mb-3">
-            <Wallet className="w-5 h-5 text-orange-500 mr-2" />
-            Income Summary
-          </h2>
-          <p className="text-4xl font-bold text-green-600">
-            &#8369;{incomeSummary.total.toLocaleString()}
-          </p>
-          <p className="text-gray-600">Total Income</p>
-          <p className="mt-2 text-lg">
-            &#8369;{incomeSummary.monthly.toLocaleString()} / month
-          </p>
-        </div>
+      <section className="mb-10 grid grid-cols-2 md:grid-cols-4 gap-6">
+        {
+          kpiSummaryData.map((d_dash: {title: string, value: string}, index: number) => (
+              <div key={index} className="bg-white p-6 rounded shadow">
+                <h2 className="flex items-center text-xl font-semibold mb-3">
+                  {d_dash.title}
+                </h2>
+                <p className="text-4xl font-bold text-green-600">
+                  {d_dash.value}
+                </p>
+              </div>
+          ))
+        }
 
-        <div className="bg-white p-6 rounded shadow">
-          <h2 className="flex items-center text-xl font-semibold mb-3">
-            <CalendarDays className="w-5 h-5 text-orange-500 mr-2" />
-            Upcoming Reservations
-          </h2>
-          {upcomingReservations.length ? (
-            <ul className="space-y-4">
-              {upcomingReservations.map((res, i) => (
-                <li key={i} className="flex items-center space-x-4 border-b pb-4">
-                  {/* Circular image */}
-                  <img
-                    src={logoWeb}
-                    alt={res.property}
-                    className="w-16 h-16 rounded-full object-cover shadow-sm"
-                  />
-                  <div>
-                    <p className="font-semibold text-lg">{res.property}</p>
-                    <p className="text-gray-600 text-sm">
-                      {new Date(res.date).toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </p>
-                    <p className="text-gray-700">{res.lessee}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-500">No upcoming reservations</p>
-          )}
-        </div>
       </section>
 
-      {/* Reservation Chart */}
-      {/* <section className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <div className="bg-white p-6 rounded shadow">
-          <h2 className="flex items-center text-xl font-semibold mb-4">
-            <BarChart3 className="w-5 h-5 text-orange-500 mr-2" />
-            Reservations (Last 6 Months)
-          </h2>
-          {reservationChartData.length ? (
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={reservationChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="reservations"
-                  stroke="#f97316"
-                  strokeWidth={2}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          ) : (
-            <p className="text-gray-500">No data available</p>
-          )}
-        </div>
-      </section> */}
+      <section className="mb-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardContent className="p-4">
+              <h3 className="mb-4 font-semibold">Revenue Trend</h3>
+
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={revenueData}>
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="revenue" stroke="#f97316" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+              <h3 className="mb-4 font-semibold">Rental Status</h3>
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie
+                    data={statusData}
+                    dataKey={"value"}
+                    outerRadius={80}>
+                      {
+                        statusData.map((_, i) => (
+                          <Cell key={i} />
+                        ))
+                      }
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </section>
+
+      <section className="mb-10 grid grid-cols-1 gap-6">
+          <Card>
+            <CardContent className="p-4">
+                <h3 className="mb-4 font-semibold">Rental Monitoring</h3>
+                <table className="w-full text-left">
+                  <thead>
+                    <tr>
+                      <th>Vehicle</th>
+                      <th>Status</th>
+                      <th>Next Booking</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rentalMonitoringData.map((item, idx) => (
+                      <tr key={idx} className="border-t">
+                        <td>{item.name}</td>
+                        <td>{item.status}</td>
+                        <td>{item.next}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+            </CardContent>
+          </Card>
+      </section>
     </div>
   );
 };

@@ -16,19 +16,14 @@ class RentalController extends Controller
 {
     public function index()
     {
-        $lessor = Lessor::with('user')
-            ->where('lessoruser_id', auth()->id())
-            ->first();
-            
-        if (!$lessor) {
-            abort(403, 'Lessor not found for this user.');
-        }
 
         $categories = Category::with('customFields')->get();
 
-        $rentals = RentalListing::where('user_id', $lessor->user->id)->get();
+        $rentals = RentalListing::where('user_id', auth()->id())->get();
 
-        $shops = $lessor->shops()->get(['id', 'name']);
+        $shops = [];
+
+        $isApprovedLessor = true;
 
         $mappedRentals = $rentals->map(function ($rental) use ($categories, $shops) {
             return [
@@ -50,19 +45,13 @@ class RentalController extends Controller
             'rentals' => $mappedRentals,
             'categories' => $categories,
             'shops' => $shops,
-            'lessorName' => $lessor->user->name
+            'lessorName' => auth()->user()->name,
+            'isApprovedLessor' => $isApprovedLessor
         ]);
     }
 
     public function store(Request $request)
     {
-        $lessor = Lessor::with('user')
-            ->where('lessoruser_id', auth()->id())
-            ->first();
-
-        if (!$lessor) {
-            abort(403, 'Lessor not found for this user.');
-        }
 
         $validated = $request->validate([
             'itemName' => 'required|string|max:255',
@@ -78,8 +67,7 @@ class RentalController extends Controller
 
         // Create the listing
         $listing = RentalListing::create([
-            'user_id' => $lessor->user->id,
-            'company_id' => $lessor->user->company->id,
+            'user_id' => auth()->id(),
             'itemName' => $validated['itemName'],
             'description' => $validated['description'] ?? null,
             'category_id' => $validated['category_id'] ?? null,
