@@ -46,7 +46,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('checkout.item');
         }
 
-        return redirect()->intended(route('landing.page.index', absolute: false));
+        return redirect()->intended(route('lessee.profile', absolute: false));
     }
     public function store1(LoginRequest $request): RedirectResponse
     {

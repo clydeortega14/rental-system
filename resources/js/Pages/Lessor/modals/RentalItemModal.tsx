@@ -31,6 +31,8 @@ interface RentalItemModalProps {
   categories: Category[];
   shops: Shop[];
   priceUnits: string[];
+  onAddMorePricing: () => void;
+  onRemoveItemPricing: (index: number) => void;
   onCategoryChange: (categoryId: number) => void;
 }
 
@@ -42,6 +44,8 @@ export default function RentalItemModal({
   categories,
   shops,
   priceUnits,
+  onAddMorePricing,
+  onRemoveItemPricing,
   onCategoryChange,
 }: RentalItemModalProps) {
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
@@ -379,10 +383,10 @@ export default function RentalItemModal({
                         </select>
 
                         <div className="flex justify-end gap-2">
-                          <Button variant="outline" type="button">
+                          <Button variant="outline" type="button" onClick={onAddMorePricing}>
                             <Plus />
                           </Button>
-                          <Button type="button" className="bg-red-400 text-white hover:bg-red-500">
+                          <Button type="button" className="bg-red-400 text-white hover:bg-red-500" onClick={ () => onRemoveItemPricing(index) }>
                             <Trash2 />
                           </Button>
                         </div>

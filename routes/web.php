@@ -147,7 +147,7 @@ Route::middleware([
     Route::post('/conversations/store/lessee/message', [ConversationController::class, 'storeMessageSent'])->name('conversations.store.lessee');
     Route::get('/conversations', [ConversationController::class, 'getUserConversations'])->name('conversations.index');
     Route::post('/conversations/{conversation}/mark-read/{user}', [ConversationController::class, 'markRead'])->name('conversations.markRead');
-    Route::get('/lessee', [LesseeController::class, 'index'])->name('lessee.profile');
+    Route::get('/rent-owner/dashboard', [LesseeController::class, 'index'])->name('lessee.profile');
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

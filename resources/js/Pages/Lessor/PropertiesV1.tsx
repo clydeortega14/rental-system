@@ -144,7 +144,23 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
   };
 
   const handleAddPricing = () => {
+    setForm((prev) => ({
+      ...prev,
+      pricing: [
+        ...prev.pricing,
+        {
+          price_per_unit: "",
+          price_unit: ""
+        }
+      ]
+    }))
+  }
 
+  const handleRemoveItemPricing = (index: number) => {
+    setForm((prev) => ({
+      ...prev,
+      pricing: prev.pricing.filter((p,idx) => idx !== index)
+    }))
   }
 
   return (
@@ -291,6 +307,8 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
           categories={categories}
           shops={shops.data}
           priceUnits={priceUnits}
+          onAddMorePricing={handleAddPricing}
+          onRemoveItemPricing={handleRemoveItemPricing}
           onCategoryChange={(categoryId: number | null) =>
             setForm((prev) => ({
               ...prev,
