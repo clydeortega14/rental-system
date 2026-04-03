@@ -11,15 +11,23 @@ use Inertia\Inertia;
 use App\Models\RentalAddItem as RentalListing;
 use App\Models\Category;
 use App\Models\Lessor;
+use App\Traits\FileTraits;
 
 class RentalController extends Controller
 {
+    use FileTraits;
+
     public function index()
     {
 
         $categories = Category::with('customFields')->get();
 
-        $rentals = RentalListing::where('user_id', auth()->id())->get();
+        $rentals = RentalListing::where('user_id', auth()->id())
+                    ->with('attachments')
+                    ->with('toCategory')
+                    // ->with('customFieldAnswers')
+                    ->with('toShop')
+                    ->get();
 
         $shops = [];
 
@@ -37,7 +45,16 @@ class RentalController extends Controller
                 'imageUrl' => $rental->imageUrl ?? '',
                 'customFieldAnswers' => $rental->customFieldAnswers ?? [],
                 'address' => $rental->toShop?->location ?? '',
-                'shopId' => $rental->toShop?->id ?? ''
+                'shopId' => $rental->toShop?->id ?? '',
+                'attachments' => $rental->attachments->map(function($attachment){
+                    return [
+                        'id' => $attachment->id,
+                        'path' => $attachment->path,
+                        'filename' => $attachment->filename,
+                        'extension' => $attachment->type,
+                        'size' => $attachment->size.' '.$attachment->size_type
+                    ];
+                })
             ];
         });
 
@@ -91,24 +108,30 @@ class RentalController extends Controller
 
         // Handle new media
         if ($request->hasFile('media')) {
-            foreach ($request->file('media') as $file) {
-                if (str_starts_with($file->getMimeType(), 'image/')) {
-                    // Resize and compress image
-                    $manager = new ImageManager(new Driver());
-                    $image = $manager->read($file)
-                        ->scale(width: 1200)
-                        ->encodeByExtension('jpg', quality: 80);
+            // dd($request->file('media'));
+            // foreach ($request->file('media') as $file) {
+            //     if (str_starts_with($file->getMimeType(), 'image/')) {
+            //         // Resize and compress image
+            //         $manager = new ImageManager(new Driver());
+            //         $image = $manager->read($file)
+            //             ->scale(width: 1200)
+            //             ->encodeByExtension('jpg', quality: 80);
 
-                    $fileName = uniqid() . '.jpg';
-                    $path = "rentals/{$fileName}";
-                    Storage::disk('public')->put($path, (string) $image);
-                    $mediaPaths[] = $path;
-                } else {
-                    // Store videos as-is
-                    $mediaPaths[] = $file->store('rentals', 'public');
-                }
-            }
+            //         $fileName = uniqid() . '.jpg';
+            //         $path = "rentals/{$fileName}";
+            //         Storage::disk('public')->put($path, (string) $image);
+            //         $mediaPaths[] = $path;
+            //     } else {
+            //         // Store videos as-is
+            //         $mediaPaths[] = $file->store('rentals', 'public');
+            //     }
+            // }
+
+            // manage file upload
+            $this->manageFileUpload($listing, $request->file('media'), 'public', 'rentals');
         }
+
+        
 
         // Save media paths (JSON column)
         $listing->update([

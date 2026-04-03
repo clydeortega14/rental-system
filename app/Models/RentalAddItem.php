@@ -73,5 +73,9 @@ class RentalAddItem extends Model
     {
         return $this->belongsTo(Shop::class, 'shop_id');
     }
-   
+
+    public function attachments()
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
+    }
 }

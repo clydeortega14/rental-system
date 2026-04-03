@@ -169,7 +169,7 @@ function Properties({rentals}: PropertiesProps) {
             }}
             className="bg-orange-600 hover:bg-orange-500 text-white font-semibold px-5 py-2 rounded-lg"
           >
-            + Add New Rental
+            + Add New Rental   dsadsadsadsadsadsadsa
           </Button>
         </div>
       </header>
@@ -191,12 +191,6 @@ function Properties({rentals}: PropertiesProps) {
                 </th>
                 <th className="px-3 sm:px-6 py-2 text-left text-xs font-semibold text-orange-700 uppercase tracking-wider">
                   Category
-                </th>
-                <th className="hidden md:table-cell px-3 sm:px-6 py-2 text-left text-xs font-semibold text-orange-700 uppercase tracking-wider">
-                  Address
-                </th>
-                <th className="px-3 sm:px-6 py-2 text-left text-xs font-semibold text-orange-700 uppercase tracking-wider">
-                  Shop
                 </th>
                 <th className="px-3 sm:px-6 py-2 text-right text-xs font-semibold text-orange-700 uppercase tracking-wider">
                   Reservation Fee
@@ -222,12 +216,6 @@ function Properties({rentals}: PropertiesProps) {
                   </td>
                   <td className="px-3 sm:px-6 py-3 text-gray-800 text-sm">
                     {rental.categoryType || "-"}
-                  </td>
-                  <td className="hidden md:table-cell px-3 sm:px-6 py-3 text-gray-700 text-sm">
-                    {rental.address || "-"}
-                  </td>
-                  <td className="px-3 sm:px-6 py-3 text-sm text-gray-700">
-                    {shops.find((s) => s.id === rental.shopId)?.name || "-"}
                   </td>
                   <td className="px-3 sm:px-6 py-3 text-right text-green-600 font-semibold text-sm">
                     ₱{Number(rental.reservationAmt || 0).toFixed(2)}

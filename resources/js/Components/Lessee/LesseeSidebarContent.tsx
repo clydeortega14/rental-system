@@ -39,16 +39,17 @@ export default function LesseeSidebarContent({
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const sidebarTabs = [
-    // {
-    //   section: "Menu",
-    //   items: [
-    //     { key: "overview", label: "Overview", icon: <BiFile size={18} /> },
-    //     { key: "bookings", label: "Bookings", icon: <BiCalendar size={18} /> },
-    //     { key: "reviews", label: "Reviews", icon: <BiCalendarEvent size={18} /> },
-    //     { key: "lessorInquiries", label: "Inquiries", icon: <BiMessageDetail size={18} /> },
-    //     { key: "lessorProfile", label: "Account Settings", icon: <BiCog size={18} /> },
-    //   ],
-    // },
+    {
+      section: "",
+      // items: [
+      //   { key: "overview", label: "Overview", icon: <BiFile size={18} /> },
+      //   { key: "bookings", label: "Bookings", icon: <BiCalendar size={18} /> },
+      //   { key: "reviews", label: "Reviews", icon: <BiCalendarEvent size={18} /> },
+      //   { key: "lessorInquiries", label: "Inquiries", icon: <BiMessageDetail size={18} /> },
+      //   { key: "lessorProfile", label: "Account Settings", icon: <BiCog size={18} /> },
+      // ],
+      items: []
+    },
     ...(!isApprovedLessor
       ? [
         {
@@ -107,7 +108,7 @@ export default function LesseeSidebarContent({
       {/* Sidebar Tabs */}
       <TabsList className="flex flex-col space-y-6 items-start">
         {sidebarTabs.map((section, index) => (
-          <div key={`section-${section.section}-${index}`} className="w-full space-y-1">
+          <div key={index} className="w-full space-y-1">
             <p className="text-xs font-semibold text-gray-500 uppercase">{section.section}</p>
             {section.items
               .filter((item) => item.label.toLowerCase().includes(search.toLowerCase()))
@@ -131,9 +132,8 @@ export default function LesseeSidebarContent({
                 }
 
                 return (
-                  <Link href={item.route}>
+                  <Link key={item.key} href={item.route}>
                     <TabsTrigger
-                      key={item.key}
                       value={item.key}
                       onClick={() => {
                         if (item.key === "signup") {

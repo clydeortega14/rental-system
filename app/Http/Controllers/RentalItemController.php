@@ -18,12 +18,11 @@ use App\Traits\RentalItems\ItemDetails;
 use App\Models\Detailable;
 use App\Models\Category;
 use App\Services\Category\CategoryService;
-use App\Traits\RentalItems\RentalListing;
 
 
 class RentalItemController extends Controller
 {
-    use FileTraits, ItemDetails, RentalListing;
+    use FileTraits, ItemDetails;
 
     protected $category_service;
 
