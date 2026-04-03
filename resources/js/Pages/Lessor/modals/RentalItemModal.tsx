@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Button } from "@/Components/Lessor/ui/button";
 import { Input } from "@/Components/Lessor/ui/input";
 import { Property as RentalItem } from "@/Pages/Lessor/types/Property";
@@ -30,6 +30,7 @@ interface RentalItemModalProps {
   onSave: (mediaFiles: File[]) => void;
   categories: Category[];
   shops: Shop[];
+  priceUnits: string[];
   onCategoryChange: (categoryId: number) => void;
 }
 
@@ -40,6 +41,7 @@ export default function RentalItemModal({
   onSave,
   categories,
   shops,
+  priceUnits,
   onCategoryChange,
 }: RentalItemModalProps) {
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
@@ -352,36 +354,41 @@ export default function RentalItemModal({
           {/* Pricing */}
           <div className="mt-4">
               <label className="block font-medium mb-1" htmlFor="reservationAmt">Pricing</label>
-              <div className="flex flow-row flex-col-2 gap-2">
-                <Input
-                  id="price-per-unit"
-                  
-                  value={""}
-                  onChange={ () => console.log('Input Price Per Unit')}
-                  required
-                  step="0.01"
-                />
+                
+                {
+                  form.pricing?.map((price, index) => (
+                    
+                      <div key={index} className="flex flow-row flex-col-2 gap-2 mb-2">
+                        <Input
+                          id={`price-per-unit-${index}`}
+                          value={price.price_per_unit ?? ""}
+                          onChange={ () => console.log('Input Price Per Unit')}
+                        />
+                        <select
+                          id={`price-unit-${index}`}
+                          value={price.price_unit}
+                          onChange={ () => console.log("select tag price unit")}
+                          className="w-full border border-gray-300 rounded-md"
+                          required
+                        >
+                          <option value="">Price Unit</option>
+                          {priceUnits.map((unit, index) => (
+                            <option key={index} value={unit}>{unit}</option>
+                          ))}
+                          
+                        </select>
 
-                <select
-                  id="price-unit"
-                  value={ ""}
-                  onChange={ () => console.log("select tag price unit")}
-                  className="w-full border border-gray-300 rounded-md p-2"
-                  required
-                >
-                  <option value="">Price Unit</option>
-                  
-                </select>
-
-                <div className="flex justify-end gap-2">
-                  <Button Button variant="outline" type="button">
-                    <Plus />
-                  </Button>
-                  <Button type="button" className="bg-red-400 text-white hover:bg-red-500">
-                    <Trash2 />
-                  </Button>
-                </div>
-              </div>
+                        <div className="flex justify-end gap-2">
+                          <Button variant="outline" type="button">
+                            <Plus />
+                          </Button>
+                          <Button type="button" className="bg-red-400 text-white hover:bg-red-500">
+                            <Trash2 />
+                          </Button>
+                        </div>
+                      </div>
+                  ))               
+                }
           </div>
 
           {/* Buttons */}

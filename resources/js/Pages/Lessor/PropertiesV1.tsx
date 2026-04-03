@@ -54,7 +54,19 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
     shopId: null,
     address: "",
     customFieldAnswers: {},
+    pricing: [
+      {
+        price_per_unit: "",
+        price_unit: "hour"
+      },
+      {
+        price_per_unit: "",
+        price_unit: "day"
+      }
+    ]
   });
+
+  const priceUnits:string[] = ["hour", "day", "week", "month"];
 
   const handleEdit = (rental: RentalItem) => {
     setForm({
@@ -130,6 +142,10 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
       setCurrentIndex(previewMedia.length - 1); // loop
     }
   };
+
+  const handleAddPricing = () => {
+
+  }
 
   return (
     <div className="max-w-8xl mx-auto p-6">
@@ -274,6 +290,7 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
           onSave={handleSave}
           categories={categories}
           shops={shops.data}
+          priceUnits={priceUnits}
           onCategoryChange={(categoryId: number | null) =>
             setForm((prev) => ({
               ...prev,

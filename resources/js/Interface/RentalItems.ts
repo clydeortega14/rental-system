@@ -29,7 +29,16 @@ export type RentalItem = {
   province_code?: string;
   city_code?: string;
   barangay_code?: string;
+
+  pricing: Pricing[];
 };
+
+export type Pricing = {
+  id?: number;
+  rental_item_id?: number;
+  price_per_unit: string;
+  price_unit: string;
+}
 
 export interface IRentalItems {
   items: RentalItem[];
