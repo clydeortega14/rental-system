@@ -69,6 +69,7 @@ class RentalController extends Controller
 
     public function store(Request $request)
     {
+        dd($request->all());
 
         $validated = $request->validate([
             'itemName' => 'required|string|max:255',
@@ -78,6 +79,7 @@ class RentalController extends Controller
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:1',
             'custom_fields' => 'nullable|array',
+            'pricing.*' => 'array|nullable',
             'media.*' => 'nullable|file|mimes:jpg,jpeg,png,mp4|max:5120', // 5MB
             'media_paths' => 'nullable|array',
         ]);

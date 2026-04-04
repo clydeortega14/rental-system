@@ -360,38 +360,67 @@ export default function RentalItemModal({
               <label className="block font-medium mb-1" htmlFor="reservationAmt">Pricing</label>
                 
                 {
-                  form.pricing?.map((price, index) => (
-                    
-                      <div key={index} className="flex flow-row flex-col-2 gap-2 mb-2">
-                        <Input
-                          id={`price-per-unit-${index}`}
-                          value={price.price_per_unit ?? ""}
-                          onChange={ () => console.log('Input Price Per Unit')}
-                        />
-                        <select
-                          id={`price-unit-${index}`}
-                          value={price.price_unit}
-                          onChange={ () => console.log("select tag price unit")}
-                          className="w-full border border-gray-300 rounded-md"
-                          required
-                        >
-                          <option value="">Price Unit</option>
-                          {priceUnits.map((unit, index) => (
-                            <option key={index} value={unit}>{unit}</option>
-                          ))}
-                          
-                        </select>
+                  form.pricing?.map((price, index) => 
+                    {
 
-                        <div className="flex justify-end gap-2">
-                          <Button variant="outline" type="button" onClick={onAddMorePricing}>
-                            <Plus />
-                          </Button>
-                          <Button type="button" className="bg-red-400 text-white hover:bg-red-500" onClick={ () => onRemoveItemPricing(index) }>
-                            <Trash2 />
-                          </Button>
+                      return (
+                        <div key={index} className="flex flow-row flex-col-2 gap-2 mb-2">
+                          <Input
+                            id={`price-per-unit-${index}`}
+                            value={price?.price_per_unit ?? ""}
+                            onChange={ (e) => setForm((prev) => {
+                              return {
+                                  ...prev,
+                                pricing: prev.pricing.map((item, idx) => {
+                                  
+                                  return idx === index ? { 
+                                    ...item, 
+                                    price_per_unit: e.target.value 
+                                  } : 
+                                  item
+                                })
+                              }
+                              
+                            }) }
+                          />
+                          <select
+                            id={`price-unit-${index}`}
+                            value={price?.price_unit || ""}
+                            onChange={ (e) =>  setForm((prev) => ({
+                              ...prev,
+                              pricing: prev.pricing.map((item, indx) => (
+                                indx === index ? {
+                                  ...item,
+                                  price_unit: e.target.value
+                                } :
+                                item
+                              ))
+                            }))
+                          }
+                            className="w-full border border-gray-300 rounded-md"
+                            required
+                          >
+                            <option value="">Price Unit</option>
+                            {priceUnits.map((unit, index) => (
+                              <option key={index} value={unit}>{unit}</option>
+                            ))}
+                            
+                          </select>
+
+                          <div className="flex justify-end gap-2">
+                            <Button variant="outline" type="button" onClick={onAddMorePricing}>
+                              <Plus />
+                            </Button>
+                            <Button type="button" className="bg-red-400 text-white hover:bg-red-500" onClick={ () => onRemoveItemPricing(index) }>
+                              <Trash2 />
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                  ))               
+                      )
+                    }
+                    
+                      
+                  )               
                 }
           </div>
 

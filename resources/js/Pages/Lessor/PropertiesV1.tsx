@@ -98,6 +98,13 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
       form.media_paths.forEach((path) => formData.append("media_paths[]", path));
     }
 
+    if(form.pricing.length > 0){
+      form.pricing.forEach((price, index) => {
+        formData.append(`pricing[${index}][price_per_unit]`, price.price_per_unit);
+        formData.append(`pricing[${index}][price_unit]`, price.price_unit)
+      });
+    }
+
     if (form.uuid) {
       formData.append("_method", "PUT");
 
