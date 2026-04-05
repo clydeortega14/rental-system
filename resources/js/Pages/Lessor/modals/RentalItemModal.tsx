@@ -418,8 +418,6 @@ export default function RentalItemModal({
                         </div>
                       )
                     }
-                    
-                      
                   )               
                 }
           </div>

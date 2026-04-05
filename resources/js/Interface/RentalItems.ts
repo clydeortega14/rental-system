@@ -38,6 +38,8 @@ export type Pricing = {
   rental_item_id?: number;
   price_per_unit: string;
   price_unit: string;
+  security_deposit?: number | null;
+  currency?: string | null;
 }
 
 export interface IRentalItems {

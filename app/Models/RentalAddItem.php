@@ -78,4 +78,9 @@ class RentalAddItem extends Model
     {
         return $this->morphMany(Attachment::class, 'attachable');
     }
+
+    public function pricings()
+    {
+        return $this->hasMany(RentalPricing::class, 'rental_item_id');
+    }
 }

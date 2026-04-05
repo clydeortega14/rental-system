@@ -26,6 +26,7 @@ class RentalController extends Controller
                     ->with('attachments')
                     ->with('toCategory')
                     // ->with('customFieldAnswers')
+                    ->with('pricings')
                     ->with('toShop')
                     ->get();
 
@@ -54,7 +55,8 @@ class RentalController extends Controller
                         'extension' => $attachment->type,
                         'size' => $attachment->size.' '.$attachment->size_type
                     ];
-                })
+                }),
+                'pricing' => $rental->pricings
             ];
         });
 
@@ -69,7 +71,6 @@ class RentalController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
 
         $validated = $request->validate([
             'itemName' => 'required|string|max:255',
@@ -131,6 +132,19 @@ class RentalController extends Controller
 
             // manage file upload
             $this->manageFileUpload($listing, $request->file('media'), 'public', 'rentals');
+        }
+
+        // check for rental pricings
+        if($request->has('pricing')){
+            $pricings = $request->pricing;
+            if(count($pricings) > 0){
+                foreach($pricings as $price){
+                    $listing->pricings()->firstOrCreate([
+                        'price_per_unit' => $price['price_per_unit'],
+                        'price_unit' => $price['price_unit']
+                    ]);
+                }
+            }
         }
 
         

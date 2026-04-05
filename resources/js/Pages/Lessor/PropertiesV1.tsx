@@ -36,7 +36,7 @@ interface PropertiesProps {
 const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactElement => {
   // const [rentalList, setRentalList] = useState<RentalItem[]>(rentals || []);
   const [filteredShopId, setFilteredShopId] = useState<number | "all">("all");
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   // Media preview state
   const [previewMedia, setPreviewMedia] = useState<string[] | null>(null);
@@ -69,6 +69,7 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
   const priceUnits:string[] = ["hour", "day", "week", "month"];
 
   const handleEdit = (rental: RentalItem) => {
+    console.log(rental)
     setForm({
       ...rental,
       categoryId: rental.categoryId ?? null,
@@ -197,19 +198,19 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
           </select>
           <Button
             onClick={() => {
-              setForm({
-                id: 0,
-                uuid: "",
-                name: "",
-                description: "",
-                categoryId: null,
-                categoryType: "",
-                reservationAmt: 0,
-                imageUrl: "",
-                shopId: null,
-                address: "",
-                customFieldAnswers: {},
-              });
+              // setForm({
+              //   id: 0,
+              //   uuid: "",
+              //   name: "",
+              //   description: "",
+              //   categoryId: null,
+              //   categoryType: "",
+              //   reservationAmt: 0,
+              //   imageUrl: "",
+              //   shopId: null,
+              //   address: "",
+              //   customFieldAnswers: {},
+              // });
               setShowModal(true);
             }}
             className="bg-brandYellow hover:bg-jaba-hover text-white font-semibold px-5 py-2 rounded-lg"
