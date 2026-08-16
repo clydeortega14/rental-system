@@ -14,8 +14,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-     
-        $categories = \App\Models\Category::with([
+        $categories = Category::with([
             'templateCategory', 
             'detail', 
             'custom_fields', 
@@ -35,6 +34,7 @@ class CategoryController extends Controller
     {
          // Validate request
         $validated = $request->validate([
+            'label' => 'required|string|max:255',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'service_fee_value' => 'required|numeric',
@@ -44,13 +44,6 @@ class CategoryController extends Controller
             'custom_fields' => 'nullable|array',
             'detail_active' => 'nullable|boolean',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-        ]);
-
-         // Save template category first
-        $template = TemplateCategory::create([
-            'service_fee' => $validated['service_fee_value'],
-            'mode_of_payment' => $validated['mode_of_payment'],
-            'pricing_duration' => $validated['pricing_duration'],
         ]);
 
          // Handle file upload
@@ -63,13 +56,13 @@ class CategoryController extends Controller
         }
        
          // Save main category
-        $category = Category::create([
+        $category = Category::firstOrCreate([
             'name' => $validated['name'],
+        ], [
             'description' => $validated['description'],
             'status' => 1,
             'image' => $imageName,
             'image_path' => $imagePath,
-            'template_category_id' => $template->id,
         ]);
 
       

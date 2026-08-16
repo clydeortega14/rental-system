@@ -90,7 +90,7 @@ const CartMainContent = ({bookingData}: ICartMainContent) => {
                                     </div>
                                     <div className="text-gray-600 text-sm space-x-2">
                                         <span >
-                                            <strong>Duration Periond:</strong>{` ${bookingData.duration_quantity} ${bookingData.duration}`}
+                                            <strong>Duration Period:</strong>{` ${bookingData.duration_quantity} ${bookingData.duration}`}
                                         </span>
                                     </div>
                                     <div className="text-gray-600 text-sm space-x-2">
