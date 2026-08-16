@@ -19,6 +19,12 @@ Requirements:
    - [composer v2.7.0](https://getcomposer.org/)
    - [typescript v5](https://www.typescriptlang.org/)
 
+Optional but highly recommended:
+   - WSL
+   - Docker (docker compose)
+
+
+
 Clone the project repository
 ``` bash
 git clone https://github.com/clydeortega14/rental-system.git
@@ -57,5 +63,23 @@ npm run dev
 compiling build for production
 ``` bash
 npm run build
+```
+
+
+## Using Docker
+
+Must have docker engine running on your system (e.g Docker Desktop)
+``` bash
+docker compose up
+```
+
+Run migrations and seeders
+``` bash
+docker compose exec php php artisan migrate --seed
+```
+
+install frontend dependencies (node_modules)
+``` bash
+docker compose exec node npm install
 ```
 
