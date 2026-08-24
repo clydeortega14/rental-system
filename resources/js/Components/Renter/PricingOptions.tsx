@@ -13,11 +13,12 @@ const PricingOptions = ({
     prices,
     selectedDuration
 }: Props) => {
+    console.log(prices)
 
     const options: { value: RentalDuration; label: string; price: number }[] = [
-        // { value: 'hourly', label: 'Hour', price: prices.hourly },
+        { value: 'hourly', label: 'Hour', price: prices.hourly },
         { value: 'daily', label: 'Day', price: prices.daily },
-        // { value: 'weekly', label: 'Week', price: prices.weekly }
+        { value: 'weekly', label: 'Week', price: prices.weekly }
     ];
   return (
     <div className="mb-6">

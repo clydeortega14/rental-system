@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay } from "date-fns";
 import { cn } from "@/lib/utils";
 import PrimaryButton from '../PrimaryButton';
+import SecondaryButton from '../SecondaryButton';
 
 interface Availability {
   [date: string]: boolean; // true means available, false means unavailable
@@ -14,13 +15,15 @@ interface RentalCalendarProps {
     selectedEndDate: string | null;
     setSelectedEndDate: (d: string | null) => void;
     unavailableDates: Availability;
+    onClickReset: () => void;
 }
 const RentalCalendar = ({
   onSelectDate, 
   selectedDate, 
   selectedEndDate, 
   setSelectedEndDate, 
-  unavailableDates
+  unavailableDates,
+  onClickReset
 }: RentalCalendarProps) => {
   
     const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -58,7 +61,15 @@ const RentalCalendar = ({
 
   return (
     <div className="mx-auto p-4">
-        <h3 className="text-lg font-semibold mb-3">Select Rental Date</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold mb-3">Select Rental Date</h3>
+          <SecondaryButton
+              onClick={onClickReset}
+          >
+              Reset
+          </SecondaryButton>
+        </div>
+        
       <div className="flex justify-between items-center mb-4">
         <button onClick={handlePrevMonth} className="text-blue-500">Prev</button>
         <h2 className="text-lg font-semibold">{format(currentMonth, "MMMM yyyy")}</h2>

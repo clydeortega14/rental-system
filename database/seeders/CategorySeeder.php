@@ -16,15 +16,19 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
+
         $data = $this->data();
 
         foreach($data as $d){
 
             $name = $this->formatLabel($d['label']);
 
-            $category = Category::create([
-                'name' => $name
-            ]);
+            $category = Category::firstOrCreate(['id' => $d['id']],
+                [
+                    'name' => $name,
+                    'description' => $d['label']
+                ]
+            );
 
             $this->addModelDetail($category, [
                 'label' => $d['label'],
@@ -38,21 +42,20 @@ class CategorySeeder extends Seeder
         return [
 
             [
-                'label' => 'vehicle',
-                'description' => 'For Vehicles Rentals'
+                'id' => 1,
+                'label' => 'Car',
+                'description' => 'Car Rentals'
             ],
             [
-                'label' => 'residential',
-                'description' => 'For Residential Rentals'
+                'id' => 2,
+                'label' => 'Property',
+                'description' => 'Property Rentals'
             ],
             [
-                'label' => 'event',
-                'description' => 'For Event and Party Rentals',
+                'id' => 3,
+                'label' => 'Item',
+                'description' => 'Item Rentals',
             ],
-            [
-                'label' => 'digital devices',
-                'description' => 'For Electronics and Technology Rentals'
-            ]
         ];
     }
 }
