@@ -38,6 +38,8 @@ class CategoryService
         // 'image_path',
         // 'template_category_id',
         return Category::select('id', 'name', 'image', 'image_path')
+        ->whereIn('name', ['car', 'property', 'item'])
+        ->orWhereIn('description', ['Car', 'Property', 'Item'])
         ->withCount('rentalItems') // Adds rental_items_count per category
         ->with(['detail' => function($query) {
             $query->select('id', 'label', 'active', 'detailable_id')
