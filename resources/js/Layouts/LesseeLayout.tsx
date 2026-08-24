@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useState, useEffect } from "react";
-import { usePage, useRemember, Link } from "@inertiajs/react";
+import { usePage, useRemember, Link, Head } from "@inertiajs/react";
 import { PageProps } from "@/types";
 import { BookingDetails } from "@/types/rental";
 import { Reservation } from "@/Pages/Lessor/types/ReservationProps";
@@ -181,7 +181,7 @@ function transformBookingToReservation(booking: BookingDetails): Reservation {
 }
 
 
-export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
+export default function LesseeLayout({ defaultTab = "lessorDashboard" }: LayoutProps) {
   const { bookings, conversations, headerData, isApprovedLessor, lessorApplicationStatus, shops: rawShops, auth, categories, rentals, lessorReservations, lessorDashboard } = usePage().props as unknown as Props;
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [allConversations, setAllConversations] = useState<Conversation[]>(conversations);
@@ -207,7 +207,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
   const lessee = {
     name: auth.user.name,
     email: auth.user.email,
-    phone: auth.user.contact.mobile,
+    phone: auth.user.contact?.mobile ?? "",
     image: auth.user.avatar ?? "/images/avatar.jpg",
     rating: 4.7,
     joined: joinedDate,
@@ -272,13 +272,13 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
     },
   ];
 
-  useEffect(() => {
-    const tab = localStorage.getItem('lessee.activeTab');
-    if (tab) {
-      setActiveTab(tab); // your state logic
-      localStorage.removeItem('lessee.activeTab');
-    }
-  }, []);
+  // useEffect(() => {
+  //   const tab = localStorage.getItem('lessee.activeTab');
+  //   if (tab) {
+  //     setActiveTab('lessorDashboard'); // your state logic
+  //     localStorage.removeItem('lessee.activeTab');
+  //   }
+  // }, []);
 
 
   const mappedConversations: Conversation[] = conversations && conversations.map(c => ({
@@ -294,6 +294,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
 
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-800 font-sans">
+      <Head title="Admin Dashboard" />
       <Header />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-1 flex-col md:flex-row mt-16">
@@ -428,7 +429,7 @@ export default function LesseeLayout({ defaultTab = "overview" }: LayoutProps) {
               <LessorProfile />
             </TabsContent>
             <TabsContent value="lessorDashboard" className="h-full">
-              {lessorDashboard && <LessorDashboard dashboardData={lessorDashboard} />}
+              {<LessorDashboard dashboardData={lessorDashboard} />}
             </TabsContent>
             <TabsContent value="lessorProperties" className="h-full">
               <LessorProperties

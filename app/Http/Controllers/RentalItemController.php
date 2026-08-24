@@ -11,18 +11,18 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\RentalItems\ItemDetails;
 use App\Models\Detailable;
 use App\Models\Category;
 use App\Services\Category\CategoryService;
-use App\Traits\RentalItems\RentalListing;
 
 
 class RentalItemController extends Controller
 {
-    use FileTraits, ItemDetails, RentalListing;
+    use FileTraits, ItemDetails;
 
     protected $category_service;
 
@@ -86,9 +86,21 @@ class RentalItemController extends Controller
         
         $serviceFee = $this->category_service->getServiceFee($session['category']['id']);
 
+        $regions = DB::table('regions')->select('id', 'code', 'name', 'region_id')->get();
+
+        $provinces = DB::table('provinces')->select('id', 'code', 'name', 'region_id', 'province_id')->get();
+
+        $cities = DB::table('cities')->select('id', 'code', 'name', 'region_id', 'province_id', 'city_id')->get();
+
+        $barangays = DB::table('barangays')->select('id', 'code', 'name', 'region_id', 'province_id', 'city_id')->get();
+
         return inertia('Item/Checkout', [
             'booking_data' => $session,
-            'serviceFee' => $serviceFee
+            'serviceFee' => $serviceFee,
+            'regions' => $regions,
+            'provinces' => $provinces,
+            'cities' => $cities,
+            'barangays' => $barangays
         ]);
     }
 

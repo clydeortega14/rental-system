@@ -11,24 +11,28 @@ use Inertia\Inertia;
 use App\Models\RentalAddItem as RentalListing;
 use App\Models\Category;
 use App\Models\Lessor;
+use App\Traits\FileTraits;
 
 class RentalController extends Controller
 {
+    use FileTraits;
+
     public function index()
     {
-        $lessor = Lessor::with('user')
-            ->where('lessoruser_id', auth()->id())
-            ->first();
-            
-        if (!$lessor) {
-            abort(403, 'Lessor not found for this user.');
-        }
 
         $categories = Category::with('customFields')->get();
 
-        $rentals = RentalListing::where('user_id', $lessor->user->id)->get();
+        $rentals = RentalListing::where('user_id', auth()->id())
+                    ->with('attachments')
+                    ->with('toCategory')
+                    // ->with('customFieldAnswers')
+                    ->with('pricings')
+                    ->with('toShop')
+                    ->get();
 
-        $shops = $lessor->shops()->get(['id', 'name']);
+        $shops = [];
+
+        $isApprovedLessor = true;
 
         $mappedRentals = $rentals->map(function ($rental) use ($categories, $shops) {
             return [
@@ -42,7 +46,17 @@ class RentalController extends Controller
                 'imageUrl' => $rental->imageUrl ?? '',
                 'customFieldAnswers' => $rental->customFieldAnswers ?? [],
                 'address' => $rental->toShop?->location ?? '',
-                'shopId' => $rental->toShop?->id ?? ''
+                'shopId' => $rental->toShop?->id ?? '',
+                'attachments' => $rental->attachments->map(function($attachment){
+                    return [
+                        'id' => $attachment->id,
+                        'path' => $attachment->path,
+                        'filename' => $attachment->filename,
+                        'extension' => $attachment->type,
+                        'size' => $attachment->size.' '.$attachment->size_type
+                    ];
+                }),
+                'pricing' => $rental->pricings
             ];
         });
 
@@ -50,19 +64,13 @@ class RentalController extends Controller
             'rentals' => $mappedRentals,
             'categories' => $categories,
             'shops' => $shops,
-            'lessorName' => $lessor->user->name
+            'lessorName' => auth()->user()->name,
+            'isApprovedLessor' => $isApprovedLessor
         ]);
     }
 
     public function store(Request $request)
     {
-        $lessor = Lessor::with('user')
-            ->where('lessoruser_id', auth()->id())
-            ->first();
-
-        if (!$lessor) {
-            abort(403, 'Lessor not found for this user.');
-        }
 
         $validated = $request->validate([
             'itemName' => 'required|string|max:255',
@@ -72,14 +80,14 @@ class RentalController extends Controller
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:1',
             'custom_fields' => 'nullable|array',
+            'pricing.*' => 'array|nullable',
             'media.*' => 'nullable|file|mimes:jpg,jpeg,png,mp4|max:5120', // 5MB
             'media_paths' => 'nullable|array',
         ]);
 
         // Create the listing
         $listing = RentalListing::create([
-            'user_id' => $lessor->user->id,
-            'company_id' => $lessor->user->company->id,
+            'user_id' => auth()->id(),
             'itemName' => $validated['itemName'],
             'description' => $validated['description'] ?? null,
             'category_id' => $validated['category_id'] ?? null,
@@ -103,24 +111,43 @@ class RentalController extends Controller
 
         // Handle new media
         if ($request->hasFile('media')) {
-            foreach ($request->file('media') as $file) {
-                if (str_starts_with($file->getMimeType(), 'image/')) {
-                    // Resize and compress image
-                    $manager = new ImageManager(new Driver());
-                    $image = $manager->read($file)
-                        ->scale(width: 1200)
-                        ->encodeByExtension('jpg', quality: 80);
+            // dd($request->file('media'));
+            // foreach ($request->file('media') as $file) {
+            //     if (str_starts_with($file->getMimeType(), 'image/')) {
+            //         // Resize and compress image
+            //         $manager = new ImageManager(new Driver());
+            //         $image = $manager->read($file)
+            //             ->scale(width: 1200)
+            //             ->encodeByExtension('jpg', quality: 80);
 
-                    $fileName = uniqid() . '.jpg';
-                    $path = "rentals/{$fileName}";
-                    Storage::disk('public')->put($path, (string) $image);
-                    $mediaPaths[] = $path;
-                } else {
-                    // Store videos as-is
-                    $mediaPaths[] = $file->store('rentals', 'public');
+            //         $fileName = uniqid() . '.jpg';
+            //         $path = "rentals/{$fileName}";
+            //         Storage::disk('public')->put($path, (string) $image);
+            //         $mediaPaths[] = $path;
+            //     } else {
+            //         // Store videos as-is
+            //         $mediaPaths[] = $file->store('rentals', 'public');
+            //     }
+            // }
+
+            // manage file upload
+            $this->manageFileUpload($listing, $request->file('media'), 'public', 'rentals');
+        }
+
+        // check for rental pricings
+        if($request->has('pricing')){
+            $pricings = $request->pricing;
+            if(count($pricings) > 0){
+                foreach($pricings as $price){
+                    $listing->pricings()->firstOrCreate([
+                        'price_per_unit' => $price['price_per_unit'],
+                        'price_unit' => $price['price_unit']
+                    ]);
                 }
             }
         }
+
+        
 
         // Save media paths (JSON column)
         $listing->update([

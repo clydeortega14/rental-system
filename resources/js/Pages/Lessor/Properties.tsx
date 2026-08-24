@@ -1,23 +1,36 @@
-import React, { useState, ReactElement } from "react";
+import React, { useState, ReactElement, useEffect } from "react";
 import RentalItemModal, { Category } from "@/Pages/Lessor/modals/RentalItemModal";
 import { Property as RentalItem } from "@/Pages/Lessor/types/Property";
 import { Button } from "@/Components/Lessor/ui/button";
 import { usePage, router } from "@inertiajs/react";
-import LessorLayout from "@/Layouts/LessorLayout";
+// import LessorLayout from "@/Layouts/LessorLayout";
+import LesseeLayout from "@/Layouts/LesseeLayout";
 
 interface Shop {
   id: number;
   name: string;
 }
 
-function Properties() {
-  const { rentals: initialRentals, categories, shops } = usePage<{
-    rentals: RentalItem[];
-    categories: Category[];
-    shops: Shop[];
-  }>().props;
+interface PropertiesProps {
+  rentals: RentalItem[];
+}
 
-  const [rentals, setRentals] = useState<RentalItem[]>(initialRentals || []);
+function Properties({rentals}: PropertiesProps) {
+  // const { rentals: initialRentals, categories, shops } = usePage<{
+  //   rentals: RentalItem[];
+  //   categories: Category[];
+  //   shops: Shop[];
+  // }>().props;
+
+  // const [rentals, setRentals] = useState<RentalItem[]>(initialRentals || []);
+
+  useEffect( () => {
+
+    console.log(rentals)
+
+  }, [rentals]);
+
+  
   const [filteredShopId, setFilteredShopId] = useState<number | "all">("all");
   const [showModal, setShowModal] = useState(false);
 
@@ -80,9 +93,10 @@ function Properties() {
 
       router.post(`/lessor/properties/${form.uuid}`, formData, {
         preserveScroll: true,
+        preserveState: true,
         forceFormData: true,
         onSuccess: () => {
-          router.reload({ only: ["rentals"] });
+          // router.reload({ only: ["rentals"] });
           setShowModal(false);
         },
         onError: (errors) => {
@@ -93,9 +107,10 @@ function Properties() {
       // CREATE
       router.post(`/lessor/properties`, formData, {
         preserveScroll: true,
+        preserveState: true,
         forceFormData: true,
         onSuccess: () => {
-          router.reload({ only: ["rentals"] });
+          // router.reload({ only: ["rentals"] });
           setShowModal(false);
         },
         onError: (errors) => {
@@ -154,12 +169,12 @@ function Properties() {
             }}
             className="bg-orange-600 hover:bg-orange-500 text-white font-semibold px-5 py-2 rounded-lg"
           >
-            + Add New Rental
+            + Add New Rental   dsadsadsadsadsadsadsa
           </Button>
         </div>
       </header>
 
-      {filteredRentals.length === 0 ? (
+      {rentals.length === 0 ? (
         <p className="text-gray-500 italic text-center mt-12">
           No rentals found for this shop.
         </p>
@@ -177,19 +192,13 @@ function Properties() {
                 <th className="px-3 sm:px-6 py-2 text-left text-xs font-semibold text-orange-700 uppercase tracking-wider">
                   Category
                 </th>
-                <th className="hidden md:table-cell px-3 sm:px-6 py-2 text-left text-xs font-semibold text-orange-700 uppercase tracking-wider">
-                  Address
-                </th>
-                <th className="px-3 sm:px-6 py-2 text-left text-xs font-semibold text-orange-700 uppercase tracking-wider">
-                  Shop
-                </th>
                 <th className="px-3 sm:px-6 py-2 text-right text-xs font-semibold text-orange-700 uppercase tracking-wider">
                   Reservation Fee
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredRentals.map((rental, idx) => (
+              {rentals.map((rental, idx) => (
                 <tr
                   key={rental.id}
                   className={
@@ -207,12 +216,6 @@ function Properties() {
                   </td>
                   <td className="px-3 sm:px-6 py-3 text-gray-800 text-sm">
                     {rental.categoryType || "-"}
-                  </td>
-                  <td className="hidden md:table-cell px-3 sm:px-6 py-3 text-gray-700 text-sm">
-                    {rental.address || "-"}
-                  </td>
-                  <td className="px-3 sm:px-6 py-3 text-sm text-gray-700">
-                    {shops.find((s) => s.id === rental.shopId)?.name || "-"}
                   </td>
                   <td className="px-3 sm:px-6 py-3 text-right text-green-600 font-semibold text-sm">
                     ₱{Number(rental.reservationAmt || 0).toFixed(2)}
@@ -245,6 +248,6 @@ function Properties() {
   );
 }
 
-Properties.layout = (page: ReactElement) => <LessorLayout>{page}</LessorLayout>;
+Properties.layout = (page: ReactElement) => <LesseeLayout defaultTab="lessorProperties" >{page}</LesseeLayout>;
 
 export default Properties;

@@ -34,7 +34,7 @@ interface PropertiesProps {
 }
 
 const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactElement => {
-  const [rentalList, setRentalList] = useState<RentalItem[]>(rentals || []);
+  // const [rentalList, setRentalList] = useState<RentalItem[]>(rentals || []);
   const [filteredShopId, setFilteredShopId] = useState<number | "all">("all");
   const [showModal, setShowModal] = useState(false);
 
@@ -54,9 +54,22 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
     shopId: null,
     address: "",
     customFieldAnswers: {},
+    pricing: [
+      {
+        price_per_unit: "",
+        price_unit: "hour"
+      },
+      {
+        price_per_unit: "",
+        price_unit: "day"
+      }
+    ]
   });
 
+  const priceUnits:string[] = ["hour", "day", "week", "month"];
+
   const handleEdit = (rental: RentalItem) => {
+    console.log(rental)
     setForm({
       ...rental,
       categoryId: rental.categoryId ?? null,
@@ -86,10 +99,18 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
       form.media_paths.forEach((path) => formData.append("media_paths[]", path));
     }
 
+    if(form.pricing.length > 0){
+      form.pricing.forEach((price, index) => {
+        formData.append(`pricing[${index}][price_per_unit]`, price.price_per_unit);
+        formData.append(`pricing[${index}][price_unit]`, price.price_unit)
+      });
+    }
+
     if (form.uuid) {
       formData.append("_method", "PUT");
 
       router.post(`/lessor/properties/${form.uuid}`, formData, {
+        preserveState: true,
         preserveScroll: true,
         forceFormData: true,
         onSuccess: () => {
@@ -109,10 +130,10 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
     }
   };
 
-  const filteredRentals =
-    filteredShopId === "all"
-      ? rentalList
-      : rentalList.filter((rental) => rental.shopId === filteredShopId);
+  // const filteredRentals =
+  //   filteredShopId === "all"
+  //     ? rentalList
+  //     : rentalList.filter((rental) => rental.shopId === filteredShopId);
 
   const goNext = () => {
     if (previewMedia && currentIndex < previewMedia.length - 1) {
@@ -129,6 +150,26 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
       setCurrentIndex(previewMedia.length - 1); // loop
     }
   };
+
+  const handleAddPricing = () => {
+    setForm((prev) => ({
+      ...prev,
+      pricing: [
+        ...prev.pricing,
+        {
+          price_per_unit: "",
+          price_unit: ""
+        }
+      ]
+    }))
+  }
+
+  const handleRemoveItemPricing = (index: number) => {
+    setForm((prev) => ({
+      ...prev,
+      pricing: prev.pricing.filter((p,idx) => idx !== index)
+    }))
+  }
 
   return (
     <div className="max-w-8xl mx-auto p-6">
@@ -157,19 +198,19 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
           </select>
           <Button
             onClick={() => {
-              setForm({
-                id: 0,
-                uuid: "",
-                name: "",
-                description: "",
-                categoryId: null,
-                categoryType: "",
-                reservationAmt: 0,
-                imageUrl: "",
-                shopId: null,
-                address: "",
-                customFieldAnswers: {},
-              });
+              // setForm({
+              //   id: 0,
+              //   uuid: "",
+              //   name: "",
+              //   description: "",
+              //   categoryId: null,
+              //   categoryType: "",
+              //   reservationAmt: 0,
+              //   imageUrl: "",
+              //   shopId: null,
+              //   address: "",
+              //   customFieldAnswers: {},
+              // });
               setShowModal(true);
             }}
             className="bg-brandYellow hover:bg-jaba-hover text-white font-semibold px-5 py-2 rounded-lg"
@@ -180,7 +221,7 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
       </header>
 
       {/* Table */}
-      {filteredRentals.length === 0 ? (
+      {rentals.length === 0 ? (
         <p className="text-gray-500 italic text-center mt-12">
           No rentals found for this shop.
         </p>
@@ -190,20 +231,17 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
             <thead className="bg-orange-100 text-orange-800 uppercase text-xs font-semibold">
               <tr>
                 <th className="px-4 py-3 text-left">Media</th>
+                <th className="px-4 py-3 text-left">Category</th>
                 <th className="px-4 py-3 text-left">Name</th>
                 <th className="hidden sm:table-cell px-4 py-3 text-left">
                   Description
                 </th>
-                <th className="px-4 py-3 text-left">Category</th>
-                <th className="hidden md:table-cell px-4 py-3 text-left">
-                  Address
-                </th>
-                <th className="px-4 py-3 text-left">Shop</th>
-                <th className="px-4 py-3 text-right">Reservation Fee</th>
+                
+                
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
-              {filteredRentals.map((rental) => {
+              {rentals.map((rental) => {
                 const shopName =
                   shops.data.find((s) => s.id === rental.shopId)?.name || "-";
                 const firstMedia =
@@ -216,7 +254,7 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
                     onClick={() => handleEdit(rental)}
                   >
                     <td className="px-4 py-3">
-                      {firstMedia ? (
+                      {rental.attachments.length > 0 ? (
                         <button
                           type="button"
                           onClick={(e) => {
@@ -237,7 +275,7 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
                             />
                           ) : (
                             <img
-                              src={`/storage/${firstMedia}`}
+                              src={`/storage/${rental.attachments[0].path}/${rental.attachments[0].filename}.${rental.attachments[0].extension}`}
                               className="w-16 h-16 object-cover rounded-md"
                             />
                           )}
@@ -248,26 +286,17 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
                         </div>
                       )}
                     </td>
+                    
+                    <td className="px-4 py-3 text-gray-800 capitalize">
+                      {rental.categoryType || "—"}
+                    </td>
                     <td className="px-4 py-3 font-medium text-gray-900">
                       {rental.name}
                     </td>
                     <td className="hidden sm:table-cell px-4 py-3 text-gray-700">
                       {rental.description || "—"}
                     </td>
-                    <td className="px-4 py-3 text-gray-800 capitalize">
-                      {rental.categoryType || "—"}
-                    </td>
-                    <td className="hidden md:table-cell px-4 py-3 text-gray-700">
-                      {rental.address || "—"}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="inline-block bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-xs font-medium">
-                        {shopName}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-right text-green-700 font-semibold">
-                      ₱{Number(rental.reservationAmt || 0).toFixed(2)}
-                    </td>
+                    
                   </tr>
                 );
               })}
@@ -285,6 +314,9 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
           onSave={handleSave}
           categories={categories}
           shops={shops.data}
+          priceUnits={priceUnits}
+          onAddMorePricing={handleAddPricing}
+          onRemoveItemPricing={handleRemoveItemPricing}
           onCategoryChange={(categoryId: number | null) =>
             setForm((prev) => ({
               ...prev,

@@ -46,13 +46,13 @@ class LesseeController extends Controller
         $headersData = $this->getHeadersData();
 
         $user = $this->getUser();
-        $isApprovedLessor = false;
+        $isApprovedLessor = true;
         $lessorApplicationStatus = null;
         $shops = [];
         $rentals = collect();
 
         if ($user) {
-            $isApprovedLessor = $this->checkIfApprovedLessor($user->id);
+            // $isApprovedLessor = $this->checkIfApprovedLessor($user->id);
             $lessorApplicationStatus = $this->getLessorApplicationStatus($user->id);
 
             $lessor = $this->getLessor($user->id);

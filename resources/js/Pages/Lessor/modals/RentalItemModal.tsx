@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Button } from "@/Components/Lessor/ui/button";
 import { Input } from "@/Components/Lessor/ui/input";
 import { Property as RentalItem } from "@/Pages/Lessor/types/Property";
+import { Plus, Trash2 } from "lucide-react";
 
 export interface CustomField {
   id: number;
@@ -29,6 +30,9 @@ interface RentalItemModalProps {
   onSave: (mediaFiles: File[]) => void;
   categories: Category[];
   shops: Shop[];
+  priceUnits: string[];
+  onAddMorePricing: () => void;
+  onRemoveItemPricing: (index: number) => void;
   onCategoryChange: (categoryId: number) => void;
 }
 
@@ -39,6 +43,9 @@ export default function RentalItemModal({
   onSave,
   categories,
   shops,
+  priceUnits,
+  onAddMorePricing,
+  onRemoveItemPricing,
   onCategoryChange,
 }: RentalItemModalProps) {
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
@@ -124,11 +131,11 @@ export default function RentalItemModal({
     setMediaFiles([...mediaFiles, ...Array.from(e.target.files)]);
   };
 
-  const removeExistingMedia = (path: string) => {
+  const removeExistingMedia = (id: number) => {
     setForm((prev) => ({
       ...prev,
-      media_paths: prev.media_paths
-        ? prev.media_paths.filter((p) => p !== path)
+      attachments: prev.attachments
+        ? prev.attachments.filter((p) => p.id !== id)
         : [],
     }));
   };
@@ -224,30 +231,6 @@ export default function RentalItemModal({
           }}
           className="space-y-5"
         >
-          {/* Name */}
-          <div>
-            <label className="block font-medium mb-1" htmlFor="name">Name</label>
-            <Input
-              id="name"
-              value={form.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-              placeholder="Enter rental name"
-              required
-            />
-          </div>
-
-          {/* Description */}
-          <div>
-            <label className="block font-medium mb-1" htmlFor="description">Description</label>
-            <textarea
-              id="description"
-              value={form.description}
-              onChange={(e) => handleInputChange("description", e.target.value)}
-              className="w-full border border-gray-300 rounded-md p-2 min-h-[80px]"
-              required
-            />
-          </div>
-
           {/* Category */}
           <div>
             <label className="block font-medium mb-1" htmlFor="category">Category</label>
@@ -273,40 +256,33 @@ export default function RentalItemModal({
                 </option>
               ))}
             </select>
+
+            {/* Custom Fields */}
+            {/* {renderCustomFields()} */}
           </div>
 
-          {/* Custom Fields */}
-          {renderCustomFields()}
 
-          {/* Shop */}
+          {/* Name */}
           <div>
-            <label className="block font-medium mb-1" htmlFor="shop">Shop</label>
-            <select
-              id="shop"
-              value={form.shopId ?? ""}
-              onChange={(e) => handleInputChange("shopId", Number(e.target.value))}
-              className="w-full border border-gray-300 rounded-md p-2"
-            >
-              <option value="">Select Shop</option>
-              {shops.map((shop) => (
-                <option key={shop.id} value={shop.id}>
-                  {shop.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Reservation Fee */}
-          <div>
-            <label className="block font-medium mb-1" htmlFor="reservationAmt">Reservation Fee</label>
+            <label className="block font-medium mb-1" htmlFor="name">Name</label>
             <Input
-              id="reservationAmt"
-              type="number"
-              min={0}
-              value={form.reservationAmt}
-              onChange={(e) => handleInputChange("reservationAmt", parseFloat(e.target.value))}
+              id="name"
+              value={form.name}
+              onChange={(e) => handleInputChange("name", e.target.value)}
+              placeholder="Enter rental name"
               required
-              step="0.01"
+            />
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block font-medium mb-1" htmlFor="description">Description</label>
+            <textarea
+              id="description"
+              value={form.description}
+              onChange={(e) => handleInputChange("description", e.target.value)}
+              className="w-full border border-gray-300 rounded-md p-2 min-h-[80px]"
+              required
             />
           </div>
 
@@ -331,13 +307,13 @@ export default function RentalItemModal({
             {/* Previews */}
             <div className="grid grid-cols-3 gap-3 mt-3">
               {/* Existing */}
-              {Array.isArray(form.media_paths) && form.media_paths.length > 0 &&
-                form.media_paths.map((path, i) => (
+              {Array.isArray(form.attachments) && form.attachments.length > 0 &&
+                form.attachments.map((path, i) => (
                   <div key={i} className="relative group">
-                    <img src={`/storage/${path}`} className="w-full h-24 object-cover rounded-md" />
+                    <img src={`/storage/${path.path}/${path.filename}.${path.extension}`} className="w-full h-24 object-cover rounded-md" />
                     <button
                       type="button"
-                      onClick={() => removeExistingMedia(path)}
+                      onClick={() => removeExistingMedia(path.id)}
                       className="absolute top-1 right-1 bg-black/60 text-white px-2 rounded opacity-0 group-hover:opacity-100"
                     >
                       ✕
@@ -365,10 +341,91 @@ export default function RentalItemModal({
             </div>
           </div>
 
+          {/* Reservation Fee */}
+          <div>
+            <label className="block font-medium mb-1" htmlFor="reservationAmt">Security Deposit (optional)</label>
+            <Input
+              id="reservationAmt"
+              type="number"
+              min={0}
+              value={form.reservationAmt}
+              onChange={(e) => handleInputChange("reservationAmt", parseFloat(e.target.value))}
+              required
+              step="0.01"
+            />
+          </div>
+
+          {/* Pricing */}
+          <div className="mt-4">
+              <label className="block font-medium mb-1" htmlFor="reservationAmt">Pricing</label>
+                
+                {
+                  form.pricing?.map((price, index) => 
+                    {
+
+                      return (
+                        <div key={index} className="flex flow-row flex-col-2 gap-2 mb-2">
+                          <Input
+                            id={`price-per-unit-${index}`}
+                            value={price?.price_per_unit ?? ""}
+                            onChange={ (e) => setForm((prev) => {
+                              return {
+                                  ...prev,
+                                pricing: prev.pricing.map((item, idx) => {
+                                  
+                                  return idx === index ? { 
+                                    ...item, 
+                                    price_per_unit: e.target.value 
+                                  } : 
+                                  item
+                                })
+                              }
+                              
+                            }) }
+                          />
+                          <select
+                            id={`price-unit-${index}`}
+                            value={price?.price_unit || ""}
+                            onChange={ (e) =>  setForm((prev) => ({
+                              ...prev,
+                              pricing: prev.pricing.map((item, indx) => (
+                                indx === index ? {
+                                  ...item,
+                                  price_unit: e.target.value
+                                } :
+                                item
+                              ))
+                            }))
+                          }
+                            className="w-full border border-gray-300 rounded-md"
+                            required
+                          >
+                            <option value="">Price Unit</option>
+                            {priceUnits.map((unit, index) => (
+                              <option key={index} value={unit}>{unit}</option>
+                            ))}
+                            
+                          </select>
+
+                          <div className="flex justify-end gap-2">
+                            <Button variant="outline" type="button" onClick={onAddMorePricing}>
+                              <Plus />
+                            </Button>
+                            <Button type="button" className="bg-red-400 text-white hover:bg-red-500" onClick={ () => onRemoveItemPricing(index) }>
+                              <Trash2 />
+                            </Button>
+                          </div>
+                        </div>
+                      )
+                    }
+                  )               
+                }
+          </div>
+
           {/* Buttons */}
           <div className="flex justify-end gap-3 mt-6">
             <Button variant="outline" onClick={onClose} type="button">Cancel</Button>
-            <Button type="submit" className="bg-orange-600 text-white hover:bg-orange-500">Save</Button>
+            <Button type="submit" className="bg-brandYellow text-white hover:bg-jaba-hover">Save</Button>
           </div>
         </form>
       </div>

@@ -1,5 +1,5 @@
 import { AxiosInstance } from 'axios';
-import { route as ziggyRoute } from 'ziggy-js';
+import type {route as ziggyRoute } from 'ziggy-js';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
@@ -10,5 +10,7 @@ declare global {
         Pusher: typeof Pusher;
     }
 
-    var route: typeof ziggyRoute;
+    const route: typeof ziggyRoute;
 }
+
+export {};

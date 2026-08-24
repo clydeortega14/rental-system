@@ -141,14 +141,13 @@ Route::middleware([
 Route::middleware([
     'auth', // auth middleware
     'verified', // email verification middleware
-    'check-user-info' // completed information details
 ])->group(function () {
 
     Route::post('/conversations', [ConversationController::class, 'store'])->name('conversations.store');
     Route::post('/conversations/store/lessee/message', [ConversationController::class, 'storeMessageSent'])->name('conversations.store.lessee');
     Route::get('/conversations', [ConversationController::class, 'getUserConversations'])->name('conversations.index');
     Route::post('/conversations/{conversation}/mark-read/{user}', [ConversationController::class, 'markRead'])->name('conversations.markRead');
-    Route::get('/lessee', [LesseeController::class, 'index'])->name('lessee.profile');
+    Route::get('/rent-owner/dashboard', [LesseeController::class, 'index'])->name('lessee.profile');
     Route::get('/itemDetails/{uuid}/checkout', [RentalItemController::class, 'checkoutItem'])->name('itemCheckout');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -279,4 +278,4 @@ require __DIR__.'/auth.php';
 require __DIR__.'/admin.php';
 
 // Booking Routes
-require __DIR__.'/booking.php';
+// require __DIR__.'/booking.php';

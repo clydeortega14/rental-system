@@ -30,7 +30,7 @@ const LandingPageLayout = ({ categories, children }: LandingPageLayoutuProps) =>
   const auth = usePage<PageProps>().props.auth;
   const [showFeedback, setShowFeedback] = useState(false); // <- start hidden
   const [cookieVisible, setCookieVisible] = useState(false);
-  const [showPromo, setShowPromo] = useState(true);
+  const [showPromo, setShowPromo] = useState(false);
 
   const [showKycModal, setShowKycModal] = useState(false);
 
@@ -57,7 +57,6 @@ const LandingPageLayout = ({ categories, children }: LandingPageLayoutuProps) =>
       document.body.style.overflow = originalOverflow;
     };
   }, [showPromo]);
-  console.log(categories);
   return (
     <div className="flex flex-col min-h-screen relative">
       <main className="flex-grow">
@@ -79,7 +78,7 @@ const LandingPageLayout = ({ categories, children }: LandingPageLayoutuProps) =>
       />
 
       {/* KYC Prompt Modal: only show if user exists */}
-      {auth.user && !showPromo && (
+      {auth.user?.kyc && !showPromo && (
         <>
           <KycPromptModal
             user={auth.user}

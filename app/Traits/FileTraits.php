@@ -39,7 +39,7 @@ trait FileTraits {
         
     }
 
-    public function storeFile($model, $file, $driver, $path)
+    public function storeFile($model, $file, $driver = 'public', $path)
     {
         $filename = Str::random(32);
         $ext = $file->extension();
@@ -64,7 +64,7 @@ trait FileTraits {
         return $new_filename;
     }
 
-    public function manageFileUpload($model, $file, $driver, $path)
+    public function manageFileUpload($model, $file, $driver = 'public', $path)
     {
         if(is_array($file)){
 
@@ -98,4 +98,6 @@ trait FileTraits {
             ];
         }
     }
+
+    
 }
