@@ -55,9 +55,10 @@ export default function View({
     const [pickUpTime, setPickUpTime] = useState<string>(formatTo24Hour(new Date()));
     const [returnTime, setReturnTime] = useState<string>(formatTo24Hour(new Date()));
 
+    const [hasOverlap, setHasOverlap] = useState<boolean>(false);
+
     const session_error_message = usePage<PageProps>().props.flash.error_message;
     const [calculatedTotal, setCalculatedTotal] = useState<number>(item.price[item.default_duration]);
-    console.log(item);
     const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
         startDate: null,
         endDate: null,
@@ -167,10 +168,21 @@ export default function View({
             let startOfDate = new Date(selectedDate);
             let endOfDate = new Date(selectedEndDate);
 
+            // handle the formatting of unavailble dates
+            const formattedUnavailableDates = Object.keys(unavailable_dates).map(date => new Date(date).getDate());
+
+            // prevent overlapping
+            const checkOverlap = formattedUnavailableDates.some(day => day >= startOfDate.getDate() && day <= endOfDate.getDate());
+
+            setHasOverlap(checkOverlap ? true : false);
+            
             setPickUpTime(formatTo24Hour(new Date()));
             setReturnTime(formatTo24Hour(new Date()));
 
             const { totalDays } = computeDateBetweenTwoDates(startOfDate, endOfDate);
+
+            console.log(totalDays)
+
             setQuantity(totalDays);
 
             bookingDetails.totalPrice && setBookingDetails({ ...bookingDetails, quantity: totalDays, totalPrice: item.price[item.default_duration] * totalDays });
@@ -179,14 +191,11 @@ export default function View({
             // show or hide booking summary content
             // when the selectedDate and SelectedEndDate is null or empty, then hide the booking summary component
             setShowBookingSummaryComponent(true);
+                
 
         } else {
             setShowBookingSummaryComponent(false);
         }
-
-
-
-
 
     }, [selectedDate, selectedEndDate]);
 
@@ -216,6 +225,7 @@ export default function View({
             <Head title={"Item Detail"} />
 
             <p>{session_error_message}</p>
+            
 
             <div className="max-w-7xl mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -248,38 +258,35 @@ export default function View({
                             selectedDuration={duration}
                         />
 
+                        { hasOverlap && (
+                            <p className="text-rose-500 text-lg">Booking has overlap, Please select another date</p>
+                        )}
+
                         <RentalCalendar
                             selectedDate={selectedDate}
                             selectedEndDate={selectedEndDate}
                             onSelectDate={handleDateSelect}
                             setSelectedEndDate={setSelectedDate}
                             unavailableDates={unavailable_dates}
-                        />
-
-
-
-                        {selectedDate && selectedEndDate && (
-                            <TimeSlots
-                                pickUpTime={pickUpTime}
-                                setPickUpTime={setPickUpTime}
-                                returnTime={returnTime}
-                                setReturnTime={setReturnTime}
-                            />
-                        )}
-                        <SecondaryButton
-                            onClick={() => {
+                            onClickReset={() => {
                                 setSelectedDate(null);
                                 setSelectedEndDate(null);
                                 setPickUpTime('');
                                 setReturnTime('');
                             }}
-                        >
-                            Reset
-                        </SecondaryButton>
+                        />
 
 
-                        {
-                            showBookingSummaryComponent && (
+
+                        {selectedDate && selectedEndDate && !hasOverlap && (
+                            <>
+                                <TimeSlots
+                                    pickUpTime={pickUpTime}
+                                    setPickUpTime={setPickUpTime}
+                                    returnTime={returnTime}
+                                    setReturnTime={setReturnTime}
+                                />
+
                                 <BookingSummary
                                     bookingDetails={bookingDetails}
                                     itemPrice={item.price}
@@ -289,8 +296,11 @@ export default function View({
                                     pickUpTime={pickUpTime}
                                     returnTime={returnTime}
                                 />
-                            )
-                        }
+                            </>
+                        )}
+                       
+
+
 
                     </div>
                 </div>

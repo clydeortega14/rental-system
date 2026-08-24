@@ -31,7 +31,7 @@ trait ItemDetails {
             'default_duration' => 'daily',
             'price' => [
                 'hourly' => 700,
-                'daily' => $find_item->price,
+                'daily' => (int) $find_item->price,
                 'weekly' => 5000
             ],
             'specifications' => $find_item->fields->mapWithKeys(function($field){
@@ -52,8 +52,6 @@ trait ItemDetails {
                 ];
             })->all()
         ];
-
-        // return $item_detail;
 
         return Inertia::render('Item/View', [
             'item' => $item_detail,

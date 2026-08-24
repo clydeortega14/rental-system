@@ -44,7 +44,7 @@ const Card: React.FC<CardProps> = ({ item, compact = false, link }) => {
           <MapPin className="w-4 h-4 mr-1" />
           <span>{item.location}</span>
         </div>
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2">{item.description}</p>
+        {/* <p className="text-gray-600 text-sm mb-4 line-clamp-2">{item.description}</p> */}
         <div className="mt-auto">
           <div className="flex justify-between items-center mb-3">
             <div>
