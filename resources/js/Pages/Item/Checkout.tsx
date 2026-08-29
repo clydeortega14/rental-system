@@ -9,6 +9,7 @@ import { KycProvider } from "@/context/KycContext";
 import { PostalAddressProvider } from "@/context/PostalAddressContext";
 import RenterLayout from "@/Layouts/RenterLayout";
 import { User } from "@/types";
+import { Region } from "@/types/postalAddress";
 import { BookingSession } from "@/types/rental";
 import { formatDateDisplay } from "@/utils/dateUtils";
 import { Head, Link } from "@inertiajs/react";
@@ -16,12 +17,13 @@ import { Calendar, ChevronLeft, CreditCard, X } from "lucide-react";
 import { PropsWithChildren, useState } from "react";
 
 interface CheckOutProps {
+    regions: Region[];
     booking_data: BookingSession;
     serviceFee: number;
     user: User;
 }
 
-export default function Checkout({booking_data, user, serviceFee}: CheckOutProps){
+export default function Checkout({regions, booking_data, user, serviceFee}: CheckOutProps){
     return (
 
         <RenterLayout>
@@ -32,6 +34,7 @@ export default function Checkout({booking_data, user, serviceFee}: CheckOutProps
                 <KycProvider>
                     <PostalAddressProvider>
                         <CheckOut 
+                            regions={regions}
                             bookingData={booking_data}
                             categoryServiceFee={serviceFee}
                         />

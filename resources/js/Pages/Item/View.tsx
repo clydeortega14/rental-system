@@ -94,12 +94,6 @@ export default function View({
     const selectedDateData = availabilityData.find(d => d.date === selectedDate);
     const timeSlots = selectedDateData?.timeSlots || [];
 
-    // const handleDurationChange = (newDuration: RentalDuration) => {
-
-    //     setBookingDetails({ ...bookingDetails, duration: newDuration });
-    //     setDuration(newDuration);
-    // };
-
     const handleDateSelect = (date: string) => {
 
         // let formatDate = new Date(date);
@@ -181,8 +175,6 @@ export default function View({
 
             const { totalDays } = computeDateBetweenTwoDates(startOfDate, endOfDate);
 
-            console.log(totalDays)
-
             setQuantity(totalDays);
 
             bookingDetails.totalPrice && setBookingDetails({ ...bookingDetails, quantity: totalDays, totalPrice: item.price[item.default_duration] * totalDays });
@@ -254,8 +246,7 @@ export default function View({
                         <p className="text-gray-700 mb-6">{item.description}</p>
 
                         <PricingOptions
-                            prices={item.price}
-                            selectedDuration={duration}
+                            prices={item.price['daily']}
                         />
 
                         { hasOverlap && (
@@ -289,7 +280,7 @@ export default function View({
 
                                 <BookingSummary
                                     bookingDetails={bookingDetails}
-                                    itemPrice={item.price}
+                                    itemPrice={item.price[item.default_duration]}
                                     onBookNow={handleBookNow}
                                     calculatedTotal={calculatedTotal}
                                     processing={processing}

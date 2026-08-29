@@ -76,8 +76,10 @@ class BookingController extends Controller
         return redirect(route('item.review'));
     }
 
-    public function checkOutBooking(StoreBookingRequest $request)
+    public function checkOutBooking(Request $request)
     {
+
+    dd($request->all());
         // check if session has a booking data, if none then return back;
         if(!$request->session()->has('booking_data')) return;
 

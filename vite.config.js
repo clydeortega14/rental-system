@@ -7,13 +7,7 @@ export default defineConfig(({mode, command}) => {
     const isServe  = command === 'serve';
 
     return {
-        base: '/build/',
-        build: {
-            outDir: 'public/build',
-            manifest: true,
-            sourcemap: false,
-            emptyOutDir: true,
-        },
+        
         server: isServe ? {
             host: '0.0.0.0',
             port: Number(env.VITE_PORT ?? 5173),
@@ -33,11 +27,5 @@ export default defineConfig(({mode, command}) => {
             }),
             react(),
         ],
-        // resolve: {
-        //     alias: {
-        //         '@': path.resolve(__dirname, 'resources/js'),
-                
-        //     },
-        // },
     }
 })

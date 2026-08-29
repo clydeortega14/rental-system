@@ -8,12 +8,7 @@ import SecondaryButton from '../SecondaryButton';
 
 interface BookingSummaryProps {
     bookingDetails: BookingDetails;
-    itemPrice: {
-        hourly: number;
-        daily: number;
-        weekly: number;
-        days?: number;
-    }
+    itemPrice: number
     onBookNow: () => void;
     calculatedTotal: number;
     processing: boolean;
@@ -59,7 +54,6 @@ const BookingSummary = ({
           <span className="text-gray-600">Duration</span>
           <span className="font-medium">
             {bookingDetails.quantity} {getDurationText('daily')}
-            {/* {bookingDetails.quantity && bookingDetails.quantity > 1 ? 's' : ''} */}
           </span>
         </div>
         
@@ -68,7 +62,7 @@ const BookingSummary = ({
             <div className="flex justify-between">
               <span className="text-gray-600">Price per {getDurationText('daily')}</span>
 
-              { bookingDetails.totalPrice && <span className="font-medium">{formatPrice(bookingDetails.totalPrice)}</span> }
+              { itemPrice && <span className="font-medium">{formatPrice(itemPrice)}</span> }
             </div>
           )
         }

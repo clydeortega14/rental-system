@@ -22,11 +22,13 @@ import { Barangay, City, Province, Region } from "@/types/postalAddress";
 import { forEach, update } from "lodash";
 
 interface CheckOutProps {
+    regions: Region[];
     bookingData: BookingSession;
     categoryServiceFee: number;
 }
 
-export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProps) {
+export default function CheckOut({regions, bookingData, categoryServiceFee}: CheckOutProps) {
+
     const user = usePage<PageProps>().props.auth.user;
 
     const isVerified = user?.kyc?.kyc_verified === true;
@@ -44,8 +46,6 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
 
     const [deliveryAddressIsSameWithBilling, setDeliveryAddressIsSameWithBilling] = useState<boolean>(false);
     const {
-        // Regions state
-        regions, 
         selectedRegion,
         handleSelectedRegion, 
         getRegions,
@@ -171,7 +171,12 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
 
     }, [deliveryAddressIsSameWithBilling, selectedRegion, selectedProvince])
 
-    const { data, setData, post, processing, errors } = useForm(formData);
+    const { data, setData, post, processing, errors, transform } = useForm({
+        customerId: null,
+        rentalItemId: null,
+        categoryId: null,
+        
+    });
 
     const { cart, removeFromCart, clearCart, totalPrice } = useCart();
     const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
@@ -209,7 +214,7 @@ export default function CheckOut({bookingData, categoryServiceFee}: CheckOutProp
         setIsProcessing(true);
 
         post(route("checkout.booking", {
-            ...formData, 
+            phone: formData.phone,
             service_fee: serviceFee, 
             total_cost: allTotal,
             payment_method: paymentMethod,
