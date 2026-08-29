@@ -45,9 +45,9 @@ generate application key
 php artisan key:generate
 ```
 
-edit database connection in .env file, then run:
+edit database connection in .env file, then migrate the tables and run the seeders:
 ``` bash
-php artisan migrate
+php artisan migrate --seed
 ```
 
 Install npm packages
@@ -81,5 +81,13 @@ docker compose exec php php artisan migrate --seed
 install frontend dependencies (node_modules)
 ``` bash
 docker compose exec node npm install
+```
+
+
+# Postal Address
+## for the postal addresses regions, provinces, cities, and barangay, Please run the yajra/laravel-address package: [seeders]
+## package reference (https://github.com/yajra/laravel-address)
+```bash
+php artisan db:seed Yajra\\Address\\Seeders\\AddressSeeder
 ```
 
