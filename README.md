@@ -84,9 +84,11 @@ docker compose exec node npm install
 ```
 
 
-# Postal Address
-## for the postal addresses regions, provinces, cities, and barangay, Please run the yajra/laravel-address package: [seeders]
-## package reference (https://github.com/yajra/laravel-address)
+## Postal Address
+
+
+for the postal addresses regions, provinces, cities, and barangay, Please run the yajra/laravel-address package: [seeders]
+package reference (https://github.com/yajra/laravel-address)
 ```bash
 php artisan db:seed Yajra\\Address\\Seeders\\AddressSeeder
 ```
