@@ -3,21 +3,13 @@ import LesseeLayout from '@/Layouts/LesseeLayout';
 
 const Index = () => {
 
-  // return <div />; // content not needed; content is in LesseeLayout tab
-
   return (
     <AuthLayout>
       <div>
-        
+        <h1 className="font-medium">Reservations</h1>
       </div>
     </AuthLayout>
   )
 };
-
-// Index.layout = (page:React.ReactNode) => (
-//   <LesseeLayout defaultTab="bookings">
-//     {page}
-//   </LesseeLayout>
-// );
 
 export default Index;

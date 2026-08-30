@@ -20,9 +20,7 @@ const Profile: React.FC<ProfileProps> = ({ layout = "sidebar" }) => {
 
   const { auth } = usePage<PageProps>().props as any;
 
-  const user = auth.user
-
-  console.log(user)
+  const user = auth.user;
 
   const isSidebar = layout === "sidebar";
 

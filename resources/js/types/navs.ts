@@ -5,6 +5,7 @@ export type NavbarItem = {
     label: string;
     icon: ReactNode;
     link: React.ReactNode;
+    active: boolean;
 }
 
 export type INavbar {

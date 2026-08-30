@@ -1,8 +1,8 @@
-import { sidenavs } from '@/data/sidebarnavs'
-import { NavbarItem } from '@/types/navs'
+import { sidebarTabs, sidenavs } from '@/data/sidebarnavs'
+import { INavbar, NavbarItem } from '@/types/navs'
 import { Link } from '@inertiajs/react'
 import React from 'react'
-import { BiSolidDashboard, BiSolidStore } from 'react-icons/bi'
+import { BiLockOpen, BiSolidDashboard, BiSolidStore } from 'react-icons/bi'
 
 const SidebarMenu = () => {
   return (
@@ -26,22 +26,50 @@ const SidebarMenu = () => {
         </div>
 
 
-        <div className="flex flex-col space-y-6 items-start">
+        <div className="flex flex-col items-start">
             {
-                sidenavs.map((nav: NavbarItem) => (
-                    <div className="w-full space-y-1">
-                
-                    <Link href={nav.link} className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors bg-jaba-yellow text-slate-100  hover:bg-jaba-hover">
-                        <span className="relative z-10 inline-flex items-center gap-2 animate-shrink-during-shine">
-                            {nav.icon}
-                            <span className="truncate">{nav.label}</span>
-                        </span>
-                    </Link>
+                sidebarTabs.map((sideTabs: INavbar, index: number) => (
+                    <div className="w-full space-y-1" key={index}>
+                    <p className="text-xs font-semibold text-gray-500 uppercase">{sideTabs.section}</p>
+                    {
+                        sideTabs.items.map((nav: NavbarItem) => (
+                            <Link href={nav.link} key={nav.key}>
+                                <div className={`relative w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors overflow-hidden 
+                                    ${nav.active ? 
+                                        'bg-brandYellow text-white hover:bg-jaba-hover data-[state=active]:bg-brandYellow data-[state=active]:text-white' 
+                                        : 'bg-gray-100 text-gray-600 hover:bg-jaba-hover data-[state=active]:bg-brandYellow data-[state=active]:text-white'
+                                    }
+                                    `}
+                                >
+                                    <span className="relative z-10 inline-flex items-center gap-2 animate-shrink-during-shine">
+                                        {nav.icon}
+                                        <span className="truncate">{nav.label}</span>
+                                    </span>
+                                 </div>
+                            </Link>
+                        ))
+                    }
+                    
                 </div>
                 ))
             }
+
+            
             
         </div>
+
+        {/* Logout / Account Setting */}
+        {
+            <Link
+                href={route('logout')}
+                method="post"
+                as="button"
+                className="space-y-6 w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors bg-jaba-yellow text-white hover:bg-jaba-hover"
+            >
+                <BiLockOpen size={18} />
+                Logout
+            </Link>
+        }
     </div>
   )
 }
