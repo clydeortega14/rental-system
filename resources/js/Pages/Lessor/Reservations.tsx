@@ -113,7 +113,7 @@ function Reservations({ lessorReservations }: ReservationsProps) {
     );
   };
 
-  const reservationsWithConflicts = reservations.map((res) => {
+  const reservationsWithConflicts = reservations?.map((res) => {
     const overlap = reservations.some(
       (other) =>
         other.id !== res.id &&
@@ -154,13 +154,13 @@ function Reservations({ lessorReservations }: ReservationsProps) {
       </header>
 
       {/* Reservation Cards */}
-      {filteredReservations.length === 0 ? (
+      {filteredReservations?.length === 0 ? (
         <p className="text-center py-10 text-gray-500 italic">
           No reservations found.
         </p>
       ) : (
         <div className="space-y-4">
-          {filteredReservations.map((res) => (
+          {filteredReservations?.map((res) => (
             <Card
               key={res.id}
               className="flex flex-col sm:flex-row gap-4 sm:gap-6 p-4 rounded-xl hover:shadow-lg"

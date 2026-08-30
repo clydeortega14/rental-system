@@ -1,9 +1,11 @@
 import React from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/Components/Lessee/ui/avatar";
 import { Star, StarHalf, StarOff } from "lucide-react";
+import { usePage } from "@inertiajs/react";
+import { PageProps } from "@/types";
 
 interface ProfileProps {
-  lessee: {
+  lessee?: {
     name: string;
     email: string;
     phone: string;
@@ -14,7 +16,14 @@ interface ProfileProps {
   layout?: "sidebar" | "header";
 }
 
-const Profile: React.FC<ProfileProps> = ({ lessee, layout = "sidebar" }) => {
+const Profile: React.FC<ProfileProps> = ({ layout = "sidebar" }) => {
+
+  const { auth } = usePage<PageProps>().props as any;
+
+  const user = auth.user
+
+  console.log(user)
+
   const isSidebar = layout === "sidebar";
 
   const renderStars = (rating: number) => {
@@ -41,25 +50,17 @@ const Profile: React.FC<ProfileProps> = ({ lessee, layout = "sidebar" }) => {
       p-4 sm:p-6 ${isSidebar ? "space-y-4 text-center" : "flex flex-col sm:flex-row items-center gap-4"}`}
     >
       <Avatar className={`${isSidebar ? "w-24 h-24 mx-auto" : "w-20 h-20 sm:w-24 sm:h-24"}`}>
-        <AvatarImage src={lessee.image} alt={lessee.name} />
-        <AvatarFallback>{lessee.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+        <AvatarImage src={ user.avatar ?? '/images/avatar.jpg'} alt={user.name} />
+        <AvatarFallback>{user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
       </Avatar>
 
       <div className={`${isSidebar ? "" : "flex-1 text-center sm:text-left"}`}>
         <h2 className={`font-semibold text-gray-800 ${isSidebar ? "text-xl" : "text-lg sm:text-xl"}`}>
-          {lessee.name}
+          {user.name}
         </h2>
-        <p className="text-sm text-gray-500 break-words">{lessee.email}</p>
-        <p className="text-sm text-gray-500 break-words">{lessee.phone}</p>
-        <p className="text-xs text-gray-400 mt-1">{`Joined ${lessee.joined}`}</p>
-
-        {/* <div
-          className={`mt-2 inline-flex items-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-1 
-          ${isSidebar ? "justify-center" : "sm:justify-start"}`}
-        >
-          {renderStars(lessee.rating)}
-          <span className="font-bold text-sm text-orange-600">{lessee.rating.toFixed(1)}</span>
-        </div> */}
+        {/* <p className="text-sm text-gray-500 break-words">{user.email}</p> */}
+        {/* <p className="text-sm text-gray-500 break-words">{user.contact.mobile}</p> */}
+        {/* <p className="text-xs text-gray-400 mt-1">{`Joined ${user.created_at}`}</p> */}
       </div>
     </div>
   );

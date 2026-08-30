@@ -169,13 +169,14 @@ export default function CheckOut({regions, bookingData, categoryServiceFee}: Che
             }); 
         }
 
-    }, [deliveryAddressIsSameWithBilling, selectedRegion, selectedProvince])
+    }, [deliveryAddressIsSameWithBilling, selectedRegion, selectedProvince]);
+
+    console.log(bookingData)
 
     const { data, setData, post, processing, errors, transform } = useForm({
         customerId: null,
         rentalItemId: null,
-        categoryId: null,
-        
+        categoryId: bookingData?.category.id,
     });
 
     const { cart, removeFromCart, clearCart, totalPrice } = useCart();
@@ -213,13 +214,13 @@ export default function CheckOut({regions, bookingData, categoryServiceFee}: Che
 
         setIsProcessing(true);
 
-        post(route("checkout.booking", {
-            phone: formData.phone,
+        transform( (data) => ({
+            ...data,
             service_fee: serviceFee, 
             total_cost: allTotal,
-            payment_method: paymentMethod,
-            status: 'Pending'
-        }), {
+        }))
+
+        post(route("checkout.booking"), {
             preserveScroll: true,
             onSuccess: () => {
                 setTimeout(() => {

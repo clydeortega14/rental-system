@@ -78,8 +78,6 @@ class BookingController extends Controller
 
     public function checkOutBooking(Request $request)
     {
-
-    dd($request->all());
         // check if session has a booking data, if none then return back;
         if(!$request->session()->has('booking_data')) return;
 
@@ -92,7 +90,7 @@ class BookingController extends Controller
             'total_cost' => $request->total_cost,
             'booked_by' => auth()->user()->id,
             'endTime' => $data['returnTime'],
-            'duration_type' => 'daily',
+            'duration_type' => $data['duration'],
         ]);
         
 

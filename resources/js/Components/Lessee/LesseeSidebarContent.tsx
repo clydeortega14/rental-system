@@ -41,13 +41,6 @@ export default function LesseeSidebarContent({
   const sidebarTabs = [
     {
       section: "",
-      // items: [
-      //   { key: "overview", label: "Overview", icon: <BiFile size={18} /> },
-      //   { key: "bookings", label: "Bookings", icon: <BiCalendar size={18} /> },
-      //   { key: "reviews", label: "Reviews", icon: <BiCalendarEvent size={18} /> },
-      //   { key: "lessorInquiries", label: "Inquiries", icon: <BiMessageDetail size={18} /> },
-      //   { key: "lessorProfile", label: "Account Settings", icon: <BiCog size={18} /> },
-      // ],
       items: []
     },
     ...(!isApprovedLessor
@@ -68,7 +61,7 @@ export default function LesseeSidebarContent({
             { key: "lessorDashboard", label: "Dashboard", icon: <BiSolidDashboard size={18} />, route: route('lessee.profile') },
             // { key: "lessorShop", label: "Shop", icon: <BiSolidStore size={18} /> },
             { key: "lessorProperties", label: "Properties", icon: <BiBuildingHouse size={18}/>, route: route('lessor.properties')  },
-            { key: "lessorReservations", label: "Reservations", icon: <BiCalendarCheck size={18} /> },
+            { key: "lessorReservations", label: "Reservations", icon: <BiCalendarCheck size={18}/>, route: route('reservations.index') },
             //ongoing --- need backend and ui-----
             { key: "lessorInvoice", label: "Invoice", icon: <BiReceipt size={18} /> },
             { key: "LessorReviews", label: "Reviews", icon: <BiStar size={18} /> },

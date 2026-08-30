@@ -21,7 +21,7 @@ class BookingRepository implements BookingRepositoryInterface
 
             try {
 
-                $booking = Booking::create([
+                $booking = Booking::firstOrCreate([
                     'category_id' => $data['category']['id'],
                     'rental_listing_id' => $data['rental_listing']['id'],
                     'booked_by' => $data['booked_by'],

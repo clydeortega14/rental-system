@@ -272,14 +272,6 @@ export default function LesseeLayout({ defaultTab = "lessorDashboard" }: LayoutP
     },
   ];
 
-  // useEffect(() => {
-  //   const tab = localStorage.getItem('lessee.activeTab');
-  //   if (tab) {
-  //     setActiveTab('lessorDashboard'); // your state logic
-  //     localStorage.removeItem('lessee.activeTab');
-  //   }
-  // }, []);
-
 
   const mappedConversations: Conversation[] = conversations && conversations.map(c => ({
     ...c,

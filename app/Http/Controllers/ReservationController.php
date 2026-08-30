@@ -35,7 +35,8 @@ class ReservationController extends Controller
             'bookings' => $bookings,
             'auth' => [
                 'user' => auth()->user()
-            ]
+            ],
+            'isApprovedLessor' => true,
         ]);
     }
 

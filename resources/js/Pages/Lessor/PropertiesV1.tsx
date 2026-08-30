@@ -221,7 +221,7 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
       </header>
 
       {/* Table */}
-      {rentals.length === 0 ? (
+      {rentals?.length === 0 ? (
         <p className="text-gray-500 italic text-center mt-12">
           No rentals found for this shop.
         </p>
@@ -254,7 +254,7 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
                     onClick={() => handleEdit(rental)}
                   >
                     <td className="px-4 py-3">
-                      {rental.attachments.length > 0 ? (
+                      {rental.attachments?.length > 0 ? (
                         <button
                           type="button"
                           onClick={(e) => {
