@@ -5,8 +5,8 @@ const Index = () => {
 
   return (
     <AuthLayout>
-      <div>
-        <h1 className="font-medium">Reservations</h1>
+      <div className="max-w-7xl mx-auto">
+          <h1 className="flex items-center text-3xl font-bold mb-6 text-brandYellow">Reservations</h1>
       </div>
     </AuthLayout>
   )

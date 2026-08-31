@@ -16,8 +16,9 @@ const AuthLayout = ({children}:PropsWithChildren) => {
         <Head title="Reservations" />
         <Header />
 
-        {/* Sidebar */}
+        
         <div className="flex flex-1 flex-col md:flex-row mt-16">
+            {/* Sidebar */}
             <aside className="hidden md:flex flex-col w-80 bg-gray-50 border-r border-gray-200 p-6 space-y-6">
                 <Suspense>
                     <Profile />
@@ -27,21 +28,17 @@ const AuthLayout = ({children}:PropsWithChildren) => {
                 <SidebarMenu />
             </aside>
 
-            <section>
+            <section className="max-w-7xl py-4 px-2 md:px-6 md:py-8">
                 {/* Mobile View */}
                 <MobileView onShowLessorModal={ () => setShowLessorModal(true) } />
 
                 {/* Main Content */}
                 <Suspense fallback={<div className="text-center text-orange-600 py-10">Loading...</div>}>
-                    <div className="max-w-5xl py-8 sm:py-6">
-                        {children}
-                    </div>
+                    {children}
                 </Suspense>
                 
             </section>
         </div>
-
-        
     </div>
   )
 }
