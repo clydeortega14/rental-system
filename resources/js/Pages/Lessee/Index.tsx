@@ -1,6 +1,10 @@
 import AuthLayout from '@/Layouts/AuthLayout';
 import LesseeLayout from '@/Layouts/LesseeLayout';
 
+interface ReservationsProps {
+   //
+}
+
 const Index = () => {
 
   return (

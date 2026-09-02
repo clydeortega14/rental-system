@@ -1,10 +1,15 @@
 import { sidebarTabs, sidenavs } from '@/data/sidebarnavs'
 import { INavbar, NavbarItem } from '@/types/navs'
-import { Link } from '@inertiajs/react'
-import React from 'react'
+import { Link, router } from '@inertiajs/react'
+import React, {useEffect} from 'react'
 import { BiLockOpen, BiSolidDashboard, BiSolidStore } from 'react-icons/bi'
 
-const SidebarMenu = () => {
+interface Props {
+    onSideNavClick: () => void;
+}
+
+const SidebarMenu = ({onSideNavClick}: Props) => {
+
   return (
     <div className="mt-6 space-y-6 text-sm text-gray-700">
         <div className="mb-4 flex justify-center">
@@ -33,7 +38,7 @@ const SidebarMenu = () => {
                     <p className="text-xs font-semibold text-gray-500 uppercase">{sideTabs.section}</p>
                     {
                         sideTabs.items.map((nav: NavbarItem) => (
-                            <Link href={nav.link} key={nav.key}>
+                            <Link href={nav.link} key={nav.key} onClick={ () => router.visit(route(nav.link))}>
                                 <div className={`relative w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors overflow-hidden 
                                     ${nav.active ? 
                                         'bg-brandYellow text-white hover:bg-jaba-hover data-[state=active]:bg-brandYellow data-[state=active]:text-white' 

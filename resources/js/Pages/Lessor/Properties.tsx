@@ -5,6 +5,8 @@ import { Button } from "@/Components/Lessor/ui/button";
 import { usePage, router } from "@inertiajs/react";
 // import LessorLayout from "@/Layouts/LessorLayout";
 import LesseeLayout from "@/Layouts/LesseeLayout";
+import AuthLayout from "@/Layouts/AuthLayout";
+import { BiBuildingHouse } from "react-icons/bi";
 
 interface Shop {
   id: number;
@@ -13,22 +15,11 @@ interface Shop {
 
 interface PropertiesProps {
   rentals: RentalItem[];
+  shops: Shop[];
+  categories: Category[];
 }
 
-function Properties({rentals}: PropertiesProps) {
-  // const { rentals: initialRentals, categories, shops } = usePage<{
-  //   rentals: RentalItem[];
-  //   categories: Category[];
-  //   shops: Shop[];
-  // }>().props;
-
-  // const [rentals, setRentals] = useState<RentalItem[]>(initialRentals || []);
-
-  useEffect( () => {
-
-    console.log(rentals)
-
-  }, [rentals]);
+function Properties({rentals, shops, categories}: PropertiesProps) {
 
   
   const [filteredShopId, setFilteredShopId] = useState<number | "all">("all");
@@ -127,10 +118,11 @@ function Properties({rentals}: PropertiesProps) {
       : rentals.filter((r) => r.shopId === filteredShopId);
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <AuthLayout>
       <header className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
-        <h1 className="text-3xl font-bold text-orange-600">
-          My Properties & Rentals
+        <h1 className="flex items-center text-3xl font-bold mb-6 text-brandYellow">
+          <BiBuildingHouse className="w-6 h-6 text-brandYellow mr-2" />
+          Rental Listings
         </h1>
         <div className="flex gap-3 flex-col sm:flex-row">
           <select
@@ -169,7 +161,7 @@ function Properties({rentals}: PropertiesProps) {
             }}
             className="bg-orange-600 hover:bg-orange-500 text-white font-semibold px-5 py-2 rounded-lg"
           >
-            + Add New Rental   dsadsadsadsadsadsadsa
+            + Add New Rental
           </Button>
         </div>
       </header>
@@ -244,10 +236,10 @@ function Properties({rentals}: PropertiesProps) {
           }
         />
       )}
-    </div>
+    </AuthLayout>
   );
 }
 
-Properties.layout = (page: ReactElement) => <LesseeLayout defaultTab="lessorProperties" >{page}</LesseeLayout>;
+// Properties.layout = (page: ReactElement) => <LesseeLayout >{page}</LesseeLayout>;
 
 export default Properties;

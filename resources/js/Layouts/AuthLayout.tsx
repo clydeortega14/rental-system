@@ -6,9 +6,9 @@ import { PageProps } from '@/types'
 import LesseeSidebarContent from '@/Components/Lessee/LesseeSidebarContent'
 import SidebarMenu from './Sidebar/SidebarMenu'
 import MobileView from './Sidebar/MobileView'
+import { sidenavs } from '@/data/sidebarnavs';
 
 const AuthLayout = ({children}:PropsWithChildren) => {
-
     const [showLessorModal, setShowLessorModal] = useState<boolean>(false);
 
   return (
@@ -28,7 +28,7 @@ const AuthLayout = ({children}:PropsWithChildren) => {
                 <SidebarMenu />
             </aside>
 
-            <section className="max-w-7xl py-4 px-2 md:px-6 md:py-8">
+            <section className="py-4 px-2 md:px-6 md:py-8">
                 {/* Mobile View */}
                 <MobileView onShowLessorModal={ () => setShowLessorModal(true) } />
 

@@ -7,28 +7,9 @@ import { router } from "@inertiajs/react";
 import { BiBuildingHouse } from "react-icons/bi";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
-interface Shop {
-  id: number;
-  name: string;
-  description?: string;
-  location?: string;
-  created_at?: string;
-  logo_url?: string;
-}
-
-interface ShopsData {
-  data: Shop[];
-  current_page: number;
-  last_page: number;
-  links: {
-    url: string | null;
-    label: string;
-    active: boolean;
-  }[];
-}
 
 interface PropertiesProps {
-  shops: ShopsData;
+  shops: {id: number, name: string}[];
   categories: Category[];
   rentals: RentalItem[];
 }
@@ -172,7 +153,7 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
   }
 
   return (
-    <div className="max-w-8xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-6">
       {/* Header */}
       <header className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
         <h1 className="flex items-center text-3xl font-bold mb-6 text-brandYellow">
@@ -190,7 +171,7 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
             }
           >
             <option value="all">All Shops</option>
-            {shops.data.map((shop) => (
+            {shops.map((shop) => (
               <option key={shop.id} value={shop.id}>
                 {shop.name}
               </option>
@@ -243,7 +224,7 @@ const Properties = ({ shops, categories, rentals }: PropertiesProps): ReactEleme
             <tbody className="bg-white divide-y divide-gray-100">
               {rentals.map((rental) => {
                 const shopName =
-                  shops.data.find((s) => s.id === rental.shopId)?.name || "-";
+                  shops.find((s) => s.id === rental.shopId)?.name || "-";
                 const firstMedia =
                   rental.media_paths?.[0] || rental.imageUrl || "";
 
