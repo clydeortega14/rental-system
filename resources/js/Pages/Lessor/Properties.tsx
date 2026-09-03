@@ -172,7 +172,7 @@ function Properties({rentals, shops, categories}: PropertiesProps) {
         </p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-          <table className="min-w-full table-auto divide-y divide-gray-200">
+          <table className="w-full table-auto divide-y divide-gray-200">
             <thead className="bg-orange-50">
               <tr>
                 <th className="px-3 sm:px-6 py-2 text-left text-xs font-semibold text-orange-700 uppercase tracking-wider">
